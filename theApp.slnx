@@ -1,3 +1,11 @@
 <Solution>
-  <Project Path="theApp/theApp.csproj" />
+  <Folder Name="/01-App/">
+    <Project Path="theApp/theApp.csproj" />
+  </Folder>
+  <Folder Name="/07-Database/">
+    <Project Path="theDatabase/theDatabase.csproj" Id="cd1a0441-2d17-4266-a2b6-5978485e240c" />
+  </Folder>
+  <Folder Name="/09-Infrastructure/">
+    <Project Path="theInfrastructure/theInfrastructure.csproj" Id="692f1133-742b-4eeb-b4bb-7b1375b0a8c8" />
+  </Folder>
 </Solution>
