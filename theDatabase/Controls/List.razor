@@ -1,0 +1,217 @@
+﻿@using theInfrastructure
+@inject ISqlDatabaseService sql
+
+<div class="border rounded-2 p-3 my-3">
+    <h4 class="border-bottom fw-bold">Erstellen</h4>
+    <div class="row p-1 align-items-center">
+        <div class="col-3 p-1">
+            <strong>Title</strong>
+        </div>
+        <div class="col-6 p-1">
+            <input class="form-control" @bind="@Title" />
+        </div>
+        <div class="col-3 p-1">
+            <button class="btn btn-primary" @onclick="Create">
+                erstellen
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+@if (Items.Any())
+{
+    <div class="border rounded-2 p-3 my-3">
+        <div class="row g-0">
+            <div class="col">
+                <h4 class="border-bottom fw-bold">Items</h4>
+            </div>
+            <div class="col-auto px-2">
+                <button class="btn btn-primary" @onclick="Load">laden</button>
+            </div>
+        </div>
+
+        <div class="row p-1 align-items-center">
+            <div class="col-6 p-1 ms-auto me-auto">
+                <input class="form-control" @bind="@Matchcode" @oninput="Load" />
+            </div>
+
+        </div>
+
+        @foreach (IDTO dto in Items)
+        {
+            <div class="row p-1 border-bottom align-items-center">
+                <div class="col-auto p-1">
+                    <button class="btn btn-primary" @onclick="@( async e => { await Select(dto); })">...</button>
+                </div>
+                <div class="col-auto p-1">
+                    @dto.ID.ToSecureString()
+                </div>
+                <div class="col p-1">
+                    <input class="form-control form-control-flush" @bind="@dto.Title" />
+                </div>
+                <div class="col-auto p-1">
+                    <button class="btn btn-sm"
+                            @onclick="@( async e => { await Update(dto); })">
+                        Update
+                    </button>
+                </div>
+                @if (DTO != null && DTO.GUID != dto.GUID)
+                {
+                    <div class="col-auto p-1">
+                        <button class="btn btn-sm" @onclick="@( async e => { await Assign(dto); })">Assign</button>
+                    </div>
+                }
+                <div class="col-auto p-1">
+                    <button class="btn btn-sm" @onclick="@( async e => { await Delete(dto); })">X</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (DTO != null)
+{
+    <div class="border rounded-2 p-3 my-3">
+
+        <h4 class="border-bottom fw-bold">Bearbeiten</h4>
+        <div class="row p-1 align-items-center">
+            <div class="col-4 p-1">
+                <input class="form-control"
+                       @bind:get="@(DTO["Nachname"].ToString() ?? string.Empty)"
+                       @bind:set="@(val => DTO["Nachname"] = val)" />
+            </div>
+            <div class="col-4 p-1">
+                <input class="form-control" @bind="@DTO.Title" />
+            </div>
+            <div class="col-4 p-1">
+                <button class="btn btn-primary" @onclick="Save">
+                    Speichern
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+
+@if (RelatedItems.Any())
+{
+    <div class="border rounded-2 p-3 my-3">
+
+        <h4 class="border-bottom fw-bold">Related Items</h4>
+        @foreach (IDTO dto in RelatedItems)
+        {
+            <div class="row p-1 border-bottom align-items-center">
+                <div class="col-auto p-1">
+                    @dto.ID.ToSecureString()
+                </div>
+                <div class="col p-1">
+                    <input class="form-control form-control-flush" @bind="@dto.Title" />
+                </div>
+                <div class="col-auto p-1">
+                    <button class="btn btn-sm"
+                            @onclick="@( async e => { await Update(dto); })">
+                        Update
+                    </button>
+                </div>
+                <div class="col-auto p-1">
+                    <button class="btn btn-sm" @onclick="@( async e => { await Remove(dto); })">Remove</button>
+                </div>
+                <div class="col-auto p-1">
+                    <button class="btn btn-sm" @onclick="@( async e => { await Delete(dto); })">X</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+@code
+{
+    List<IDTO> Items { get; set; } = new();
+    List<IDTO> RelatedItems { get; set; } = new();
+
+    private IDTO DTO { get; set; }
+    private string Title { get; set; }
+    private string Matchcode { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            await Load();
+            this.StateHasChanged();
+        }
+
+    }
+
+    private async Task Select(IDTO dto)
+    {
+        DTO = dto;
+
+        await LoadRelatedItems();
+    }
+    private async Task Save()
+    {
+        await sql.Update(DTO);
+        await Load();
+    }
+
+    private async Task Create()
+    {
+        await sql.Create(QueryParameter.Default(this.Title));
+        await Load();
+    }
+
+    private async Task Load()
+    {
+        Items.Clear();
+        IQueryParameter query = new QueryParameter();
+        query.Matchcode = this.Matchcode;
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        IQueryResult result = await sql.GetItems(query);
+        Items = result.Items;
+    }
+    private async Task LoadRelatedItems()
+    {
+        RelatedItems.Clear();
+
+        if (this.DTO != null)
+        {
+            IQueryParameter query = new QueryParameter();
+            IQueryResult result = await sql.GetRelatedItems(this.DTO);
+            RelatedItems = result.Items;
+        }
+
+    }
+    private async Task Delete(IDTO dto)
+    {
+        await sql.Delete(dto);
+        await Load();
+    }
+
+    private async Task Update(IDTO dto)
+    {
+        await sql.Update(dto);
+        await Load();
+    }
+    private async Task Assign(IDTO dto)
+    {
+        if (this.DTO != null)
+        {
+            IQueryResult result = await sql.Assign(this.DTO, dto);
+            await LoadRelatedItems();
+        }
+    }
+    private async Task Remove(IDTO dto)
+    {
+        if (this.DTO != null)
+        {
+            IQueryResult result = await sql.Remove(this.DTO, dto);
+            await LoadRelatedItems();
+        }
+    }
+}

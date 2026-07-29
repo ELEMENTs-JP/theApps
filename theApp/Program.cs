@@ -1,10 +1,27 @@
 using theApp.Components;
+using theDatabase;
+using theInfrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+
+// Database Service 
+builder.Services.AddScoped<ISqlDatabaseService>(provider =>
+{
+    // Abruf des WebHostEnvironment aus dem DI-Container
+    var environment = provider.GetRequiredService<IWebHostEnvironment>();
+
+    // Auslesen des ContentRootPath
+    string rootPath = environment.ContentRootPath;
+
+    // Manuelle Instanziierung und Übergabe des Pfads
+    return new SQLiteService(rootPath);
+});
+
 
 var app = builder.Build();
 
@@ -21,7 +38,9 @@ app.UseHttpsRedirection();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
+
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+   .AddInteractiveServerRenderMode()
+   .AddAdditionalAssemblies(typeof(theDatabase.Controls.DatabaseSetup).Assembly); 
 
 app.Run();

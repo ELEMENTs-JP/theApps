@@ -1,0 +1,55 @@
+﻿@using theDatabase
+@using theInfrastructure
+@inject ISqlDatabaseService sql
+
+<div class="border rounded-2 p-3 my-3">
+
+    <h4 class="fw-bold">Database Management</h4>
+    <div class="row align-items-center">
+        <div class="col p-2">
+            <button class="btn btn-sm btn-primary m-3" @onclick="CreateDatabase">Datenbank erstellen</button>
+        </div>
+        <div class="col p-2">
+            <button class="btn btn-sm btn-primary m-3" @onclick="DeleteDatabase">Datenbank löschen</button>
+        </div>
+        <div class="col p-2">
+            @if (sql.DatabaseExists == true)
+            {
+                <span class="badge bg-success">Datenbank existiert</span>
+            }
+            else
+            {
+                <span class="badge bug-warning">Keine Datenbank vorhanden</span>
+            }
+        </div>
+    </div>
+
+    <div class="m-3">@Info</div>
+</div>
+
+@code {
+
+    string Info = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+
+    }
+
+    private async Task CreateDatabase()
+    {
+        SQLiteService.Database = "Default.db";
+        IQueryResult info = sql.CreateDatabase();
+        Info = info.Message;
+    }
+
+    private async Task DeleteDatabase()
+    {
+        SQLiteService.Database = "Default.db";
+        IQueryResult info = sql.DeleteDatabase();
+        Info = info.Message;
+    }
+
+}
