@@ -2,6 +2,9 @@
   <Folder Name="/01-App/">
     <Project Path="theApp/theApp.csproj" />
   </Folder>
+  <Folder Name="/05-Controls/">
+    <Project Path="theControls/theControls.csproj" Id="c6fee19a-2f57-4097-b0fe-6500e8b23520" />
+  </Folder>
   <Folder Name="/07-Database/">
     <Project Path="theDatabase/theDatabase.csproj" Id="cd1a0441-2d17-4266-a2b6-5978485e240c" />
   </Folder>
