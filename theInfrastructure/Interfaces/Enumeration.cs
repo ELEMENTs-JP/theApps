@@ -8,12 +8,14 @@ namespace theInfrastructure
     { 
         NULL = 0,
         Empty = 1,
+        Search = 2,
+        Check = 3,
     }
     public enum FieldTyp
     {
         Text,
         TextArea,
-        Hidden,
+        Select,
 
 
         Number,
@@ -36,6 +38,7 @@ namespace theInfrastructure
         Color,
         Range,
         
+        Hidden,
     }
 
     public enum DatabaseTyp

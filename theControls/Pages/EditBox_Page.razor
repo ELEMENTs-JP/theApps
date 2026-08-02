@@ -1,27 +1,45 @@
 ﻿@page "/EditBox"
-
-
+@inject ISqlDatabaseService sql
 
 <div class="container">
-
     
     <div class="row">
-
 
         @foreach (FieldTyp field in Enum.GetValues(typeof(FieldTyp)))
         {
             <div class="col-12 col-md-6 col-lg-4 p-2">
-                <EditBox Label="@field.ToString()" Type="@field"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
+                <EditBox Label="@field.ToString()" Type="@field" 
+                    Placeholder="@( ((field == FieldTyp.Select) ? "bitte wählen" : "eingeben...") )"
+                    Items="@( ((field == FieldTyp.Select) ? this.Items : null) )"
+                    Description="Hier steht eine kleine Beschreibung ob es funktioniert." />
             </div>
         }
-
-       
     </div>
-
 </div>
 
-
 @code {
+
+    List<IDTO> Items { get; set; } = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            await Load();
+            this.StateHasChanged();
+        }
+    }
+
+    private async Task Load()
+    {
+        Items.Clear();
+        IQueryParameter query = new QueryParameter();
+        query.Matchcode = string.Empty;
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        IQueryResult result = await sql.GetItems(query);
+        Items = result.Items;
+    }
 
 }

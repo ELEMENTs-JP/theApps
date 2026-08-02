@@ -1,49 +1,81 @@
-﻿@using theControls.Input
+﻿@using theControls.Icons
+@using theControls.Input
 
 <div class="border rounded-2 p-2 bg-body">
+    
     @if (Type == FieldTyp.TextArea)
     {
         <TextArea Label="@Label"
-                  Description="@Description"
-                  Value="@Value"
-                  ValueChanged="@ValueChanged"
-                  Placeholder="@Placeholder"
-                  CssClass="@CssClass"
-                  Rows="@Rows"
-                  Disabled="@Disabled"
-                  ReadOnly="@ReadOnly">
+                    Description="@Description"
+                    Value="@Value"
+                    ValueChanged="@ValueChanged"
+                    Placeholder="@Placeholder"
+                    CssClass="@CssClass"
+                    Rows="@Rows"
+                    Disabled="@Disabled"
+                    ReadOnly="@ReadOnly">
 
             <Overlay>
                 <button type="button"
-                        class="btn btn-sm btn-icon btn-success px-2"
-                        @onclick="CheckClicked">
+                class="btn btn-sm btn-icon btn-success px-2"
+                @onclick="CheckClicked">
                     <i class="ti ti-check"></i>
                 </button>
             </Overlay>
 
         </TextArea>
     }
-    else
+    else if (Type == FieldTyp.Select)
     {
-        <TextBox Label="@Label"
-                 Description="@Description"
-                 Value="@Value"
-                 ValueChanged="@ValueChanged"
-                 Type="@Type"
-                 Placeholder="@Placeholder"
-                 CssClass="@CssClass"
-                 Min="@Min"
-                 Max="@Max"
-                 Step="@Step"
-                 Disabled="@Disabled"
-                 ReadOnly="@ReadOnly">
-
-            <Overlay>
+        <Select Label="@Label"
+                Description="@Description"
+                Items="@Items"
+                Value="@Value"
+                ValueChanged="@ValueChanged"
+                Placeholder="@Placeholder"
+                CssClass="@CssClass"
+                Disabled="@Disabled"
+                ReadOnly="@ReadOnly">
+         @*    <Overlay>
                 <button type="button"
-                        class="btn btn-sm btn-icon btn-success px-2"
+                    class="btn btn-sm btn-icon btn-success px-2"
                         @onclick="CheckClicked">
                     <i class="ti ti-check"></i>
                 </button>
+            </Overlay> *@
+
+        </Select>
+    
+    }
+    else
+    {
+        <TextBox Label="@Label"
+            Description="@Description"
+            Value="@Value"
+            ValueChanged="@ValueChanged"
+            Type="@Type"
+            Placeholder="@Placeholder"
+            CssClass="@CssClass"
+            Min="@Min"
+            Max="@Max"
+            Step="@Step"
+            Disabled="@Disabled"
+            ReadOnly="@ReadOnly">
+
+            <Overlay>
+
+                @if (Type == FieldTyp.Search)
+                {
+                    <SymbolIcon Symbol="@Icon.Search" />
+                }
+                else
+                {
+                    <button type="button"
+                        class="btn btn-sm btn-icon btn-success" style="padding:0.7rem;"
+                        @onclick="CheckClicked">
+                        <SymbolIcon Symbol="@Icon.Check" />
+                    </button>
+                }
             </Overlay>
 
         </TextBox>
@@ -66,6 +98,9 @@
 
     [Parameter]
     public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public List<IDTO> Items { get; set; } = new();
 
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
