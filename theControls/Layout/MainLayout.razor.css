@@ -12,10 +12,13 @@ main {
     flex: 1;
     overflow-y: auto;
     min-height: 0;
+    background-color: #fff;
 }
 
+.content {
+  
+}
 .navigation {
-    
 }
 
 .header {

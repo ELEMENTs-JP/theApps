@@ -10,6 +10,40 @@ namespace theInfrastructure
 {
     public static class Helper
     {
+        public static string ToHtmlValue(this InputType type)
+        {
+            return type switch
+            {
+                InputType.Text => "text",
+                InputType.Password => "password",
+                InputType.Email => "email",
+                InputType.Number => "number",
+                InputType.Integer => "number",
+                InputType.Decimal => "number",
+                InputType.Tel => "tel",
+                InputType.Url => "url",
+                InputType.Search => "search",
+                InputType.Date => "date",
+                InputType.Time => "time",
+                InputType.DateTimeLocal => "datetime-local",
+                InputType.Month => "month",
+                InputType.Week => "week",
+                InputType.Color => "color",
+                InputType.Range => "range",
+                InputType.Hidden => "hidden",
+                _ => "text"
+            };
+        }
+        public static string? GetStep(this InputType type)
+        {
+            return type switch
+            {
+                InputType.Integer => "1",
+                InputType.Decimal => "any",
+                _ => null
+            };
+        }
+
         private const string Base62Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
         public static string ToShortCode(this Guid guid, int length = 5)

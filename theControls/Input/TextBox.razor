@@ -1,0 +1,147 @@
+﻿@if (!string.IsNullOrEmpty(this.Label))
+{
+    <label class="form-label" style="padding-left:3px;" for="@Id">@Label</label>
+}
+
+<div class="position-relative">
+    <input id="@Id" name="@InputName"
+           class="form-control @CssClass"
+           type="@Type.ToHtmlValue()"
+           placeholder="@Placeholder"
+           step="@(Step ?? Type.GetStep())"
+           min="@Min"
+           max="@Max"
+           maxlength="@MaxLength"
+           minlength="@MinLength"
+           value="@Value"
+           autocomplete="@GetAutocomplete()"
+           @oninput="HandleInput"
+           disabled="@Disabled"
+           readonly="@ReadOnly" />
+
+    @if (Overlay != null)
+    {
+        <div class="position-absolute top-50 end-0 translate-middle-y me-2">
+            @Overlay
+        </div>
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(Description))
+{
+    <div class="text-muted" style="padding-left:3px; padding-top:3px;">
+        @this.Description.ToSecureString()
+    </div>
+}
+@if (!string.IsNullOrEmpty(Hint))
+{
+    <div class="form-hint" style="padding-left:3px; padding-top:3px;">
+        @Hint.ToSecureString()
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public RenderFragment? Overlay { get; set; }
+
+    [Parameter]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    [Parameter]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+    [Parameter]
+    public string Hint { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public InputType Type { get; set; } = InputType.Text;
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public string Placeholder { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? Step { get; set; }
+
+    [Parameter]
+    public string? Min { get; set; }
+
+    [Parameter]
+    public string? Max { get; set; }
+
+    [Parameter]
+    public int? MaxLength { get; set; }
+
+    [Parameter]
+    public int? MinLength { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        Value = e.Value?.ToString() ?? string.Empty;
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private string? GetAutocomplete()
+    {
+        return Type switch
+        {
+            InputType.Password => "new-password",
+            InputType.Email => "email",
+            InputType.Tel => "tel",
+            InputType.Url => "url",
+            InputType.Search => "off",
+            _ => null
+        };
+    }
+
+    private string InputName =>
+    !string.IsNullOrWhiteSpace(Name)
+        ? Name
+        : GenerateName(Label);
+
+    private static string GenerateName(string label)
+    {
+        if (string.IsNullOrWhiteSpace(label))
+            return $"input_{Guid.NewGuid():N}";
+
+        var name = label.Trim().ToLowerInvariant();
+
+        name = name
+            .Replace("ä", "ae")
+            .Replace("ö", "oe")
+            .Replace("ü", "ue")
+            .Replace("ß", "ss");
+
+        var chars = name
+            .Select(c => char.IsLetterOrDigit(c) ? c : '_')
+            .ToArray();
+
+        name = new string(chars);
+
+        while (name.Contains("__"))
+            name = name.Replace("__", "_");
+
+        return name.Trim('_');
+    }
+
+}

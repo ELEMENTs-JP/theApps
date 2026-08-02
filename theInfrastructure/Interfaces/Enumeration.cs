@@ -4,6 +4,27 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum InputType
+    {
+        Text,
+        Password,
+        Email,
+        Number,
+        Integer,
+        Decimal,
+        Tel,
+        Url,
+        Search,
+        Date,
+        Time,
+        DateTimeLocal,
+        Month,
+        Week,
+        Color,
+        Range,
+        Hidden
+    }
+
     public enum DatabaseTyp
     {
         NULL = 0,

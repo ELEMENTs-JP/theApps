@@ -1,0 +1,73 @@
+﻿@using theControls.Input
+
+<div class="border rounded-2 p-2 bg-light">
+
+    <TextBox Label="@Label"
+             Description="@Description"
+             Value="@Value"
+             ValueChanged="@ValueChanged"
+             Type="@Type"
+             Placeholder="@Placeholder"
+             CssClass="@CssClass"
+             Min="@Min"
+             Max="@Max"
+             Step="@Step"
+             Disabled="@Disabled"
+             ReadOnly="@ReadOnly" >
+         <Overlay>
+            <button type="button"
+                    class="btn btn-sm btn-icon btn-success px-2"
+                    @onclick="CheckClicked">
+                <i class="ti ti-check"></i>
+            </button>
+         </Overlay>
+         </TextBox>
+
+    
+</div>
+
+
+@code {
+
+
+
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public InputType Type { get; set; } = InputType.Text;
+
+    [Parameter]
+    public string Placeholder { get; set; } = string.Empty;
+
+    [Parameter]
+    public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? Min { get; set; }
+
+    [Parameter]
+    public string? Max { get; set; }
+
+    [Parameter]
+    public string? Step { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    [Parameter]
+    public EventCallback CheckClicked { get; set; }
+
+}
