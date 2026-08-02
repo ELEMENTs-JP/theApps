@@ -2,3 +2,14 @@
     border-color:#aaa;
     box-shadow: 0 0 0 0 transparent !important;
 }
+
+.overlay {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease-in-out;
+}
+
+.overlay-container:hover .overlay {
+    opacity: 1;
+    pointer-events: auto;
+}

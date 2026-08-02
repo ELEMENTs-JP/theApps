@@ -3,9 +3,9 @@
     <label class="form-label" style="padding-left:5px;" for="@Id">@Label</label>
 }
 
-<div class="position-relative">
+<div class="position-relative overlay-container">
     <input id="@Id" name="@InputName"
-           class="form-control @CssClass"
+           class="form-control pe-5 @CssClass"
            type="@Type.ToHtmlValue()"
            placeholder="@Placeholder"
            step="@(Step ?? Type.GetStep())"
@@ -21,7 +21,7 @@
 
     @if (Overlay != null)
     {
-        <div class="position-absolute top-50 end-0 translate-middle-y me-2">
+        <div class="overlay position-absolute top-50 end-0 translate-middle-y me-2">
             @Overlay
         </div>
     }

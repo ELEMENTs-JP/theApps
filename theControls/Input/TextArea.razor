@@ -3,10 +3,10 @@
     <label class="form-label" style="padding-left:5px;" for="@Id">@Label</label>
 }
 
-<div class="position-relative">
+<div class="position-relative overlay-container">
     <textarea id="@Id"
               name="@InputName"
-              class="form-control @CssClass @(Overlay != null ? "pe-5" : "")"
+              class="form-control @CssClass @(Overlay != null ? "pe-6" : "")"
               placeholder="@Placeholder"
               maxlength="@MaxLength"
               minlength="@MinLength"
@@ -17,7 +17,7 @@
 
     @if (Overlay != null)
     {
-        <div class="position-absolute top-0 end-0 mt-2 me-2">
+        <div class="overlay position-absolute top-0 end-0 mt-2 me-2">
             @Overlay
         </div>
     }
