@@ -10,6 +10,30 @@ namespace theInfrastructure
 {
     public static class Helper
     {
+        public static string GenerateName(string label)
+        {
+            if (string.IsNullOrWhiteSpace(label))
+                return $"input_{Guid.NewGuid():N}";
+
+            var name = label.Trim().ToLowerInvariant();
+
+            name = name
+                .Replace("ä", "ae")
+                .Replace("ö", "oe")
+                .Replace("ü", "ue")
+                .Replace("ß", "ss");
+
+            var chars = name
+                .Select(c => char.IsLetterOrDigit(c) ? c : '_')
+                .ToArray();
+
+            name = new string(chars);
+
+            while (name.Contains("__"))
+                name = name.Replace("__", "_");
+
+            return name.Trim('_');
+        }
         public static string ToHtmlValue(this InputType type)
         {
             return type switch

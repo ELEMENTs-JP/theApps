@@ -41,6 +41,7 @@ app.MapStaticAssets();
 
 app.MapRazorComponents<App>()
    .AddInteractiveServerRenderMode()
-   .AddAdditionalAssemblies(typeof(theDatabase.Controls.DatabaseSetup).Assembly); 
+   .AddAdditionalAssemblies(typeof(theDatabase.Controls.DatabaseSetup).Assembly, 
+                                typeof(theControls.Edit.EditBox).Assembly); 
 
 app.Run();

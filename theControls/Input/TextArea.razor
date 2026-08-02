@@ -4,24 +4,20 @@
 }
 
 <div class="position-relative">
-    <input id="@Id" name="@InputName"
-           class="form-control @CssClass"
-           type="@Type.ToHtmlValue()"
-           placeholder="@Placeholder"
-           step="@(Step ?? Type.GetStep())"
-           min="@Min"
-           max="@Max"
-           maxlength="@MaxLength"
-           minlength="@MinLength"
-           value="@Value"
-           autocomplete="@GetAutocomplete()"
-           @oninput="HandleInput"
-           disabled="@Disabled"
-           readonly="@ReadOnly" />
+    <textarea id="@Id"
+              name="@InputName"
+              class="form-control @CssClass @(Overlay != null ? "pe-5" : "")"
+              placeholder="@Placeholder"
+              maxlength="@MaxLength"
+              minlength="@MinLength"
+              rows="@Rows"
+              @oninput="HandleInput"
+              disabled="@Disabled"
+              readonly="@ReadOnly">@Value</textarea>
 
     @if (Overlay != null)
     {
-        <div class="position-absolute top-50 end-0 translate-middle-y me-2">
+        <div class="position-absolute top-0 end-0 mt-2 me-2">
             @Overlay
         </div>
     }
@@ -56,6 +52,7 @@
 
     [Parameter]
     public string Description { get; set; } = string.Empty;
+
     [Parameter]
     public string Hint { get; set; } = string.Empty;
 
@@ -63,25 +60,16 @@
     public string Value { get; set; } = string.Empty;
 
     [Parameter]
-    public string CssClass { get; set; } = string.Empty;
-
-    [Parameter]
-    public InputType Type { get; set; } = InputType.Text;
-
-    [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public string CssClass { get; set; } = string.Empty;
 
     [Parameter]
     public string Placeholder { get; set; } = string.Empty;
 
     [Parameter]
-    public string? Step { get; set; }
-
-    [Parameter]
-    public string? Min { get; set; }
-
-    [Parameter]
-    public string? Max { get; set; }
+    public int Rows { get; set; } = 4;
 
     [Parameter]
     public int? MaxLength { get; set; }
@@ -101,24 +89,9 @@
         await ValueChanged.InvokeAsync(Value);
     }
 
-    private string? GetAutocomplete()
-    {
-        return Type switch
-        {
-            InputType.Password => "new-password",
-            InputType.Email => "email",
-            InputType.Tel => "tel",
-            InputType.Url => "url",
-            InputType.Search => "off",
-            _ => null
-        };
-    }
-
     private string InputName =>
     !string.IsNullOrWhiteSpace(Name)
         ? Name
         : Helper.GenerateName(Label);
-
-   
 
 }

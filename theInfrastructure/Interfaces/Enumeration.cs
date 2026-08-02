@@ -7,6 +7,7 @@ namespace theInfrastructure
     public enum InputType
     {
         Text,
+        TextArea,
         Password,
         Email,
         Number,

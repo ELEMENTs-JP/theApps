@@ -1,27 +1,54 @@
 ﻿@using theControls.Input
 
 <div class="border rounded-2 p-2 bg-light">
+    @if (Type == InputType.TextArea)
+    {
+        <TextArea Label="@Label"
+                  Description="@Description"
+                  Value="@Value"
+                  ValueChanged="@ValueChanged"
+                  Placeholder="@Placeholder"
+                  CssClass="@CssClass"
+                  Rows="@Rows"
+                  Disabled="@Disabled"
+                  ReadOnly="@ReadOnly">
 
-    <TextBox Label="@Label"
-             Description="@Description"
-             Value="@Value"
-             ValueChanged="@ValueChanged"
-             Type="@Type"
-             Placeholder="@Placeholder"
-             CssClass="@CssClass"
-             Min="@Min"
-             Max="@Max"
-             Step="@Step"
-             Disabled="@Disabled"
-             ReadOnly="@ReadOnly" >
-         <Overlay>
-            <button type="button"
-                    class="btn btn-sm btn-icon btn-success px-2"
-                    @onclick="CheckClicked">
-                <i class="ti ti-check"></i>
-            </button>
-         </Overlay>
-         </TextBox>
+            <Overlay>
+                <button type="button"
+                        class="btn btn-sm btn-icon btn-success px-2"
+                        @onclick="CheckClicked">
+                    <i class="ti ti-check"></i>
+                </button>
+            </Overlay>
+
+        </TextArea>
+    }
+    else
+    {
+        <TextBox Label="@Label"
+                 Description="@Description"
+                 Value="@Value"
+                 ValueChanged="@ValueChanged"
+                 Type="@Type"
+                 Placeholder="@Placeholder"
+                 CssClass="@CssClass"
+                 Min="@Min"
+                 Max="@Max"
+                 Step="@Step"
+                 Disabled="@Disabled"
+                 ReadOnly="@ReadOnly">
+
+            <Overlay>
+                <button type="button"
+                        class="btn btn-sm btn-icon btn-success px-2"
+                        @onclick="CheckClicked">
+                    <i class="ti ti-check"></i>
+                </button>
+            </Overlay>
+
+        </TextBox>
+    }
+
 
     
 </div>
@@ -60,6 +87,8 @@
 
     [Parameter]
     public string? Step { get; set; }
+    [Parameter]
+    public int Rows { get; set; } = 4;
 
     [Parameter]
     public bool Disabled { get; set; }
