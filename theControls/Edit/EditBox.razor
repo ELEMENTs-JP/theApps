@@ -1,7 +1,7 @@
 ﻿@using theControls.Icons
 @using theControls.Input
 
-<div class="border rounded-2 p-2 bg-body">
+<div class="@( ((Border == true) ? "border " : "")) rounded-2 p-2 bg-body">
     
     @if (Type == FieldTyp.TextArea)
     {
@@ -18,7 +18,7 @@
             <Overlay>
                 <button type="button"
                 class="btn btn-sm btn-icon btn-success px-2"
-                @onclick="CheckClicked">
+                @onclick="OnSaveClicked">
                     <i class="ti ti-check"></i>
                 </button>
             </Overlay>
@@ -62,33 +62,28 @@
             Disabled="@Disabled"
             ReadOnly="@ReadOnly">
 
-            <Overlay>
-
+            <Inlay>
                 @if (Type == FieldTyp.Search)
                 {
                     <SymbolIcon Symbol="@Icon.Search" />
                 }
-                else
+            </Inlay>
+            <Overlay>
+                @if (Type != FieldTyp.Search)
                 {
                     <button type="button"
                         class="btn btn-sm btn-icon btn-success" style="padding:0.7rem;"
-                        @onclick="CheckClicked">
+                            @onclick="OnSaveClicked">
                         <SymbolIcon Symbol="@Icon.Check" />
                     </button>
                 }
             </Overlay>
-
         </TextBox>
     }
-
-
-    
 </div>
 
 
 @code {
-
-
 
     [Parameter]
     public string Label { get; set; } = string.Empty;
@@ -103,9 +98,6 @@
     public List<IDTO> Items { get; set; } = new();
 
     [Parameter]
-    public EventCallback<string> ValueChanged { get; set; }
-
-    [Parameter]
     public FieldTyp Type { get; set; } = FieldTyp.Text;
 
     [Parameter]
@@ -113,6 +105,9 @@
 
     [Parameter]
     public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool Border { get; set; } = true;
 
     [Parameter]
     public string? Min { get; set; }
@@ -132,6 +127,9 @@
     public bool ReadOnly { get; set; }
 
     [Parameter]
-    public EventCallback CheckClicked { get; set; }
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnSaveClicked { get; set; }
 
 }

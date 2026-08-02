@@ -3,3 +3,10 @@ html, body {
     height: 100vh;
     overflow: hidden;
 }
+
+.pointer {
+    cursor:pointer;
+}
+.hover:hover {
+    opacity:0.7;
+}

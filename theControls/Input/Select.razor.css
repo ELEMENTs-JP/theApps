@@ -2,3 +2,7 @@
     border-color: #aaa;
     box-shadow: 0 0 0 0 transparent !important;
 }
+
+.form-select {
+    height:2.375rem !important;
+}

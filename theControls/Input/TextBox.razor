@@ -19,6 +19,13 @@
            disabled="@Disabled"
            readonly="@ReadOnly" />
 
+    @if (Inlay != null)
+    {
+        <div class="position-absolute top-50 end-0 translate-middle-y me-2">
+            @Inlay
+        </div>
+    }
+
     @if (Overlay != null)
     {
         <div class="overlay position-absolute top-50 end-0 translate-middle-y me-2">
@@ -44,6 +51,9 @@
 
     [Parameter]
     public RenderFragment? Overlay { get; set; }
+
+    [Parameter]
+    public RenderFragment? Inlay { get; set; }
 
     [Parameter]
     public string Id { get; set; } = Guid.NewGuid().ToString();

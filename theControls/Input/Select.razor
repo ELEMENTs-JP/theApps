@@ -4,23 +4,43 @@
 }
 
 <div class="position-relative overlay-container">
-   
-    <select id="@Id"
-            name="@InputName"
-            class="form-select @CssClass"
-            value="@Value"
-            @onchange="HandleChange"
-            disabled="@Disabled">
+    <div class="dropdown-center position-relative w-100">
+        <div id="@Id" name="@InputName"
+               class="form-select pointer align-items-center pe-5 @CssClass"
+                placeholder="@Placeholder" value="@Value"
+               disabled="@Disabled" readonly="@ReadOnly" 
+               data-bs-toggle="dropdown" 
+               aria-expanded="false" >
+            @if (SelectedItem != null)
+            {
+                @SelectedItem.Title.ToSecureString()
+            }
+        </div>
+        <div class="dropdown-menu w-100">
+            
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <div class="dropdown-header">
+                    @Label
+                </div>
+            }
 
-        @if (!string.IsNullOrEmpty(Placeholder))  {
-            <option value="" disabled selected>@Placeholder</option> }
+            @if (!string.IsNullOrEmpty(Description))
+            {
+                <div class="text-muted" style="padding: 0 8px 0 8px;">
+                    @this.Description.ToSecureString()
+                </div>
+            }
 
-        @foreach (IDTO item in Items) 
-        {
-            <option value="@item.Title" 
-                    selected="@IsSelected(item)">@item.Title</option> 
-        }
-    </select>
+            @foreach (IDTO item in Items)
+            {
+                <div class="dropdown-item" 
+                    @onclick="@( e => { SelectedItem = item; Value = item.Title; })">
+                    @item.Title
+                </div>
+            }
+      </div>
+    </div>
 
     @if (Overlay != null)
     {
@@ -66,6 +86,9 @@
     public string Value { get; set; } = string.Empty;
 
     [Parameter]
+    public IDTO SelectedItem { get; set; }
+
+    [Parameter]
     public string CssClass { get; set; } = string.Empty;
 
     [Parameter]
@@ -75,15 +98,7 @@
     public List<IDTO> Items { get; set; } = new();
 
     [Parameter]
-    public Func<object, string>? TextSelector { get; set; }
-
-    [Parameter]
-    public Func<object, string>? ValueSelector { get; set; }
-
-    [Parameter]
     public string Placeholder { get; set; } = string.Empty;
-
-
 
     [Parameter]
     public bool Disabled { get; set; }
