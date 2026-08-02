@@ -9,7 +9,7 @@ namespace theInfrastructure
     {
         List<IItemType> ItemTypes { get; set; }
     }
-    public class App : IApp
+    public class BaseApp : IApp
     {
         public List<IItemType> ItemTypes { get; set; } = new();
     }
