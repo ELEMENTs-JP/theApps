@@ -1,7 +1,7 @@
 ﻿@using theControls.Input
 
-<div class="border rounded-2 p-2 bg-light">
-    @if (Type == InputType.TextArea)
+<div class="border rounded-2 p-2 bg-body">
+    @if (Type == FieldTyp.TextArea)
     {
         <TextArea Label="@Label"
                   Description="@Description"
@@ -71,7 +71,7 @@
     public EventCallback<string> ValueChanged { get; set; }
 
     [Parameter]
-    public InputType Type { get; set; } = InputType.Text;
+    public FieldTyp Type { get; set; } = FieldTyp.Text;
 
     [Parameter]
     public string Placeholder { get; set; } = string.Empty;

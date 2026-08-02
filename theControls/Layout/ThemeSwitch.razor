@@ -1,0 +1,65 @@
+﻿
+@inject IJSRuntime JS
+
+<button class="btn btn-icon"
+        @onclick="ToggleTheme"
+        title="Design wechseln">
+
+    @if (_darkMode)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="icon"
+             width="24"
+             height="24"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2"
+             stroke-linecap="round"
+             stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="M4.93 4.93l1.41 1.41" />
+            <path d="M17.66 17.66l1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="M6.34 17.66l-1.41 1.41" />
+            <path d="M19.07 4.93l-1.41 1.41" />
+        </svg>
+    }
+    else
+    {
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="icon"
+             width="24"
+             height="24"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2"
+             stroke-linecap="round"
+             stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9A9 9 0 1 1 12 3z" />
+        </svg>
+    }
+</button>
+
+@code {
+    private bool _darkMode;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _darkMode = await JS.InvokeAsync<bool>("themeManager.isDark");
+        StateHasChanged();
+    }
+
+    private async Task ToggleTheme()
+    {
+        _darkMode = !_darkMode;
+        await JS.InvokeVoidAsync("themeManager.setTheme", _darkMode ? "dark" : "light");
+    }
+}

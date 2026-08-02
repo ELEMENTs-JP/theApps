@@ -1,0 +1,36 @@
+﻿@if (Position == LoadingPosition.Head)
+{
+     @* Tabler *@
+    <link rel="stylesheet" href="@Assets["lib/tabler/dist/css/tabler.min.css"]" />
+    <script src="@Assets["lib/tabler/dist/js/tabler.min.js"]"></script>
+
+
+    <script>
+        (function () {
+            let theme = localStorage.getItem("theme");
+
+            if (!theme) {
+                theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+                    ? "dark"
+                    : "light";
+            }
+
+            document.documentElement.setAttribute("data-bs-theme", theme);
+        })();
+    </script>
+}
+
+@if (Position == LoadingPosition.Body)
+{
+    @* Controls JS *@
+    <script src="@Assets["./_content/theControls/js/controls.js"]"></script>
+
+    @* Tabler Icons *@
+    <link href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet" />
+}
+
+@code {
+
+    [Parameter]
+    public LoadingPosition Position { get; set; } = LoadingPosition.NULL;
+}

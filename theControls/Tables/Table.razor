@@ -1,0 +1,41 @@
+﻿
+<table class="table">
+    <thead>
+        <tr>
+
+            @foreach (IField col in Fields)
+            {
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">ItemType</th>
+            }
+            
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (IDTO row in Items)
+        {
+            <tr>
+                <th scope="row">@row.ID</th>
+                <td>@row.Title</td>
+                <td>@row.ItemType</td>
+            </tr>
+        }
+        
+    </tbody>
+</table>
+
+
+
+
+
+@code {
+
+    [Parameter]
+    public List<IDTO> Items { get; set; } = new();
+
+    [Parameter]
+    public List<IField> Fields { get; set; } = new();
+
+}

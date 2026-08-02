@@ -16,6 +16,10 @@
     <ProjectReference Include="..\theInfrastructure\theInfrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\css\" />
+  </ItemGroup>
+
 
 
 </Project>

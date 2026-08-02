@@ -66,7 +66,7 @@
     public string CssClass { get; set; } = string.Empty;
 
     [Parameter]
-    public InputType Type { get; set; } = InputType.Text;
+    public FieldTyp Type { get; set; } = FieldTyp.Text;
 
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
@@ -105,11 +105,11 @@
     {
         return Type switch
         {
-            InputType.Password => "new-password",
-            InputType.Email => "email",
-            InputType.Tel => "tel",
-            InputType.Url => "url",
-            InputType.Search => "off",
+            FieldTyp.Password => "new-password",
+            FieldTyp.Email => "email",
+            FieldTyp.Tel => "tel",
+            FieldTyp.Url => "url",
+            FieldTyp.Search => "off",
             _ => null
         };
     }

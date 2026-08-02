@@ -1,0 +1,41 @@
+﻿@page "/Table"
+@using theControls.Tables
+@using theDatabase
+@inject ISqlDatabaseService sql
+
+
+<div class="container">
+
+    
+    <Table Items="@Items">
+
+    </Table>
+
+</div>
+
+
+@code {
+
+    List<IDTO> Items { get; set; } = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            await Load();
+            this.StateHasChanged();
+        }
+    }
+
+    private async Task Load()
+    {
+        Items.Clear();
+        IQueryParameter query = new QueryParameter();
+        query.Matchcode = string.Empty;
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        IQueryResult result = await sql.GetItems(query);
+        Items = result.Items;
+    }
+}

@@ -34,36 +34,36 @@ namespace theInfrastructure
 
             return name.Trim('_');
         }
-        public static string ToHtmlValue(this InputType type)
+        public static string ToHtmlValue(this FieldTyp type)
         {
             return type switch
             {
-                InputType.Text => "text",
-                InputType.Password => "password",
-                InputType.Email => "email",
-                InputType.Number => "number",
-                InputType.Integer => "number",
-                InputType.Decimal => "number",
-                InputType.Tel => "tel",
-                InputType.Url => "url",
-                InputType.Search => "search",
-                InputType.Date => "date",
-                InputType.Time => "time",
-                InputType.DateTimeLocal => "datetime-local",
-                InputType.Month => "month",
-                InputType.Week => "week",
-                InputType.Color => "color",
-                InputType.Range => "range",
-                InputType.Hidden => "hidden",
+                FieldTyp.Text => "text",
+                FieldTyp.Password => "password",
+                FieldTyp.Email => "email",
+                FieldTyp.Number => "number",
+                FieldTyp.Integer => "number",
+                FieldTyp.Decimal => "number",
+                FieldTyp.Tel => "tel",
+                FieldTyp.Url => "url",
+                FieldTyp.Search => "search",
+                FieldTyp.Date => "date",
+                FieldTyp.Time => "time",
+                FieldTyp.DateTimeLocal => "datetime-local",
+                FieldTyp.Month => "month",
+                FieldTyp.Week => "week",
+                FieldTyp.Color => "color",
+                FieldTyp.Range => "range",
+                FieldTyp.Hidden => "hidden",
                 _ => "text"
             };
         }
-        public static string? GetStep(this InputType type)
+        public static string? GetStep(this FieldTyp type)
         {
             return type switch
             {
-                InputType.Integer => "1",
-                InputType.Decimal => "any",
+                FieldTyp.Integer => "1",
+                FieldTyp.Decimal => "any",
                 _ => null
             };
         }

@@ -4,26 +4,33 @@ using System.Text;
 
 namespace theInfrastructure
 {
-    public enum InputType
+    public enum FieldTyp
     {
         Text,
         TextArea,
-        Password,
-        Email,
+        Hidden,
+
+
         Number,
         Integer,
         Decimal,
-        Tel,
+        
+        Password,
+        Email,
         Url,
-        Search,
+        
+        DateTimeLocal,
         Date,
         Time,
-        DateTimeLocal,
+        
         Month,
         Week,
+        Tel,
+        
+        Search,
         Color,
         Range,
-        Hidden
+        
     }
 
     public enum DatabaseTyp
@@ -31,6 +38,13 @@ namespace theInfrastructure
         NULL = 0,
         Master = 1,
         Client = 2,
+    }
+
+    public enum LoadingPosition
+    { 
+        NULL = 0,
+        Head = 1,
+        Body = 2,
     }
 
 }

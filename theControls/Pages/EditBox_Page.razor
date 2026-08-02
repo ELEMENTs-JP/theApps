@@ -6,103 +6,17 @@
 
     
     <div class="row">
-        <div class="col-4">
-            <EditBox Label="Text"
+
+
+        @foreach (FieldTyp field in Enum.GetValues(typeof(FieldTyp)))
+        {
+            <div class="col-4 p-2">
+                <EditBox Label="@field.ToString()" Type="@field"
                      Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-        <div class="col-4">
-            <EditBox Label="TextArea" Type="InputType.TextArea"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-        <div class="col-4">
-            <EditBox Label="Hidden" Type="InputType.Hidden"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
+            </div>
+        }
 
-
-
-        <div class="col-4">
-            <EditBox Label="Number" Type="InputType.Number"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-        <div class="col-4">
-            <EditBox Label="Integer" Type="InputType.Integer"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-        <div class="col-4">
-            <EditBox Label="Decimal" Type="InputType.Decimal"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-
-
-
-        <div class="col-4">
-            <EditBox Label="Date Time" Type="InputType.DateTimeLocal"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-        <div class="col-4">
-            <EditBox Label="Date" Type="InputType.Date"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-        <div class="col-4">
-            <EditBox Label="Time" Type="InputType.Time"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-
-
-
-
-
-
-
-        <div class="col-4">
-            <EditBox Label="Date Time" Type="InputType.Email"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-        <div class="col-4">
-            <EditBox Label="Password" Type="InputType.Password"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-        <div class="col-4">
-            <EditBox Label="Month" Type="InputType.Month"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-
-
-
-
-
-        <div class="col-4">
-            <EditBox Label="Color" Type="InputType.Color"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-        <div class="col-4">
-            <EditBox Label="Range" Type="InputType.Range"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-        <div class="col-4">
-            <EditBox Label="Search" Type="InputType.Search"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-
-
-
-
-
-
-        
-        <div class="col-4">
-            <EditBox Label="Tel" Type="InputType.Tel"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-        <div class="col-4">
-            <EditBox Label="Url" Type="InputType.Url"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
-        <div class="col-4">
-            <EditBox Label="Week" Type="InputType.Week"
-                     Description="Hier steht eine kleine Beschreibung die einfach nur Text darstellen soll um zu sehen ob es ordentlich dargestellt wird." />
-        </div>
+       
     </div>
 
 </div>

@@ -4,6 +4,11 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public interface IField
+    {
+        FieldTyp Typ { get; set; }
+        string Title { get; set; }
+    }
 
     public interface IQueryParameter
     {
