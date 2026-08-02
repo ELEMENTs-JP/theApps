@@ -1,33 +1,48 @@
-﻿
-<table class="table">
-    <thead>
-        <tr>
+﻿@using theControls.Icons
+@if (_showSpinner)
+{
+    <h1 class="placeholder-glow">
+        <span class="placeholder col-12"></span>
+    </h1>
+}
+else if (!Items.Any())
+{
+    <div class="text-center my-5 text-secondary">
+        <SymbolIcon Symbol="Icon.Empty" />
+        <p>Keine Daten vorhanden.</p>
+    </div>
+}
+else
+{
 
-            @foreach (IField col in Fields)
-            {
-                <th scope="col">#</th>
-                <th scope="col">Title</th>
-                <th scope="col">ItemType</th>
-            }
-            
-        </tr>
-    </thead>
-    <tbody>
-
-        @foreach (IDTO row in Items)
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <th scope="row">@row.ID</th>
-                <td>@row.Title</td>
-                <td>@row.ItemType</td>
+
+                @foreach (IField col in Fields)
+                {
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">ItemType</th>
+                }
+
             </tr>
-        }
-        
-    </tbody>
-</table>
+        </thead>
+        <tbody>
 
+            @foreach (IDTO row in Items)
+            {
+                <tr>
+                    <th scope="row">@row.ID</th>
+                    <td>@row.Title</td>
+                    <td>@row.ItemType</td>
+                </tr>
+            }
 
+        </tbody>
+    </table>
 
+}
 
 
 @code {
@@ -38,4 +53,14 @@
     [Parameter]
     public List<IField> Fields { get; set; } = new();
 
+    private bool _showSpinner = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1000);
+
+        _showSpinner = false;
+
+        await InvokeAsync(StateHasChanged);
+    }
 }

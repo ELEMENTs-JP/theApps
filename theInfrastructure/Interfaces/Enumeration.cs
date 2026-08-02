@@ -4,6 +4,11 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum Icon
+    { 
+        NULL = 0,
+        Empty = 1,
+    }
     public enum FieldTyp
     {
         Text,
