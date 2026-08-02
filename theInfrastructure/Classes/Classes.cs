@@ -4,11 +4,7 @@ using System.Text;
 
 namespace theInfrastructure
 {
-    public class Field : IField
-    {
-        public FieldTyp Typ { get; set; } = FieldTyp.Text;
-        public string Title { get; set; } = string.Empty;
-    }
+
 
 
     public class QueryResult : IQueryResult

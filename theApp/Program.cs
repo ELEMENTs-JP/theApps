@@ -23,6 +23,18 @@ builder.Services.AddScoped<ISqlDatabaseService>(provider =>
 });
 
 
+
+// App Service 
+builder.Services.AddScoped<IAppService>(provider =>
+{
+    // Abruf des WebHostEnvironment aus dem DI-Container
+    var environment = provider.GetRequiredService<IWebHostEnvironment>();
+
+    // Manuelle Instanziierung und Übergabe 
+    return new AppService(environment);
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

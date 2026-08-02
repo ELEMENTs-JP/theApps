@@ -4,11 +4,7 @@ using System.Text;
 
 namespace theInfrastructure
 {
-    public interface IField
-    {
-        FieldTyp Typ { get; set; }
-        string Title { get; set; }
-    }
+ 
 
     public interface IQueryParameter
     {
@@ -24,6 +20,10 @@ namespace theInfrastructure
         // Validation 
         string Message { get; set; }
         bool Validate();
+    }
+    public interface IAppService
+    { 
+    
     }
     public interface ISqlDatabaseService
     {

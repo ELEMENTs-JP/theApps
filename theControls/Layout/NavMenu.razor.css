@@ -55,12 +55,12 @@
     }
 
 .nav-item ::deep a.active {
-    background-color: #999;
+    background-color: #77777799;
     color: #fff;
 }
 
     .nav-item ::deep .nav-link:hover {
-        background-color: #555;
+        background-color: #55555599;
         color: #fff;
     }
 
