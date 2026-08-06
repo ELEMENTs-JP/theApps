@@ -77,14 +77,24 @@
         <h4 class="border-bottom fw-bold">Bearbeiten</h4>
         <div class="row p-1 align-items-center">
             <div class="col-4 p-1">
+                <input class="form-control" @bind="@Context.Item.Title" />
+            </div>
+            <div class="col-2 p-1">
                 <input class="form-control"
                        @bind:get="@(Context.Item["Title"].ToString() ?? string.Empty)"
                        @bind:set="@(val => Context.Item["Title"] = val)" />
             </div>
-            <div class="col-4 p-1">
-                <input class="form-control" @bind="@Context.Item.Title" />
+            <div class="col-2 p-1">
+                <input class="form-control"
+                       @bind:get="@(Context.Item["Description"].ToString() ?? string.Empty)"
+                       @bind:set="@(val => Context.Item["Description"] = val)" />
             </div>
-            <div class="col-4 p-1">
+            <div class="col-2 p-1">
+                <input class="form-control"
+                       @bind:get="@(Context.Item["Status"].ToString() ?? string.Empty)"
+                       @bind:set="@(val => Context.Item["Status"] = val)" />
+            </div>
+            <div class="col-2 p-1">
                     <button class="btn btn-primary" @onclick="@(async e => {
                                 await Context.Update(Context.Item);
                                 await Context.Search();

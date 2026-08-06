@@ -2,7 +2,7 @@
 @using theControls.Input
 
 
-@if (Field != null && Context != null)
+@if (Field != null && Context != null && Context.Item != null)
 {
     <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-2 bg-body">
     
@@ -10,7 +10,7 @@
         {
             <TextArea Label="@Field.Title"
                       Description="@Field.Description"
-                      Value="@Value"
+                      Value="@Context.Item[Field.Column]"
                       ValueChanged="@ValueChanged"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
@@ -32,7 +32,7 @@
             <Select Label="@Field.Title"
                     Description="@Field.Description"
                     Items="@Items"
-                    Value="@Value"
+                    Value="@Context.Item[Field.Column]"
                     ValueChanged="@ValueChanged"
                     Placeholder="@Field.Placeholder"
                     CssClass="@CssClass"
@@ -44,7 +44,7 @@
         {
             <TextBox Label="@Field.Title"
                      Description="@Field.Description"
-                     Value="@Value"
+                     Value="@Context.Item[Field.Column]"
                      ValueChanged="@ValueChanged"
                      Type="@Field.Typ"
                      Placeholder="@Field.Placeholder"
@@ -77,9 +77,6 @@
 }
 
 @code {
-
-    [Parameter]
-    public string Value { get; set; } = string.Empty;
 
     [Parameter]
     public List<IDTO> Items { get; set; } = new();
@@ -118,5 +115,10 @@
 
     [Parameter]
     public EventCallback OnSaveClicked { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
 
 }
