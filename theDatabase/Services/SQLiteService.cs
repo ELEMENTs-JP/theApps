@@ -294,10 +294,10 @@ namespace theDatabase
             {
                 CreatedAt = DateTime.Now,
                 CreatedBy = Guid.NewGuid(),
-                Creator = "Jürgen Pott",
+                Creator = "JP",
                 EditedAt = DateTime.Now,
                 EditedBy = Guid.NewGuid(),
-                Editor = "Jürgen Pott"
+                Editor = "JP"
             };
 
             // Query generieren
