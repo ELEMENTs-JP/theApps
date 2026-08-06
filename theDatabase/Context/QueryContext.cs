@@ -7,6 +7,8 @@ namespace theDatabase
 {
     public class QueryContext : IQueryContext
     {
+        public bool IsLoading { get; set; } = false;
+
         ISqlDatabaseService sqlService = null;
         public IItemType ItemType { get; set; } = null;
         public IDTO Item { get; set; } = null;
@@ -36,33 +38,41 @@ namespace theDatabase
             if (sqlService == null)
                 return;
 
+            IsLoading = true;
+
             Items.Clear();
             IQueryParameter query = new QueryParameter();
             query.Matchcode = string.Empty;
             query.MasterGUID = SQLiteService.GeneralMasterGUID;
             IQueryResult result = await sqlService.GetItems(query);
             Items = result.Items;
+
+            IsLoading = false;
         }
-        public async Task Load(string ID)
+        public async Task Load(string GUID)
         {
             if (sqlService == null)
                 return;
 
-            if (string.IsNullOrEmpty(ID))
+            if (string.IsNullOrEmpty(GUID))
                 return;
+
+            IsLoading = true;
 
             Item = null;
 
             IQueryParameter query = new QueryParameter();
             query.Matchcode = string.Empty;
             query.MasterGUID = SQLiteService.GeneralMasterGUID;
-            query.GUID = new Guid(ID);
+            query.GUID = new Guid(GUID);
             IQueryResult result = await sqlService.GetItem(query);
 
             if (result.Items[0] != null)
             { 
                 Item = result.Items[0];
             }
+
+            IsLoading = false;
         }
         public async Task Delete(IDTO dto)
         {

@@ -1,6 +1,6 @@
 ﻿@page "/EditBox"
-@page "/EditBox/{ItemTypeExternal}"
-@page "/EditBox/{ItemTypeExternal}/{ID}"
+@page "/EditBox/{IT}"
+@page "/EditBox/{IT}/{GUID}"
 @using theInfrastructure
 
 @inject ISqlDatabaseService sql
@@ -32,10 +32,10 @@
     List<IDTO> Items { get; set; } = new();
 
     [Parameter]
-    public string ItemTypeExternal { get; set; } = string.Empty;
+    public string IT { get; set; } = string.Empty;
 
     [Parameter]
-    public string ID { get; set; } = string.Empty;
+    public string GUID { get; set; } = string.Empty;
 
     private IItemType ItemType { get; set; } = null;
     private IQueryContext Context { get; set; } = null;
@@ -48,15 +48,15 @@
     {
         await base.OnParametersSetAsync();
 
-        if (!string.IsNullOrEmpty(this.ItemTypeExternal))
+        if (!string.IsNullOrEmpty(this.IT))
         {
-            ItemType = new ItemTypeBuilder().BuildITemType(this.ItemTypeExternal);
+            ItemType = new ItemTypeBuilder().BuildITemType(this.IT);
         }
 
-        if (!string.IsNullOrEmpty(this.ID))
+        if (!string.IsNullOrEmpty(this.GUID))
         {
             Context = new QueryContext(sql);
-            await Context.Load(this.ID);
+            await Context.Load(this.GUID);
         }
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
