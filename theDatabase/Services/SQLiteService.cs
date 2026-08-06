@@ -387,6 +387,50 @@ namespace theDatabase
 
             return result;
         }
+        public async Task<IQueryResult> GetItem(IQueryParameter query)
+        {
+            IQueryResult result = new QueryResult { Status = "OK", Message = "" };
+
+            // Query Validation 
+            if (query.Validate() == false)
+            {
+                result.Status = "FAIL";
+                result.Message = "Query not conform";
+                return result;
+            }
+
+            // Datenbank 
+            if (DatabaseExists == false)
+            {
+                result.Status = "FAIL";
+                result.Message = "Database not exists";
+                return result;
+            }
+
+            FormattableString sql = Query.GetItem(query);
+
+            try
+            {
+                await using var ctx = GetContext();
+
+                IQueryable<tbl_CON_Content> queryable = ctx.tbl_CON_Content;
+
+                queryable = queryable.Where(x =>
+                    EF.Functions.Collate(x.GUID, "NOCASE") == query.GUID &&
+                    EF.Functions.Collate(x.MasterGUID, "NOCASE") == query.MasterGUID);
+
+                var items = await queryable.AsNoTracking().ToListAsync();
+
+                result.Items = items.Cast<IDTO>().ToList();
+            }
+            catch (Exception ex)
+            {
+                result.Status = "FAIL";
+                result.Message = ex.Message;
+            }
+
+            return result;
+        }
         public async Task<IQueryResult> Update(IDTO dto)
         {
             IQueryResult result = new QueryResult { Status = "OK", Message = "" };

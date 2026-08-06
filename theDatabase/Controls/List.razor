@@ -11,7 +11,7 @@
             <input class="form-control" @bind="@Title" />
         </div>
         <div class="col-3 p-1">
-            <button class="btn btn-primary" @onclick="Create">
+            <button class="btn btn-primary" @onclick="@( async e => { await Context.Create(this.Title); await Context.Search(); })">
                 erstellen
             </button>
         </div>
@@ -20,7 +20,7 @@
 
 
 
-@if (Items.Any())
+@if (Context.Items.Any())
 {
     <div class="border rounded-2 p-3 my-3">
         <div class="row g-0">
@@ -36,10 +36,9 @@
             <div class="col-6 p-1 ms-auto me-auto">
                 <input class="form-control" @bind="@Matchcode" @oninput="Load" />
             </div>
-
         </div>
 
-        @foreach (IDTO dto in Items)
+        @foreach (IDTO dto in Context.Items)
         {
             <div class="row p-1 border-bottom align-items-center">
                 <div class="col-auto p-1">
@@ -53,25 +52,25 @@
                 </div>
                 <div class="col-auto p-1">
                     <button class="btn btn-sm"
-                            @onclick="@( async e => { await Update(dto); })">
+                            @onclick="@( async e => { await Context.Update(dto); await Context.Search(); })">
                         Update
                     </button>
                 </div>
-                @if (DTO != null && DTO.GUID != dto.GUID)
+                @if (Context.Item != null && Context.Item.GUID != dto.GUID)
                 {
                     <div class="col-auto p-1">
                         <button class="btn btn-sm" @onclick="@( async e => { await Assign(dto); })">Assign</button>
                     </div>
                 }
                 <div class="col-auto p-1">
-                    <button class="btn btn-sm" @onclick="@( async e => { await Delete(dto); })">X</button>
+                    <button class="btn btn-sm" @onclick="@( async e => { await Context.Delete(dto); await Context.Search(); })">X</button>
                 </div>
             </div>
         }
     </div>
 }
 
-@if (DTO != null)
+@if (Context.Item != null)
 {
     <div class="border rounded-2 p-3 my-3">
 
@@ -79,14 +78,17 @@
         <div class="row p-1 align-items-center">
             <div class="col-4 p-1">
                 <input class="form-control"
-                       @bind:get="@(DTO["Nachname"].ToString() ?? string.Empty)"
-                       @bind:set="@(val => DTO["Nachname"] = val)" />
+                       @bind:get="@(Context.Item["Title"].ToString() ?? string.Empty)"
+                       @bind:set="@(val => Context.Item["Title"] = val)" />
             </div>
             <div class="col-4 p-1">
-                <input class="form-control" @bind="@DTO.Title" />
+                <input class="form-control" @bind="@Context.Item.Title" />
             </div>
             <div class="col-4 p-1">
-                <button class="btn btn-primary" @onclick="Save">
+                    <button class="btn btn-primary" @onclick="@(async e => {
+                                await Context.Update(Context.Item);
+                                await Context.Search();
+                            })">
                     Speichern
                 </button>
             </div>
@@ -111,7 +113,10 @@
                 </div>
                 <div class="col-auto p-1">
                     <button class="btn btn-sm"
-                            @onclick="@( async e => { await Update(dto); })">
+                            @onclick="@(async e => {
+                                await Context.Update(dto);
+                                await Context.Search();
+                            })">
                         Update
                     </button>
                 </div>
@@ -119,7 +124,12 @@
                     <button class="btn btn-sm" @onclick="@( async e => { await Remove(dto); })">Remove</button>
                 </div>
                 <div class="col-auto p-1">
-                    <button class="btn btn-sm" @onclick="@( async e => { await Delete(dto); })">X</button>
+                    <button class="btn btn-sm" @onclick="@(async e => {
+                                await Context.Delete(dto);
+                                await Context.Search();
+                            })">
+                        X
+                    </button>
                 </div>
             </div>
         }
@@ -129,12 +139,20 @@
 
 @code
 {
-    List<IDTO> Items { get; set; } = new();
+    [Parameter]
+    public IQueryContext Context { get; set; }
+
     List<IDTO> RelatedItems { get; set; } = new();
 
-    private IDTO DTO { get; set; }
     private string Title { get; set; }
     private string Matchcode { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Context = new QueryContext(sql);
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -142,74 +160,46 @@
 
         if (firstRender)
         {
-            await Load();
+            await Context.Search();
             this.StateHasChanged();
         }
     }
 
     private async Task Select(IDTO dto)
     {
-        DTO = dto;
-
+        Context.Item = dto;
         await LoadRelatedItems();
-    }
-    private async Task Save()
-    {
-        await sql.Update(DTO);
-        await Load();
-    }
-
-    private async Task Create()
-    {
-        await sql.Create(QueryParameter.Default(this.Title));
-        await Load();
     }
 
     private async Task Load()
     {
-        Items.Clear();
-        IQueryParameter query = new QueryParameter();
-        query.Matchcode = this.Matchcode;
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
-        IQueryResult result = await sql.GetItems(query);
-        Items = result.Items;
+        await Context.Search();    
     }
+
     private async Task LoadRelatedItems()
     {
         RelatedItems.Clear();
 
-        if (this.DTO != null)
+        if (Context.Item != null)
         {
             IQueryParameter query = new QueryParameter();
-            IQueryResult result = await sql.GetRelatedItems(this.DTO);
+            IQueryResult result = await sql.GetRelatedItems(Context.Item);
             RelatedItems = result.Items;
         }
-
-    }
-    private async Task Delete(IDTO dto)
-    {
-        await sql.Delete(dto);
-        await Load();
-    }
-
-    private async Task Update(IDTO dto)
-    {
-        await sql.Update(dto);
-        await Load();
     }
     private async Task Assign(IDTO dto)
     {
-        if (this.DTO != null)
+        if (Context.Item != null)
         {
-            IQueryResult result = await sql.Assign(this.DTO, dto);
+            IQueryResult result = await sql.Assign(Context.Item, dto);
             await LoadRelatedItems();
         }
     }
     private async Task Remove(IDTO dto)
     {
-        if (this.DTO != null)
+        if (Context.Item != null)
         {
-            IQueryResult result = await sql.Remove(this.DTO, dto);
+            IQueryResult result = await sql.Remove(Context.Item, dto);
             await LoadRelatedItems();
         }
     }

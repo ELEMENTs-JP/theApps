@@ -12,6 +12,9 @@ namespace theInfrastructure
     }
     public class BaseApp : IApp
     {
+        public BaseApp()
+        { 
+        }
         public string Name { get; set; } = string.Empty;
         public List<IItemType> ItemTypes { get; set; } = new();
     }

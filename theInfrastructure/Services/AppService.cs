@@ -17,19 +17,31 @@ namespace theInfrastructure
         IWebHostEnvironment Environment;
 
         // Properties 
+        public List<IApp> AllApps { get; set; } = new();
+        
 
 
 
         // CTR 
         public AppService()
         {
-
+            InitApps();
         }
         public AppService(IWebHostEnvironment env)
         {
             Environment = env;
+            InitApps();
         }
 
-      
+        private void InitApps()
+        {
+            AppBuilder builder = new AppBuilder();
+
+            AllApps.Clear();
+
+            AllApps.Add(builder.BuildApp("Task"));
+
+            
+        }
     }
 }

@@ -59,6 +59,17 @@ namespace theDatabase
             // Query 
             return FormattableStringFactory.Create(sql, parameters);
         }
+  
+        public static FormattableString GetItem(IQueryParameter query)
+        {
+            object[] parameters = Array.Empty<object>();
+            var sql = "SELECT * FROM tbl_CON_Content";
+
+            sql += " WHERE GUID = {0} COLLATE NOCASE AND MasterGUID = {1} COLLATE NOCASE";
+            parameters = new object[] { query.GUID, query.MasterGUID };
+
+            return FormattableStringFactory.Create(sql, parameters);
+        }
         public static FormattableString DeleteItem(IDTO dto)
         {
             string guid = dto.GUID.ToSecureString();

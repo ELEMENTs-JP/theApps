@@ -22,8 +22,8 @@ namespace theInfrastructure
         bool Validate();
     }
     public interface IAppService
-    { 
-    
+    {
+        List<IApp> AllApps { get; set; }
     }
     public interface ISqlDatabaseService
     {
@@ -34,7 +34,7 @@ namespace theInfrastructure
 
         Task<IQueryResult> Create(IQueryParameter query);
         Task<IQueryResult> GetItems(IQueryParameter query);
-
+        Task<IQueryResult> GetItem(IQueryParameter query);
         Task<IQueryResult> Delete(IDTO dto);
         Task<IQueryResult> Update(IDTO dto);
 

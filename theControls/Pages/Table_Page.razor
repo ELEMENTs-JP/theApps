@@ -1,13 +1,14 @@
 ﻿@page "/Table"
 @using theControls.Tables
 @using theDatabase
+@using theInfrastructure
 @inject ISqlDatabaseService sql
 
 
 <div class="container">
 
     
-    <Table Items="@Items">
+    <Table Context="@Context">
 
     </Table>
 
@@ -16,26 +17,24 @@
 
 @code {
 
-    List<IDTO> Items { get; set; } = new();
+    IQueryContext Context { get; set; } 
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Context = new QueryContext(sql);
+        Context.ItemType = new ItemType_Task();
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
 
         if (firstRender)
         {
-            await Load();
+            await Context.Search();
             this.StateHasChanged();
         }
     }
 
-    private async Task Load()
-    {
-        Items.Clear();
-        IQueryParameter query = new QueryParameter();
-        query.Matchcode = string.Empty;
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
-        IQueryResult result = await sql.GetItems(query);
-        Items = result.Items;
-    }
 }

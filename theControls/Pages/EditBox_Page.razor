@@ -1,27 +1,60 @@
 ﻿@page "/EditBox"
+@page "/EditBox/{ItemTypeExternal}"
+@page "/EditBox/{ItemTypeExternal}/{ID}"
+@using theInfrastructure
+
 @inject ISqlDatabaseService sql
 
 <div class="container">
-    
-    <div class="row">
 
-        @foreach (FieldTyp field in Enum.GetValues(typeof(FieldTyp)))
-        {
-            <div class="col-12 col-md-6 col-lg-4 p-2">
-                <EditBox Label="@field.ToString()" Type="@field" 
-                    Placeholder="@( ((field == FieldTyp.Select) ? "bitte wählen" : "eingeben...") )"
-                    Items="@( ((field == FieldTyp.Select) ? this.Items : null) )"
-                    Description="Hier steht eine kleine Beschreibung ob es funktioniert." />
-            </div>
-        }
-    </div>
+    
+    @if (ItemType != null && Context != null)
+    {
+        <EditArea ItemType="@this.ItemType" Context="@Context" />
+    }
+    else
+    {
+        <div class="row">
+
+            @foreach (FieldTyp field in Enum.GetValues(typeof(FieldTyp)))
+            {
+                <div class="col-12 col-md-6 col-lg-4 p-2">
+                    <EditBox Field="@( new FieldBuilder().BuildField(field))"
+                             Items="@( ((field == FieldTyp.Select) ? this.Items : null) )"/>
+                </div>
+            }
+        </div>
+    }
 </div>
 
 @code {
 
     List<IDTO> Items { get; set; } = new();
 
+    [Parameter]
+    public string ItemTypeExternal { get; set; } = string.Empty;
 
+    [Parameter]
+    public string ID { get; set; } = string.Empty;
+
+    private IItemType ItemType { get; set; } = null;
+    private IQueryContext Context { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (!string.IsNullOrEmpty(this.ItemTypeExternal))
+        {
+            ItemType = new ItemTypeBuilder().BuildITemType(this.ItemTypeExternal);
+        }
+
+        if (!string.IsNullOrEmpty(this.ID))
+        {
+            Context = new QueryContext(sql);
+            await Context.Load(this.ID);
+        }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -29,19 +62,7 @@
 
         if (firstRender)
         {
-            await Load();
-            this.StateHasChanged();
+            // this.StateHasChanged();
         }
     }
-
-    private async Task Load()
-    {
-        Items.Clear();
-        IQueryParameter query = new QueryParameter();
-        query.Matchcode = string.Empty;
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
-        IQueryResult result = await sql.GetItems(query);
-        Items = result.Items;
-    }
-
 }

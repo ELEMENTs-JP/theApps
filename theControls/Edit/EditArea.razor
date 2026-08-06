@@ -1,0 +1,37 @@
+﻿@using theInfrastructure
+
+@if (ItemType != null && Context != null && Context.Item != null)
+{
+
+    <div class="border rounded-2 p-2">
+
+        <div class="row g-0 px-2">
+            <div class="col-12 p-2 border-bottom">
+                <h1 class="h1">@Context.Item.Title</h1>
+            </div>
+        </div>
+
+        <div class="row g-0">
+
+            @foreach (IField field in ItemType.Fields)
+            {
+                <div class="@( field.CSS + " p-2 ")">
+                    <EditBox Field="@field" Context="@Context" />
+                </div>
+            }
+        </div>
+
+    </div>
+}
+
+
+
+
+@code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; } // Injectiopn
+
+    [Parameter]
+    public IQueryContext Context { get; set; } // Injection
+}

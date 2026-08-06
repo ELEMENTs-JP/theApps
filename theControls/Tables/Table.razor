@@ -1,63 +1,68 @@
 ﻿@using theControls.Icons
-@if (_showSpinner)
+@using theInfrastructure
+@inject NavigationManager nm
+
+@if (Context != null)
 {
-    <h1 class="placeholder-glow">
-        <span class="placeholder col-12"></span>
-    </h1>
-}
-else if (!Items.Any())
-{
-    <div class="text-center my-5 text-secondary">
-        <SymbolIcon Symbol="Icon.Empty" />
-        <p>Keine Daten vorhanden.</p>
-    </div>
-}
-else
-{
+    @if (_showSpinner)
+    {
+        <h1 class="placeholder-glow">
+            <span class="placeholder col-12"></span>
+        </h1>
+    }
+    else if (!Context.Items.Any())
+    {
+        <div class="text-center my-5 text-secondary">
+            <SymbolIcon Symbol="Icon.Empty" />
+        </div>
+    }
+    else
+    {
 
-    <table class="table">
-        <thead>
-            <tr>
+        @if (Context.ItemType != null && Context.ItemType.Fields != null)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        @foreach (IField col in Context.ItemType.Fields)
+                        {
+                            <th scope="col">@( col.Title)</th>
+                        }
 
-                @foreach (IField col in Fields)
-                {
-                    <th scope="col">#</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">ItemType</th>
-                }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (IDTO item in Context.Items)
+                    {
+                        <tr class="hover pointer" @onclick="@( e => { nm.NavigateTo("/EditBox/Task/" + item.GUID, false); } )">
+                            @foreach (IField col in Context.ItemType.Fields)
+                            {
+                                <td>@(item[col.Column].ToSecureString())</td>
+                            }
+                        </tr>
+                    }
 
-            </tr>
-        </thead>
-        <tbody>
-
-            @foreach (IDTO row in Items)
-            {
-                <tr>
-                    <th scope="row">@row.ID</th>
-                    <td>@row.Title</td>
-                    <td>@row.ItemType</td>
-                </tr>
-            }
-
-        </tbody>
-    </table>
-
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div>Context, ItemType oder Fields are empty</div>    
+        }
+    }
 }
 
 
 @code {
 
     [Parameter]
-    public List<IDTO> Items { get; set; } = new();
-
-    [Parameter]
-    public List<IField> Fields { get; set; } = new();
+    public IQueryContext Context { get; set; }
 
     private bool _showSpinner = true;
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(1000);
+        await Task.Delay(300);
 
         _showSpinner = false;
 

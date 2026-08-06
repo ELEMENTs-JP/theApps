@@ -4,23 +4,23 @@ using System.Text;
 
 namespace theInfrastructure
 {
-    public class AppBuilder
+    public class ItemTypeBuilder
     {
-        public AppBuilder() { }
+        public ItemTypeBuilder() { }
 
-        public static AppBuilder Create() { return new AppBuilder(); }
+        public static ItemTypeBuilder Create() { return new ItemTypeBuilder(); }
 
-        public IApp BuildApp(string Name)
+        public IItemType BuildITemType(string Name)
         {
             switch (Name)
             {
                 case "Task":
                     {
-                        return new AppTask();
+                        return new ItemType_Task();
                     }
                 default:
                     {
-                        return new AppTask();
+                        return new ItemType_Task();
                     }
             }
         }

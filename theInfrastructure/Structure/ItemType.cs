@@ -9,9 +9,19 @@ namespace theInfrastructure
     public interface IItemType
     {
         List<IField> Fields { get; set; }
+        void Init();
     }
-    public class  ItemType : IItemType
+    public class  BaseItemType : IItemType
     {
+        public BaseItemType()
+        { 
+        
+        }
         public List<IField> Fields { get; set; } = new();
+
+        public virtual void Init()
+        { 
+        
+        }
     }
 }

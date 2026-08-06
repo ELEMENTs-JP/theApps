@@ -1,20 +1,22 @@
 ﻿@using theControls.Icons
 @using theControls.Input
 
-<div class="@( ((Border == true) ? "border " : "")) rounded-2 p-2 bg-body">
-    
-    @if (Type == FieldTyp.TextArea)
-    {
-        <TextArea Label="@Label"
-                    Description="@Description"
-                    Value="@Value"
-                    ValueChanged="@ValueChanged"
-                    Placeholder="@Placeholder"
-                    CssClass="@CssClass"
-                    Rows="@Rows"
-                    Disabled="@Disabled"
-                    ReadOnly="@ReadOnly">
 
+@if (Field != null && Context != null)
+{
+    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-2 bg-body">
+    
+        @if (Field.Typ == FieldTyp.TextArea)
+        {
+            <TextArea Label="@Field.Title"
+                      Description="@Field.Description"
+                      Value="@Value"
+                      ValueChanged="@ValueChanged"
+                      Placeholder="@Field.Placeholder"
+                      CssClass="@CssClass"
+                      Rows="@Rows"
+                      Disabled="@Disabled"
+                      ReadOnly="@ReadOnly">
             <Overlay>
                 <button type="button"
                 class="btn btn-sm btn-icon btn-success px-2"
@@ -24,72 +26,57 @@
             </Overlay>
 
         </TextArea>
-    }
-    else if (Type == FieldTyp.Select)
-    {
-        <Select Label="@Label"
-                Description="@Description"
-                Items="@Items"
-                Value="@Value"
-                ValueChanged="@ValueChanged"
-                Placeholder="@Placeholder"
-                CssClass="@CssClass"
-                Disabled="@Disabled"
-                ReadOnly="@ReadOnly">
-         @*    <Overlay>
-                <button type="button"
-                    class="btn btn-sm btn-icon btn-success px-2"
-                        @onclick="CheckClicked">
-                    <i class="ti ti-check"></i>
-                </button>
-            </Overlay> *@
+        }
+        else if (Field.Typ == FieldTyp.Select)
+        {
+            <Select Label="@Field.Title"
+                    Description="@Field.Description"
+                    Items="@Items"
+                    Value="@Value"
+                    ValueChanged="@ValueChanged"
+                    Placeholder="@Field.Placeholder"
+                    CssClass="@CssClass"
+                    Disabled="@Disabled"
+                    ReadOnly="@ReadOnly">
+            </Select>
+        }
+        else
+        {
+            <TextBox Label="@Field.Title"
+                     Description="@Field.Description"
+                     Value="@Value"
+                     ValueChanged="@ValueChanged"
+                     Type="@Field.Typ"
+                     Placeholder="@Field.Placeholder"
+                     CssClass="@CssClass"
+                     Min="@Min"
+                     Max="@Max"
+                     Step="@Step"
+                     Disabled="@Disabled"
+                     ReadOnly="@ReadOnly">
+                <Inlay>
+                    @if (Field.Typ == FieldTyp.Search)
+                    {
+                        <SymbolIcon Symbol="@Icon.Search" />
+                    }
+                </Inlay>
+                <Overlay>
+                    @if (Field.Typ != FieldTyp.Search)
+                    {
+                        <button type="button"
+                                class="btn btn-sm btn-icon btn-success" style="padding:0.7rem;"
+                                @onclick="OnSaveClicked">
+                            <SymbolIcon Symbol="@Icon.Check" />
+                        </button>
+                    }
+                </Overlay>
+            </TextBox>
+        }
+    </div>
 
-        </Select>
-    
-    }
-    else
-    {
-        <TextBox Label="@Label"
-            Description="@Description"
-            Value="@Value"
-            ValueChanged="@ValueChanged"
-            Type="@Type"
-            Placeholder="@Placeholder"
-            CssClass="@CssClass"
-            Min="@Min"
-            Max="@Max"
-            Step="@Step"
-            Disabled="@Disabled"
-            ReadOnly="@ReadOnly">
-
-            <Inlay>
-                @if (Type == FieldTyp.Search)
-                {
-                    <SymbolIcon Symbol="@Icon.Search" />
-                }
-            </Inlay>
-            <Overlay>
-                @if (Type != FieldTyp.Search)
-                {
-                    <button type="button"
-                        class="btn btn-sm btn-icon btn-success" style="padding:0.7rem;"
-                            @onclick="OnSaveClicked">
-                        <SymbolIcon Symbol="@Icon.Check" />
-                    </button>
-                }
-            </Overlay>
-        </TextBox>
-    }
-</div>
-
+}
 
 @code {
-
-    [Parameter]
-    public string Label { get; set; } = string.Empty;
-
-    [Parameter]
-    public string Description { get; set; } = string.Empty;
 
     [Parameter]
     public string Value { get; set; } = string.Empty;
@@ -98,10 +85,10 @@
     public List<IDTO> Items { get; set; } = new();
 
     [Parameter]
-    public FieldTyp Type { get; set; } = FieldTyp.Text;
+    public IField Field { get; set; }
 
     [Parameter]
-    public string Placeholder { get; set; } = string.Empty;
+    public IQueryContext Context { get; set; }
 
     [Parameter]
     public string CssClass { get; set; } = string.Empty;
