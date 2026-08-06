@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
@@ -10,6 +12,23 @@ namespace theInfrastructure
 {
     public static class Helper
     {
+        public static bool HasContent(this RenderFragment fragment)
+        {
+            try
+            {
+                if (fragment == null)
+                    return false;
+
+                var builder = new RenderTreeBuilder();
+                fragment(builder);
+
+                return builder.GetFrames().Count > 0;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
         public static string GenerateName(string label)
         {
             if (string.IsNullOrWhiteSpace(label))

@@ -1,0 +1,23 @@
+﻿@inject NavigationManager nm
+
+@if (Context != null)
+{
+    <tr class="pointer"
+        @onclick="@( e => { nm.NavigateTo("/EditBox/Task/" + Item.GUID, false); })">
+
+        @foreach (IField col in Context.ItemType.Fields)
+        {
+            <td>@(Item[col.Column].ToSecureString())</td>
+        }
+    </tr>
+}
+
+@code {
+
+    [Parameter]
+    public IQueryContext Context { get; set; }
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+}

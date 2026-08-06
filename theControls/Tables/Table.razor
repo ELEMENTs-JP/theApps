@@ -18,10 +18,9 @@
     }
     else
     {
-
         @if (Context.ItemType != null && Context.ItemType.Fields != null)
         {
-            <table class="table">
+            <table class="table table-hover">
                 <thead>
                     <tr>
                         @foreach (IField col in Context.ItemType.Fields)
@@ -34,14 +33,8 @@
                 <tbody>
                     @foreach (IDTO item in Context.Items)
                     {
-                        <tr class="hover pointer" @onclick="@( e => { nm.NavigateTo("/EditBox/Task/" + item.GUID, false); } )">
-                            @foreach (IField col in Context.ItemType.Fields)
-                            {
-                                <td>@(item[col.Column].ToSecureString())</td>
-                            }
-                        </tr>
+                        <TableRow Context="@Context" Item="@item" />
                     }
-
                 </tbody>
             </table>
         }

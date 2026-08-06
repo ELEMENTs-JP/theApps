@@ -1,0 +1,138 @@
+﻿@if (!string.IsNullOrEmpty(this.Label))
+{
+    <label class="form-label" style="padding-left:5px;" for="@Id">
+        @Label
+    </label>
+}
+
+<div class="form-check @CssClass">
+    <input id="@Id"
+           name="@InputName"
+           class="form-check-input"
+           type="checkbox"
+           checked="@IsChecked"
+           @onchange="HandleInput"
+           disabled="@Disabled"
+           readonly="@ReadOnly" />
+
+    @if (Inlay != null)
+    {
+        <div class="ms-2">
+            @Inlay
+        </div>
+    }
+
+    @if (Overlay != null)
+    {
+        <div class="ms-2">
+            @Overlay
+        </div>
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(Description))
+{
+    <div class="text-muted" style="padding-left:3px; padding-top:3px;">
+        @Description.ToSecureString()
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Hint))
+{
+    <div class="form-hint" style="padding-left:3px; padding-top:3px;">
+        @Hint.ToSecureString()
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public RenderFragment? Overlay { get; set; }
+
+    [Parameter]
+    public RenderFragment? Inlay { get; set; }
+
+
+    [Parameter]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+
+
+    [Parameter]
+    public string Name { get; set; } = string.Empty;
+
+
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+
+
+    [Parameter]
+    public string Hint { get; set; } = string.Empty;
+
+
+    [Parameter]
+    public string Value { get; set; } = "false";
+
+
+    [Parameter]
+    public string CssClass { get; set; } = string.Empty;
+
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+
+    private bool IsChecked
+    {
+        get => ParseBoolean(Value);
+        set => Value = value.ToString().ToLowerInvariant();
+    }
+
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        var checkedValue = e.Value is bool b && b;
+
+        Value = checkedValue
+            ? "true"
+            : "false";
+
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+
+    private static bool ParseBoolean(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return false;
+
+        return value.Trim().ToLowerInvariant() switch
+        {
+            "true" => true,
+            "1" => true,
+            "yes" => true,
+            "y" => true,
+            "on" => true,
+
+            _ => false
+        };
+    }
+
+
+    private string InputName =>
+        !string.IsNullOrWhiteSpace(Name)
+            ? Name
+            : Helper.GenerateName(Label);
+}

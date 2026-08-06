@@ -4,6 +4,7 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum ModalFormSize { Small, Normal, Large, Extra, Full }
     public enum Icon
     { 
         NULL = 0,

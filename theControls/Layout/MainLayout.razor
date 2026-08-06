@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@using theControls.Modal
+@using theControls.New
+@inherits LayoutComponentBase
 
 <div class="app-frame">
     <div class="border-end">
@@ -6,7 +8,9 @@
     </div>
 
     <main>
-        <div class="header border-bottom">
+        <div class="header border-bottom hstack gap-3">
+            <NewItem /> 
+            <div class="ms-auto"></div>
             <ThemeSwitch />
         </div>
 

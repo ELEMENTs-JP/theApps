@@ -1,0 +1,259 @@
+
+
+<div class="@( GetButtonGroupClass() + " " + FrameCSS )"
+     data-bs-toggle="modal" title="@ButtonToolTip"
+     data-bs-target="@( "#modal_" + modalGUID.ToString() )">
+
+    @if (!string.IsNullOrEmpty(ButtonText))
+    {
+        @if (ShowTitleInButton)
+        {
+            <div id="@( "Title_Text_" + modalGUID )" class="@( "" + TitleCSS )">
+
+                @if (!string.IsNullOrEmpty(ButtonIcon))
+                {
+                    @(((MarkupString)ButtonIcon.ToSecureString()))
+                }
+
+                @(((MarkupString)Title.ToSecureString()))
+            </div>
+        }
+    }
+
+    @if (!string.IsNullOrEmpty(Value))
+    {
+        <div id="@( "Button_Value_" + modalGUID )" class="@( " " + ValueCSS )" @onclick="onBtnClck">
+            @(((MarkupString)Value.ToSecureString()))
+        </div>
+    }
+
+    <div id="@( "Toggle_Button_" + modalGUID )" class="@( ButtonCSS + " position-relative " )" >
+
+        @if (!string.IsNullOrEmpty(ButtonText))
+        {
+            @if (!string.IsNullOrEmpty(ButtonIcon))
+            {
+                @(((MarkupString)ButtonIcon.ToSecureString()))
+            }
+            @(((MarkupString)ButtonText.ToSecureString()))
+        }
+        else
+        {
+            @if (!string.IsNullOrEmpty(ButtonIcon))
+            {
+                @(((MarkupString)ButtonIcon.ToSecureString()))
+            }
+            @(((MarkupString)Title.ToSecureString()))
+        }
+
+        @if (Count >= 1)
+        {
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                @Count.ToSecureString()
+            </span>
+        }
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="@FormCSS" id="@( "modal_" + modalGUID.ToString() )" tabindex="-1" 
+     aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false">
+    <div class="@( ModalCSS + " " + SetSize() )">
+        <div class="modal-content rounded-2 border-start border-end border-bottom border-top-primary-3">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@((MarkupString)Title)</h5>
+                <div class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="closeclick"></div>
+            </div>
+            @if (!string.IsNullOrEmpty(Description))
+            {
+                <div class="w-100 border-bottom bg-surface-secondary p-2 ps-4 overflow-hidden">
+                    <small class="text-muted text-truncate-line">@Description.ToSecureString()</small>
+                </div>
+
+            }
+            <div class="@ContentCSS modal-body" style="height:625px;">
+
+                @if (RelatedContent.HasContent())
+                {
+                    <div>
+                        @RelatedContent   
+                    </div>
+                }
+
+                @ChildContent
+            </div>
+            <div class="modal-footer">
+                <div class="row g-o">
+                    <div class="col">
+                        @FooterContent
+                    </div>
+                    <div class="col-auto">
+                        <div class="btn btn-secondary" data-bs-dismiss="modal" @onclick="cancelclick">@CancelTitle</div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="btn btn-primary" data-bs-dismiss="modal" @onclick="okclick">@OKTitle</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    private string modalGUID = Guid.NewGuid() + "_modal_form_" + DateTime.Now.ToShortDateString();
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string TitleCSS { get; set; } = " fw-bold ";
+
+    [Parameter]
+    public string FrameCSS { get; set; } = "  ";
+
+    [Parameter]
+    public string ContentCSS { get; set; } = " ";
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ValueCSS { get; set; } = " ";
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+
+    [Parameter]
+    public int Count { get; set; } = 0;
+
+    [Parameter]
+    public bool ShowTitleInButton { get; set; } = true;
+
+    [Parameter]
+    public bool ShowAsButtonGroup { get; set; } = true;
+
+    [Parameter]
+    public string FormCSS { get; set; } = "modal fade"; // modal modal-blur fade
+
+    [Parameter]
+    public string ButtonCSS { get; set; } = " btn btn-sm px-2 ";
+
+    [Parameter]
+    public string ButtonText { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ButtonToolTip { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ButtonIcon { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ModalCSS { get; set; } = "modal-dialog modal-dialog-centered modal-dialog-scrollable";
+
+    [Parameter]
+    public RenderFragment RelatedContent { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment FooterContent { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnButtonClick { get; set; }
+    private void onBtnClck()
+    {
+        try
+        {
+            OnButtonClick.InvokeAsync("OK");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("FAIL: " + ex.Message);
+        }
+    }
+
+
+    [Parameter]
+    public EventCallback<string> OnOKClicked { get; set; }
+
+    private void okclick()
+    {
+        try
+        {
+            OnOKClicked.InvokeAsync("OK");
+            OnClickedGeneral.InvokeAsync("OK");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("FAIL: " + ex.Message);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> OnCancelClicked { get; set; }
+
+    private void cancelclick()
+    {
+        try
+        {
+            OnCancelClicked.InvokeAsync("Cancel");
+            OnClickedGeneral.InvokeAsync("Cancel");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("FAIL: " + ex.Message);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> OnCloseClicked { get; set; }
+
+    private void closeclick()
+    {
+        try
+        {
+            OnCloseClicked.InvokeAsync("Close");
+            OnClickedGeneral.InvokeAsync("Close");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("FAIL: " + ex.Message);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> OnClickedGeneral { get; set; }
+
+    [Parameter]
+    public string OKTitle { get; set; } = "OK";
+
+    [Parameter]
+    public string CancelTitle { get; set; } = "Cancel";
+
+    [Parameter]
+    public ModalFormSize Size { get; set; } = ModalFormSize.Large;
+
+    private string SetSize()
+    {
+        if (Size == ModalFormSize.Small) { return "modal-sm"; }
+        else if (Size == ModalFormSize.Large) { return "modal-lg"; }
+        else if (Size == ModalFormSize.Extra) { return "modal-xl"; }
+        else if (Size == ModalFormSize.Full) { return " modal-fullscreen "; }
+        else { return ""; }
+    }
+    private string GetButtonGroupClass()
+    {
+        if (ShowAsButtonGroup)
+        {
+            return "  d-flex align-items-center rounded-2 p-1 cp-2  ";
+        }
+        else
+        {
+            return " d-flex align-items-center pointer rounded-2 py-2 ";    
+        }
+    }
+
+}
