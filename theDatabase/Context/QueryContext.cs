@@ -57,7 +57,7 @@ namespace theDatabase
             query.Matchcode = string.Empty;
             query.MasterGUID = SQLiteService.GeneralMasterGUID;
             query.GUID = new Guid(ID);
-            IQueryResult result = await sqlService.GetItems(query);
+            IQueryResult result = await sqlService.GetItem(query);
 
             if (result.Items[0] != null)
             { 
@@ -74,6 +74,9 @@ namespace theDatabase
         public async Task Update(IDTO dto)
         {
             if (sqlService == null)
+                return;
+
+            if (dto == null)
                 return;
 
             await sqlService.Update(dto);

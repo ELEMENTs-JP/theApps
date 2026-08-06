@@ -445,21 +445,12 @@ namespace theDatabase
 
                     if (dbitem != null)
                     {
-                        // Metadata (load)
-                        //Metadata mtd = Helper.Deserialize<Metadata>(dbitem.Metadata);
-                        //mtd.EditedAt = DateTime.Now;
-                        //mtd.EditedBy = Guid.Empty;
-                        //mtd.Editor = "Hono Lulu";
-
                         dbitem.Metadata.EditedAt = DateTime.Now;
                         dbitem.Metadata.EditedBy = Guid.Empty;
                         dbitem.Metadata.Editor = "Hono Lulu";
 
                         // CONTENT 
-                        dbitem = (tbl_CON_Content)Helper.MapPropertiesByReflection(dto, dbitem);
-          
-                        // Metadata (set)
-                        //dbitem.Metadata = Helper.Serialize<Metadata>(mtd);
+                        dbitem = (tbl_CON_Content)Helper.MapProperties(dto, dbitem);
                     }
 
                     // SAVE 

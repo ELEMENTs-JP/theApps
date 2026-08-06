@@ -185,16 +185,12 @@ namespace theInfrastructure
 
             return SQLite;
         }
-
-
-        public static object MapPropertiesByReflection(object UI, object DB)
+ 
+        public static object MapProperties(object UI, object DB)
         {
             // check Objects 
-            if (UI == null)
-                return null;
-
-            if (DB == null)
-                return null;
+            if (UI == null || DB == null)
+                return default;
 
             // Check Type 
             Type _uiType = UI.GetType();
@@ -202,25 +198,29 @@ namespace theInfrastructure
             if (_dbType.FullName != _uiType.FullName)
                 return null;
 
-            // Iterate over Properties 
-            foreach (PropertyInfo pi in _uiType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            PropertyInfo[] properties = _dbType.GetProperties(
+              BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (PropertyInfo pi in properties)
             {
                 //check 
                 if (pi == null)
                     continue;
 
-                // not mapping GUID 
-                string property = pi.Name;
-                if (property == "GUID")
+                if (!pi.CanRead)
                     continue;
 
-                if (property == "MasterGUID")
+                // not mapping GUID 
+                if (pi.Name.Equals("GUID", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                if (pi.Name.Equals("MasterGUID", StringComparison.OrdinalIgnoreCase))
                     continue;
 
                 // Check for NotMapped 
-                NotMappedAttribute notM = (NotMappedAttribute)Attribute.GetCustomAttribute(pi, typeof(NotMappedAttribute));
-                if (notM != null)
+                if (pi.GetCustomAttribute<NotMappedAttribute>() != null)
                     continue;
+
 
                 // get old value 
                 object uiValue = null;
@@ -236,7 +236,7 @@ namespace theInfrastructure
                 try
                 {
                     // SAVE VALUE to dbObject : set new Value 
-                    DB.GetType().GetProperty(property).SetValue(DB, uiValue);
+                    DB.GetType().GetProperty(pi.Name).SetValue(DB, uiValue);
                 }
                 catch (Exception ex)
                 {

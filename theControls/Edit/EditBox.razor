@@ -4,14 +4,14 @@
 
 @if (Field != null && Context != null && Context.Item != null)
 {
-    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-2 bg-body">
+    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-2 bg-body" title="@( "Feld: " + Field.Column )">
     
         @if (Field.Typ == FieldTyp.TextArea)
         {
             <TextArea Label="@Field.Title"
                       Description="@Field.Description"
                       Value="@Context.Item[Field.Column]"
-                      ValueChanged="@ValueChanged"
+                      ValueChanged="@( async e => { Context.Item[Field.Column] = e; await Change(); } )"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
                       Rows="@Rows"
@@ -20,7 +20,7 @@
             <Overlay>
                 <button type="button"
                 class="btn btn-sm btn-icon btn-success px-2"
-                @onclick="OnSaveClicked">
+                @onclick="Save">
                     <i class="ti ti-check"></i>
                 </button>
             </Overlay>
@@ -33,7 +33,7 @@
                     Description="@Field.Description"
                     Items="@Items"
                     Value="@Context.Item[Field.Column]"
-                    ValueChanged="@ValueChanged"
+                    ValueChanged="@Change"
                     Placeholder="@Field.Placeholder"
                     CssClass="@CssClass"
                     Disabled="@Disabled"
@@ -45,7 +45,7 @@
             <TextBox Label="@Field.Title"
                      Description="@Field.Description"
                      Value="@Context.Item[Field.Column]"
-                     ValueChanged="@ValueChanged"
+                     ValueChanged="@( async e => { Context.Item[Field.Column] = e; await Change(); } )"
                      Type="@Field.Typ"
                      Placeholder="@Field.Placeholder"
                      CssClass="@CssClass"
@@ -64,8 +64,9 @@
                     @if (Field.Typ != FieldTyp.Search)
                     {
                         <button type="button"
-                                class="btn btn-sm btn-icon btn-success" style="padding:0.7rem;"
-                                @onclick="OnSaveClicked">
+                                class="btn btn-sm btn-icon btn-success" 
+                                style="padding:0.7rem;"
+                                @onclick="Save">
                             <SymbolIcon Symbol="@Icon.Check" />
                         </button>
                     }
@@ -111,11 +112,26 @@
     public bool ReadOnly { get; set; }
 
     [Parameter]
-    public EventCallback<string> ValueChanged { get; set; }
+    public EventCallback<IDTO> ItemChanged { get; set; }
 
     [Parameter]
-    public EventCallback OnSaveClicked { get; set; }
+    public EventCallback<IDTO> ItemSaved { get; set; }
 
+    private async Task<IDTO> Save()
+    {
+        // Update 
+        await Context.Update(Context.Item);
+
+        // Events 
+        await ItemSaved.InvokeAsync(Context.Item);
+        return Context.Item;
+    }
+    private async Task<IDTO> Change()
+    {
+        // Events 
+        await ItemChanged.InvokeAsync(Context.Item);
+        return Context.Item;
+    }
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();

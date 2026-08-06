@@ -43,6 +43,10 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
 
         if (!string.IsNullOrEmpty(this.ItemTypeExternal))
         {
@@ -55,7 +59,6 @@
             await Context.Load(this.ID);
         }
     }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);

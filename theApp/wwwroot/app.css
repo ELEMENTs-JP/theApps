@@ -1,3 +1,8 @@
+:root {
+    --tsp-hover: #99999911;
+}
+
+
 html, body {
 /*    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
     height: 100vh;
@@ -8,5 +13,6 @@ html, body {
     cursor:pointer;
 }
 .hover:hover {
-    opacity:0.7;
+    background-color: var(--tsp-hover) !important;
+    transition: background-color 0.25s ease;
 }
