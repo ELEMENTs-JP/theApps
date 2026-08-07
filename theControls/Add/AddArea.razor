@@ -1,0 +1,46 @@
+﻿@using theControls.Modal
+  
+
+@if (ItemType != null)
+{
+    <ModalForm Title="neuen Eintrag erstellen" 
+                    ShowTitleInButton="false" 
+                        ButtonText="Neu">
+        <ChildContent>
+            <div class="row">
+                @foreach (IField field in ItemType.Fields)
+                {
+                    <div class="col-12 p-2">
+                        <AddBox Field="@field" ValueChanged="@( async e => { await OnChange(field, e); } )" />
+                    </div>
+                }
+            </div>
+        </ChildContent>
+    </ModalForm>
+}
+
+@code {
+
+    // Fields 
+    private List<IDataValue> Values { get; set; } = new();
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (ItemType == null)
+        {
+            ItemType = ItemTypeBuilder.Create().BuildITemType("Task");
+        }
+    }
+
+    private async Task OnChange(IField field, string Value)
+    {
+        IDataValue val = new DataValue(field, Value);
+        Values.AddOrUpdate(val);
+    }
+
+}

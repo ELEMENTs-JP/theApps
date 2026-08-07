@@ -19,9 +19,11 @@ namespace theInfrastructure
             // Fields 
             Fields = new List<IField>();
 
-            Fields.Add(new Field() { Title = "Title", Typ = FieldTyp.Text, Column = "Title" });
-            Fields.Add(new Field() { Title = "Status", Typ = FieldTyp.Text, Column = "Status" });
-            Fields.Add(new Field() { Title = "Description", Typ = FieldTyp.TextArea, Column = "Description" });
+            Fields.Add(new Field() { Title = "Status", Typ = FieldTyp.Text, Column = "Status", CSS=" col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Tablet });
+            Fields.Add(new Field() { Title = "Fortschritt", Typ = FieldTyp.Text, Column = "Progress", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Tablet });
+            Fields.Add(new Field() { Title = "Priorität", Typ = FieldTyp.Text, Column = "Prio", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Tablet });
+            Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR  });
+            Fields.Add(new Field() { Title = "Description", Typ = FieldTyp.TextArea, Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
         }
     }
 }

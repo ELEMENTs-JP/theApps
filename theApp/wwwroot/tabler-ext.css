@@ -1,0 +1,23 @@
+
+:root {
+    
+}
+
+.form-label {
+    padding-left: 9px !important;
+}
+
+.col-025 {
+    flex: 0 0 auto;
+    width: 2.08333333%;
+}
+
+.col-050 {
+    flex: 0 0 auto;
+    width: 4.16666667%;
+}
+
+.col-075 {
+    flex: 0 0 auto;
+    width: 6.25%;
+}

@@ -445,6 +445,9 @@ namespace theDatabase
 
                     if (dbitem != null)
                     {
+                        dbitem.Title = dto.Title;
+                        dbitem.Content = dto.Content;
+
                         dbitem.Metadata.EditedAt = DateTime.Now;
                         dbitem.Metadata.EditedBy = Guid.Empty;
                         dbitem.Metadata.Editor = "Hono Lulu";

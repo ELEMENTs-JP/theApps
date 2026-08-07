@@ -8,9 +8,12 @@
 <div class="container">
 
     
-    @if (ItemType != null && Context != null)
+    @if (ItemType != null)
     {
-        <EditArea ItemType="@this.ItemType" Context="@Context" />
+        @if (Context != null)
+        {
+            <EditArea ItemType="@this.ItemType" Context="@Context" />
+        }
     }
     else
     {

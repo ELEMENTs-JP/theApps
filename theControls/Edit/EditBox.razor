@@ -4,35 +4,35 @@
 
 @if (Field != null && Context != null && Context.Item != null)
 {
-    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-2 bg-body" title="@( "Feld: " + Field.Column )">
-    
+    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-2 bg-body">
+
         @if (Field.Typ == FieldTyp.TextArea)
         {
             <TextArea Label="@Field.Title"
                       Description="@Field.Description"
-                      Value="@Context.Item[Field.Column]"
-                      ValueChanged="@( async e => { Context.Item[Field.Column] = e; await Change(); } )"
+                      Value="@( onValueBinding() )"
+                      ValueChanged="@(async e => { onValueChanged(e); await Change(); })"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
                       Rows="@Rows"
                       Disabled="@Disabled"
                       ReadOnly="@ReadOnly">
-            <Overlay>
-                <button type="button"
-                class="btn btn-sm btn-icon btn-success px-2"
-                @onclick="Save">
-                    <i class="ti ti-check"></i>
-                </button>
-            </Overlay>
+                <Overlay>
+                    <button type="button"
+                    class="btn btn-sm btn-icon btn-success px-2"
+                    @onclick="Save">
+                        <i class="ti ti-check"></i>
+                    </button>
+                </Overlay>
 
-        </TextArea>
+            </TextArea>
         }
         else if (Field.Typ == FieldTyp.Select)
         {
             <Select Label="@Field.Title"
                     Description="@Field.Description"
                     Items="@Items"
-                    Value="@Context.Item[Field.Column]"
+                    Value="@( onValueBinding() )"
                     ValueChanged="@Change"
                     Placeholder="@Field.Placeholder"
                     CssClass="@CssClass"
@@ -40,12 +40,43 @@
                     ReadOnly="@ReadOnly">
             </Select>
         }
+        else if (Field.Typ == FieldTyp.CheckBox)
+        {
+            <CheckBox Label="@Field.Title"
+                      Description="@Field.Description"
+                      Value="@( onValueBinding() )"
+                      ValueChanged="@Change"
+                      CssClass="@CssClass"
+                      Disabled="@Disabled"
+                      ReadOnly="@ReadOnly" />
+        }
+        else if (Field.Typ == FieldTyp.Heading)
+        {
+            <Heading Label="@Field.Title" ShowLabel="false"
+                     Description="@Field.Description"
+                     Value="@( onValueBinding() )"
+                     ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
+                     CssClass="@CssClass"
+                     Disabled="@Disabled"
+                     ReadOnly="@ReadOnly">
+                <Overlay>
+
+                    <button type="button"
+                            class="btn btn-sm btn-icon btn-success"
+                            style="padding:0.7rem;"
+                            @onclick="Save">
+                        <SymbolIcon Symbol="@Icon.Check" />
+                    </button>
+
+                </Overlay>
+            </Heading>
+        }
         else
         {
             <TextBox Label="@Field.Title"
                      Description="@Field.Description"
-                     Value="@Context.Item[Field.Column]"
-                     ValueChanged="@( async e => { Context.Item[Field.Column] = e; await Change(); } )"
+                     Value="@( onValueBinding() )"
+                     ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
                      Type="@Field.Typ"
                      Placeholder="@Field.Placeholder"
                      CssClass="@CssClass"
@@ -64,7 +95,7 @@
                     @if (Field.Typ != FieldTyp.Search)
                     {
                         <button type="button"
-                                class="btn btn-sm btn-icon btn-success" 
+                                class="btn btn-sm btn-icon btn-success"
                                 style="padding:0.7rem;"
                                 @onclick="Save">
                             <SymbolIcon Symbol="@Icon.Check" />
@@ -86,6 +117,9 @@
     public IField Field { get; set; }
 
     [Parameter]
+    public ValueBindingTyp Binding { get; set; } = ValueBindingTyp.Property;
+
+    [Parameter]
     public IQueryContext Context { get; set; }
 
     [Parameter]
@@ -93,6 +127,9 @@
 
     [Parameter]
     public bool Border { get; set; } = true;
+
+    [Parameter]
+    public bool ShowLabel { get; set; } = false;
 
     [Parameter]
     public string? Min { get; set; }
@@ -111,30 +148,65 @@
     [Parameter]
     public bool ReadOnly { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    private async Task<IDTO> Save()
+    {
+        // Update
+        await Context.Update(Context.Item);
+
+        // Events
+        await ItemSaved.InvokeAsync(Context.Item);
+        return Context.Item;
+    }
+    private async Task<IDTO> Change()
+    {
+        // Events
+        await ItemChanged.InvokeAsync(Context.Item);
+        return Context.Item;
+    }
+
+    private string onValueBinding()
+    {
+
+        if (Binding == ValueBindingTyp.Property)
+        {
+            return Context.Item[Field.Column];
+        }
+        else if (Binding == ValueBindingTyp.Description)
+        {
+            return Context.Item.Content.ToSecureString();
+        }
+        else
+        {
+            return Context.Item.Title.ToSecureString();
+        }
+    }
+    private void onValueChanged(string text)
+    {
+        if (Binding == ValueBindingTyp.Property)
+        {
+            Context.Item[Field.Column] = text;
+        }
+        else if (Binding == ValueBindingTyp.Description)
+        {
+            Context.Item.Content = text;
+        }
+        else
+        {
+            Context.Item.Title = text;
+        }
+
+    }
+
     [Parameter]
     public EventCallback<IDTO> ItemChanged { get; set; }
 
     [Parameter]
     public EventCallback<IDTO> ItemSaved { get; set; }
 
-    private async Task<IDTO> Save()
-    {
-        // Update 
-        await Context.Update(Context.Item);
-
-        // Events 
-        await ItemSaved.InvokeAsync(Context.Item);
-        return Context.Item;
-    }
-    private async Task<IDTO> Change()
-    {
-        // Events 
-        await ItemChanged.InvokeAsync(Context.Item);
-        return Context.Item;
-    }
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
 
 }

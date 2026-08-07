@@ -34,6 +34,9 @@ builder.Services.AddScoped<IAppService>(provider =>
     return new AppService(environment);
 });
 
+// Messaging Bus Service 
+builder.Services.AddScoped<IMessagingBusService, MessagingBusService>();
+
 
 var app = builder.Build();
 

@@ -12,12 +12,27 @@ namespace theInfrastructure
         Search = 2,
         Check = 3,
     }
+    public enum ValueBindingTyp
+    { 
+        NULL = 0,
+        Title = 1,
+        Description = 2,
+        Property = 3,
+    }
+    public enum DeviceDisplay
+    { 
+        NULL = 0,
+        Phone = 1,
+        Tablet = 2,
+        Desktop = 3,
+    }
     public enum FieldTyp
     {
         Text,
         TextArea,
         Select,
-
+        CheckBox,
+        Heading,
 
         Number,
         Integer,
@@ -27,7 +42,7 @@ namespace theInfrastructure
         Email,
         Url,
         
-        DateTimeLocal,
+        DateTime,
         Date,
         Time,
         
@@ -40,6 +55,7 @@ namespace theInfrastructure
         Range,
         
         Hidden,
+        HR,
     }
 
     public enum DatabaseTyp

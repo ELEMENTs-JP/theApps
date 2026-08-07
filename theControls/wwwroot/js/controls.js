@@ -23,3 +23,15 @@
         return theme === "dark";
     }
 };
+
+window.getInnerText = element => element.innerText;
+
+window.contentEditable = {
+    getText: function (element) {
+        return element.innerText;
+    }
+};
+
+window.contentEditable.setText = function (element, value) {
+    element.innerText = value ?? "";
+};

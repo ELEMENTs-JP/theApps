@@ -1,0 +1,126 @@
+﻿@using theControls.Icons
+@using theControls.Input
+
+
+@if (Field != null)
+{
+    <div class="@( ((Border == true) ? " border " : "")) rounded-2 p-2 bg-body">
+
+        @if (Field.Typ == FieldTyp.TextArea)
+        {
+            <TextArea Label="@Field.Title"
+                      Description="@Field.Description"
+                      Value="@( string.Empty )"
+                      ValueChanged="@(async e => {  Value = e;  await ValueChanged.InvokeAsync(e);})"
+                      Placeholder="@Field.Placeholder"
+                      CssClass="@CssClass"
+                      Rows="@Rows"
+                      Disabled="@Disabled"
+                      ReadOnly="@ReadOnly">
+            </TextArea>
+        }
+        else if (Field.Typ == FieldTyp.Select)
+        {
+            <Select Label="@Field.Title"
+                    Description="@Field.Description"
+                    Items="@Items"
+                    Value="@( string.Empty )"
+                    ValueChanged="@(async e => { Value = e; await ValueChanged.InvokeAsync(e); })"
+                    Placeholder="@Field.Placeholder"
+                    CssClass="@CssClass"
+                    Disabled="@Disabled"
+                    ReadOnly="@ReadOnly">
+            </Select>
+        }
+        else if (Field.Typ == FieldTyp.CheckBox)
+        {
+            <CheckBox Label="@Field.Title"
+                      Description="@Field.Description"
+                      Value="@( string.Empty )"
+                      ValueChanged="@(async e => { Value = e; await ValueChanged.InvokeAsync(e); })"
+                      CssClass="@CssClass"
+                      Disabled="@Disabled"
+                      ReadOnly="@ReadOnly" />
+        }
+        else if (Field.Typ == FieldTyp.Heading)
+        {
+            <Heading Label="@Field.Title" ShowLabel="false"
+                     Description="@Field.Description"
+                     Value="@( string.Empty )"
+                     ValueChanged="@(async e =>{ Value = e; await ValueChanged.InvokeAsync(e); })"
+                     CssClass="@CssClass"
+                     Disabled="@Disabled"
+                     ReadOnly="@ReadOnly">
+ 
+            </Heading>
+        }
+        else
+        {
+            <TextBox Label="@Field.Title"
+                     Description="@Field.Description"
+                     Value="@( string.Empty )"
+                     ValueChanged="@(async e =>{ Value = e; await ValueChanged.InvokeAsync(e); })"
+                     Type="@Field.Typ"
+                     Placeholder="@Field.Placeholder"
+                     CssClass="@CssClass"
+                     Min="@Min"
+                     Max="@Max"
+                     Step="@Step"
+                     Disabled="@Disabled"
+                     ReadOnly="@ReadOnly">
+            </TextBox>
+        }
+    </div>
+
+}
+
+@code {
+
+    [Parameter]
+    public List<IDTO> Items { get; set; } = new();
+
+    [Parameter]
+    public IField Field { get; set; }
+
+    [Parameter]
+    public ValueBindingTyp Binding { get; set; } = ValueBindingTyp.Property;
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool Border { get; set; } = true;
+
+    [Parameter]
+    public bool ShowLabel { get; set; } = false;
+
+    [Parameter]
+    public string? Min { get; set; }
+
+    [Parameter]
+    public string? Max { get; set; }
+
+    [Parameter]
+    public string? Step { get; set; }
+    [Parameter]
+    public int Rows { get; set; } = 4;
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+
+}

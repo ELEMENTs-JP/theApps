@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,6 +13,171 @@ namespace theInfrastructure
 {
     public static class Helper
     {
+        public static string GetClassByDevice(IField field)
+        {
+
+            if (field.OnDevice == DeviceDisplay.Tablet)
+            {
+                return " d-none d-md-table-cell ";
+            }
+            else if (field.OnDevice == DeviceDisplay.Desktop)
+            {
+                return " d-none d-lg-table-cell ";
+            }
+
+            return string.Empty;
+        }
+        private static bool SafeConvertible(IConvertible convertible)
+        {
+            if (convertible == null)
+                return false;
+
+            switch (convertible.GetTypeCode())
+            {
+                case TypeCode.Boolean:
+                return (bool)convertible;
+
+                case TypeCode.String:
+                return bool.TryParse((string)convertible, out var result)
+                       && result;
+
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.Byte:
+                case TypeCode.SByte:
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                return convertible.ToInt64(null) != 0;
+
+                case TypeCode.Decimal:
+                case TypeCode.Double:
+                case TypeCode.Single:
+                return convertible.ToDouble(null) != 0;
+
+                default:
+                return false;
+            }
+        }
+        public static bool ToSecureBool(this object? obj)
+        {
+            return obj switch
+            {
+                null => false,
+                bool b => b,
+                int i => i != 0,
+                string s when bool.TryParse(s, out var b) => b,
+                string s when int.TryParse(s, out var i) => i != 0,
+                IConvertible c => SafeConvertible(c), // Fallback für Spezialtypen
+                _ => false
+            };
+        }
+        public static string SplitGetFirst(this string text, string separator = "-")
+        {
+            if (!text.Contains(separator))
+            {
+                return text;
+            }
+
+            List<char> cs = new List<char>();
+            if (separator.Length > 1)
+            {
+                foreach (char c in separator)
+                {
+                    cs.Add(c);
+                }
+                return text.Split(cs.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0];
+            }
+            return text.Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries)[0];
+        }
+        public static string SplitGetLast(this string text, string separator = ".")
+        {
+            try
+            {
+                if (text == null)
+                {
+                    return string.Empty;
+                }
+
+                string[] arr = text.Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries);
+                return arr[arr.Length - 1];
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+        public static DateTime ToSecureDateTime(this object text)
+        {
+            try
+            {
+                if (text == null)
+                    return DateTime.Now;
+
+                if (string.IsNullOrEmpty(text.ToString()))
+                {
+                    return DateTime.MinValue;
+                }
+
+                if (text.ToSecureString().ToLower().Contains("T".ToLower()))
+                {
+                    string date = text.ToSecureString().SplitGetFirst("T");
+                    string time = text.ToSecureString().SplitGetLast("T");
+
+                    // check 
+                    time = (time.SplitGetFirst(":").Length == 1) ? ("0" + time) : time;
+
+                    DateTime newDate = Convert.ToDateTime(date + "T" + time);
+                    return newDate;
+                }
+
+                return Convert.ToDateTime(text.ToString());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("FAIL : DateTime Conversion : " + ex.Message);
+                return DateTime.Now;
+            }
+        }
+        public static decimal ToSecureDecimal(this object text, decimal defaultIfNullOrEmpty = 0m, decimal defaultIfZero = 0m)
+        {
+            try
+            {
+                if (text == null)
+                {
+                    return defaultIfNullOrEmpty;
+                }
+
+                if (string.IsNullOrEmpty(text.ToSecureString()))
+                {
+                    return defaultIfNullOrEmpty;
+                }
+
+                if (decimal.TryParse(text.ToSecureString(), out decimal result))
+                {
+                    return result == 0 ? defaultIfZero : result;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("FAIL : ToSecureDecimal : " + ex.Message);
+            }
+
+            return defaultIfNullOrEmpty;
+        }
+        public static void AddOrUpdate(this List<IDataValue> items, IDataValue value)
+        {
+            ArgumentNullException.ThrowIfNull(items);
+            ArgumentNullException.ThrowIfNull(value?.Field?.Title);
+
+            int index = items.FindIndex(x => x?.Field?.Title == value.Field.Title);
+
+            if (index >= 0)
+                items[index] = value; // Ersetzen über Direct Index Assignment O(1)
+            else
+                items.Add(value);     // Hinzufügen O(1)
+        }
         public static bool HasContent(this RenderFragment fragment)
         {
             try
@@ -68,7 +234,7 @@ namespace theInfrastructure
                 FieldTyp.Search => "search",
                 FieldTyp.Date => "date",
                 FieldTyp.Time => "time",
-                FieldTyp.DateTimeLocal => "datetime-local",
+                FieldTyp.DateTime => "datetime-local",
                 FieldTyp.Month => "month",
                 FieldTyp.Week => "week",
                 FieldTyp.Color => "color",

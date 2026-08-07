@@ -1,5 +1,7 @@
 ﻿@using theControls.Icons
 @using theInfrastructure
+@inject IMessagingBusService bus
+
 @inject NavigationManager nm
 
 @if (Context != null)
@@ -20,27 +22,25 @@
     {
         @if (Context.ItemType != null && Context.ItemType.Fields != null)
         {
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        @foreach (IField col in Context.ItemType.Fields)
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <TableHeader Context="@Context" />
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (IDTO item in Context.Items)
                         {
-                            <th scope="col">@( col.Title)</th>
+                            <TableRow Context="@Context" Item="@item" />
                         }
-
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (IDTO item in Context.Items)
-                    {
-                        <TableRow Context="@Context" Item="@item" />
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         }
         else
         {
-            <div>Context, ItemType oder Fields are empty</div>    
+            <div>Context, ItemType oder Fields are empty</div>
         }
     }
 }
@@ -53,6 +53,24 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await InvokeAsync(StateHasChanged);
+        bus.OnMessage += OnMessageIncome;
+    }
+
+    private void OnMessageIncome(AppMessage msg)
+    {
+        if (msg.Action == BusAction.Selected)
+        {
+            // Logik: Prüfen ob Wechsel erlaubt...
+            bool canChange = true;
+
+            if (canChange)
+            {
+                // Wir nutzen den Reply-Kanal des Senders für eine Antwort-Message
+                msg.Reply?.Invoke(new AppMessage(msg.Id, BusAction.ResponseOk));
+
+                // Jetzt eigene Daten laden basierend auf msg.Id
+                // ... LoadDetails(msg.Id);
+            }
+        }
     }
 }

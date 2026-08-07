@@ -1,5 +1,5 @@
 ﻿@using theControls.Modal
-@using theControls.New
+@using theControls.Add
 @inherits LayoutComponentBase
 
 <div class="app-frame">
@@ -9,7 +9,7 @@
 
     <main>
         <div class="header border-bottom hstack gap-3">
-            <NewItem /> 
+                <AddArea ItemType="@( new ItemTypeBuilder().BuildITemType("Task") )" />
             <div class="ms-auto"></div>
             <ThemeSwitch />
         </div>

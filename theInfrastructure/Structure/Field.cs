@@ -14,6 +14,8 @@ namespace theInfrastructure
         string Description { get; set; }
         string Placeholder { get; set; }
         string CSS { get; set; }
+
+        DeviceDisplay OnDevice { get; set; }
     }
 
     public class Field : IField
@@ -26,5 +28,6 @@ namespace theInfrastructure
         public string Placeholder { get; set; } = string.Empty;
         public string Column { get; set; } = string.Empty;
         public string CSS { get; set; } = "col";
+        public DeviceDisplay OnDevice { get; set; } = DeviceDisplay.NULL;
     }
 }

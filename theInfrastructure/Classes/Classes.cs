@@ -1,9 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 using System.Text;
 
 namespace theInfrastructure
 {
+
+    public interface IDataValue
+    {
+        IField Field { get; set; }
+        string Value { get; set; }
+
+    }
+    public class DataValue : IDataValue
+    {
+        public DataValue(IField field, string value)
+        {
+            Field = field;
+            Value = value;
+        }
+
+        public IField Field { get; set; }
+        public string Value { get; set; } = string.Empty;
+    }
 
 
 
