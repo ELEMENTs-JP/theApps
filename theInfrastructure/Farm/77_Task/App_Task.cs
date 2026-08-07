@@ -10,9 +10,9 @@ namespace theInfrastructure
         public AppTask()
         { 
             Name = "Task-Management";
-        }
-        
-        
-    }
 
+            // ItemTypes 
+            this.ItemTypes.Add(new ItemType_Task());
+        }
+    }
 }

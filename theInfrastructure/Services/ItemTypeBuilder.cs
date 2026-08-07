@@ -14,6 +14,14 @@ namespace theInfrastructure
         {
             switch (Name)
             {
+                case "App":
+                    {
+                        return new ItemType_App();
+                    }
+                case "ItemType":
+                    {
+                        return new ItemType_ItemType();
+                    }
                 case "Task":
                     {
                         return new ItemType_Task();

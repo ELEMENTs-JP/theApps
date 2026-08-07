@@ -8,11 +8,13 @@ namespace theInfrastructure
     // Interface 
     public interface IItemType
     {
+        string Name { get; set; }
         List<IField> Fields { get; set; }
         void Init();
     }
     public class  BaseItemType : IItemType
     {
+        public string Name { get; set; } = string.Empty;
         public BaseItemType()
         { 
         

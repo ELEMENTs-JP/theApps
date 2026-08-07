@@ -1,17 +1,26 @@
-﻿@using theControls.Modal
+﻿@using theControls.Input
+@using theControls.Modal
+@inject ISqlDatabaseService sql
+@inject IMessagingBusService msg
   
-
 @if (ItemType != null)
 {
-    <ModalForm Title="neuen Eintrag erstellen" 
-                    ShowTitleInButton="false" 
-                        ButtonText="Neu">
+    <ModalForm Title="neuen Eintrag erstellen"
+               ShowTitleInButton="false"
+               ButtonText="Neu" 
+               OnOKClicked="@( async e => { await OnOK(); } )">
         <ChildContent>
             <div class="row">
-                @foreach (IField field in ItemType.Fields)
+
+                <div class="col-12 p-2">
+                    <TextBox Label="Titel" Placeholder="Titel des Datensatzes" 
+                        ValueChanged="@( async e => { Title = e; })" />
+                </div>
+
+                @foreach (IField field in ItemType.Fields.Where(s => s.Typ != FieldTyp.HR))
                 {
                     <div class="col-12 p-2">
-                        <AddBox Field="@field" ValueChanged="@( async e => { await OnChange(field, e); } )" />
+                        <AddBox Field="@field" ValueChanged="@( async e => { await OnChange(field, e); })" />
                     </div>
                 }
             </div>
@@ -21,7 +30,11 @@
 
 @code {
 
+    private IQueryContext Context { get; set; }
+
     // Fields 
+    private string Title { get; set; } = string.Empty;
+
     private List<IDataValue> Values { get; set; } = new();
 
     [Parameter]
@@ -35,6 +48,30 @@
         {
             ItemType = ItemTypeBuilder.Create().BuildITemType("Task");
         }
+
+        Context = new QueryContext(sql);
+    }
+
+    private async Task OnOK()
+    {
+        if (Context == null)
+            return;
+
+        if (string.IsNullOrEmpty(Title))
+            return;
+
+        // Erstellen 
+        Guid ID = await Context.Create(Title);
+
+        // Laden 
+        await Context.Load(ID.ToSecureString());
+
+        foreach (IDataValue dv in Values)
+        {
+            Context.Item[dv.Field.Column] = dv.Value.ToSecureString();    
+        }
+
+        await Context.Update(Context.Item);
     }
 
     private async Task OnChange(IField field, string Value)

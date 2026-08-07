@@ -13,7 +13,7 @@ namespace theInfrastructure
         Task Search();
         Task Load(string ID);
         void Init(ISqlDatabaseService sql);
-        Task Create(string title);
+        Task<Guid> Create(string title);
         Task Delete(IDTO dto);
         Task Update(IDTO dto);
         Task Assign(IDTO dto);

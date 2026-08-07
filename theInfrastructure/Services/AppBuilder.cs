@@ -14,6 +14,10 @@ namespace theInfrastructure
         {
             switch (Name)
             {
+                case "Farm":
+                    {
+                        return new AppFarm();
+                    }
                 case "Task":
                     {
                         return new AppTask();

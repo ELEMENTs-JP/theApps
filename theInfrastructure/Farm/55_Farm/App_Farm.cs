@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace theInfrastructure
+{
+    // App 
+    public class AppFarm : BaseApp, IApp
+    {
+        public AppFarm()
+        { 
+            Name = "Farm Management";
+
+            // ItemTypes 
+            this.ItemTypes.Add(new ItemType_App());
+            this.ItemTypes.Add(new ItemType_ItemType());
+        }
+
+      
+    }
+
+}

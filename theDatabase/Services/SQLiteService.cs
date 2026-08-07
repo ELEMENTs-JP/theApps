@@ -274,14 +274,17 @@ namespace theDatabase
             IQueryResult info = new QueryResult { Status = "OK", Message = "" };
 
             string itemType = "Task";
-            Guid item = Guid.NewGuid();
+            if (query.GUID == Guid.Empty)
+            {
+                query.GUID = Guid.NewGuid();
+            }
             Guid master = GeneralMasterGUID;
             string id = SqlHelper.GenerateID(itemType, master);
 
             // Datensatz 
             IQueryParameter input = new QueryParameter
             {
-                GUID = item,
+                GUID = query.GUID,
                 MasterGUID = master,
                 ID = id,
                 Title = query.Title,

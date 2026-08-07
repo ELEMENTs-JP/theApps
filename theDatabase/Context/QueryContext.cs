@@ -26,12 +26,15 @@ namespace theDatabase
         {
             sqlService = sql;
         }
-        public async Task Create(string title)
+        public async Task<Guid> Create(string title)
         {
             if (sqlService == null)
-                return;
+                return Guid.Empty;
 
-            await sqlService.Create(QueryParameter.Default(title));
+            IQueryParameter qp = QueryParameter.Default(title);
+            Guid gid = qp.GUID;
+            await sqlService.Create(qp);
+            return gid;
         }
         public async Task Search()
         {
@@ -51,28 +54,35 @@ namespace theDatabase
         }
         public async Task Load(string GUID)
         {
-            if (sqlService == null)
-                return;
+            try
+            {
+                if (sqlService == null)
+                    return;
 
-            if (string.IsNullOrEmpty(GUID))
-                return;
+                if (string.IsNullOrEmpty(GUID))
+                    return;
 
-            IsLoading = true;
+                IsLoading = true;
 
-            Item = null;
+                Item = null;
 
-            IQueryParameter query = new QueryParameter();
-            query.Matchcode = string.Empty;
-            query.MasterGUID = SQLiteService.GeneralMasterGUID;
-            query.GUID = new Guid(GUID);
-            IQueryResult result = await sqlService.GetItem(query);
+                IQueryParameter query = new QueryParameter();
+                query.Matchcode = string.Empty;
+                query.MasterGUID = SQLiteService.GeneralMasterGUID;
+                query.GUID = new Guid(GUID);
+                IQueryResult result = await sqlService.GetItem(query);
 
-            if (result.Items[0] != null)
-            { 
-                Item = result.Items[0];
+                if (result.Items[0] != null)
+                {
+                    Item = result.Items[0];
+                }
+
+                IsLoading = false;
             }
-
-            IsLoading = false;
+            catch (Exception ex)
+            {
+                
+            }
         }
         public async Task Delete(IDTO dto)
         {
