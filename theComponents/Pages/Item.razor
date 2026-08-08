@@ -1,0 +1,48 @@
+﻿@page "/Item/{IT}/{ID}"
+
+@using theControls.Edit
+@using theDatabase
+@using theInfrastructure
+
+@inject ISqlDatabaseService sql
+
+<div class="container">
+
+    @if (ItemType != null)
+    {
+        @if (Context != null)
+        {
+            <EditArea ItemType="@this.ItemType" Context="@Context" />
+        }
+    }
+
+</div>
+
+@code {
+
+    [Parameter]
+    public string ID { get; set; } = string.Empty;
+
+    [Parameter]
+    public string IT { get; set; } = string.Empty;
+
+    private IItemType ItemType { get; set; } = null;
+    private IQueryContext Context { get; set; } = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (!string.IsNullOrEmpty(this.IT))
+        {
+            ItemType = new ItemTypeBuilder().BuildITemType(this.IT);
+        }
+
+        if (!string.IsNullOrEmpty(this.ID))
+        {
+            Context = new QueryContext(sql);
+            await Context.Load(this.ID);
+        }
+    }
+  
+}

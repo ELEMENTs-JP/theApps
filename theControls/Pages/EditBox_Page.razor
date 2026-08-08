@@ -1,6 +1,5 @@
 ﻿@page "/EditBox"
-@page "/EditBox/{IT}"
-@page "/EditBox/{IT}/{GUID}"
+
 @using theInfrastructure
 
 @inject ISqlDatabaseService sql
@@ -8,40 +7,25 @@
 <div class="container">
 
     
-    @if (ItemType != null)
-    {
-        @if (Context != null)
-        {
-            <EditArea ItemType="@this.ItemType" Context="@Context" />
-        }
-    }
-    else
-    {
-        <div class="row">
 
-            @foreach (FieldTyp field in Enum.GetValues(typeof(FieldTyp)))
-            {
-                <div class="col-12 col-md-6 col-lg-4 p-2">
-                    <EditBox Field="@( new FieldBuilder().BuildField(field))"
-                             Items="@( ((field == FieldTyp.Select) ? this.Items : null) )"/>
-                </div>
-            }
-        </div>
-    }
+    <div class="row">
+
+        @foreach (FieldTyp field in Enum.GetValues(typeof(FieldTyp)))
+        {
+            <div class="col-12 col-md-6 col-lg-4 p-2">
+                <EditBox Field="@( new FieldBuilder().BuildField(field))"
+                         Items="@( ((field == FieldTyp.DropDown) ? this.Items : null) )" />
+            </div>
+        }
+    </div>
+
 </div>
 
 @code {
 
     List<IDTO> Items { get; set; } = new();
 
-    [Parameter]
-    public string IT { get; set; } = string.Empty;
 
-    [Parameter]
-    public string GUID { get; set; } = string.Empty;
-
-    private IItemType ItemType { get; set; } = null;
-    private IQueryContext Context { get; set; } = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,16 +35,6 @@
     {
         await base.OnParametersSetAsync();
 
-        if (!string.IsNullOrEmpty(this.IT))
-        {
-            ItemType = new ItemTypeBuilder().BuildITemType(this.IT);
-        }
-
-        if (!string.IsNullOrEmpty(this.GUID))
-        {
-            Context = new QueryContext(sql);
-            await Context.Load(this.GUID);
-        }
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

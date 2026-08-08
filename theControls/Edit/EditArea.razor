@@ -24,7 +24,8 @@
                 else
                 {
                     <div class="@( field.CSS + " p-2 " )">
-                        <EditBox Field="@field" Context="@Context" Border="false" />
+                        <EditBox Field="@field" Context="@Context" 
+                                IsEditable="@field.IsEditable" Border="false" />
                     </div>
                 }
             }

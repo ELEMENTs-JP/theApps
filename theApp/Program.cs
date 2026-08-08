@@ -8,6 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// Detail Informatiopnen bei rekursiven Fehlern 
+builder.Services.AddServerSideBlazor()
+    .AddCircuitOptions(options =>
+    {
+        if (builder.Environment.IsDevelopment()) //Only add details when debugging.
+        {
+            options.DetailedErrors = true;
+        }
+    });
 
 // Database Service 
 builder.Services.AddScoped<ISqlDatabaseService>(provider =>
@@ -56,7 +65,8 @@ app.MapStaticAssets();
 
 app.MapRazorComponents<App>()
    .AddInteractiveServerRenderMode()
-   .AddAdditionalAssemblies(typeof(theDatabase.Controls.DatabaseSetup).Assembly, 
+   .AddAdditionalAssemblies(typeof(theDatabase.Controls.DatabaseSetup).Assembly,
+                                typeof(theComponents.Pages.Item).Assembly,
                                 typeof(theControls.Edit.EditBox).Assembly); 
 
 app.Run();

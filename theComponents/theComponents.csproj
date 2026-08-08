@@ -11,6 +11,12 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\theControls\theControls.csproj" />
+    <ProjectReference Include="..\theDatabase\theDatabase.csproj" />
+    <ProjectReference Include="..\theInfrastructure\theInfrastructure.csproj" />
+  </ItemGroup>
+
 
 
 </Project>

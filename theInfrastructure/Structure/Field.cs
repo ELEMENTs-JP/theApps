@@ -16,6 +16,7 @@ namespace theInfrastructure
         string CSS { get; set; }
 
         DeviceDisplay OnDevice { get; set; }
+        bool IsEditable { get; set; }
     }
 
     public class Field : IField
@@ -29,5 +30,7 @@ namespace theInfrastructure
         public string Column { get; set; } = string.Empty;
         public string CSS { get; set; } = "col";
         public DeviceDisplay OnDevice { get; set; } = DeviceDisplay.NULL;
+
+        public bool IsEditable { get; set; } = true;
     }
 }

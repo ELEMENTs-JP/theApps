@@ -9,17 +9,17 @@
         @if (Field.Typ == FieldTyp.TextArea)
         {
             <TextArea Label="@Field.Title"
-                      Description="@Field.Description"
-                      Value="@( onValueBinding() )"
-                      ValueChanged="@(async e => { onValueChanged(e); await Change(); })"
-                      Placeholder="@Field.Placeholder"
-                      CssClass="@CssClass"
-                      Rows="@Rows"
-                      Disabled="@Disabled"
-                      ReadOnly="@ReadOnly">
+            Description="@Field.Description"
+            Value="@( onValueBinding() )"
+            ValueChanged="@(async e => { onValueChanged(e); await Change(); })"
+            Placeholder="@Field.Placeholder"
+            CssClass="@CssClass"
+            Rows="@Rows"
+            Disabled="@Disabled"
+            ReadOnly="@ReadOnly">
                 <Overlay>
                     <button type="button"
-                    class="btn btn-sm btn-icon btn-success px-2"
+                    class="btn btn-sm btn-ghost-success me-1"
                     @onclick="Save">
                         <i class="ti ti-check"></i>
                     </button>
@@ -27,44 +27,41 @@
 
             </TextArea>
         }
-        else if (Field.Typ == FieldTyp.Select)
+        else if (Field.Typ == FieldTyp.DropDown)
         {
-            <Select Label="@Field.Title"
-                    Description="@Field.Description"
-                    Items="@Items"
-                    Value="@( onValueBinding() )"
-                    ValueChanged="@Change"
-                    Placeholder="@Field.Placeholder"
-                    CssClass="@CssClass"
-                    Disabled="@Disabled"
-                    ReadOnly="@ReadOnly">
-            </Select>
-        }
-        else if (Field.Typ == FieldTyp.CheckBox)
-        {
-            <CheckBox Label="@Field.Title"
+            <DropDown Label="@Field.Title"
                       Description="@Field.Description"
                       Value="@( onValueBinding() )"
-                      ValueChanged="@Change"
+                      ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
+                      Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
                       Disabled="@Disabled"
                       ReadOnly="@ReadOnly" />
         }
+        else if (Field.Typ == FieldTyp.CheckBox)
+        {
+            <CheckBox Label="@Field.Title"
+            Description="@Field.Description"
+            Value="@( onValueBinding() )"
+            ValueChanged="@Change"
+            CssClass="@CssClass"
+            Disabled="@Disabled"
+            ReadOnly="@ReadOnly" />
+        }
         else if (Field.Typ == FieldTyp.Heading)
         {
             <Heading Label="@Field.Title" ShowLabel="false"
-                     Description="@Field.Description"
-                     Value="@( onValueBinding() )"
-                     ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
-                     CssClass="@CssClass"
-                     Disabled="@Disabled"
-                     ReadOnly="@ReadOnly">
+            Description="@Field.Description"
+            Value="@( onValueBinding() )"
+            ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
+            CssClass="@CssClass"
+            Disabled="@Disabled"
+            ReadOnly="@ReadOnly">
                 <Overlay>
 
                     <button type="button"
-                            class="btn btn-sm btn-icon btn-success"
-                            style="padding:0.7rem;"
-                            @onclick="Save">
+                            class="btn btn-sm btn-ghost-success me-2"
+                    @onclick="Save">
                         <SymbolIcon Symbol="@Icon.Check" />
                     </button>
 
@@ -74,17 +71,14 @@
         else
         {
             <TextBox Label="@Field.Title"
-                     Description="@Field.Description"
-                     Value="@( onValueBinding() )"
-                     ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
-                     Type="@Field.Typ"
-                     Placeholder="@Field.Placeholder"
-                     CssClass="@CssClass"
-                     Min="@Min"
-                     Max="@Max"
-                     Step="@Step"
-                     Disabled="@Disabled"
-                     ReadOnly="@ReadOnly">
+            Description="@Field.Description"
+            Value="@( onValueBinding() )"
+            ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
+            Type="@Field.Typ"
+            Placeholder="@Field.Placeholder"
+            CssClass="@CssClass"
+            Min="@Min" Max="@Max" Step="@Step"
+            IsEditable="@IsEditable">
                 <Inlay>
                     @if (Field.Typ == FieldTyp.Search)
                     {
@@ -95,9 +89,8 @@
                     @if (Field.Typ != FieldTyp.Search)
                     {
                         <button type="button"
-                                class="btn btn-sm btn-icon btn-success"
-                                style="padding:0.7rem;"
-                                @onclick="Save">
+                                class="btn btn-sm btn-ghost-success me-1"
+                        @onclick="Save">
                             <SymbolIcon Symbol="@Icon.Check" />
                         </button>
                     }
@@ -147,6 +140,9 @@
 
     [Parameter]
     public bool ReadOnly { get; set; }
+
+    [Parameter]
+    public bool IsEditable { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {

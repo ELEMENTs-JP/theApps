@@ -20,11 +20,13 @@ namespace theInfrastructure
             // Fields 
             Fields = new List<IField>();
 
-            Fields.Add(new Field() { Title = "Status", Typ = FieldTyp.Text, Column = "Status", CSS=" col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Tablet });
-            Fields.Add(new Field() { Title = "Fortschritt", Typ = FieldTyp.Text, Column = "Progress", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Tablet });
-            Fields.Add(new Field() { Title = "Priorität", Typ = FieldTyp.Text, Column = "Prio", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Tablet });
+            Fields.Add(new Field() { Title = "Status", Description = "definiert den Status", Typ = FieldTyp.Text,
+                IsEditable = false, Column = "Status", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Tablet });
+            Fields.Add(new Field() { Title = "Fortschritt", Description = "legt den Fortschritt fest", Typ = FieldTyp.Text, Column = "Progress", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Tablet });
+            Fields.Add(new Field() { Title = "Priorität", Description = "legt die Priorität fest", Typ = FieldTyp.Text, Column = "Prio", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Tablet });
             Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR  });
             Fields.Add(new Field() { Title = "Description", Typ = FieldTyp.TextArea, Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
+            Fields.Add(new Field() { Title = "Auswahl", Typ = FieldTyp.DropDown, Column = "Auswahl", CSS = " col-12 col-md-6 col-lg-4 " });
         }
     }
 }

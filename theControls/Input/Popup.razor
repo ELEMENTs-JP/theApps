@@ -1,0 +1,162 @@
+
+
+<div id="@( "frame_popup_" + ID )" class="@( " " +
+            ((Centered) ? " dropdown-center " : " dropdown ")) ">
+
+    <div id="@( "link_popup_" + ID )" class="@( " d-flex p-05 align-items-center " + ButtonCssClass
+            + ((TextColorReset) ? " text-reset " : "") )  " data-bs-toggle="dropdown">
+
+        @if (!string.IsNullOrEmpty(ImageUrl))
+        {
+            <span id="@( "avatar_popup_" + ID )" class="avatar avatar-sm"
+                  style="background-image: url(@ImageUrl)"></span>
+        }
+
+        @*  d-none d-xl-block   *@
+        <div id="@( "head_popup_" + ID )" class="p-05">
+
+            @if (!string.IsNullOrEmpty(HtmlIcon))
+            {
+                <span>
+                    @((MarkupString)HtmlIcon)
+                </span>
+            }
+
+            @if (ShowTitle == true)
+            {
+                <span class="@( TitleCSS + " px-1 ")">
+                    @((MarkupString)Title)
+                </span>
+            }
+
+            @if (ShowSubTitle == true)
+            {
+                <div class="mt-1 small text-muted">@SubTitle</div>
+            }
+
+
+        </div>
+
+        @if (ShowDropDownToggle)
+        {
+            <div class="@( "pointer hover rounded-2 px-1 pe-2  dropdown-toggle")">
+            </div>
+        }
+
+
+
+    </div>
+
+    <div id="@( "body_popup_" + ID )" class="@( "dropdown-menu " + DropDownPosition + DropDownArrow )" style="@MenuStyle">
+
+        <div class="row g-0">
+            
+            <div class="col">
+                @if (ShowTitleInPopupMenu)
+                {
+                    <div class="px-2 pt-2 fw-bold">@Title</div>
+                }
+                @if (ShowSubTitleInPopupMenu == true)
+                {
+                    <div class="px-2 mb-1 small text-muted text-truncate-container-2 overflow-hidden">@SubTitle</div>
+                }
+            </div>
+            
+            @if (RelatedContent.HasContent())
+            {
+                <div class="col-auto p-1 pe-2">
+                    @RelatedContent
+                </div>
+            }
+        </div>
+
+
+
+
+
+        @if (ShowTitleInPopupMenu)
+        {
+            <div class="dropdown-divider"></div>
+        }
+
+        <div class="@( ContentCssClass + " " + " overflow-y-auto " )" style="@( ContentStyle + " " + MaxHeightCSS )">
+            @ChildContent
+        </div>
+
+
+    </div>
+</div>
+
+
+
+@code {
+
+    [Parameter]
+    public string ID { get; set; } = "" + Guid.NewGuid();
+
+    [Parameter]
+    public bool Centered { get; set; } = false;
+
+    [Parameter]
+    public string HtmlIcon { get; set; } = "";
+
+    [Parameter]
+    public string ImageUrl { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Title { get; set; } = "Title";
+
+    [Parameter]
+    public string TitleCSS { get; set; } = "  ";
+
+    [Parameter]
+    public bool ShowTitle { get; set; } = true;
+
+    [Parameter]
+    public bool ShowTitleInPopupMenu { get; set; } = true;
+
+    [Parameter]
+    public bool TextColorReset { get; set; } = true;
+
+    [Parameter]
+    public string SubTitle { get; set; } = "";
+
+    [Parameter]
+    public bool ShowSubTitle { get; set; } = false;
+
+    [Parameter]
+    public bool ShowSubTitleInPopupMenu { get; set; } = true;
+
+
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment RelatedContent { get; set; }
+
+    [Parameter]
+    public string MenuStyle { get; set; } = "min-width:13rem;";
+
+    [Parameter]
+    public string MaxHeightCSS { get; set; } = "max-height:44rem;";
+
+    [Parameter]
+    public bool ShowDropDownToggle { get; set; } = false;
+
+    [Parameter]
+    public string DropDownPosition { get; set; } = " dropdown-menu-end ";
+
+    [Parameter]
+    public string DropDownArrow { get; set; } = "  "; // dropdown-menu-arrow
+
+    [Parameter]
+    public string ButtonCssClass { get; set; } = "  ";
+
+    [Parameter]
+    public string ContentCssClass { get; set; } = "  ";
+
+    [Parameter]
+    public string ContentStyle { get; set; } = "  ";
+
+}

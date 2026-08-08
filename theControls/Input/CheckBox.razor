@@ -1,6 +1,6 @@
 ﻿@if (!string.IsNullOrEmpty(this.Label))
 {
-    <label class="form-label" for="@Id">
+    <label class="form-label text-secondary" for="@Id">
         @Label
     </label>
 }
@@ -32,7 +32,7 @@
 
 @if (!string.IsNullOrEmpty(Description))
 {
-    <div class="text-muted" style="padding-left:3px; padding-top:3px;">
+    <div class="text-muted small border-top" style="padding-left:3px; padding-top:3px;">
         @Description.ToSecureString()
     </div>
 }

@@ -19,9 +19,9 @@
                       ReadOnly="@ReadOnly">
             </TextArea>
         }
-        else if (Field.Typ == FieldTyp.Select)
+        else if (Field.Typ == FieldTyp.DropDown)
         {
-            <Select Label="@Field.Title"
+            <DropDown Label="@Field.Title"
                     Description="@Field.Description"
                     Items="@Items"
                     Value="@( string.Empty )"
@@ -30,7 +30,7 @@
                     CssClass="@CssClass"
                     Disabled="@Disabled"
                     ReadOnly="@ReadOnly">
-            </Select>
+            </DropDown>
         }
         else if (Field.Typ == FieldTyp.CheckBox)
         {
@@ -63,11 +63,7 @@
                      Type="@Field.Typ"
                      Placeholder="@Field.Placeholder"
                      CssClass="@CssClass"
-                     Min="@Min"
-                     Max="@Max"
-                     Step="@Step"
-                     Disabled="@Disabled"
-                     ReadOnly="@ReadOnly">
+                     Min="@Min" Max="@Max" Step="@Step">
             </TextBox>
         }
     </div>

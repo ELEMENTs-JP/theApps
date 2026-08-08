@@ -16,9 +16,13 @@
         border: 1px solid var(--tblr-border-color-translucent) !important;
         transition: border-color 0.35s ease;
     }
-/*    .editbox:active {
-        background-color: var(--tsp-hover-light) !important;
-        transition: background-color 0.35s ease;
-        border: 1px solid var(--tblr-border-color-translucent) !important;
-        transition: border-color 0.35s ease;
-    }*/
+
+.viewbox {
+    border: 1px solid transparent !important;
+    border-radius: 0.35rem;
+    width: 100%;
+    background-color: transparent !important;
+    outline: none;
+    padding: 0.35rem 0.5rem;
+    cursor: default;
+    caret-color: transparent;}
