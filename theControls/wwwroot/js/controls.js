@@ -35,3 +35,30 @@ window.contentEditable = {
 window.contentEditable.setText = function (element, value) {
     element.innerText = value ?? "";
 };
+
+
+
+function SetIndividualTimer(dotNetRef, methodName, ms, repeat) {
+    try {
+        if (repeat) {
+            // Wiederholender Timer
+            const intervalId = setInterval(() => {
+                dotNetRef.invokeMethodAsync(methodName);
+            }, ms);
+
+            // Optional: Rückgabe der ID, falls man den Timer später stoppen möchte
+            return intervalId;
+        }
+        else {
+            // Einmaliger Timer
+            const timeoutId = setTimeout(() => {
+                dotNetRef.invokeMethodAsync(methodName);
+            }, ms);
+
+            return timeoutId;
+        }
+    }
+    catch (e) {
+
+    }
+}

@@ -4,7 +4,7 @@
 
 @if (Field != null && Context != null && Context.Item != null)
 {
-    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-2 bg-body">
+    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-2 @CssClass">
 
         @if (Field.Typ == FieldTyp.TextArea)
         {
@@ -123,7 +123,7 @@
     public IQueryContext Context { get; set; }
 
     [Parameter]
-    public string CssClass { get; set; } = string.Empty;
+    public string CssClass { get; set; } = " bg-body ";
 
     [Parameter]
     public bool Border { get; set; } = true;

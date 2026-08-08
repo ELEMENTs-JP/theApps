@@ -1,0 +1,58 @@
+
+
+@if (ChildContent.HasContent())
+{
+    @if (Position == StaticPosition.NULL || Position == StaticPosition.Relative)
+    {
+        @ChildContent        
+    }
+
+    @if (Position == StaticPosition.MessageBox)
+    {
+
+        <div class="@(" position-fixed bottom-0 start-50 m-5 " )"
+        style="z-index:99999!important;">
+
+            @ChildContent
+
+        </div>
+
+    }
+
+    @if (Position == StaticPosition.ScreenCenter)
+    {
+        <div class="position-relative">
+            <div class="position-absolute top-50 start-50 translate-middle">
+                @ChildContent
+            </div>
+        </div>
+    }
+
+    @if (Position == StaticPosition.BottomMiddle)
+    {
+        <div class="position-relative">
+            <div class="position-absolute top-100 start-50 translate-middle">
+                @ChildContent
+            </div>
+        </div>
+    }
+}
+
+
+@code {
+
+    private string ID { get; set; } = "static_position_DIV_ID_" + Guid.NewGuid();
+
+    [Parameter]
+    public string FrameCSS { get; set; } = string.Empty;
+
+    [Parameter]
+    public StaticPosition Position { get; set; } = StaticPosition.Relative;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback OnMessageChanged { get; set; }
+
+}

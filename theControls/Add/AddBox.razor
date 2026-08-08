@@ -4,7 +4,7 @@
 
 @if (Field != null)
 {
-    <div class="@( ((Border == true) ? " border " : "")) rounded-2 p-2 bg-body">
+    <div class="@( ((Border == true) ? " border " : "")) rounded-2 p-2 @CssClass ">
 
         @if (Field.Typ == FieldTyp.TextArea)
         {
@@ -89,7 +89,7 @@
     public string Value { get; set; } = string.Empty;
 
     [Parameter]
-    public string CssClass { get; set; } = string.Empty;
+    public string CssClass { get; set; } = " bg-body ";
 
     [Parameter]
     public bool Border { get; set; } = true;

@@ -4,6 +4,27 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum StaticPosition
+    {
+        NULL = 0,
+
+        Relative,
+        ScreenCenter,
+        MessageBox,
+
+        TopLeft,
+        TopMiddle,
+        TopRight,
+
+        MiddleLeft,
+        MiddleMiddle,
+        MiddleRight,
+
+        BottomLeft,
+        BottomMiddle,
+        BottomRight,
+
+    }
     public enum ModalFormSize { Small, Normal, Large, Extra, Full }
     public enum Icon
     { 

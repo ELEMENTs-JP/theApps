@@ -13,14 +13,15 @@
             <div class="row">
 
                 <div class="col-12 p-2">
-                    <TextBox Label="Titel" Placeholder="Titel des Datensatzes" 
+                    <TextBox Label="Titel" 
                         ValueChanged="@( async e => { Title = e; })" />
                 </div>
 
                 @foreach (IField field in ItemType.Fields.Where(s => s.Typ != FieldTyp.HR))
                 {
                     <div class="col-12 p-2">
-                        <AddBox Field="@field" ValueChanged="@( async e => { await OnChange(field, e); })" />
+                        <AddBox Field="@field" CssClass="" Border="false"
+                            ValueChanged="@( async e => { await OnChange(field, e); })" />
                     </div>
                 }
             </div>
@@ -72,6 +73,9 @@
         }
 
         await Context.Update(Context.Item);
+
+        AppMessage am = new AppMessage("ID", BusAction.Updated, "Datensatz erzeugt");
+        msg.Publish(am);
     }
 
     private async Task OnChange(IField field, string Value)
