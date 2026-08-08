@@ -5,12 +5,16 @@
     <tr class="pointer"
         @onclick="@( e => { nm.NavigateTo("/Item/Task/" + Item.GUID, false); })">
 
-            <td class="text-muted">@(Item.ID.ToSecureString())</td>
-            <td class="fw-bold">@(Item.Title.ToSecureString())</td>
-        
-            @foreach (IField col in Context.ItemType.Fields.Where(f => f.Typ != FieldTyp.HR))
+        <td class="text-muted">@(Item.ID.ToSecureString())</td>
+        <td class="fw-bold">@(Item.Title.ToSecureString())</td>
+
+        @foreach (IField col in Context.ItemType.Fields.Where(f => f.Typ != FieldTyp.HR))
         {
-            <td class="@( Helper.GetClassByDevice(col) )">@(Item[col.Column].ToSecureString())</td>
+            <td class="@Helper.GetClassByDevice(col) align-items-center">
+
+                <TableCell Value="@(Item[col.Column].ToSecureString())" Field="@col" />
+
+            </td>
         }
     </tr>
 }

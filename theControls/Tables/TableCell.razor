@@ -1,0 +1,82 @@
+﻿
+@if (Field != null)
+{
+    @if (Field.Typ == FieldTyp.CheckBox)
+    {
+        
+    }
+    else
+    {
+        @Text
+    }
+}
+
+@code {
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    private string Text { get; set; } = string.Empty;
+
+    [Parameter]
+    public IField Field { get; set; } 
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await Convert();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+
+
+        }
+    }
+
+    public async Task Convert()
+    {
+        if (string.IsNullOrEmpty(Value))
+        {
+            Text = string.Empty;
+            return;
+        }
+
+        switch (this.Field.Typ)
+        {
+            case FieldTyp.Date:
+                {
+                    
+                    Text = Value.ToSecureDateTime().ToString("dddd, dd. MMMM yyyy");
+                    break;
+                }
+            case FieldTyp.DateTime:
+                {
+                    Text = Value.ToSecureDateTime().ToString("dddd, dd. MMMM yyyy - HH:mm");
+                    break;
+                }
+            case FieldTyp.Time:
+                {
+                    Text = Value.ToSecureDateTime().ToString("HH:mm");
+                    break;
+                }
+            default:
+                {
+                    Text = Value.ToSecureString();
+                    break;    
+                }
+        }
+
+        await Task.CompletedTask;
+    }
+}

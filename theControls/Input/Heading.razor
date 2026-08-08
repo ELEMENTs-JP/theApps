@@ -9,13 +9,12 @@
 }
 <div class="position-relative overlay-container">
     <div id="@Id" name="@InputName"
-         class="display-6 editbox @CssClass" style="margin-left:-10px;"
-         contenteditable="@(!Disabled && !ReadOnly)"
+        class=" display-6 @CssClass @( ((IsEditable) ? " editbox " : " viewbox no-select ") )" style="margin-left:-10px;"
+         contenteditable="@(IsEditable)"
          role="textbox"
          aria-multiline="false"
-         aria-readonly="@ReadOnly"
          spellcheck="false"
-         tabindex="@(Disabled ? "-1" : "0")"
+         tabindex="@(IsEditable ? "0" : "-1")"
          data-placeholder="@Placeholder"
          @ref="_element"
          @oninput="HandleInput"
@@ -86,10 +85,7 @@
     public string Placeholder { get; set; } = string.Empty;
 
     [Parameter]
-    public bool Disabled { get; set; }
-
-    [Parameter]
-    public bool ReadOnly { get; set; }
+    public bool IsEditable { get; set; } = true;
 
     [Parameter]
     public bool AutoFocus { get; set; }

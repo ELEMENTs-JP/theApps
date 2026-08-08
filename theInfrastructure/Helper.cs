@@ -73,6 +73,17 @@ namespace theInfrastructure
                 _ => false
             };
         }
+        public static string ToDate(this object? obj)
+        {
+            string val = obj.ToSecureString();
+
+            if (val.Contains("T"))
+            {
+                val = val.SplitGetFirst("T");
+            }
+
+            return val;
+        }
         public static string SplitGetFirst(this string text, string separator = "-")
         {
             if (!text.Contains(separator))

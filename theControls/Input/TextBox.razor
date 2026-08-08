@@ -4,14 +4,13 @@
 }
 
 <div class="position-relative overlay-container">
-    <input id="@Id" name="@InputName"
+    <input id="@Id" name="@InputName" data-value="@Value"
            class=" pe-5 @CssClass @( ((IsEditable) ? " editbox " : " viewbox no-select ") )"
            type="@Type.ToHtmlValue()"
            placeholder="@Placeholder"
            spellcheck="false"
            step="@(Step ?? Type.GetStep())"
-           min="@Min"
-           max="@Max"
+           min="@Min" max="@Max"
            maxlength="@MaxLength"
            minlength="@MinLength"
            value="@Value"
@@ -20,14 +19,14 @@
 
     @if (Inlay != null && IsEditable == true)
     {
-        <div class="position-absolute top-50 end-0 translate-middle-y me-2">
+        <div class="position-absolute top-50 end-0 translate-middle-y me-1">
             @Inlay
         </div>
     }
 
     @if (Overlay != null && IsEditable == true)
     {
-        <div class="overlay position-absolute top-50 end-0 translate-middle-y me-2">
+        <div class="overlay position-absolute top-50 end-0 translate-middle-y me-1">
             @Overlay
         </div>
     }
@@ -35,7 +34,7 @@
 
 @if (!string.IsNullOrEmpty(Description))
 {
-    <div class="text-muted small border-top no-select mx-1" style="padding-left:3px; padding-top:3px;">
+    <div class="text-muted small border-top no-select mx-1 mt-1" style="padding-left:3px; padding-top:3px;">
         @this.Description.ToSecureString()
     </div>
 }

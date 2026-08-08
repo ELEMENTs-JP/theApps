@@ -5,8 +5,7 @@
 
 <div class="position-relative overlay-container">
 
-    <div id="@( "frame_popup_" + ID )" name="@InputName" class="@(" w-100 dropdown-center editbox ")) "
-         disabled="@Disabled" readonly="@ReadOnly">
+    <div id="@( "frame_popup_" + ID )" name="@InputName" class="@(" w-100 dropdown-center editbox ")) ">
 
         <div id="@( "link_popup_" + ID )" class="@(" row align-items-center ")" data-bs-toggle="dropdown">
 
@@ -73,7 +72,7 @@
 
 @if (!string.IsNullOrEmpty(Description))
 {
-    <div class="text-muted small border-top" style="padding-left:3px; padding-top:3px;">
+    <div class="text-muted small border-top mt-1" style="padding-left:3px; padding-top:3px;">
         @this.Description.ToSecureString()
     </div>
 }
@@ -136,10 +135,7 @@
 
 
     [Parameter]
-    public bool Disabled { get; set; }
-
-    [Parameter]
-    public bool ReadOnly { get; set; }
+    public bool IsEditable { get; set; } = true;
 
     private async Task HandleInput(IDTO dto)
     {

@@ -1,5 +1,6 @@
 ﻿@using theControls.Icons
 @using theControls.Input
+@inject IMessagingBusService msg
 
 
 @if (Field != null && Context != null && Context.Item != null)
@@ -9,20 +10,17 @@
         @if (Field.Typ == FieldTyp.TextArea)
         {
             <TextArea Label="@Field.Title"
-            Description="@Field.Description"
-            Value="@( onValueBinding() )"
-            ValueChanged="@(async e => { onValueChanged(e); await Change(); })"
-            Placeholder="@Field.Placeholder"
-            CssClass="@CssClass"
-            Rows="@Rows"
-            Disabled="@Disabled"
-            ReadOnly="@ReadOnly">
+                      Description="@Field.Description"
+                      Value="@( onValueBinding() )"
+                      ValueChanged="@(async e => { onValueChanged(e); await Change(); })"
+                      Placeholder="@Field.Placeholder"
+                      CssClass="@CssClass"
+                      Rows="@Rows"
+                      IsEditable="@IsEditable">
                 <Overlay>
-                    <button type="button"
-                    class="btn btn-sm btn-ghost-success me-1"
-                    @onclick="Save">
+                    <div class="hover pointer rounded-2 p-1 me-1" @onclick="Save">
                         <i class="ti ti-check"></i>
-                    </button>
+                    </div>
                 </Overlay>
 
             </TextArea>
@@ -32,38 +30,36 @@
             <DropDown Label="@Field.Title"
                       Description="@Field.Description"
                       Value="@( onValueBinding() )"
-                      ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
+                      ValueChanged="@(async e =>{ onValueChanged(e); await Change(); await Save(); })"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
-                      Disabled="@Disabled"
-                      ReadOnly="@ReadOnly" />
+                      IsEditable="@IsEditable">
+
+            </DropDown>
         }
         else if (Field.Typ == FieldTyp.CheckBox)
         {
             <CheckBox Label="@Field.Title"
-            Description="@Field.Description"
-            Value="@( onValueBinding() )"
-            ValueChanged="@Change"
-            CssClass="@CssClass"
-            Disabled="@Disabled"
-            ReadOnly="@ReadOnly" />
+                      Description="@Field.Description"
+                      Value="@( onValueBinding() )"
+                      ValueChanged="@(async e =>{ onValueChanged(e); await Change(); await Save(); })"
+                      CssClass="@CssClass"
+                      IsEditable="@IsEditable">
+
+            </CheckBox>
         }
         else if (Field.Typ == FieldTyp.Heading)
         {
             <Heading Label="@Field.Title" ShowLabel="false"
-            Description="@Field.Description"
-            Value="@( onValueBinding() )"
-            ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
-            CssClass="@CssClass"
-            Disabled="@Disabled"
-            ReadOnly="@ReadOnly">
+                     Description="@Field.Description"
+                     Value="@( onValueBinding() )"
+                     ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
+                     CssClass="@CssClass"
+                     IsEditable="@IsEditable">
                 <Overlay>
-
-                    <button type="button"
-                            class="btn btn-sm btn-ghost-success me-2"
-                    @onclick="Save">
+                    <div class="hover pointer rounded-2 p-1 me-2" @onclick="Save">
                         <SymbolIcon Symbol="@Icon.Check" />
-                    </button>
+                    </div>
 
                 </Overlay>
             </Heading>
@@ -71,14 +67,14 @@
         else
         {
             <TextBox Label="@Field.Title"
-            Description="@Field.Description"
-            Value="@( onValueBinding() )"
-            ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
-            Type="@Field.Typ"
-            Placeholder="@Field.Placeholder"
-            CssClass="@CssClass"
-            Min="@Min" Max="@Max" Step="@Step"
-            IsEditable="@IsEditable">
+                     Description="@Field.Description"
+                     Value="@( onValueBinding() )"
+                     ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
+                     Type="@Field.Typ"
+                     Placeholder="@Field.Placeholder"
+                     CssClass="@CssClass"
+                     Min="@Min" Max="@Max" Step="@Step"
+                     IsEditable="@IsEditable">
                 <Inlay>
                     @if (Field.Typ == FieldTyp.Search)
                     {
@@ -88,11 +84,9 @@
                 <Overlay>
                     @if (Field.Typ != FieldTyp.Search)
                     {
-                        <button type="button"
-                                class="btn btn-sm btn-ghost-success me-1"
-                        @onclick="Save">
+                        <div class="hover pointer rounded-2 p-1" @onclick="Save">
                             <SymbolIcon Symbol="@Icon.Check" />
-                        </button>
+                        </div>
                     }
                 </Overlay>
             </TextBox>
@@ -154,6 +148,8 @@
         // Update
         await Context.Update(Context.Item);
 
+        msg.Publish("", BusAction.Updated, "Eintrag aktualisiert");
+
         // Events
         await ItemSaved.InvokeAsync(Context.Item);
         return Context.Item;
@@ -167,10 +163,24 @@
 
     private string onValueBinding()
     {
-
         if (Binding == ValueBindingTyp.Property)
         {
-            return Context.Item[Field.Column];
+            string val = Context.Item[Field.Column].ToSecureString();
+
+            if (Field.Typ == FieldTyp.Date)
+            {
+                val = val.ToDate();
+            }
+            else if (Field.Typ == FieldTyp.Time)
+            {
+                
+            }
+            else if (Field.Typ == FieldTyp.DateTime)
+            {
+                
+            }
+
+            return val;
         }
         else if (Binding == ValueBindingTyp.Description)
         {

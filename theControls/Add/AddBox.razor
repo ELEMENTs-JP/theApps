@@ -14,9 +14,7 @@
                       ValueChanged="@(async e => {  Value = e;  await ValueChanged.InvokeAsync(e);})"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
-                      Rows="@Rows"
-                      Disabled="@Disabled"
-                      ReadOnly="@ReadOnly">
+                      Rows="@Rows">
             </TextArea>
         }
         else if (Field.Typ == FieldTyp.DropDown)
@@ -27,9 +25,7 @@
                     Value="@( string.Empty )"
                     ValueChanged="@(async e => { Value = e; await ValueChanged.InvokeAsync(e); })"
                     Placeholder="@Field.Placeholder"
-                    CssClass="@CssClass"
-                    Disabled="@Disabled"
-                    ReadOnly="@ReadOnly">
+                    CssClass="@CssClass">
             </DropDown>
         }
         else if (Field.Typ == FieldTyp.CheckBox)
@@ -38,9 +34,7 @@
                       Description="@Field.Description"
                       Value="@( string.Empty )"
                       ValueChanged="@(async e => { Value = e; await ValueChanged.InvokeAsync(e); })"
-                      CssClass="@CssClass"
-                      Disabled="@Disabled"
-                      ReadOnly="@ReadOnly" />
+                      CssClass="@CssClass" />
         }
         else if (Field.Typ == FieldTyp.Heading)
         {
@@ -48,9 +42,7 @@
                      Description="@Field.Description"
                      Value="@( string.Empty )"
                      ValueChanged="@(async e =>{ Value = e; await ValueChanged.InvokeAsync(e); })"
-                     CssClass="@CssClass"
-                     Disabled="@Disabled"
-                     ReadOnly="@ReadOnly">
+                     CssClass="@CssClass">
  
             </Heading>
         }

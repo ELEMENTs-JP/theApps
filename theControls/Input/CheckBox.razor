@@ -5,15 +5,13 @@
     </label>
 }
 
-<div class="form-check @CssClass">
+<div class="form-check form-switch no-focus @CssClass" style="margin-left: 9px; padding-top: 9px;">
     <input id="@Id"
            name="@InputName"
            class="form-check-input"
            type="checkbox"
            checked="@IsChecked"
-           @onchange="HandleInput"
-           disabled="@Disabled"
-           readonly="@ReadOnly" />
+           @onchange="HandleInput" />
 
     @if (Inlay != null)
     {
@@ -32,7 +30,7 @@
 
 @if (!string.IsNullOrEmpty(Description))
 {
-    <div class="text-muted small border-top" style="padding-left:3px; padding-top:3px;">
+    <div class="text-muted small border-top mt-1" style="padding-left:3px; padding-top:3px;">
         @Description.ToSecureString()
     </div>
 }
@@ -65,6 +63,12 @@
     [Parameter]
     public string Label { get; set; } = string.Empty;
 
+    [Parameter]
+    public string TrueText { get; set; } = string.Empty;
+
+    [Parameter]
+    public string FalseText { get; set; } = string.Empty;
+
 
     [Parameter]
     public string Description { get; set; } = string.Empty;
@@ -87,11 +91,7 @@
 
 
     [Parameter]
-    public bool Disabled { get; set; }
-
-
-    [Parameter]
-    public bool ReadOnly { get; set; }
+    public bool IsEditable { get; set; } = true;
 
 
     private bool IsChecked

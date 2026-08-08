@@ -27,6 +27,12 @@ namespace theInfrastructure
             Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR  });
             Fields.Add(new Field() { Title = "Description", Typ = FieldTyp.TextArea, Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
             Fields.Add(new Field() { Title = "Auswahl", Typ = FieldTyp.DropDown, Column = "Auswahl", CSS = " col-12 col-md-6 col-lg-4 " });
+            Fields.Add(new Field() { Title = "Done", Typ = FieldTyp.CheckBox, Column = "Done", CSS = " col-12 col-md-6 col-lg-4 " });
+
+            Fields.Add(new Field() { Title = "Date", Typ = FieldTyp.Date, Column = "Date", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
+            Fields.Add(new Field() { Title = "Time", Typ = FieldTyp.Time, Column = "Time", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
+            Fields.Add(new Field() { Title = "DateTime", Typ = FieldTyp.DateTime, Column = "DateTime", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
+
         }
     }
 }
