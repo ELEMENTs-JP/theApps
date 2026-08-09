@@ -10,7 +10,11 @@
                ButtonText="Neu" 
                OnOKClicked="@( async e => { await OnOK(); } )">
         <ChildContent>
-            <div class="row">
+            <div class="row g-0">
+
+                <div class="col-12 p-2">
+                    <small class="text-muted small">@ItemType.Name</small>
+                </div>
 
                 <div class="col-12 p-2">
                     <TextBox Label="Titel" 
@@ -19,7 +23,7 @@
 
                 @foreach (IField field in ItemType.Fields.Where(s => s.Typ != FieldTyp.HR))
                 {
-                    <div class="col-12 p-2">
+                    <div class="col-12">
                         <AddBox Field="@field" CssClass="" Border="false"
                             ValueChanged="@( async e => { await OnChange(field, e); })" />
                     </div>
@@ -45,14 +49,18 @@
     {
         await base.OnInitializedAsync();
 
-        if (ItemType == null)
-        {
-            ItemType = ItemTypeBuilder.Create().BuildITemType("Task");
-        }
 
-        Context = new QueryContext(sql);
     }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
 
+        if (ItemType != null)
+        {
+            Context = new QueryContext(sql);
+            Context.ItemType = this.ItemType;
+        }
+    }
     private async Task OnOK()
     {
         if (Context == null)
@@ -67,14 +75,16 @@
         // Laden 
         await Context.Load(ID.ToSecureString());
 
+        // Fields 
         foreach (IDataValue dv in Values)
         {
             Context.Item[dv.Field.Column] = dv.Value.ToSecureString();    
         }
 
+        // Update 
         await Context.Update(Context.Item);
 
-        AppMessage am = new AppMessage("ID", BusAction.Updated, "Datensatz erzeugt");
+        AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
         msg.Publish(am);
     }
 

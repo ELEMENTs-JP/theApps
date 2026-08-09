@@ -38,10 +38,20 @@ builder.Services.AddScoped<IAppService>(provider =>
 {
     // Abruf des WebHostEnvironment aus dem DI-Container
     var environment = provider.GetRequiredService<IWebHostEnvironment>();
+    string rootPath = environment.ContentRootPath;
 
     // Manuelle Instanziierung und Übergabe 
-    return new AppService(environment);
+    return new AppService(environment, new SQLiteService(rootPath));
 });
+
+
+
+
+
+
+
+
+
 
 // Messaging Bus Service 
 builder.Services.AddScoped<IMessagingBusService, MessagingBusService>();

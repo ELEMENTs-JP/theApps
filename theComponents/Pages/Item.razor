@@ -41,6 +41,7 @@
         if (!string.IsNullOrEmpty(this.ID))
         {
             Context = new QueryContext(sql);
+            Context.ItemType = ItemType;
             await Context.Load(this.ID);
         }
     }

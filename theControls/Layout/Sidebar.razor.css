@@ -1,0 +1,79 @@
+
+.header {
+    height: 3.5rem;
+}
+
+
+
+.bi {
+    display: inline-block;
+    position: relative;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.75rem;
+    top: -1px;
+    background-size: cover;
+}
+
+
+.nav-item {
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+}
+
+    .nav-item:first-of-type {
+        padding-top: 1rem;
+    }
+
+    .nav-item:last-of-type {
+        padding-bottom: 1rem;
+    }
+
+    .nav-item ::deep .nav-link {
+        background: none;
+        border: none;
+        border-radius: 4px;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        line-height: 3rem;
+        width: 100%;
+    }
+
+.nav-item ::deep a.active {
+    background-color: #77777799;
+    color: #fff;
+}
+
+    .nav-item ::deep .nav-link:hover {
+        background-color: #55555599;
+        color: #fff;
+    }
+
+.nav-scrollable {
+    display: none;
+}
+
+.navbar-toggler {
+    appearance:button;
+    position:absolute;
+    top:1rem;
+    right:1rem;
+}
+.navbar-toggler:checked ~ .nav-scrollable {
+    display: block;
+}
+
+
+@media (min-width: 992px) {
+    .navbar-toggler {
+        display: none;
+    }
+
+    .nav-scrollable {
+
+        display: block;
+        height: calc(100vh - 3.5rem);
+        overflow-y: auto;
+    }
+}

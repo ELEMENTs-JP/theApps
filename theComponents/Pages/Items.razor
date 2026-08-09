@@ -1,5 +1,54 @@
-﻿@page "/Items"
+﻿@page "/Items/{IT}"
+@using theControls.Add
+@using theControls.Tables
+@using theDatabase
+@using theInfrastructure
+
+@inject ISqlDatabaseService sql
+
+<div class="container-flex">
+
+    <div class="row">
+        <div class="col">
+
+        </div>
+        <div class="col">
+
+        </div>
+        <div class="col-auto">
+            <AddArea ItemType="@Context.ItemType" />
+        </div>
+    </div>
+    <Table Context="@Context">
+    </Table>
+</div>
 
 @code {
 
+    [Parameter]
+    public string IT { get; set; } = string.Empty;
+
+    IQueryContext Context { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Context = new QueryContext(sql);
+        Context.ItemType = new ItemTypeBuilder().BuildITemType(IT);
+        await Context.Search();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            // this.StateHasChanged();
+        }
+    }
 }

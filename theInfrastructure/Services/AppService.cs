@@ -15,33 +15,46 @@ namespace theInfrastructure
     {
         // Fields 
         IWebHostEnvironment Environment;
+        ISqlDatabaseService SqlService;
 
         // Properties 
         public List<IApp> AllApps { get; set; } = new();
         
-
-
-
         // CTR 
         public AppService()
         {
             InitApps();
         }
-        public AppService(IWebHostEnvironment env)
+        public AppService(IWebHostEnvironment env, ISqlDatabaseService sql)
         {
             Environment = env;
+            SqlService = sql;
+
             InitApps();
         }
 
-        private void InitApps()
+        private async void InitApps()
         {
             AppBuilder builder = new AppBuilder();
 
             AllApps.Clear();
 
-            AllApps.Add(builder.BuildApp("Task"));
+            AllApps.Add(new AppFarm());
+            AllApps.Add(new AppTask());
 
-            
+            IQueryParameter qp = new QueryParameter();
+            qp.ItemType = "App";
+            qp.MasterGUID = SqlService.MasterGUID;
+
+            IQueryResult result = await SqlService.GetItems(qp);
+            List<IDTO> apps = result.Items;
+
+            foreach (IDTO app in apps)
+            {
+                IApp template = new App_Template(app.Title);
+                AllApps.Add(template);
+            }
+
         }
     }
 }

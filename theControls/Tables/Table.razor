@@ -56,20 +56,21 @@
         bus.OnMessage += OnMessageIncome;
     }
 
-    private void OnMessageIncome(AppMessage msg)
+    private async void OnMessageIncome(AppMessage msg)
     {
-        if (msg.Action == BusAction.Selected)
+        if (msg.Action == BusAction.Refresh)
         {
+            await Context.Search();
+
+            await InvokeAsync(this.StateHasChanged);
+
             // Logik: Prüfen ob Wechsel erlaubt...
             bool canChange = true;
 
             if (canChange)
             {
-                // Wir nutzen den Reply-Kanal des Senders für eine Antwort-Message
+                
                 msg.Reply?.Invoke(new AppMessage(msg.Id, BusAction.ResponseOk));
-
-                // Jetzt eigene Daten laden basierend auf msg.Id
-                // ... LoadDetails(msg.Id);
             }
         }
     }

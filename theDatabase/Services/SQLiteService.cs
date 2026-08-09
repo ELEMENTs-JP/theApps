@@ -19,6 +19,7 @@ namespace theDatabase
         public static string Database { get; set; } = "Default.db";
         public static string ContentRootPath = string.Empty;
         public static Guid GeneralMasterGUID = new Guid("30C61E17-DBD3-4FF1-8BD6-612834D328D9");
+        public Guid MasterGUID { get { return SQLiteService.GeneralMasterGUID; } }
 
         // Properties 
         public Guid SystemGUID {

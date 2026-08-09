@@ -33,6 +33,7 @@ namespace theDatabase
 
             IQueryParameter qp = QueryParameter.Default(title);
             Guid gid = qp.GUID;
+            qp.ItemType = ItemType.Name;
             await sqlService.Create(qp);
             return gid;
         }
@@ -41,12 +42,16 @@ namespace theDatabase
             if (sqlService == null)
                 return;
 
+            if (ItemType == null)
+                return;
+
             IsLoading = true;
 
             Items.Clear();
             IQueryParameter query = new QueryParameter();
             query.Matchcode = string.Empty;
             query.MasterGUID = SQLiteService.GeneralMasterGUID;
+            query.ItemType = ItemType.Name;
             IQueryResult result = await sqlService.GetItems(query);
             Items = result.Items;
 
@@ -70,6 +75,7 @@ namespace theDatabase
                 query.Matchcode = string.Empty;
                 query.MasterGUID = SQLiteService.GeneralMasterGUID;
                 query.GUID = new Guid(GUID);
+                query.ItemType = this.ItemType.Name;
                 IQueryResult result = await sqlService.GetItem(query);
 
                 if (result.Items[0] != null)

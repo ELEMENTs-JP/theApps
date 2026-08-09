@@ -1,0 +1,43 @@
+﻿@inject NavigationManager nm
+
+
+    <div class="dropdown-center " role="group">
+
+        <div class="pointer hover rounded-2 p-1 px-2" data-bs-toggle="dropdown">
+            <small class="text-muted"><i class="ti ti-chevron-down"></i></small>
+        </div>
+
+        <div class="dropdown-menu" style="min-width:15rem;">
+
+
+
+            <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
+                 @onclick="DeleteItem">
+                <i class="bi bi-x-lg text-danger fw-bold pe-2"></i>
+                endgültig löschen...
+            </div>
+
+        </div>
+    </div>
+
+
+@code {
+
+
+    [Parameter]
+    public IItemType ItemType { get; set; } // Injectiopn
+
+    [Parameter]
+    public IQueryContext Context { get; set; } // Injection
+
+
+    private async Task DeleteItem()
+    {
+        if (Context != null)
+        {
+            await Context.Delete(Context.Item);
+
+            nm.NavigateTo("Items/" + ItemType.Name, false);
+        }
+    }
+}

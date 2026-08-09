@@ -1,0 +1,48 @@
+﻿@using theComponents.CMS
+@using theControls.Modal
+@using theControls.Add
+@inherits LayoutComponentBase
+
+
+<div class="frame">
+    <div class="sidebar">
+
+        <Sidebar>
+            <MenuContent>
+                <AppSelector />
+            </MenuContent>
+        </Sidebar>
+    </div>
+
+    <main class="w-100">
+        <div class="header border-bottom hstack gap-3">
+            <AddArea ItemType="@( new ItemTypeBuilder().BuildITemType("Task"))" />
+
+
+            <div class="ms-auto me-auto"></div>
+            <a href="/Setup">Database</a>
+            <div class="ms-auto"></div>
+            <ThemeSwitch />
+        </div>
+
+        <article class="p-3 bg-cover">
+            @Body
+        </article>
+    </main>
+</div>
+
+
+
+<StaticPositionContainer Position="@StaticPosition.MessageBox">
+
+    <InfoBox FrameCSS="m-2" CloseAfterSeconds="true" Seconds="5"
+             ShowCloseButton="true" />
+
+</StaticPositionContainer>
+
+@code {
+
+    
+   
+
+}

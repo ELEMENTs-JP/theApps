@@ -29,6 +29,7 @@ namespace theInfrastructure
     {
         bool DatabaseExists { get; }
         string DefaultDatabasePath { get; }
+        Guid MasterGUID { get; }
         IQueryResult CreateDatabase();
         IQueryResult DeleteDatabase();
 

@@ -47,7 +47,7 @@ namespace theDatabase
             object[] parameters = Array.Empty<object>();
 
             // Query 
-            string sql = "SELECT * FROM tbl_CON_Content";
+            string sql = "SELECT * FROM tbl_CON_Content WHERE ItemType = '"+ query.ItemType +"'";
 
             // Matchcode 
             if (!string.IsNullOrEmpty(query.Matchcode))

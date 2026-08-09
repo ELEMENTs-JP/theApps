@@ -53,7 +53,7 @@ namespace theInfrastructure
     public enum BusAction
     {
         // Requests / Benachrichtigungen
-        Selected, Updated, Deleted, RequestData,
+        Refresh,  Selected, Updated, Deleted, RequestData,
         // Responses
         ResponseOk, ResponseError, ResponseData
     }
