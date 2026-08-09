@@ -1,22 +1,32 @@
 ﻿@page "/Item/{IT}/{ID}"
 
+@using theComponents.Items
+@using theControls.Add
 @using theControls.Edit
+@using theControls.Layout
+@using theControls.Tables
 @using theDatabase
 @using theInfrastructure
 
 @inject ISqlDatabaseService sql
 
-<div class="container">
+
 
     @if (ItemType != null)
     {
         @if (Context != null)
         {
-            <EditArea ItemType="@this.ItemType" Context="@Context" />
+            <EditArea ItemType="@this.ItemType" ID="@ID" />
+
+            @foreach (IItemType it in this.ItemType.ItemTypes)
+            {
+                <div class="my-3"></div>
+                <RelatedItemsComp ItemType="@it" RelatedItem="@Context.Item" />
+            }
         }
     }
 
-</div>
+
 
 @code {
 
@@ -27,7 +37,9 @@
     public string IT { get; set; } = string.Empty;
 
     private IItemType ItemType { get; set; } = null;
+
     private IQueryContext Context { get; set; } = null;
+    private IQueryContext RelatedContext { get; set; } = null;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -35,7 +47,7 @@
 
         if (!string.IsNullOrEmpty(this.IT))
         {
-            ItemType = new Factory().BuildItemType(this.IT);
+            ItemType = new Factory(sql).BuildItemType(this.IT);
         }
 
         if (!string.IsNullOrEmpty(this.ID))
@@ -45,5 +57,5 @@
             await Context.Load(this.ID);
         }
     }
-  
+
 }

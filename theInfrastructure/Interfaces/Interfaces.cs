@@ -23,6 +23,7 @@ namespace theInfrastructure
     }
     public interface IAppService
     {
+        IApp App { get; set; }
         List<IApp> AllApps { get; set; }
     }
     public interface ISqlDatabaseService

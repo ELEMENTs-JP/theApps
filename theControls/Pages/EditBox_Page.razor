@@ -13,7 +13,7 @@
         @foreach (FieldTyp field in Enum.GetValues(typeof(FieldTyp)))
         {
             <div class="col-12 col-md-6 col-lg-4 p-2">
-                <EditBox Field="@( new Factory().BuildField(field))"
+                <EditBox Field="@( new Factory(sql).BuildField(field))"
                          Items="@( ((field == FieldTyp.DropDown) ? this.Items : null) )" />
             </div>
         }

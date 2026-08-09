@@ -9,7 +9,7 @@
    display:none;
 }
 
-.nav-scrollable {
+.scrollable {
     display: none;
 }
 
@@ -28,7 +28,7 @@
         display: none;
     }
 
-    .nav-scrollable {
+    .scrollable {
         display: block;
         height: calc(100vh - var(--tsp-header-height) - var(--tsp-footer-height));
         overflow-y: auto;

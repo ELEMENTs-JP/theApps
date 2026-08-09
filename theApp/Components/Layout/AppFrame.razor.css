@@ -17,6 +17,12 @@ html, body {
 .main {
     flex: 1;
     min-width: 0;
+    
+}
+main:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
 }
 
 .footer {

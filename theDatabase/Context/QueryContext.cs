@@ -11,9 +11,9 @@ namespace theDatabase
 
         ISqlDatabaseService sqlService = null;
         public IItemType ItemType { get; set; } = null;
+        public IDTO RelatedItem { get; set; } = null;
         public IDTO Item { get; set; } = null;
         public List<IDTO> Items { get; set; } = new List<IDTO>();
-
         public QueryContext()
         {
 
@@ -89,6 +89,29 @@ namespace theDatabase
             {
                 
             }
+        }
+        public async Task RelatedItems()
+        {
+            if (sqlService == null)
+                return;
+
+            if (ItemType == null)
+                return;
+
+            if (RelatedItem == null)
+                return;
+
+            IsLoading = true;
+
+            Items.Clear();
+            IQueryParameter query = new QueryParameter();
+            query.Matchcode = string.Empty;
+            query.MasterGUID = SQLiteService.GeneralMasterGUID;
+            query.ItemType = ItemType.Name;
+            IQueryResult result = await sqlService.GetRelatedItems(RelatedItem);
+            Items = result.Items;
+
+            IsLoading = false;
         }
         public async Task Delete(IDTO dto)
         {

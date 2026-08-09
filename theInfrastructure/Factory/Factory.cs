@@ -7,10 +7,13 @@ namespace theInfrastructure
 {
     public class Factory
     {
-        public Factory() { }
+        ISqlDatabaseService sqlService;
+        public Factory(ISqlDatabaseService sql) 
+        {
+            sqlService = sql;
+        }
 
-        public static Factory Create() { return new Factory(); }
-
+        // App 
         public IApp BuildApp(string name)
         {
             string className = $"App_{name}";
@@ -26,6 +29,7 @@ namespace theInfrastructure
             return (IApp)Activator.CreateInstance(type)!;
         }
 
+        // ItemType 
         public IItemType BuildItemType(string name)
         {
             string className = $"ItemType_{name}";
@@ -40,7 +44,19 @@ namespace theInfrastructure
 
             return (IItemType)Activator.CreateInstance(type)!;
         }
+        public List<IItemType> InjectItemTypes(IApp app)
+        {
+            List<IItemType> itemTypes = new();
 
+            if (app.GetType() == typeof(App_Template))
+            {
+
+            }
+
+            return itemTypes;
+        }
+
+        // Fields 
         public IField BuildField(FieldTyp fieldTyp)
         {
             foreach (FieldTyp field in Enum.GetValues(typeof(FieldTyp)))
@@ -58,6 +74,16 @@ namespace theInfrastructure
 
             return null;
         }
+        public List<IField> InjectFields(IItemType itemType)
+        {
+            List<IField> fields = new();
 
+            if (itemType.GetType() == typeof(ItemType_Template))
+            {
+
+            }
+
+            return fields;
+        }
     }
 }

@@ -3,17 +3,15 @@
 @if (Context != null)
 {
     <tr class="pointer"
-        @onclick="@( e => { nm.NavigateTo("/Item/Task/" + Item.GUID, false); })">
+        @onclick="@( e => { nm.NavigateTo("/Item/" + Context.ItemType.Name + "/" + Item.GUID, false); })">
 
-        <td class="text-muted">@(Item.ID.ToSecureString())</td>
-        <td class="fw-bold">@(Item.Title.ToSecureString())</td>
+        <td class="text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</td>
+        <td class="fw-bold" title="@Item.ItemType">@(Item.Title.ToSecureString())</td>
 
         @foreach (IField col in Context.ItemType.Fields.Where(f => f.Typ != FieldTyp.HR))
         {
             <td class="@Helper.GetClassByDevice(col) align-items-center">
-
                 <TableCell Value="@(Item[col.Column].ToSecureString())" Field="@col" />
-
             </td>
         }
     </tr>

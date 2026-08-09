@@ -8,10 +8,12 @@ namespace theInfrastructure
     {
         bool IsLoading { get; set; } 
         IItemType ItemType { get; set; }
+        IDTO RelatedItem { get; set; }
         IDTO Item { get; set; }
         List<IDTO> Items { get; set; }
         Task Search();
         Task Load(string ID);
+        Task RelatedItems();
         void Init(ISqlDatabaseService sql);
         Task<Guid> Create(string title);
         Task Delete(IDTO dto);

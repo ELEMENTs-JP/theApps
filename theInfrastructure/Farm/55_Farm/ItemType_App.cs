@@ -11,15 +11,17 @@ namespace theInfrastructure
             Name = "App";
             Init();
         }
-        public List<IField> Fields { get; set; } = new();
 
         public override void Init()
         {
-            base.Init(); 
+            base.Init();
+
+            // ItemTypes 
+            ItemTypes = new List<IItemType>();
+            ItemTypes.Add(new ItemType_ItemType());
 
             // Fields 
             Fields = new List<IField>();
-
             Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR  });
             Fields.Add(new Field() { Title = "Description", Typ = FieldTyp.TextArea, Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
         }

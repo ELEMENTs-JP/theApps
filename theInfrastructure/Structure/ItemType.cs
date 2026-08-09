@@ -9,6 +9,7 @@ namespace theInfrastructure
     public interface IItemType
     {
         string Name { get; set; }
+        List<IItemType> ItemTypes { get; set; }
         List<IField> Fields { get; set; }
         void Init();
     }
@@ -19,7 +20,11 @@ namespace theInfrastructure
         { 
         
         }
+
+
+        public List<IItemType> ItemTypes { get; set; } = new();
         public List<IField> Fields { get; set; } = new();
+
 
         public virtual void Init()
         { 

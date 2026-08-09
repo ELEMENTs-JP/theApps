@@ -2,31 +2,42 @@
 @using theControls.Modal
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
-  
+
 @if (ItemType != null)
 {
     <ModalForm Title="neuen Eintrag erstellen"
                ShowTitleInButton="false"
-               ButtonText="Neu" 
+               ButtonText="Neu"
                OnOKClicked="@( async e => { await OnOK(); } )">
         <ChildContent>
-            <div class="row g-0">
-
-                <div class="col-12 p-2 px-3 mb-3 border-bottom">
-                    <div class="text-muted fw-bold">@ItemType.Name</div>
+            <div class="d-flex flex-row border-bottom mb-3">
+                <div class="vstack p-2 px-3">
+                    <div class="text-secondary fw-bold">@ItemType.Name</div>
                     <small class="text-muted small">Erstellt einen neuen ItemType</small>
                 </div>
+                @if (RelatedItem != null)
+                {
+                    <div class="vr"></div>
+                    <div class="vstack p-2 px-3">
+                        <div class="text-secondary fw-bold">@RelatedItem.Title</div>
+                        <small class="text-muted small">Verbundener Eintrag vom Typ: @RelatedItem.ItemType</small>
+                    </div>
+                }
+                <div class="flex-fill vstack p-2 px-3">
+                </div>
+            </div>
 
+            <div class="row g-0">
                 <div class="col-12 p-2">
-                    <TextBox Label="Titel" 
-                        ValueChanged="@( async e => { Title = e; })" />
+                    <TextBox Label="Titel"
+                             ValueChanged="@( async e => { Title = e; })" />
                 </div>
 
                 @foreach (IField field in ItemType.Fields.Where(s => s.Typ != FieldTyp.HR))
                 {
                     <div class="col-12">
                         <AddBox Field="@field" CssClass="" Border="false"
-                            ValueChanged="@( async e => { await OnChange(field, e); })" />
+                                ValueChanged="@( async e => { await OnChange(field, e); })" />
                     </div>
                 }
             </div>
@@ -36,21 +47,23 @@
 
 @code {
 
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    [Parameter]
+    public IDTO RelatedItem { get; set; }
+
     private IQueryContext Context { get; set; }
 
-    // Fields 
+    // Fields
     private string Title { get; set; } = string.Empty;
 
     private List<IDataValue> Values { get; set; } = new();
 
-    [Parameter]
-    public IItemType ItemType { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
-
     }
     protected override async Task OnParametersSetAsync()
     {
@@ -70,20 +83,26 @@
         if (string.IsNullOrEmpty(Title))
             return;
 
-        // Erstellen 
+        // Erstellen
         Guid ID = await Context.Create(Title);
 
-        // Laden 
+        // Laden
         await Context.Load(ID.ToSecureString());
 
-        // Fields 
+        // Fields
         foreach (IDataValue dv in Values)
         {
-            Context.Item[dv.Field.Column] = dv.Value.ToSecureString();    
+            Context.Item[dv.Field.Column] = dv.Value.ToSecureString();
         }
 
-        // Update 
+        // Update
         await Context.Update(Context.Item);
+
+        // Related Item
+        if (RelatedItem != null)
+        {
+            await Context.Assign(RelatedItem);
+        }
 
         AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
         msg.Publish(am);

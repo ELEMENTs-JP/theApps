@@ -1,10 +1,11 @@
 ﻿@using theControls.Icons
 @using theInfrastructure
 @inject IMessagingBusService bus
+@inject ISqlDatabaseService sql
 
 @inject NavigationManager nm
 
-@if (Context != null)
+@if (Context != null && ItemType != null)
 {
     @if (Context.IsLoading == true)
     {
@@ -49,11 +50,37 @@
 @code {
 
     [Parameter]
-    public IQueryContext Context { get; set; }
+    public IItemType ItemType { get; set; }
+
+    [Parameter]
+    public IDTO RelatedItem { get; set; }
+
+    IQueryContext Context { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         bus.OnMessage += OnMessageIncome;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        // Context 
+        Context = new QueryContext(sql);
+        Context.ItemType = ItemType;
+
+        if (RelatedItem != null)
+        {
+            // Related Items 
+            Context.RelatedItem = RelatedItem;
+            await Context.RelatedItems();
+        }
+        else
+        {
+            await Context.Search();
+        }
+
     }
 
     private async void OnMessageIncome(AppMessage msg)

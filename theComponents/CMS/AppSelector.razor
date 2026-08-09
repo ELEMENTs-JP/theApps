@@ -2,33 +2,28 @@
 @inject IAppService app
 @inject NavigationManager nm
 
-
 <div class="border-top border-bottom p-2">
 
-    <div class="text-muted small fw-bold ps-2">
-        Apps
-    </div>
-
+    <div class="text-muted small fw-bold ps-2">Apps</div>
     <div class="row g-0">
         @foreach (IApp app in app.AllApps)
         {
             <div class="col-12 p-1">
-                <div class="rounded-2 hover pointer p-1 px-2 fw-bold" @onclick="@( async e => { await OnAppSelect(app); })">
+                <div class="rounded-2 hover pointer p-1 px-2 fw-bold" 
+                @onclick="@( async e => { await OnAppSelect(app); })">
                     @app.Name
                 </div>
             </div>
         }
     </div>
 
-
-    <div class="text-muted small fw-bold ps-2">
-        Listen
-    </div>
+    <div class="text-muted small fw-bold ps-2">Listen</div>
     <div class="row g-0">
         @foreach (IItemType it in this.ItemTypes)
         {
             <div class="col-12 p-1">
-                <div class="rounded-2 hover pointer p-1 px-2 fw-bold" @onclick="@( async e => { await OnItemType(it); })">
+                <div class="rounded-2 hover pointer p-1 px-2 fw-bold" 
+                @onclick="@( async e => { await OnItemType(it); })">
                     @it.Name
                 </div>
             </div>
@@ -38,16 +33,14 @@
 
 @code {
 
-    private IApp SelectedApp { get; set; }
-
     private List<IItemType> ItemTypes { get; set; } = new();
 
-    private async Task OnAppSelect(IApp app)
+    private async Task OnAppSelect(IApp _app)
     {
-        SelectedApp = app;
+        app.App = _app;
 
         ItemTypes.Clear();
-        ItemTypes.AddRange(SelectedApp.ItemTypes);
+        ItemTypes.AddRange(app.App.ItemTypes);
 
         await Task.CompletedTask;    
     }

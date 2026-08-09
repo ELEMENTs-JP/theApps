@@ -1,0 +1,42 @@
+﻿@using theControls.Add
+@using theControls.Layout
+@using theControls.Tables
+@inject ISqlDatabaseService sql
+
+@if (ItemType != null)
+{
+    <Frame>
+        <Header>
+            <h1 class="display-6">@ItemType.Name</h1>
+        </Header>
+        <Related>
+            <AddArea ItemType="@ItemType" />
+        </Related>
+        <Content>
+            <DataTable ItemType="@this.ItemType">
+
+            </DataTable>
+        </Content>
+    </Frame>
+}
+
+@code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            // this.StateHasChanged();
+        }
+    }
+}

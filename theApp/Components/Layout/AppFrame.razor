@@ -2,6 +2,7 @@
 @using theControls.Add
 @using theControls.Modal
 
+@inject ISqlDatabaseService sql
 @inherits LayoutComponentBase
 
 <div class="frame">
@@ -13,9 +14,9 @@
         </Sidebar>
     </div>
 
-    <main class="w-100 vstack">
+    <main class="w-100 d-flex flex-column">
         <div class="header hstack px-3">
-            <AddArea ItemType="@( new Factory().BuildItemType("Task"))" />
+            <AddArea ItemType="@( new Factory(sql).BuildItemType("Task"))" />
 
             <div class="ms-auto me-auto"></div>
             <a href="/Setup">Database</a>
@@ -23,9 +24,9 @@
             <ThemeSwitch />
         </div>
 
-        <article class="p-3 bg-cover">
+        <div class="p-3 scrollable flex-fill">
             @Body
-        </article>
+        </div>
         <div class="footer">
 
         </div>

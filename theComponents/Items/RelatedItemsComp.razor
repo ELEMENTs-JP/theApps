@@ -1,0 +1,56 @@
+﻿@using theControls.Add
+@using theControls.Layout
+@using theControls.Tables
+@inject ISqlDatabaseService sql
+
+@if (RelatedItem != null)
+{
+    <Frame Border="true" Rounded="true">
+        <Header>
+            @if (ItemType != null)
+            {
+                <h1 class="h1">@ItemType.Name</h1>
+            }
+        </Header>
+        <Related>
+            <AddArea ItemType="@ItemType" RelatedItem="@RelatedItem" />
+        </Related>
+        <Content>
+            <DataTable ItemType="@ItemType" />
+        </Content>
+    </Frame>
+}
+
+ 
+
+@code {
+    IQueryContext Context { get; set; }
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    [Parameter]
+    public IDTO RelatedItem { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Context = new QueryContext(sql);
+        Context.ItemType = ItemType;
+        await Context.Search();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            // this.StateHasChanged();
+        }
+    }
+}
