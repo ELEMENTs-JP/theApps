@@ -35,7 +35,7 @@
 
         if (!string.IsNullOrEmpty(this.IT))
         {
-            ItemType = new ItemTypeBuilder().BuildITemType(this.IT);
+            ItemType = new Factory().BuildItemType(this.IT);
         }
 
         if (!string.IsNullOrEmpty(this.ID))

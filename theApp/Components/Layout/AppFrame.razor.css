@@ -11,7 +11,7 @@ html, body {
 }
 
 .sidebar {
-
+    border-right: 1px solid var(--tblr-border-color);
 }
 
 .main {
@@ -19,13 +19,15 @@ html, body {
     min-width: 0;
 }
 
-
-
-.header {
-    height: 3.5rem;
-    align-items: center;
+.footer {
+    display: none;
 }
 
+.header {
+    height: var(--tsp-header-height);
+    align-items: center;
+    border-bottom: 1px solid var(--tblr-border-color);
+}
 
 @media (min-width: 992px) {
     .frame {
@@ -35,5 +37,9 @@ html, body {
     .sidebar {
         width: 250px;
         flex-shrink: 0;
+    }
+    .footer {
+        display: initial;
+        height: var(--tsp-footer-height);
     }
 }

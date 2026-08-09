@@ -1,18 +1,27 @@
 :root {
     --tsp-hover: #77777711;
     --tsp-hover-light: #cccccc11;
+    --tsp-header-height: 3.5rem;
+    --tsp-footer-height: 1.5rem;
 }
 
 
 html, body {
-/*    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+    /*    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
     height: 100vh;
     overflow: hidden;
 }
 
-.pointer {
-    cursor:pointer;
+a {
+    color: #aaaaaa;
 }
+
+    
+
+.pointer {
+    cursor: pointer;
+}
+
 .hover:hover {
     background-color: var(--tsp-hover) !important;
     transition: background-color 0.25s ease;

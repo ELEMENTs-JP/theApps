@@ -3,6 +3,18 @@
     
 }
 
+
+
+[data-bs-theme=light] {
+
+}
+
+[data-bs-theme=dark] {
+    --tblr-body-bg: #151925;
+}
+
+
+
 .form-label {
     padding-left: 9px !important;
     margin-bottom: 3px;

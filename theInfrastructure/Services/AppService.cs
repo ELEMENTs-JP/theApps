@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using theInfrastructure;
 
 namespace theInfrastructure
 {
@@ -35,12 +34,12 @@ namespace theInfrastructure
 
         private async void InitApps()
         {
-            AppBuilder builder = new AppBuilder();
+            Factory builder = new Factory();
 
             AllApps.Clear();
 
-            AllApps.Add(new AppFarm());
-            AllApps.Add(new AppTask());
+            AllApps.Add(new App_Farm());
+            AllApps.Add(new App_Task());
 
             IQueryParameter qp = new QueryParameter();
             qp.ItemType = "App";

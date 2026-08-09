@@ -5,9 +5,9 @@ using System.Text;
 namespace theInfrastructure
 {
     // App 
-    public class AppTask : BaseApp, IApp
+    public class App_Task : BaseApp, IApp
     {
-        public AppTask()
+        public App_Task()
         { 
             Name = "Task-Management";
 

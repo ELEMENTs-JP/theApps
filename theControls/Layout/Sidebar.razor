@@ -1,17 +1,23 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing
 
-<div class="header ps-3 navbar align-items-center">
+<div class="d-flex flex-column">
+    <div class="header p-3 align-items-center">
         <a class="h1" href="">theApp</a>
-</div>
-<input type="checkbox" class="navbar-toggler" />
+    </div>
+    <input type="checkbox" class="navbar-toggler" />
 
-<div id="navigation" class="nav-scrollable">
-    <nav class="nav flex-column">
-        @MenuContent
-    </nav>
+    <div class="nav-scrollable flex-fill">
+        <nav class="nav flex-column">
+            @MenuContent
+        </nav>
+    </div>
+
+    <div class="footer">
+
+    </div>
 </div>
 
-@code{
+@code {
 
     [Parameter]
     public RenderFragment MenuContent { get; set; }

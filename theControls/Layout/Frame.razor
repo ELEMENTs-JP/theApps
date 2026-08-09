@@ -1,0 +1,79 @@
+﻿
+
+<div class="@GetCssClass()">
+
+    <div class="d-flex flex-row px-3 border-bottom">
+
+        @if (Icon.HasContent())
+        {
+            <div class="p-1">
+                @Icon
+            </div>
+        }
+
+        @if (Header.HasContent())
+        {
+            <div class="flex-fill p-1 vstack">
+                @Header
+            </div>
+        }
+
+        @if (Related.HasContent())
+        {
+            <div class="p-1">
+                @Related
+            </div>
+        }
+    </div>
+
+    @if (Content.HasContent())
+    {
+        <div class="row g-0 p-1">
+            <div class="col-12 p-1">
+                @Content
+            </div>
+        </div>
+    }
+
+</div>
+
+@code {
+
+    [Parameter]
+    public bool Border { get; set; } = false;
+
+    [Parameter]
+    public bool Rounded { get; set; } = false;
+
+    [Parameter]
+    public RenderFragment Icon { get; set; }
+
+    [Parameter]
+    public RenderFragment Header { get; set; }
+
+    [Parameter]
+    public RenderFragment Related { get; set; }
+
+    [Parameter]
+    public RenderFragment Content { get; set; }
+
+    private string GetCssClass()
+    {
+        string css = string.Empty;
+
+        css = " p-2 ";
+
+        if (Border)
+        {
+            css += " border ";
+        }
+
+        if (Rounded)
+        {
+            css += " rounded-2 ";
+        }
+
+        return css;
+    }
+
+}

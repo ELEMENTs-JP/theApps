@@ -5,9 +5,9 @@ using System.Text;
 namespace theInfrastructure
 {
     // App 
-    public class AppFarm : BaseApp, IApp
+    public class App_Farm : BaseApp, IApp
     {
-        public AppFarm()
+        public App_Farm()
         { 
             Name = "Farm Management";
 

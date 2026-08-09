@@ -39,7 +39,7 @@
         await base.OnParametersSetAsync();
 
         Context = new QueryContext(sql);
-        Context.ItemType = new ItemTypeBuilder().BuildITemType(IT);
+        Context.ItemType = new Factory().BuildItemType(IT);
         await Context.Search();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)

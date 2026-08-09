@@ -1,46 +1,41 @@
-﻿@using theControls.Modal
+﻿@using theControls.Layout
+@using theControls.Modal
 @using theControls.Pages
 @using theInfrastructure
 
 @if (ItemType != null && Context != null && Context.Item != null)
 {
-    <div class="border rounded-2 p-2">
 
-        <div class="row g-0 px-2 border-bottom">
-            <div class="col p-2">
-                <EditBox Field="@( new FieldBuilder().BuildField(FieldTyp.Heading) )" 
-                        Binding="ValueBindingTyp.Title" Context="@Context" Border="false" />
-            </div>
-            <div class="col-auto p-2">
-                <ContextMenu Context="@Context" ItemType="@ItemType" />
-            </div>
-            <div class="col-12 px-3 pb-2" style="margin-top:-18px;">
-                <small class="text-muted small">@Context.ItemType.Name</small>
-            </div>
-        </div>
+    <Frame Border="true" Rounded="true">
+        <Header>
+            <EditBox Field="@( new Factory().BuildField(FieldTyp.Heading))"
+                     Binding="ValueBindingTyp.Title" Context="@Context" Border="false" />
+            <small class="text-muted small ps-2">@Context.ItemType.Name</small>
+        </Header>
+        <Related>
+            <ContextMenu Context="@Context" ItemType="@ItemType" />
+        </Related>
+        <Content>
+            <div class="row g-0">
 
-        <div class="row g-0">
-
-            @foreach (IField field in ItemType.Fields)
-            {
-                @if (field.Typ == FieldTyp.HR)
+                @foreach (IField field in ItemType.Fields)
                 {
-                    <div class="hr-text px-3">@field.Title</div>    
+                    @if (field.Typ == FieldTyp.HR)
+                    {
+                        <div class="hr-text px-3">@field.Title</div>
+                    }
+                    else
+                    {
+                        <div class="@( field.CSS + " p-2 " )">
+                            <EditBox Field="@field" Context="@Context"
+                                     IsEditable="@field.IsEditable" Border="false" />
+                        </div>
+                    }
                 }
-                else
-                {
-                    <div class="@( field.CSS + " p-2 " )">
-                        <EditBox Field="@field" Context="@Context" 
-                                IsEditable="@field.IsEditable" Border="false" />
-                    </div>
-                }
-            }
-        </div>
-
-    </div>
+            </div>
+        </Content>
+    </Frame>
 }
-
-
 
 
 @code {
