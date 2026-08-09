@@ -2,47 +2,29 @@
 @using theInfrastructure
 @inject IMessagingBusService bus
 @inject ISqlDatabaseService sql
+@implements IAsyncDisposable
 
 @inject NavigationManager nm
 
 @if (Context != null && ItemType != null)
 {
-    @if (Context.IsLoading == true)
+    @if (Context.ItemType != null && Context.ItemType.Fields != null)
     {
-        <h1 class="placeholder-glow">
-            <span class="placeholder col-12"></span>
-        </h1>
-    }
-    else if (!Context.Items.Any())
-    {
-        <div class="text-center my-5 text-secondary">
-            <SymbolIcon Symbol="Icon.Empty" />
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <TableHeader Context="@Context" />
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (IDTO item in Context.Items)
+                    {
+                        <TableRow Context="@Context" Item="@item" />
+                    }
+                </tbody>
+            </table>
         </div>
-    }
-    else
-    {
-        @if (Context.ItemType != null && Context.ItemType.Fields != null)
-        {
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <TableHeader Context="@Context" />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (IDTO item in Context.Items)
-                        {
-                            <TableRow Context="@Context" Item="@item" />
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-        else
-        {
-            <div>Context, ItemType oder Fields are empty</div>
-        }
     }
 }
 
@@ -66,15 +48,15 @@
     {
         await base.OnParametersSetAsync();
 
-        // Context 
+        // Context
         Context = new QueryContext(sql);
         Context.ItemType = ItemType;
 
         if (RelatedItem != null)
         {
-            // Related Items 
+            // Related Items
             Context.RelatedItem = RelatedItem;
-            await Context.RelatedItems();
+            await Context.RelatedItems(ItemType.Name);
         }
         else
         {
@@ -96,9 +78,27 @@
 
             if (canChange)
             {
-                
+
                 msg.Reply?.Invoke(new AppMessage(msg.Id, BusAction.ResponseOk));
             }
         }
     }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            ItemType = null;
+            RelatedItem = null;
+
+            ((IDisposable)Context).Dispose();
+            Context = null;
+
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+
 }

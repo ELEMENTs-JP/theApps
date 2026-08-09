@@ -13,18 +13,21 @@
 
 
     @if (ItemType != null)
+{
+    @if (Context != null)
     {
-        @if (Context != null)
-        {
+        <div class="container">
+
             <EditArea ItemType="@this.ItemType" ID="@ID" />
 
             @foreach (IItemType it in this.ItemType.ItemTypes)
             {
                 <div class="my-3"></div>
-                <RelatedItemsComp ItemType="@it" RelatedItem="@Context.Item" />
+                <RelatedItemsComp ItemType="@it" RelatedItem="@RelatedItem" />
             }
-        }
+        </div>
     }
+}
 
 
 
@@ -40,6 +43,7 @@
 
     private IQueryContext Context { get; set; } = null;
     private IQueryContext RelatedContext { get; set; } = null;
+    private IDTO RelatedItem { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -47,7 +51,8 @@
 
         if (!string.IsNullOrEmpty(this.IT))
         {
-            ItemType = new Factory(sql).BuildItemType(this.IT);
+            Factory f = new Factory(sql);
+            ItemType = await f.BuildItemType(this.IT);
         }
 
         if (!string.IsNullOrEmpty(this.ID))
@@ -55,6 +60,8 @@
             Context = new QueryContext(sql);
             Context.ItemType = ItemType;
             await Context.Load(this.ID);
+
+            RelatedItem = Context.Item;
         }
     }
 

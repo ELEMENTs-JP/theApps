@@ -274,13 +274,12 @@ namespace theDatabase
         {
             IQueryResult info = new QueryResult { Status = "OK", Message = "" };
 
-            string itemType = "Task";
             if (query.GUID == Guid.Empty)
             {
                 query.GUID = Guid.NewGuid();
             }
             Guid master = GeneralMasterGUID;
-            string id = SqlHelper.GenerateID(itemType, master);
+            string id = SqlHelper.GenerateID(query.ItemType, master);
 
             // Datensatz 
             IQueryParameter input = new QueryParameter
@@ -478,7 +477,7 @@ namespace theDatabase
         }
 
         // Relation 
-        public async Task<IQueryResult> GetRelatedItems(IDTO dto, string Typ = "")
+        public async Task<IQueryResult> GetRelatedItems(IDTO dto, string ItemType, string Typ = "Association")
         {
             IQueryResult info = new QueryResult { Status = "OK", Message = "" };
 
@@ -486,15 +485,6 @@ namespace theDatabase
             {
                 await using (SQLiteContext ctx = GetContext())
                 {
-
-                    //var query = from content in ctx.tbl_CON_Content
-                    //            where ctx.tbl_TEC_Relation.Any(relation =>
-                    //                (relation.ParentGUID == dto.GUID && relation.ChildGUID == content.GUID) || 
-                    //                (relation.ChildGUID == dto.GUID && relation.ParentGUID == content.GUID)   
-                    //            )
-                    //            select content;
-
-
                     var query = from content in ctx.tbl_CON_Content
                                 where ctx.tbl_TEC_Relation.Any(relation =>
                                     (
@@ -502,6 +492,7 @@ namespace theDatabase
                                         (relation.ChildGUID == dto.GUID && relation.ParentGUID == content.GUID)
                                     )
                                     && (relation.RelationType.Equals(Typ))
+                                    && (content.ItemType.Equals(ItemType))
                                 )
                                 select content;
 

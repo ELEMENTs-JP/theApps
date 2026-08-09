@@ -61,7 +61,7 @@ namespace theInfrastructure
 
             foreach (IDTO app in apps)
             {
-                IApp template = new App_Template(app.Title);
+                IApp template = new App_Template(app, SqlService);
                 AllApps.Add(template);
             }
 

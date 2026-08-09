@@ -42,7 +42,7 @@ namespace theInfrastructure
 
         Task<IQueryResult> Assign(IDTO parent, IDTO child);
         Task<IQueryResult> Remove(IDTO parent, IDTO child);
-        Task<IQueryResult> GetRelatedItems(IDTO dto, string Typ = "");
+        Task<IQueryResult> GetRelatedItems(IDTO dto, string ItemType, string Typ = "Association");
 
     }
     public interface IQueryResult

@@ -9,14 +9,14 @@
         <Header>
             @if (ItemType != null)
             {
-                <h1 class="h1">@ItemType.Name</h1>
+                <h3 class="h3">@ItemType.Name</h3>
             }
         </Header>
         <Related>
             <AddArea ItemType="@ItemType" RelatedItem="@RelatedItem" />
         </Related>
         <Content>
-            <DataTable ItemType="@ItemType" />
+            <DataTable ItemType="@ItemType" RelatedItem="@RelatedItem" />
         </Content>
     </Frame>
 }
@@ -24,7 +24,7 @@
  
 
 @code {
-    IQueryContext Context { get; set; }
+
 
     [Parameter]
     public IItemType ItemType { get; set; }
@@ -40,9 +40,6 @@
     {
         await base.OnParametersSetAsync();
 
-        Context = new QueryContext(sql);
-        Context.ItemType = ItemType;
-        await Context.Search();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

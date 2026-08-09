@@ -1,5 +1,6 @@
 
 
+<!-- Button -->
 <div class="@( GetButtonGroupClass() + " " + FrameCSS )"
      data-bs-toggle="modal" title="@ButtonToolTip"
      data-bs-target="@( "#modal_" + modalGUID.ToString() )">
@@ -27,6 +28,7 @@
         </div>
     }
 
+    
     <div id="@( "Toggle_Button_" + modalGUID )" class="@( ButtonCSS + " position-relative " )" >
 
         @if (!string.IsNullOrEmpty(ButtonText))
@@ -53,6 +55,7 @@
             </span>
         }
     </div>
+
 </div>
 
 <!-- Modal -->
@@ -83,12 +86,12 @@
                 @ChildContent
             </div>
             <div class="modal-footer">
-                <div class="row g-o">
+                <div class="row g-0 align-items-center">
                     <div class="col">
                         @FooterContent
                     </div>
                     <div class="col-auto">
-                        <div class="btn btn-secondary" data-bs-dismiss="modal" @onclick="cancelclick">@CancelTitle</div>
+                        <div class="hover pointer p-2 px-3 rounded me-3" data-bs-dismiss="modal" @onclick="cancelclick">@CancelTitle</div>
                     </div>
                     <div class="col-auto">
                         <div class="btn btn-primary" data-bs-dismiss="modal" @onclick="okclick">@OKTitle</div>
@@ -138,7 +141,7 @@
     public string FormCSS { get; set; } = "modal fade"; // modal modal-blur fade
 
     [Parameter]
-    public string ButtonCSS { get; set; } = " btn btn-sm px-2 ";
+    public string ButtonCSS { get; set; } = " hover pointer rounded-2 p-2 ";
 
     [Parameter]
     public string ButtonText { get; set; } = string.Empty;

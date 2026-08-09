@@ -16,7 +16,8 @@
 
     <main class="w-100 d-flex flex-column">
         <div class="header hstack px-3">
-            <AddArea ItemType="@( new Factory(sql).BuildItemType("Task"))" />
+
+            <AddArea ItemType="@ItemType" />
 
             <div class="ms-auto me-auto"></div>
             <a href="/Setup">Database</a>
@@ -44,7 +45,15 @@
 
 @code {
 
-    
-   
+    IItemType ItemType { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Factory f = new Factory(sql);
+        ItemType = await f.BuildItemType("Task");
+    }
+
 
 }

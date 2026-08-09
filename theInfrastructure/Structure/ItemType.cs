@@ -11,7 +11,7 @@ namespace theInfrastructure
         string Name { get; set; }
         List<IItemType> ItemTypes { get; set; }
         List<IField> Fields { get; set; }
-        void Init();
+        Task Init();
     }
     public class  BaseItemType : IItemType
     {
@@ -21,14 +21,13 @@ namespace theInfrastructure
         
         }
 
-
         public List<IItemType> ItemTypes { get; set; } = new();
         public List<IField> Fields { get; set; } = new();
 
+        public virtual async Task Init()
+        {
+            // ItemTypes 
 
-        public virtual void Init()
-        { 
-        
         }
     }
 }

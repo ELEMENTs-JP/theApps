@@ -10,7 +10,18 @@
 }
 
 [data-bs-theme=dark] {
-    --tblr-body-bg: #151925;
+    --tblr-body-bg: #292b33;
+    --tblr-bg-surface: #24272d;
+}
+
+
+.modal-footer {
+    background:none !important;
+}
+
+.markdown > table thead th, .table thead th {
+    background: none !important;
+    border-bottom-width: 1px !important;
 }
 
 

@@ -25,7 +25,8 @@
     {
         await base.OnParametersSetAsync();
 
-        ItemType = new Factory(sql).BuildItemType(IT);
+        Factory f = new Factory(sql);
+        ItemType = await f.BuildItemType(IT);
     }
 
 }

@@ -13,9 +13,9 @@ namespace theInfrastructure
         }
         public List<IField> Fields { get; set; } = new();
 
-        public override void Init()
+        public override async Task Init()
         {
-            base.Init(); 
+            await base.Init(); 
 
             // Fields 
             Fields = new List<IField>();

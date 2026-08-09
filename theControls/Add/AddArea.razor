@@ -29,7 +29,7 @@
 
             <div class="row g-0">
                 <div class="col-12 p-2">
-                    <TextBox Label="Titel"
+                    <TextBox Label="Titel" Value="@Title"
                              ValueChanged="@( async e => { Title = e; })" />
                 </div>
 
@@ -104,8 +104,16 @@
             await Context.Assign(RelatedItem);
         }
 
+        // Clean 
+        Title = string.Empty;
+        Values.Clear();
+
+        // Message 
         AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
         msg.Publish(am);
+
+        // Visual Update 
+        await InvokeAsync(this.StateHasChanged);
     }
 
     private async Task OnChange(IField field, string Value)

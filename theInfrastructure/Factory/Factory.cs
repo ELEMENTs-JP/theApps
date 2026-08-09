@@ -30,7 +30,7 @@ namespace theInfrastructure
         }
 
         // ItemType 
-        public IItemType BuildItemType(string name)
+        public async Task<IItemType> BuildItemType(string name)
         {
             string className = $"ItemType_{name}";
 
@@ -40,7 +40,19 @@ namespace theInfrastructure
                                                      typeof(IItemType).IsAssignableFrom(t));
 
             if (type == null)
-                throw new ArgumentException($"Kein ItemType für '{name}' gefunden.");
+            {
+                IQueryParameter qp = new QueryParameter();
+                qp.ItemType = "ItemType";
+                qp.MasterGUID = sqlService.MasterGUID;
+                IQueryResult result = await sqlService.GetItems(qp);
+                
+                IDTO dto = result.Items.FirstOrDefault(se => se.Title == name);
+                if (dto != null)
+                { 
+                    IItemType template = new ItemType_Template(dto, sqlService);
+                    return template;
+                }
+            }
 
             return (IItemType)Activator.CreateInstance(type)!;
         }

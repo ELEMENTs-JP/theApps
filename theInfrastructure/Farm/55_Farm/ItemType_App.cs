@@ -12,9 +12,9 @@ namespace theInfrastructure
             Init();
         }
 
-        public override void Init()
+        public override async Task Init()
         {
-            base.Init();
+            await base.Init();
 
             // ItemTypes 
             ItemTypes = new List<IItemType>();

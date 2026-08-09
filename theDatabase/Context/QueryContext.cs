@@ -5,7 +5,7 @@ using theInfrastructure;
 
 namespace theDatabase
 {
-    public class QueryContext : IQueryContext
+    public class QueryContext : IQueryContext, IDisposable
     {
         public bool IsLoading { get; set; } = false;
 
@@ -90,7 +90,7 @@ namespace theDatabase
                 
             }
         }
-        public async Task RelatedItems()
+        public async Task RelatedItems(string itemType)
         {
             if (sqlService == null)
                 return;
@@ -108,7 +108,7 @@ namespace theDatabase
             query.Matchcode = string.Empty;
             query.MasterGUID = SQLiteService.GeneralMasterGUID;
             query.ItemType = ItemType.Name;
-            IQueryResult result = await sqlService.GetRelatedItems(RelatedItem);
+            IQueryResult result = await sqlService.GetRelatedItems(RelatedItem, itemType);
             Items = result.Items;
 
             IsLoading = false;
@@ -151,6 +151,22 @@ namespace theDatabase
 
             IQueryResult result = await sqlService.Remove(this.Item, dto);
 
+        }
+
+        // Dispose
+        public void Dispose()
+        {
+            try
+            {
+                ItemType = null;
+                RelatedItem = null;
+                Item = null;
+                Items = null;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+            }
         }
     }
 }

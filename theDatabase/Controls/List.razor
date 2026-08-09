@@ -193,8 +193,8 @@
         if (Context.Item != null)
         {
             IQueryParameter query = new QueryParameter();
-            IQueryResult result = await sql.GetRelatedItems(Context.Item);
-            RelatedItems = result.Items;
+            // IQueryResult result = await sql.GetRelatedItems(Context.Item);
+            // RelatedItems = result.Items;
         }
     }
     private async Task Assign(IDTO dto)

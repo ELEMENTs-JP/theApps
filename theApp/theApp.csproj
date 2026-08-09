@@ -14,4 +14,8 @@
     <ProjectReference Include="..\theInfrastructure\theInfrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Database\" />
+  </ItemGroup>
+
 </Project>

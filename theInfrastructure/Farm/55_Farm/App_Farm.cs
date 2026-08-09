@@ -14,6 +14,7 @@ namespace theInfrastructure
             // ItemTypes 
             this.ItemTypes.Add(new ItemType_App());
             this.ItemTypes.Add(new ItemType_ItemType());
+            this.ItemTypes.Add(new ItemType_Field());
         }
 
       

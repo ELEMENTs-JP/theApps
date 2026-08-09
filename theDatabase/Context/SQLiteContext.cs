@@ -67,10 +67,10 @@ namespace theDatabase
                 {
                     builder.ToJson();
                 });
-                entity.OwnsMany(e => e.History, builder =>
-                {
-                    builder.ToJson();
-                });
+                //entity.OwnsMany(e => e.History, builder =>
+                //{
+                //    builder.ToJson();
+                //});
 
                 entity.OwnsOne(x => x.Metadata, builder =>
                 {

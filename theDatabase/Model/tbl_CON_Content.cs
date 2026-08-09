@@ -71,7 +71,6 @@ namespace theDatabase
             }
         }
         
-        // History 
-        public List<ItemHistory> History { get; set; } = new List<ItemHistory>();
+
     }
 }

@@ -13,7 +13,7 @@ namespace theInfrastructure
         List<IDTO> Items { get; set; }
         Task Search();
         Task Load(string ID);
-        Task RelatedItems();
+        Task RelatedItems(string itemType);
         void Init(ISqlDatabaseService sql);
         Task<Guid> Create(string title);
         Task Delete(IDTO dto);
