@@ -18,7 +18,7 @@ Welcome to your new app.
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateTask;
-        var token = authState.User.FindFirst("CustomToken")?.Value;
+        var token = authState.User.FindFirst("SecureToken")?.Value;
         // Lade Daten mit diesem Token...
     }
 }

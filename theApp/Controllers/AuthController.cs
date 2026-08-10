@@ -16,7 +16,7 @@ public class AuthController : ControllerBase
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, username),
-                new Claim("CustomToken", "STARK-VERSCHLUESSELTES-TOKEN-123")
+                new Claim("SecureToken", "STARK-VERSCHLUESSELTES-TOKEN-123")
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

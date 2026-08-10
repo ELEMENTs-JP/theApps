@@ -49,9 +49,12 @@ namespace theInfrastructure
 
             AllApps.Clear();
 
+            // Default Apps 
             AllApps.Add(new App_Farm());
+            AllApps.Add(new App_Security());
             AllApps.Add(new App_Task());
 
+            // Individuall Apps 
             IQueryParameter qp = new QueryParameter();
             qp.ItemType = "App";
             qp.MasterGUID = SqlService.MasterGUID;
