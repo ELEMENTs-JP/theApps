@@ -69,7 +69,16 @@
     {
         if (msg.Action == BusAction.Refresh)
         {
-            await Context.Search();
+            if (RelatedItem != null)
+            {
+                // Related Items
+                Context.RelatedItem = RelatedItem;
+                await Context.RelatedItems(ItemType.Name);
+            }
+            else
+            {
+                await Context.Search();
+            }
 
             await InvokeAsync(this.StateHasChanged);
 
@@ -78,7 +87,6 @@
 
             if (canChange)
             {
-
                 msg.Reply?.Invoke(new AppMessage(msg.Id, BusAction.ResponseOk));
             }
         }
@@ -88,11 +96,16 @@
     {
         try
         {
+            bus.OnMessage -= OnMessageIncome;
+
             ItemType = null;
             RelatedItem = null;
 
-            ((IDisposable)Context).Dispose();
-            Context = null;
+            if (Context != null)
+            {
+                ((IDisposable)Context).Dispose();
+                Context = null;
+            }
 
         }
         catch (Exception ex)

@@ -1,4 +1,5 @@
-﻿@using theComponents.CMS
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using theComponents.CMS
 @using theControls.Add
 @using theControls.Modal
 
@@ -15,13 +16,30 @@
     </div>
 
     <main class="w-100 d-flex flex-column">
-        <div class="header hstack px-3">
+        <div class="header hstack px-3 bg-surface">
 
             <AddArea ItemType="@ItemType" />
 
             <div class="ms-auto me-auto"></div>
             <a href="/Setup">Database</a>
-            <div class="ms-auto"></div>
+            
+            <div class="ms-auto me-auto"></div>
+
+            <AuthorizeView>
+                <Authorized>
+                    <form action="/api/auth/logout" method="post">
+                        <AntiforgeryToken />
+                        <button type="submit" class="hover pointer rounded p-1 px-1 border-top my-2 text-center bg-danger text-white border-0 w-100">
+                            Abmelden
+                        </button>
+                    </form>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/Login">Login</a>
+                </NotAuthorized>
+            </AuthorizeView>
+            <div class="ms-auto me-auto"></div>
+
             <ThemeSwitch />
         </div>
 
@@ -29,7 +47,6 @@
             @Body
         </div>
         <div class="footer">
-
         </div>
     </main>
 </div>

@@ -14,9 +14,12 @@
     --tblr-bg-surface: #24272d;
 }
 
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+    line-height: initial !important;
+}
 
 .modal-footer {
-    background:none !important;
+    background: none !important;
 }
 
 .markdown > table thead th, .table thead th {
@@ -49,3 +52,7 @@
     flex: 0 0 auto;
     width: 6.25%;
 }
+
+
+
+

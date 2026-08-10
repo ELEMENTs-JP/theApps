@@ -37,7 +37,7 @@
         {
             await Context.Delete(Context.Item);
 
-            nm.NavigateTo("Items/" + ItemType.Name, true);
+            nm.NavToLibrary(ItemType.Name);
         }
     }
 }

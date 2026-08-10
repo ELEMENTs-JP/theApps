@@ -6,6 +6,7 @@ namespace theInfrastructure
 {
     public interface IQueryContext
     {
+        Guid ID { get; set; }
         bool IsLoading { get; set; } 
         IItemType ItemType { get; set; }
         IDTO RelatedItem { get; set; }

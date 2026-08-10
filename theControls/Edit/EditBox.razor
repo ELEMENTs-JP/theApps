@@ -1,7 +1,7 @@
 ﻿@using theControls.Icons
 @using theControls.Input
 @inject IMessagingBusService msg
-
+@implements IAsyncDisposable
 
 @if (Field != null && Context != null && Context.Item != null)
 {
@@ -9,9 +9,8 @@
 
         @if (Field.Typ == FieldTyp.TextArea)
         {
-            <TextArea Label="@Field.Title"
-                      Description="@Field.Description"
-                      Value="@( onValueBinding() )"
+            <TextArea @key="@( "TextArea-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
+                      Label="@Title" Description="@Description" Value="@Value"
                       ValueChanged="@(async e => { onValueChanged(e); await Change(); })"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
@@ -27,9 +26,8 @@
         }
         else if (Field.Typ == FieldTyp.DropDown)
         {
-            <DropDown Label="@Field.Title"
-                      Description="@Field.Description"
-                      Value="@( onValueBinding() )"
+            <DropDown @key="@( "DropDown-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
+                      Label="@Title" Description="@Description" Value="@Value"
                       ValueChanged="@(async e =>{ onValueChanged(e); await Change(); await Save(); })"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
@@ -39,9 +37,8 @@
         }
         else if (Field.Typ == FieldTyp.CheckBox)
         {
-            <CheckBox Label="@Field.Title"
-                      Description="@Field.Description"
-                      Value="@( onValueBinding() )"
+            <CheckBox @key="@( "CheckBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
+                      Label="@Title" Description="@Description" Value="@Value"
                       ValueChanged="@(async e =>{ onValueChanged(e); await Change(); await Save(); })"
                       CssClass="@CssClass"
                       IsEditable="@IsEditable">
@@ -50,9 +47,8 @@
         }
         else if (Field.Typ == FieldTyp.Heading)
         {
-            <Heading Label="@Field.Title" ShowLabel="false"
-                     Description="@Field.Description"
-                     Value="@( onValueBinding() )"
+            <Heading @key="@( "Heading-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
+                     Label="@Title" ShowLabel="false" Description="@Description" Value="@Value"
                      ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
                      CssClass="@CssClass"
                      IsEditable="@IsEditable">
@@ -66,9 +62,8 @@
         }
         else
         {
-            <TextBox Label="@Field.Title"
-                     Description="@Field.Description"
-                     Value="@( onValueBinding() )"
+            <TextBox @key="@( "TextBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
+                     Label="@Title" Description="@Description" Value="@Value"
                      ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
                      Type="@Field.Typ"
                      Placeholder="@Field.Placeholder"
@@ -96,6 +91,11 @@
 }
 
 @code {
+
+    private string Title { get; set; } = string.Empty;
+    private string Description { get; set; } = string.Empty;
+    private string Value { get; set; } = string.Empty;
+
 
     [Parameter]
     public List<IDTO> Items { get; set; } = new();
@@ -126,6 +126,7 @@
 
     [Parameter]
     public string? Step { get; set; }
+
     [Parameter]
     public int Rows { get; set; } = 4;
 
@@ -141,6 +142,16 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Title = Field.Title;
+        Description = Field.Description;
+
+        Value = onValueBinding();
     }
 
     private async Task<IDTO> Save()
@@ -173,11 +184,11 @@
             }
             else if (Field.Typ == FieldTyp.Time)
             {
-                
+
             }
             else if (Field.Typ == FieldTyp.DateTime)
             {
-                
+
             }
 
             return val;
@@ -214,5 +225,30 @@
     [Parameter]
     public EventCallback<IDTO> ItemSaved { get; set; }
 
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (Items != null)
+            {
+                Items.Clear();
+                Items = null;
+            }
 
+            if (Field != null)
+            {
+                Field = null;
+            }
+
+            if (Context != null)
+            {
+                ((IDisposable)Context).Dispose();
+                Context = null;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
 }

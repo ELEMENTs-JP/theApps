@@ -13,6 +13,14 @@ namespace theInfrastructure
 {
     public static class Helper
     {
+        public static void NavToItem(this NavigationManager nm, string ItemType, Guid GUID)
+        {
+            nm.NavigateTo("/Item/" + ItemType + "/" + GUID.ToString(), false);
+        }
+        public static void NavToLibrary(this NavigationManager nm, string ItemType)
+        {
+            nm.NavigateTo("/Items/" + ItemType, false);
+        }
         public static string GetClassByDevice(IField field)
         {
 

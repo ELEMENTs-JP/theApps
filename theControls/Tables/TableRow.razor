@@ -3,7 +3,7 @@
 @if (Context != null)
 {
     <tr class="pointer"
-        @onclick="@( e => { nm.NavigateTo("/Item/" + Context.ItemType.Name + "/" + Item.GUID, true); })">
+        @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
 
         <td class="text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</td>
         <td class="fw-bold" title="@Item.ItemType">@(Item.Title.ToSecureString())</td>

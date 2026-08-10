@@ -1,17 +1,19 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing
 
 <div class="d-flex flex-column">
-    <div class="header p-3 align-items-center">
-        <a class="h1" href="">theApp</a>
+    <div class="header p-3 align-items-center bg-surface">
+        <div class="h1">theApp</div>
     </div>
-    <input type="checkbox" class="navbar-toggler" />
 
     <div class="scrollable flex-fill">
-        <nav class="nav flex-column">
+        <nav class="flex-column">
             @MenuContent
         </nav>
     </div>
 
+    <div class="form-check form-switch no-focus togglerPos">
+        <input class="form-check-input toggler" type="checkbox" />
+    </div>
     <div class="footer">
 
     </div>

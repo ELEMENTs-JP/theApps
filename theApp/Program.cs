@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using theApp.Components;
 using theDatabase;
 using theInfrastructure;
@@ -17,6 +18,9 @@ builder.Services.AddServerSideBlazor()
             options.DetailedErrors = true;
         }
     });
+
+// Controllers für Security API 
+builder.Services.AddControllers();
 
 // Database Service 
 builder.Services.AddScoped<ISqlDatabaseService>(provider =>
@@ -46,9 +50,30 @@ builder.Services.AddScoped<IAppService>(provider =>
 
 
 
+// A valid antiforgery token was not provided with the request. Add an antiforgery token, or disable antiforgery validation for this endpoint.
 
+// --- 1. Cookie-Authentifizierung konfigurieren
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "MeinAppAuthCookie";
+        options.LoginPath = "/Login"; // Wohin bei @attribute [Authorize]
 
+        // DYNAMISCHE ANPASSUNG:
+        // Im Development-Mode erlauben wir Cookies über HTTP.
+        // In Produktion erzwingen wir Secure (HTTPS).
+        options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+            ? CookieSecurePolicy.SameAsRequest
+            : CookieSecurePolicy.Always;
 
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromHours(12);
+    });
+
+builder.Services.AddHttpContextAccessor(); // Wichtig für den Zugriff auf den User
+// --- 1. Cookie-Authentifizierung konfigurieren
+
+builder.Services.AddCascadingAuthenticationState();
 
 
 
@@ -77,6 +102,12 @@ app.MapRazorComponents<App>()
    .AddInteractiveServerRenderMode()
    .AddAdditionalAssemblies(typeof(theDatabase.Controls.DatabaseSetup).Assembly,
                                 typeof(theComponents.Pages.Item).Assembly,
-                                typeof(theControls.Edit.EditBox).Assembly); 
+                                typeof(theControls.Edit.EditBox).Assembly);
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+// 2. Controller-Routen nach app.Build() mappen:
+app.MapControllers();
 
 app.Run();

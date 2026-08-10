@@ -7,6 +7,7 @@ namespace theDatabase
 {
     public class QueryContext : IQueryContext, IDisposable
     {
+        public Guid ID { get; set; } = Guid.NewGuid();
         public bool IsLoading { get; set; } = false;
 
         ISqlDatabaseService sqlService = null;

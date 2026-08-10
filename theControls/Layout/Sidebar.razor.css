@@ -13,18 +13,21 @@
     display: none;
 }
 
-.navbar-toggler {
-    appearance: button;
+.togglerPos {
     position: absolute;
     top: 1rem;
     right: 1rem;
 }
-    .navbar-toggler:checked ~ .nav-scrollable {
-        display: block;
-    }
+.toggler {
+    
+}
+
+.form-check:has(.toggler:checked) + .scrollable {
+    display: block !important;
+}
 
 @media (min-width: 992px) {
-    .navbar-toggler {
+    .toggler {
         display: none;
     }
 

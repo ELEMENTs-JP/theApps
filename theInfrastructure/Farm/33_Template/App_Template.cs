@@ -16,6 +16,7 @@ namespace theInfrastructure
             this.Item = Item;
             // Metadata 
             this.Name = Item.Title;
+            this.Group = Item["Group"].ToSecureString();
 
             Init();
         }

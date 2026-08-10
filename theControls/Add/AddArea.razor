@@ -2,6 +2,7 @@
 @using theControls.Modal
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
+@implements IAsyncDisposable
 
 @if (ItemType != null)
 {
@@ -122,4 +123,23 @@
         Values.AddOrUpdate(val);
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            ItemType = null;
+            RelatedItem = null;
+
+            if (Context != null)
+            {
+                ((IDisposable)Context).Dispose();
+                Context = null;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
 }

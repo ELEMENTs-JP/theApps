@@ -3,13 +3,15 @@
 @using theControls.Pages
 @using theInfrastructure
 @inject ISqlDatabaseService sql
+@implements IAsyncDisposable
+
 
 @if (ItemType != null && !string.IsNullOrEmpty(ID))
 {
     <Frame Border="true" Rounded="true">
         <Header>
-            <EditBox Field="@( new Factory(sql).BuildField(FieldTyp.Heading))"
-                     Binding="ValueBindingTyp.Title" Context="@Context" Border="false" />
+            <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)" Field="@TitleField" Binding="ValueBindingTyp.Title"
+                    Context="@Context" Border="false" />
             <small class="text-muted small ps-2">@Context.ItemType.Name</small>
         </Header>
         <Related>
@@ -26,7 +28,8 @@
                     else
                     {
                         <div class="@( field.CSS + " p-2 " )">
-                            <EditBox Field="@field" Context="@Context"
+                            <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column + "-" + Context.Item.GUID)" 
+                                    Field="@field" Context="@Context"
                                      IsEditable="@field.IsEditable" Border="false" />
                         </div>
                     }
@@ -46,14 +49,37 @@
     public string ID { get; set; } // Injectiopn
 
     IQueryContext Context { get; set; }
+    IField TitleField { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
 
+        // Field 
+        TitleField = new Factory(sql).BuildField(FieldTyp.Heading);
+
+        // Context 
         Context = new QueryContext(sql);
         Context.ItemType = ItemType;
         await Context.Load(ID);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            ItemType = null;
+
+            if (Context != null)
+            {
+                ((IDisposable)Context).Dispose();
+                Context = null;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
     }
   
 }
