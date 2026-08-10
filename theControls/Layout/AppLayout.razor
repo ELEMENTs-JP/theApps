@@ -1,0 +1,78 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager nm
+@attribute [Authorize]
+
+
+  <AuthorizeView>
+      <Authorized>
+        <div class="frame">
+            <div class="sidebar">
+                <Sidebar>
+                    <MenuContent>
+                        @Menu
+                    </MenuContent>
+                </Sidebar>
+            </div>
+            <main class="w-100 d-flex flex-column">
+                <div class="header hstack px-3 bg-surface">
+                    @Header
+                </div>
+                <div class="p-3 scrollable flex-fill">
+                    @Body
+                </div>
+                <div class="footer">
+                    @Footer
+                </div>
+            </main>
+        </div>
+
+        <StaticPositionContainer Position="@StaticPosition.MessageBox">
+
+            <InfoBox FrameCSS="m-2" CloseAfterSeconds="true" Seconds="5"
+                     ShowCloseButton="true" />
+
+        </StaticPositionContainer>
+      </Authorized>
+      <NotAuthorized>
+          
+          <div class="hover pointer rounded-2 p-2 m-5" @onclick="@( e => { nm.NavigateTo("/Login", false); } )">
+              go to Login
+          </div>
+
+      </NotAuthorized>
+  </AuthorizeView>
+                
+
+
+
+
+
+@code {
+
+    [Parameter]
+    public RenderFragment Menu { get; set; }
+
+    [Parameter]
+    public RenderFragment Header { get; set; }
+
+    [Parameter]
+    public RenderFragment Body { get; set; }
+
+    [Parameter]
+    public RenderFragment Footer { get; set; }
+
+    [CascadingParameter] 
+    private Task<AuthenticationState> AuthStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateTask;
+        var token = authState.User.FindFirst("SecureToken")?.Value;
+
+        string val = token;
+        // Lade Daten mit diesem Token...
+    }
+
+
+}

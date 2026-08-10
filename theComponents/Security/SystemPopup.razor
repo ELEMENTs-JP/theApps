@@ -1,0 +1,134 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using theControls.Icons
+@using theControls.Layout
+
+
+<div id="@( "frame_popup_" + ID )" class="@(" " +
+                       ((Centered) ? " dropdown-center " : " dropdown ")) ">
+
+    <div id="@( "link_popup_" + ID )" class="@(" d-flex p-1 align-items-center " + ButtonCssClass
+                                   + ((TextColorReset) ? " text-reset " : "") )  " data-bs-toggle="dropdown">
+
+        @if (!string.IsNullOrEmpty(ImageUrl))
+        {
+            <span id="@( "avatar_popup_" + ID )" class="avatar avatar-sm"
+                  style="background-image: url(@ImageUrl)"></span>
+        }
+
+        @*  d-none d-xl-block   *@
+        <div id="@( "head_popup_" + ID )" class="rounded-2 hover pointer p-1">
+            <SymbolIcon Symbol="Icon.Config" />
+        </div>
+
+        @if (ShowDropDownToggle)
+        {
+            <div class="@( "pointer hover rounded-2 px-1 pe-2  dropdown-toggle")">
+            </div>
+        }
+    </div>
+
+    <div id="@( "body_popup_" + ID )" class="@( "dropdown-menu " + DropDownPosition + DropDownArrow )" style="@MenuStyle">
+        <div class="row g-0">
+            <div class="col">
+                @if (ShowTitleInPopupMenu)
+                {
+                    <div class="px-2 pt-2 fw-bold">@Title</div>
+                }
+                @if (ShowSubTitleInPopupMenu == true)
+                {
+                    <div class="px-2 mb-1 small text-muted text-truncate-container-2 overflow-hidden">@SubTitle</div>
+                }
+            </div>
+        </div>
+
+        @if (ShowTitleInPopupMenu)
+        {
+            <div class="dropdown-divider"></div>
+        }
+
+        <div class="@( " px-2 " + " overflow-y-auto " )" style="@( ContentStyle + " " + MaxHeightCSS )">
+            <AuthorizeView>
+                <Authorized>
+
+                    <ThemeSwitch />
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/Setup">Database</a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <form action="/api/auth/logout" method="post">
+                        <AntiforgeryToken />
+                        <button type="submit" class="hover pointer rounded p-1 text-center bg-danger text-white border-0 w-100">
+                            Abmelden
+                        </button>
+                    </form>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/Login">Login</a>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string ID { get; set; } = "" + Guid.NewGuid();
+
+    [Parameter]
+    public bool Centered { get; set; } = false;
+
+    [Parameter]
+    public string HtmlIcon { get; set; } = "";
+
+    [Parameter]
+    public string ImageUrl { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Title { get; set; } = "the APP";
+
+    [Parameter]
+    public string TitleCSS { get; set; } = "  ";
+
+    [Parameter]
+    public bool ShowTitle { get; set; } = true;
+
+    [Parameter]
+    public bool ShowTitleInPopupMenu { get; set; } = true;
+
+    [Parameter]
+    public bool TextColorReset { get; set; } = true;
+
+    [Parameter]
+    public string SubTitle { get; set; } = "";
+
+    [Parameter]
+    public bool ShowSubTitle { get; set; } = false;
+
+    [Parameter]
+    public bool ShowSubTitleInPopupMenu { get; set; } = true;
+
+    [Parameter]
+    public string MenuStyle { get; set; } = "min-width:13rem;";
+
+    [Parameter]
+    public string MaxHeightCSS { get; set; } = "max-height:44rem;";
+
+    [Parameter]
+    public bool ShowDropDownToggle { get; set; } = false;
+
+    [Parameter]
+    public string DropDownPosition { get; set; } = " dropdown-menu-end ";
+
+    [Parameter]
+    public string DropDownArrow { get; set; } = "  "; // dropdown-menu-arrow
+
+    [Parameter]
+    public string ButtonCssClass { get; set; } = "  ";
+
+    [Parameter]
+    public string ContentStyle { get; set; } = "  ";
+
+}

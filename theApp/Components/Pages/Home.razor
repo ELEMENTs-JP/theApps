@@ -1,8 +1,6 @@
 ﻿@page "/"
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.Authorization
 @using theControls.Edit
-@attribute [Authorize]
+
 
 <PageTitle>Home</PageTitle>
 
@@ -12,13 +10,5 @@ Welcome to your new app.
 
 
 @code {
-    // In OnInitialized ist der User SOFORT verfügbar (Pre-rendering tauglich!)
-    [CascadingParameter] private Task<AuthenticationState> AuthStateTask { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthStateTask;
-        var token = authState.User.FindFirst("SecureToken")?.Value;
-        // Lade Daten mit diesem Token...
-    }
+    
 }

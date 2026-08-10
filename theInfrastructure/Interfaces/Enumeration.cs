@@ -33,6 +33,7 @@ namespace theInfrastructure
         Search = 2,
         Check = 3,
         Menu = 4,
+        Config = 5,
     }
     public enum ValueBindingTyp
     { 

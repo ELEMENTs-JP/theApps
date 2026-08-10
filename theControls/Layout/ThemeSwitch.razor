@@ -1,7 +1,7 @@
 ﻿
 @inject IJSRuntime JS
 
-<button class="btn btn-icon"
+<div class="dropdown-item"
         @onclick="ToggleTheme"
         title="Design wechseln">
 
@@ -43,7 +43,7 @@
             <path d="M12 3a6 6 0 0 0 9 9A9 9 0 1 1 12 3z" />
         </svg>
     }
-</button>
+</div>
 
 @code {
     private bool _darkMode;

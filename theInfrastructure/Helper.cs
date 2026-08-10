@@ -13,6 +13,21 @@ namespace theInfrastructure
 {
     public static class Helper
     {
+        // Mail 
+        public static bool IsMailFormat(this string mail)
+        {
+            if (mail.ToLower().Contains("@".ToLower()))
+            {
+                if (mail.ToLower().Contains(".".ToLower()))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Navigation 
         public static void NavToItem(this NavigationManager nm, string ItemType, Guid GUID)
         {
             nm.NavigateTo("/Item/" + ItemType + "/" + GUID.ToString(), false);

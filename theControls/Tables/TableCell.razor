@@ -3,7 +3,11 @@
 {
     @if (Field.Typ == FieldTyp.CheckBox)
     {
-        
+
+    }
+    else if (Field.Typ == FieldTyp.Password)
+    {
+        @( "..." )    
     }
     else
     {
