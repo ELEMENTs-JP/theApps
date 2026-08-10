@@ -47,12 +47,12 @@ namespace theDatabase
             object[] parameters = Array.Empty<object>();
 
             // Query 
-            string sql = "SELECT * FROM tbl_CON_Content WHERE ItemType = '"+ query.ItemType +"'";
+            string sql = "SELECT * FROM tbl_CON_Content WHERE ItemType = '"+ query.ItemType +"' ";
 
             // Matchcode 
             if (!string.IsNullOrEmpty(query.Matchcode))
             {
-                sql += " WHERE Matchcode LIKE {0} COLLATE NOCASE";
+                sql += " AND Matchcode LIKE {0} COLLATE NOCASE ";
                 parameters = new object[] { $"%{query.Matchcode}%" };
             }
 

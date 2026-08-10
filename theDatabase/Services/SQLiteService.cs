@@ -297,10 +297,10 @@ namespace theDatabase
             {
                 CreatedAt = DateTime.Now,
                 CreatedBy = Guid.NewGuid(),
-                Creator = "JP",
+                Creator = "Batman",
                 EditedAt = DateTime.Now,
                 EditedBy = Guid.NewGuid(),
-                Editor = "JP"
+                Editor = "Batman"
             };
 
             // Query generieren
@@ -313,6 +313,10 @@ namespace theDatabase
                     await ctx.Database.ExecuteSqlAsync(fq);
                 }
 
+                // Item GUID 
+                info.GUID = query.GUID;
+
+                // Message 
                 info.Message = "Eintrag erfolgreich erstellt.";
             }
             catch (Exception ex)
@@ -582,10 +586,11 @@ namespace theDatabase
                 {
                     // check 
                     var result = await (from query in ctx.tbl_TEC_Relation
-                                        where query.ParentGUID == parent.GUID
-                                        && query.ChildGUID == child.GUID
-                                        && query.RelationType == associationType
+                                        where  (query.ParentGUID == parent.GUID && query.ChildGUID == child.GUID) ||
+                                                (query.ParentGUID == child.GUID && query.ChildGUID == parent.GUID)
                                         select query).FirstOrDefaultAsync();
+
+                                        // && query.RelationType == associationType
 
                     // does not exists 
                     if (result == null)

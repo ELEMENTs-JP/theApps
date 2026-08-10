@@ -14,13 +14,13 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <TableHeader Context="@Context" />
+                        <TableHeader Context="@Context" IsRelated="@( (RelatedItem != null))" />
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (IDTO item in Context.Items)
                     {
-                        <TableRow Context="@Context" Item="@item" />
+                        <TableRow Context="@Context" Item="@item" IsRelated="@( (RelatedItem != null) )" />
                     }
                 </tbody>
             </table>

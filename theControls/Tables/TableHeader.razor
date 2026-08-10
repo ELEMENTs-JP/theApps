@@ -10,12 +10,19 @@
         <th scope="col" class="@(  Helper.GetClassByDevice(col) )">@( col.Title)</th>
     }
 
+    @if (IsRelated)
+    {
+        <th scope="col"></th>
+    }
 }
 
 @code {
 
     [Parameter]
     public IQueryContext Context { get; set; }
+
+    [Parameter]
+    public bool IsRelated { get; set; } = false;
 
 
 }

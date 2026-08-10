@@ -9,6 +9,7 @@ namespace theDatabase
     {
         public Guid ID { get; set; } = Guid.NewGuid();
         public bool IsLoading { get; set; } = false;
+        public string Matchcode { get; set; } = string.Empty;
 
         ISqlDatabaseService sqlService = null;
         public IItemType ItemType { get; set; } = null;
@@ -50,7 +51,7 @@ namespace theDatabase
 
             Items.Clear();
             IQueryParameter query = new QueryParameter();
-            query.Matchcode = string.Empty;
+            query.Matchcode = this.Matchcode.ToSecureString();
             query.MasterGUID = SQLiteService.GeneralMasterGUID;
             query.ItemType = ItemType.Name;
             IQueryResult result = await sqlService.GetItems(query);
@@ -147,10 +148,15 @@ namespace theDatabase
             if (sqlService == null)
                 return;
 
-            if (this.Item == null)
-                return;
+            //if (this.Item != null)
+            //{ 
+            //    IQueryResult result = await sqlService.Remove(this.Item, dto);
+            //}
 
-            IQueryResult result = await sqlService.Remove(this.Item, dto);
+            if (this.RelatedItem != null)
+            {
+                IQueryResult result = await sqlService.Remove(this.RelatedItem, dto);
+            }
 
         }
 

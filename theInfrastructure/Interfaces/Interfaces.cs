@@ -50,6 +50,7 @@ namespace theInfrastructure
         string Status { get; set; }
         string Message { get; set; }
         List<IDTO> Items { get; set; }
+        Guid GUID { get; set; }
         void Validate();
     }
     public interface IDTO

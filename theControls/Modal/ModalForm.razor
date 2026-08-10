@@ -1,9 +1,12 @@
+@using theControls.Icons
 
 
 <!-- Button -->
 <div class="@( GetButtonGroupClass() + " " + FrameCSS )"
      data-bs-toggle="modal" title="@ButtonToolTip"
      data-bs-target="@( "#modal_" + modalGUID.ToString() )">
+
+
 
     @if (!string.IsNullOrEmpty(ButtonText))
     {
@@ -29,7 +32,12 @@
     }
 
     
-    <div id="@( "Toggle_Button_" + modalGUID )" class="@( ButtonCSS + " position-relative " )" >
+    <div id="@( "Toggle_Button_" + modalGUID )" class="@( ButtonCSS + " position-relative " )">
+
+        @if (Icon.HasContent())
+        {
+            @Icon
+        }
 
         @if (!string.IsNullOrEmpty(ButtonText))
         {
@@ -59,7 +67,7 @@
 </div>
 
 <!-- Modal -->
-<div class="@FormCSS" id="@( "modal_" + modalGUID.ToString() )" tabindex="-1" 
+<div class="@FormCSS" id="@( "modal_" + modalGUID.ToString() )" tabindex="-1"
      aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false">
     <div class="@( ModalCSS + " " + SetSize() )">
         <div class="modal-content rounded-2 border-start border-end border-bottom border-top-primary-3">
@@ -79,7 +87,7 @@
                 @if (RelatedContent.HasContent())
                 {
                     <div>
-                        @RelatedContent   
+                        @RelatedContent
                     </div>
                 }
 
@@ -154,6 +162,10 @@
 
     [Parameter]
     public string ModalCSS { get; set; } = "modal-dialog modal-dialog-centered modal-dialog-scrollable";
+
+
+    [Parameter]
+    public RenderFragment Icon { get; set; }
 
     [Parameter]
     public RenderFragment RelatedContent { get; set; }
@@ -241,11 +253,16 @@
 
     private string SetSize()
     {
-        if (Size == ModalFormSize.Small) { return "modal-sm"; }
-        else if (Size == ModalFormSize.Large) { return "modal-lg"; }
-        else if (Size == ModalFormSize.Extra) { return "modal-xl"; }
-        else if (Size == ModalFormSize.Full) { return " modal-fullscreen "; }
-        else { return ""; }
+        if (Size == ModalFormSize.Small)
+        { return "modal-sm"; }
+        else if (Size == ModalFormSize.Large)
+        { return "modal-lg"; }
+        else if (Size == ModalFormSize.Extra)
+        { return "modal-xl"; }
+        else if (Size == ModalFormSize.Full)
+        { return " modal-fullscreen "; }
+        else
+        { return ""; }
     }
     private string GetButtonGroupClass()
     {
@@ -255,7 +272,7 @@
         }
         else
         {
-            return " d-flex align-items-center pointer rounded-2 py-2 ";    
+            return " d-flex align-items-center pointer rounded-2 py-2 ";
         }
     }
 

@@ -29,11 +29,14 @@ namespace theInfrastructure
     public enum Icon
     { 
         NULL = 0,
-        Empty = 1,
-        Search = 2,
-        Check = 3,
-        Menu = 4,
-        Config = 5,
+        Empty,
+        Search,
+        Check,
+        Menu,
+        Config,
+        Connect,
+        Disconnect,
+        Neu,
     }
     public enum ValueBindingTyp
     { 

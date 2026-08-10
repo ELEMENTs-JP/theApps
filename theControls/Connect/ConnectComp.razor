@@ -7,19 +7,20 @@
 
 @if (ItemType != null)
 {
-    <ModalForm Title="neuen Eintrag erstellen"
+    <ModalForm Title="einen Eintrag verbinden"
                ShowTitleInButton="false"
-               ButtonText="Neu"
+               ButtonText="Connect"
                OnOKClicked="@( async e => { await OnOK(); } )">
                <Icon>
-            <SymbolIcon Symbol="Icon.Neu" CSS="me-2 float-start" />
+            <SymbolIcon Symbol="Icon.Connect" CSS="me-2 float-start" />
                </Icon>
         <ChildContent>
             <div class="d-flex flex-row border-bottom mb-3">
                 <div class="vstack p-2 px-3">
                     <div class="text-secondary fw-bold">@ItemType.Name</div>
-                    <small class="text-muted small">Erstellt einen neuen ItemType</small>
+                    <small class="text-muted small">Verbindet einen Eintrag</small>
                 </div>
+
                 @if (RelatedItem != null)
                 {
                     <div class="vr"></div>
@@ -28,24 +29,34 @@
                         <small class="text-muted small">Verbundener Eintrag vom Typ: @RelatedItem.ItemType</small>
                     </div>
                 }
+
+                @if (SelectedItem != null)
+                {
+                    <div class="vr"></div>
+                    <div class="vstack p-2 px-3">
+                        <div class="text-secondary fw-bold">@SelectedItem.Title</div>
+                        <small class="text-muted small">zu verbindender Eintrag vom Typ: @SelectedItem.ItemType</small>
+                    </div>
+                }
+
                 <div class="flex-fill vstack p-2 px-3">
                 </div>
             </div>
 
-            <div class="row g-0">
-                <div class="col-12 p-2">
-                    <TextBox Label="Titel" Value="@Title"
-                             ValueChanged="@( async e => { Title = e; })" />
-                </div>
-
-                @foreach (IField field in ItemType.Fields.Where(s => s.Typ != FieldTyp.HR))
-                {
-                    <div class="col-12">
-                        <AddBox Field="@field" CssClass="" Border="false"
-                                ValueChanged="@( async e => { await OnChange(field, e); })" />
-                    </div>
-                }
+            <div class="d-flex justify-content-center">
+                <TextBox Type="FieldTyp.Search" Placeholder="nach Einträgen suchen"
+                         ValueChanged="@( async e => { Matchcode = e; await Search(); })" />
             </div>
+
+            @foreach (IDTO item in Context.Items)
+            {
+                <div class="row g-0 hover pointer rounded-2 p-1 my-2" @onclick="@( async e => { SelectedItem = item; })">
+                    <div class="col-12 p-1">
+                        @item.Title.ToSecureString()
+                    </div>
+                </div>
+            }
+
         </ChildContent>
     </ModalForm>
 }
@@ -58,13 +69,12 @@
     [Parameter]
     public IDTO RelatedItem { get; set; }
 
+    private IDTO SelectedItem { get; set; }
+
     private IQueryContext Context { get; set; }
 
     // Fields
-    private string Title { get; set; } = string.Empty;
-
-    private List<IDataValue> Values { get; set; } = new();
-
+    private string Matchcode { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,51 +90,50 @@
             Context.ItemType = this.ItemType;
         }
     }
+
+    private async Task Search()
+    {
+        // Context
+        if (Context == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(this.Matchcode))
+        {
+            Context.Items.Clear();
+            return;
+        }
+
+        Context.Matchcode = this.Matchcode;
+        await Context.Search();
+    }
+
     private async Task OnOK()
     {
         if (Context == null)
             return;
 
-        if (string.IsNullOrEmpty(Title))
+        if (string.IsNullOrEmpty(Matchcode))
             return;
 
-        // Erstellen
-        Guid ID = await Context.Create(Title);
+        if (RelatedItem == null)
+            return;
 
-        // Laden
-        await Context.Load(ID.ToSecureString());
+        if (SelectedItem == null)
+            return;
 
-        // Fields
-        foreach (IDataValue dv in Values)
-        {
-            Context.Item[dv.Field.Column] = dv.Value.ToSecureString();
-        }
+        // Assign 
+        await sql.Assign(RelatedItem, SelectedItem);
 
-        // Update
-        await Context.Update(Context.Item);
+        SelectedItem = null;
 
-        // Related Item
-        if (RelatedItem != null)
-        {
-            await Context.Assign(RelatedItem);
-        }
-
-        // Clean 
-        Title = string.Empty;
-        Values.Clear();
-
-        // Message 
-        AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
+        // Message
+        AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz verbunden");
         msg.Publish(am);
 
-        // Visual Update 
+        // Visual Update
         await InvokeAsync(this.StateHasChanged);
-    }
-
-    private async Task OnChange(IField field, string Value)
-    {
-        IDataValue val = new DataValue(field, Value);
-        Values.AddOrUpdate(val);
     }
 
     public async ValueTask DisposeAsync()

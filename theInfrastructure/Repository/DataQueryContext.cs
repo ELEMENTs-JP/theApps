@@ -8,6 +8,7 @@ namespace theInfrastructure
     {
         Guid ID { get; set; }
         bool IsLoading { get; set; } 
+        string Matchcode { get; set; }
         IItemType ItemType { get; set; }
         IDTO RelatedItem { get; set; }
         IDTO Item { get; set; }

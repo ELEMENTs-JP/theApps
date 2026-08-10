@@ -1,17 +1,29 @@
-﻿@inject NavigationManager nm
+﻿@using theControls.Icons
+@inject NavigationManager nm
+@inject IMessagingBusService msg
 
 @if (Context != null)
 {
-    <tr class="pointer"
-        @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
-
+    <tr class="">
         <td class="text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</td>
-        <td class="fw-bold" title="@Item.ItemType">@(Item.Title.ToSecureString())</td>
+        
+        <td class="fw-bold pointer" title="@Item.ItemType"
+            @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
+            @(Item.Title.ToSecureString())
+        </td>
 
         @foreach (IField col in Context.ItemType.Fields.Where(f => f.Typ != FieldTyp.HR))
         {
             <td class="@Helper.GetClassByDevice(col) align-items-center">
                 <TableCell Value="@(Item[col.Column].ToSecureString())" Field="@col" />
+            </td>
+        }
+
+        @if (IsRelated)
+        {
+            <td>
+                <SymbolIcon Symbol="Icon.Disconnect" CSS="pointer"
+                            OnClick="@( async  e => { await Disconnect(); })" />
             </td>
         }
     </tr>
@@ -24,5 +36,22 @@
 
     [Parameter]
     public IDTO Item { get; set; }
+
+    [Parameter]
+    public bool IsRelated { get; set; } = false;
+
+    private async Task Disconnect()
+    {
+        if (Context == null)
+        {
+            return;
+        }
+
+        await Context.Remove(Item);
+
+        // Message
+        AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz verbunden");
+        msg.Publish(am);
+    }
 
 }

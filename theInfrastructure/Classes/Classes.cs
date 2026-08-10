@@ -30,6 +30,7 @@ namespace theInfrastructure
     {
         public string Status { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
+        public Guid GUID { get; set; } = Guid.Empty;
 
         public List<IDTO> Items { get; set; } = new();
 
