@@ -1,5 +1,5 @@
 ﻿
-<div class="@CSS" @onclick="@onBtnClck">
+<div class="@( CSS + "  " )" style="margin-top:-2px;" @onclick="@onBtnClck">
 
     @if (Symbol == Icon.Empty)
     {
@@ -72,7 +72,7 @@
 
     @if (Symbol == Icon.Search)
     {
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="@( "max-height:"+ MaxHeight +"px !important; max-width:"+MaxWidth+"px !important;" )"
+        <svg xmlns="http://www.w3.org/2000/svg" style="@( "max-height:"+ MaxHeight +"px !important; max-width:"+MaxWidth+"px !important;" )"
              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
              class="icon icon-tabler icons-tabler-outline icon-tabler-search">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -83,7 +83,7 @@
 
     @if (Symbol == Icon.Check)
     {
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="@( "max-height:"+ MaxHeight +"px !important; max-width:"+MaxWidth+"px !important;" )"
+        <svg xmlns="http://www.w3.org/2000/svg" style="@( "max-height:"+ MaxHeight +"px !important; max-width:"+MaxWidth+"px !important;" )"
              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
              class="icon icon-tabler icons-tabler-outline icon-tabler-check">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -93,7 +93,7 @@
 
     @if (Symbol == Icon.Menu)
     {
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
              class="icon icon-tabler icons-tabler-outline icon-tabler-menu-2">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -105,7 +105,7 @@
 
     @if (Symbol == Icon.Config)
     {
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
              class="icon icon-tabler icons-tabler-outline icon-tabler-adjustments-horizontal">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -123,7 +123,7 @@
 
     @if (Symbol == Icon.Connect)
     {
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-link">
+        <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-link">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M9 15l6 -6" />
             <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" />
@@ -133,7 +133,7 @@
 
     @if (Symbol == Icon.Disconnect)
     {
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-link-off">
+        <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-link-off">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M9 15l3 -3m2 -2l1 -1" />
             <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" />
@@ -144,7 +144,7 @@
 
     @if (Symbol == Icon.Neu)
     {
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
              class="icon icon-tabler icons-tabler-outline icon-tabler-plus">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
