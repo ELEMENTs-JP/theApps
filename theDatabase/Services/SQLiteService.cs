@@ -336,6 +336,7 @@ namespace theDatabase
             {
                 await using (SQLiteContext ctx = GetContext())
                 {
+                    // Item Delete 
                     var rowsAffected = await ctx.Database.ExecuteSqlAsync(query);
 
                     if (rowsAffected == 0)
@@ -343,6 +344,11 @@ namespace theDatabase
                         result.Status = "FAIL";
                         result.Message = "Datensatz wurde nicht gefunden.";
                     }
+
+                    // Connection Delete 
+                    await ctx.tbl_TEC_Relation
+                            .Where(conn => conn.ParentGUID == dto.GUID || conn.ChildGUID == dto.GUID)
+                                .ExecuteDeleteAsync();
                 }
             }
             catch (Exception ex)
