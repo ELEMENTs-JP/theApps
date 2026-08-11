@@ -7,13 +7,13 @@
 
 @if (ItemType != null)
 {
-    <ModalForm Title="neuen Eintrag erstellen"
+    <ModalForm @key="@(new Guid().ToSecureString())" Title="neuen Eintrag erstellen"
                ShowTitleInButton="false"
                ButtonText="Neu"
                OnOKClicked="@( async e => { await OnOK(); } )">
-               <Icon>
+        <Icon>
             <SymbolIcon Symbol="Icon.Neu" CSS="me-2 float-start" />
-               </Icon>
+        </Icon>
         <ChildContent>
             <div class="d-flex flex-row border-bottom mb-3">
                 <div class="vstack p-2 px-3">
@@ -109,15 +109,15 @@
             await Context.Assign(RelatedItem);
         }
 
-        // Clean 
+        // Clean
         Title = string.Empty;
         Values.Clear();
 
-        // Message 
+        // Message
         AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
         msg.Publish(am);
 
-        // Visual Update 
+        // Visual Update
         await InvokeAsync(this.StateHasChanged);
     }
 

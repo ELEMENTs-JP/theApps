@@ -1,3 +1,4 @@
+@using Microsoft.AspNetCore.Components.Sections
 @using theControls.Icons
 
 
@@ -66,49 +67,51 @@
 
 </div>
 
-<!-- Modal -->
-<div class="@FormCSS" id="@( "modal_" + modalGUID.ToString() )" tabindex="-1"
-     aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false">
-    <div class="@( ModalCSS + " " + SetSize() )">
-        <div class="modal-content rounded-2 border-start border-end border-bottom border-top-primary-3">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">@((MarkupString)Title)</h5>
-                <div class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="closeclick"></div>
-            </div>
-            @if (!string.IsNullOrEmpty(Description))
-            {
-                <div class="w-100 border-bottom bg-surface-secondary p-2 ps-4 overflow-hidden">
-                    <small class="text-muted text-truncate-line">@Description.ToSecureString()</small>
+
+    <!-- Modal -->
+    <div class="@FormCSS" id="@( "modal_" + modalGUID.ToString() )" tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false">
+        <div class="@( ModalCSS + " " + SetSize() )">
+            <div class="modal-content rounded-2 border-start border-end border-bottom border-top-primary-3">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">@((MarkupString)Title)</h5>
+                    <div class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="closeclick"></div>
                 </div>
-
-            }
-            <div class="@ContentCSS modal-body" style="height:625px;">
-
-                @if (RelatedContent.HasContent())
+                @if (!string.IsNullOrEmpty(Description))
                 {
-                    <div>
-                        @RelatedContent
+                    <div class="w-100 border-bottom bg-surface-secondary p-2 ps-4 overflow-hidden">
+                        <small class="text-muted text-truncate-line">@Description.ToSecureString()</small>
                     </div>
-                }
 
-                @ChildContent
-            </div>
-            <div class="modal-footer">
-                <div class="row g-0 align-items-center">
-                    <div class="col">
-                        @FooterContent
-                    </div>
-                    <div class="col-auto">
-                        <div class="hover pointer p-2 px-3 rounded me-3" data-bs-dismiss="modal" @onclick="cancelclick">@CancelTitle</div>
-                    </div>
-                    <div class="col-auto">
-                        <div class="btn btn-primary" data-bs-dismiss="modal" @onclick="okclick">@OKTitle</div>
+                }
+                <div class="@ContentCSS modal-body" style="height:625px;">
+
+                    @if (RelatedContent.HasContent())
+                    {
+                        <div>
+                            @RelatedContent
+                        </div>
+                    }
+
+                    @ChildContent
+                </div>
+                <div class="modal-footer">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            @FooterContent
+                        </div>
+                        <div class="col-auto">
+                            <div class="hover pointer p-2 px-3 rounded me-3" data-bs-dismiss="modal" @onclick="cancelclick">@CancelTitle</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="btn btn-primary" data-bs-dismiss="modal" @onclick="okclick">@OKTitle</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
 
 
 @code {

@@ -12,6 +12,7 @@ namespace theInfrastructure
             Name = "Security";
 
             // ItemTypes 
+            this.ItemTypes.Add(new ItemType_Principal());
             this.ItemTypes.Add(new ItemType_User());
         }
     }

@@ -1,0 +1,25 @@
+@inject IJSRuntime JS
+
+<div class="bg-surface p-2 align-items-center border-bottom border-start border-end">
+    <small id="datetimeclock">Samstag, 11. August 2026 - 11:20 Uhr</small>
+</div>
+
+
+
+@code {
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        try
+        {
+            JS.InvokeVoidAsync("DateTimeShortClockFull", null);
+        }
+        catch (Exception ex)
+        {
+        
+        }
+    }
+
+}

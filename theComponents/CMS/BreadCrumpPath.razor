@@ -1,0 +1,49 @@
+﻿@inject IMessagingBusService message
+@inject IAppService app
+@implements IAsyncDisposable
+
+@if(app != null && app.App != null)
+{
+    <div class="bg-surface p-2 align-items-center border-bottom border-start border-end">
+        @app.App.Name
+    </div>
+}
+
+@code {
+
+    IApp App { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        message.OnMessage += OnMessageRun;
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+    }
+
+    private void OnMessageRun(AppMessage msg)
+    {
+        if (msg.Id == "App" && msg.Action == BusAction.Refresh)
+        {
+            this.StateHasChanged();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            App = null;
+            message.OnMessage -= OnMessageRun;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+
+}

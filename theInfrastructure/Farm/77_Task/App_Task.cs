@@ -9,7 +9,7 @@ namespace theInfrastructure
     {
         public App_Task()
         { 
-            Name = "Task-Management";
+            Name = "Task";
 
             // ItemTypes 
             this.ItemTypes.Add(new ItemType_Task());

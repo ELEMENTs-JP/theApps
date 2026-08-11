@@ -1,0 +1,16 @@
+﻿@inject ISecurityService sec
+
+
+@if(sec.Principal != null)
+{
+    <div class="bg-surface p-2 align-items-center  border-bottom border-start border-end">
+        @sec.Principal.Title
+    </div>
+}
+
+@code {
+
+    
+
+
+}

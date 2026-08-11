@@ -13,6 +13,31 @@ namespace theInfrastructure
 {
     public static class Helper
     {
+        public static Guid ToSecureGUID(this object text)
+        {
+            try
+            {
+                if (text == null)
+                    return Guid.Empty;
+
+                if (CheckGUID(text.ToString()))
+                {
+                    return new Guid(text.ToSecureString());
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("FAIL : ToSecureGUID : " + ex.Message);
+            }
+
+            return Guid.Empty;
+        }
+        public static bool CheckGUID(string text)
+        {
+            return text != null
+                   && text.Length == 36
+                   && Guid.TryParseExact(text, "D", out _);
+        }
         // Mail 
         public static bool IsMailFormat(this string mail)
         {
@@ -28,6 +53,10 @@ namespace theInfrastructure
         }
 
         // Navigation 
+        public static void NavToApp(this NavigationManager nm, string App)
+        {
+            nm.NavigateTo("/App/" + App , false);
+        }
         public static void NavToItem(this NavigationManager nm, string ItemType, Guid GUID)
         {
             nm.NavigateTo("/Item/" + ItemType + "/" + GUID.ToString(), false);

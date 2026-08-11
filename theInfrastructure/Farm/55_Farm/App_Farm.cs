@@ -9,7 +9,7 @@ namespace theInfrastructure
     {
         public App_Farm()
         { 
-            Name = "Farm Management";
+            Name = "Farm";
 
             // ItemTypes 
             this.ItemTypes.Add(new ItemType_App());

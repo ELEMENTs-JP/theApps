@@ -42,7 +42,11 @@ public class AuthController : ControllerBase
 
         if (user != null)
         {
-            await SignIn(username);
+            // Nutzer zuordnen falls nicht zugeordnet 
+            await AssignToPrincipal(user);
+
+            // Einloggen 
+            await SignIn(username, user.GUID);
             return LocalRedirect("/");
         }
 
@@ -104,21 +108,74 @@ public class AuthController : ControllerBase
             // Update 
             await sqlService.Update(newUser);
 
+            // Nutzer zuordnen falls nicht zugeordnet 
+            await AssignToPrincipal(newUser);
+
             // SignIn 
-            await SignIn(username);
+            await SignIn(username, newUser.GUID);
+
             return LocalRedirect("/");
         }
 
         return Redirect("/login?error=true");
     }
 
+    private async Task AssignToPrincipal(IDTO user)
+    {
+        // Check 
+        if (user == null)
+            return;
 
-    private async Task SignIn(string username)
+        // Query: Principal 
+        IQueryParameter query = new QueryParameter();
+        query.Matchcode = string.Empty;
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.ItemType = "Principal";
+
+        // Suche 
+        IQueryResult pResult = await sqlService.GetItems(query);
+
+        // Principal filtern 
+        IDTO principal = pResult.Items.Where(se => 
+                            se.GUID == SQLiteService.GeneralMasterGUID && 
+                            se.MasterGUID == SQLiteService.GeneralMasterGUID).FirstOrDefault();
+        
+        // prüfen ob existiert : falls NEIN 
+        if (principal == null)
+        {
+            // Create : Principal erstellen 
+            IQueryParameter c = new QueryParameter();
+            c.MasterGUID = SQLiteService.GeneralMasterGUID;
+            c.GUID = SQLiteService.GeneralMasterGUID;
+            c.ItemType = "Principal";
+            c.Title = "Default";
+            IQueryResult newResult = await sqlService.Create(c);
+
+            principal = newResult.Items.Where(se =>
+                            se.GUID == SQLiteService.GeneralMasterGUID &&
+                            se.MasterGUID == SQLiteService.GeneralMasterGUID).FirstOrDefault();
+        }
+
+        if (principal == null)
+            return;
+
+        // nach zugeordneten User suchen 
+        IQueryResult userListResult = await sqlService.GetRelatedItems(principal, "User");
+        IDTO findUser = userListResult.Items.Where(se => se.GUID == user.GUID).FirstOrDefault();
+        
+        // wenn kein Nutzer zugeordnet ist 
+        if (findUser == null)
+        { 
+            // zuordnen 
+            await sqlService.Assign(principal, user);
+        }
+    }
+    private async Task SignIn(string username, Guid userGUID)
     {
         var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, username),
-                new Claim("SecureToken", "STARK-VERSCHLUESSELTES-TOKEN-123")
+                new Claim("SecureToken", userGUID.ToSecureString())
             };
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

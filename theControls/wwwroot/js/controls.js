@@ -1,4 +1,33 @@
-﻿window.themeManager = {
+﻿
+
+
+const timeOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+
+function DateTimeShortClockFull() {
+    var date = new Date();
+
+    try {
+        let dtLabel = document.getElementById("datetimeclock");
+
+        if (dtLabel !== null) {
+            dtLabel.innerText = date.toLocaleDateString("de-DE", timeOptions) + " Uhr";
+            dtLabel.textContent = date.toLocaleDateString("de-DE", timeOptions) + " Uhr";
+            setTimeout(DateTimeShortClockFull, 1000);
+        }
+    }
+    catch (e) {
+
+    }
+
+
+}
+
+
+
+
+
+
+window.themeManager = {
 
     setTheme: function (theme) {
 

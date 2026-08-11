@@ -14,7 +14,7 @@ namespace theInfrastructure
         }
 
         // App 
-        public IApp BuildApp(string name)
+        public async Task<IApp> BuildApp(string name)
         {
             string className = $"App_{name}";
 
@@ -24,7 +24,19 @@ namespace theInfrastructure
                                                      typeof(IApp).IsAssignableFrom(t));
 
             if (type == null)
-                throw new ArgumentException($"Keine App für '{name}' gefunden.");
+            {
+                IQueryParameter qp = new QueryParameter();
+                qp.ItemType = "App";
+                qp.MasterGUID = sqlService.MasterGUID;
+                IQueryResult result = await sqlService.GetItems(qp);
+
+                IDTO dto = result.Items.FirstOrDefault(se => se.Title == name);
+                if (dto != null)
+                {
+                    IApp template = new App_Template(dto, sqlService);
+                    return template;
+                }
+            }
 
             return (IApp)Activator.CreateInstance(type)!;
         }

@@ -1,0 +1,53 @@
+﻿@page "/App/{ID}"
+
+@using theComponents.Items
+@using theControls.Add
+@using theControls.Edit
+@using theControls.Layout
+@using theControls.Tables
+@using theDatabase
+@using theInfrastructure
+
+@inject ISqlDatabaseService sql
+@inject IAppService apps
+
+
+
+@if (App != null && apps.App != null)
+{
+    <div class="container">
+
+        <h1 class="display-6">@App.Name</h1>
+        <h1 class="display-6">@apps.App.Name</h1>
+
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public string ID { get; set; } = string.Empty;
+    private IApp App { get; set; } = null;
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (!string.IsNullOrEmpty(this.ID))
+        {
+            Factory f = new Factory(sql);
+            App = await f.BuildApp(ID);
+
+            if (App.Name == apps.App.Name)
+            {
+                
+            
+            }
+        }
+
+     
+    }
+
+}

@@ -21,10 +21,19 @@ namespace theInfrastructure
         string Message { get; set; }
         bool Validate();
     }
+
+    public interface ISecurityService
+    {
+        IDTO Principal { get; set; }
+        IDTO User { get; set; }
+        Task SetUser(Guid GUID);
+    }
+
     public interface IAppService
     {
         IApp App { get; set; }
         List<IApp> AllApps { get; set; }
+        Task SetApp(IApp app);
     }
     public interface ISqlDatabaseService
     {

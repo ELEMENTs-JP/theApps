@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager nm
+@inject ISecurityService sec
 @attribute [Authorize]
 
 
@@ -10,13 +11,16 @@
             <div class="sidebar">
                 <Sidebar>
                     <MenuContent>
-                        @Menu
+                        @Navigation
                     </MenuContent>
                 </Sidebar>
             </div>
             <main class="w-100 d-flex flex-column">
                 <div class="header hstack px-3 bg-surface">
                     @Header
+                </div>
+                <div class="menu px-3">
+                    @Menu
                 </div>
                 <div class="p-3 scrollable flex-fill">
                     @Body
@@ -43,18 +47,16 @@
       </NotAuthorized>
   </AuthorizeView>
                 
-
-
-
-
-
 @code {
 
     [Parameter]
-    public RenderFragment Menu { get; set; }
+    public RenderFragment Navigation { get; set; }
 
     [Parameter]
     public RenderFragment Header { get; set; }
+
+    [Parameter]
+    public RenderFragment Menu { get; set; }
 
     [Parameter]
     public RenderFragment Body { get; set; }
@@ -67,12 +69,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // Token 
         var authState = await AuthStateTask;
         var token = authState.User.FindFirst("SecureToken")?.Value;
-
-        string val = token;
-        // Lade Daten mit diesem Token...
+        if (!string.IsNullOrEmpty(token))
+        {
+            await sec.SetUser(token.ToSecureGUID());
+        }
     }
-
-
 }

@@ -5,7 +5,11 @@ using System.Text;
 
 namespace theInfrastructure
 {
-
+    public static class Sections
+    {
+        // SectionOutlet, SectionContent 
+        public static readonly object ModalOutlet = new();
+    }
     public interface IDataValue
     {
         IField Field { get; set; }

@@ -14,7 +14,7 @@ namespace theInfrastructure
         void Publish(AppMessage msg);
 
         // Bequemer Überladungs-Helfer
-        void Publish(string id, BusAction action, object? payload = null, Action<AppMessage>? reply = null);
+        void Publish(string id, BusAction action, object? obj = null, Action<AppMessage>? reply = null);
     }
 
     public class MessagingBusService : IMessagingBusService
@@ -43,9 +43,9 @@ namespace theInfrastructure
         }
 
         // Bequemer Überladungs-Helfer
-        public void Publish(string id, BusAction action, object? payload = null, Action<AppMessage>? reply = null)
+        public void Publish(string id, BusAction action, object? obj = null, Action<AppMessage>? reply = null)
         {
-            Publish(new AppMessage(id, action, payload, reply));
+            Publish(new AppMessage(id, action, obj, reply));
         }
 
     }

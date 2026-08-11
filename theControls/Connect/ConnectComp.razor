@@ -7,7 +7,7 @@
 
 @if (ItemType != null)
 {
-    <ModalForm Title="einen Eintrag verbinden"
+    <ModalForm @key="@(new Guid().ToSecureString())" Title="einen Eintrag verbinden"
                ShowTitleInButton="false"
                ButtonText="Connect"
                OnOKClicked="@( async e => { await OnOK(); } )">
