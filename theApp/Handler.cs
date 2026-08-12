@@ -42,14 +42,14 @@ namespace theApp
             });
 
             // Language Service 
-            builder.Services.AddScoped<ILanguageService>(provider =>
+            builder.Services.AddScoped<ILocalizationService>(provider =>
             {
                 // Abruf des WebHostEnvironment aus dem DI-Container
                 var environment = provider.GetRequiredService<IWebHostEnvironment>();
                 string rootPath = environment.ContentRootPath;
 
                 // Manuelle Instanziierung und Übergabe 
-                return new LanguageService(environment, new SQLiteService(rootPath));
+                return new LocalizationService(environment, new SQLiteService(rootPath));
             });
 
             // Security Service 

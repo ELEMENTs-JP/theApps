@@ -33,15 +33,19 @@
                 <TabsPanel ID="@( ID + "1")" IsActive="true">
 
                     <div class="row">
-                        <div class="col-4">
-                            <TextBox Label="Titel" Value="@SystemTitle"
+                        <div class="col-4 px-2">
+                            <TextBox Label="Titel" Value="@Configuration.Title"
                                      ValueChanged="@(e => { Configuration.Title = e;
                                         Serializer.Save<SystemConfiguration>(Configuration, "system.config"); })" />
                         </div>
-                        <div class="col-4">
+                        <div class="col-4 px-2 border-start border-end">
                             <ThemeSwitch />
+                            <hr />
+                            <CheckBox Label="Akzente" Value="@Configuration.Akzente.ToSecureString()" 
+                                      ValueChanged="@(e => { Configuration.Akzente = e.ToSecureBool();
+                                        Serializer.Save<SystemConfiguration>(Configuration, "system.config"); })" />
                         </div>
-                        <div class="col-4">
+                        <div class="col-4 px-2">
                             <LanguageSelector Value="@Configuration.Sprache" 
                                 ValueChanged="@(  e => { Configuration.Sprache = e.ID;
                                     Serializer.Save<SystemConfiguration>(Configuration, "system.config"); })" />
@@ -70,14 +74,11 @@
 
     private SystemConfiguration Configuration { get; set; } = null;
 
-    private string SystemTitle { get; set; } = string.Empty;
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
         Configuration = Serializer.Load<SystemConfiguration>("system.config");
-        SystemTitle = Configuration.Title;
     }
 
     protected override async Task OnParametersSetAsync()

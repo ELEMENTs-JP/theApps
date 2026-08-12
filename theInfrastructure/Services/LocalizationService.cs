@@ -11,22 +11,22 @@ using System.Xml.Linq;
 
 namespace theInfrastructure
 {
-    public class LanguageService : ILanguageService, INotifyPropertyChanged, IDisposable
+    public class LocalizationService : ILocalizationService, INotifyPropertyChanged, IDisposable
     {
         // Fields 
         IWebHostEnvironment Environment;
         ISqlDatabaseService SqlService;
 
-        private SystemConfiguration Configuration { get; set; } = null;
+        public SystemConfiguration Configuration { get; set; } = null;
 
         // CTR 
-        public LanguageService()
+        public LocalizationService()
         {
             Init();
 
             this.PropertyChanged += AppService_PropertyChanged;
         }
-        public LanguageService(IWebHostEnvironment env, ISqlDatabaseService sql)
+        public LocalizationService(IWebHostEnvironment env, ISqlDatabaseService sql)
         {
             Environment = env;
             SqlService = sql;
@@ -38,7 +38,7 @@ namespace theInfrastructure
 
         private async void Init()
         {
-              if (Configuration == null)
+            if (Configuration == null)
             {
                 Configuration = Serializer.Load<SystemConfiguration>("system.config");
             }

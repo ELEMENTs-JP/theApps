@@ -12,5 +12,6 @@ namespace theInfrastructure
     {
         public string Title { get; set; } = string.Empty;
         public string Sprache { get; set; } = string.Empty;
+        public bool Akzente { get; set; } = false; // weiße Akzente anzeigen oder nicht 
     }
 }

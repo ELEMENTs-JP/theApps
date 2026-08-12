@@ -1,6 +1,6 @@
 :root {
-    --tsp-hover: #77777711;
-    --tsp-hover-light: #cccccc11;
+    --tsp-hover: #77777733;
+    --tsp-hover-light: #cccccc33;
     --tsp-header-height: 3.5rem;
     --tsp-footer-height: 1.5rem;
 }
@@ -29,6 +29,7 @@ a {
 .hover:hover {
     background-color: var(--tsp-hover) !important;
     transition: background-color 0.25s ease;
+    color: #cccccc !important;
 }
 
 .overlay {

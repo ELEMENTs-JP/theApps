@@ -22,8 +22,9 @@ namespace theInfrastructure
         bool Validate();
     }
 
-    public interface ILanguageService
+    public interface ILocalizationService
     {
+        SystemConfiguration Configuration { get; set; }
         string GetLabel(string de, string en, string es);
     }
 

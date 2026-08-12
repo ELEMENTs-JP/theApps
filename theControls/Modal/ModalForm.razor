@@ -1,9 +1,10 @@
 @using Microsoft.AspNetCore.Components.Sections
 @using theControls.Icons
-
+@inject ILocalizationService loc
 
 <!-- Button -->
 <div class="@( GetButtonGroupClass() + " " + FrameCSS )"
+   
      data-bs-toggle="modal" title="@ButtonToolTip"
      data-bs-target="@( "#modal_" + modalGUID.ToString() )">
 
@@ -72,7 +73,8 @@
     <div class="@FormCSS" id="@( "modal_" + modalGUID.ToString() )" tabindex="-1"
          aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false">
         <div class="@( ModalCSS + " " + SetSize() )">
-            <div class="modal-content rounded-2 border-start border-end border-bottom border-top-primary-3">
+            <div class="modal-content rounded-2 border-start border-end border-bottom border-top-primary-3"
+             style="@( " " + GetFrameStyle() + " " )">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">@((MarkupString)Title)</h5>
                     <div class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="closeclick"></div>
@@ -278,5 +280,16 @@
             return " d-flex align-items-center pointer rounded-2 py-2 ";
         }
     }
+    private string GetFrameStyle()
+    {
+        string style = string.Empty;
 
+        if (loc.Configuration != null)
+        {
+            style = ((loc.Configuration.Akzente) ? " border-top: 3px solid #ffffff !important; " : "");
+        }
+
+        return style;
+
+    }
 }

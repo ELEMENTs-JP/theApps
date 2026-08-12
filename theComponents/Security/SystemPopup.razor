@@ -51,9 +51,6 @@
             <AuthorizeView>
                 <Authorized>
 
-             
-
-                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="/Setting">Einstellungen</a>
                     
                     <div class="dropdown-divider"></div>
@@ -62,7 +59,8 @@
                     <div class="dropdown-divider"></div>
                     <form action="/api/auth/logout" method="post">
                         <AntiforgeryToken />
-                        <button type="submit" class="hover pointer rounded p-1 text-center bg-danger text-white border-0 w-100">
+                        <button type="submit" 
+                            class="hover pointer rounded-2 p-1 text-center bg-light text-dark border-0 w-100">
                             Abmelden
                         </button>
                     </form>
