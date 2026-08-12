@@ -1,41 +1,44 @@
 
-
-
-@if (this.Layout == TabsLayout.Regular)
+@if (IsVisible)
 {
-    <button class="@( ((ShowAsTab) ? " nav-link " : " " ) + ((Ausrichtung == Orientation.Vertical) ? " rounded " : " ") + ((IsActive == true) ? " active " : " "))"
-            type="button" role="tab" data-bs-toggle="tab"
-            id="@( "nav-" + ID + "-tab" )"
-            data-bs-target="@( "#" + "nav-" + ID )"
-            aria-controls="@( "nav-" + ID )" aria-selected="@( IsActive.ToSecureString() )">
-        @Title.ToSecureString()
-    </button>
+    @if (this.Layout == TabsLayout.Regular)
+    {
+        <button class="@( ((ShowAsTab) ? " nav-link " : " " ) + ((Ausrichtung == Orientation.Vertical) ? " rounded " : " ") + ((IsActive == true) ? " active " : " "))"
+                type="button" role="tab" data-bs-toggle="tab"
+                id="@( "nav-" + ID + "-tab" )"
+                data-bs-target="@( "#" + "nav-" + ID )"
+                aria-controls="@( "nav-" + ID )" aria-selected="@( IsActive.ToSecureString() )">
+            @Title.ToSecureString()
+        </button>
+    }
 
-}
-@if (this.Layout == TabsLayout.Buttons)
-{
-    <button class="@( " nav-link m-1 "  + " rounded-1 "  + ((IsActive == true) ? " active " : "  "))"
-            type="button" role="tab" data-bs-toggle="tab"
-            id="@( "nav-" + ID + "-tab" )"
-            data-bs-target="@( "#" + "nav-" + ID )"
-            aria-controls="@( "nav-" + ID )" aria-selected="@( IsActive.ToSecureString() )">
+    @if (this.Layout == TabsLayout.Buttons)
+    {
+        <button class="@( " nav-link m-1 mt-2 "  + " rounded-1 "  + ((IsActive == true) ? " active " : "  "))"
+                type="button" role="tab" data-bs-toggle="tab"
+                id="@( "nav-" + ID + "-tab" )"
+                data-bs-target="@( "#" + "nav-" + ID )"
+                aria-controls="@( "nav-" + ID )" aria-selected="@( IsActive.ToSecureString() )">
 
-        <div class="row g-0">
+            <div class="row g-0">
 
-            @if (!string.IsNullOrEmpty(Icon))
-            {
-                <div class="col-auto ms-auto px-1">
-                    @( ((MarkupString)Icon) )
+                @if (!string.IsNullOrEmpty(Icon))
+                {
+                    <div class="col-auto ms-auto px-1">
+                        @( ((MarkupString)Icon) )
+                    </div>
+                }
+
+                <div class="col-auto px-1 me-auto">
+                    @Title.ToSecureString()
                 </div>
-            }
-
-            <div class="col-auto px-1 me-auto">
-                @Title.ToSecureString()
             </div>
-        </div>
 
-    </button>
+        </button>
+    }
 }
+
+
 
 @code {
     [Parameter]
@@ -49,6 +52,9 @@
 
     [Parameter]
     public bool IsActive { get; set; } = false;
+
+    [Parameter]
+    public bool IsVisible { get; set; } = true;
 
     [Parameter]
     public bool ShowAsTab { get; set; } = true;

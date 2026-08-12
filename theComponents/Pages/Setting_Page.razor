@@ -17,7 +17,7 @@
 
 
 
-<div class="container">
+<div class="container-flex">
 
     <ControlHeader Title="Einstellungen" Border="true" />
 
@@ -26,8 +26,8 @@
         <TabsFrame Orientation="Orientation.Vertical" FrameCSS=" row g-0 w-100">
             <HeaderContent>
                 <TabsItem ID="@( ID + "1")" Title="Einstellungen" IsActive="true" Layout="TabsLayout.Buttons" />
-                <TabsItem ID="@( ID + "2")" Title="Anschrift" Layout="TabsLayout.Buttons" />
-                <TabsItem ID="@( ID + "3")" Title="Shop" Layout="TabsLayout.Buttons" />
+                <TabsItem ID="@( ID + "2")" Title="Anschrift" Layout="TabsLayout.Buttons" IsVisible="false" />
+                <TabsItem ID="@( ID + "3")" Title="Shop" Layout="TabsLayout.Buttons" IsVisible="false" />
             </HeaderContent>
             <ChildContent>
                 <TabsPanel ID="@( ID + "1")" IsActive="true">
@@ -36,6 +36,7 @@
                             ValueChanged="@(e =>  { Configuration.Title = e;
                             Serializer.Save<SystemConfiguration>(Configuration, "system.config"); })" />
 
+                    <ThemeSwitch />
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "2")">
