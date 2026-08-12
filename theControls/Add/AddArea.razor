@@ -35,8 +35,15 @@
             <div class="row g-0">
                 <div class="col-12 p-2">
                     <TextBox Label="Titel" Value="@Title"
-                             ValueChanged="@( async e => { Title = e; })" />
+                             ValueChanged="@( async e => { Title = e; await SearchForDuplicates(); })" />
                 </div>
+
+                @if (!string.IsNullOrEmpty(Message))
+                {
+                    <div class="col-12 p-2">
+                       @Message
+                    </div>
+                }
 
                 @foreach (IField field in ItemType.Fields.Where(s => s.Typ != FieldTyp.HR))
                 {
@@ -62,9 +69,9 @@
 
     // Fields
     private string Title { get; set; } = string.Empty;
+    private string Message { get; set; } = string.Empty;
 
     private List<IDataValue> Values { get; set; } = new();
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,6 +87,28 @@
             Context.ItemType = this.ItemType;
         }
     }
+
+    private async Task SearchForDuplicates()
+    {
+        Message = string.Empty;
+
+        if (Context == null)
+            return;
+
+        // 
+        Context.Matchcode = this.Title;
+        await Context.Search();
+
+        IDTO item = Context.Items.Where(se => se.Title == this.Title).FirstOrDefault();
+        if (item != null)
+        {
+            // Message 
+            Message = "Datensatz existiert bereits";
+        }
+
+        await Task.CompletedTask;    
+    }
+
     private async Task OnOK()
     {
         if (Context == null)
@@ -120,7 +149,6 @@
         // Visual Update
         await InvokeAsync(this.StateHasChanged);
     }
-
     private async Task OnChange(IField field, string Value)
     {
         IDataValue val = new DataValue(field, Value);
