@@ -5,6 +5,7 @@
 @using theControls.Edit
 @using theControls.Layout
 @using theControls.Tables
+@using theControls.Text
 @using theDatabase
 @using theInfrastructure
 
@@ -13,12 +14,11 @@
 
 
 
-@if (App != null && apps.App != null)
+@if (apps.App != null)
 {
     <div class="container">
 
-        <h1 class="display-6">@App.Name</h1>
-        <h1 class="display-6">@apps.App.Name</h1>
+        <ControlHeader PreTitle="Application" Title="@apps.App.Name" />
 
     </div>
 }
@@ -28,8 +28,6 @@
 
     [Parameter]
     public string ID { get; set; } = string.Empty;
-    private IApp App { get; set; } = null;
-
 
     protected override async Task OnParametersSetAsync()
     {
@@ -38,13 +36,13 @@
         if (!string.IsNullOrEmpty(this.ID))
         {
             Factory f = new Factory(sql);
-            App = await f.BuildApp(ID);
+            // App = await f.BuildApp(ID);
 
-            if (App.Name == apps.App.Name)
-            {
+            // if (App.Name == apps.App.Name)
+            // {
                 
             
-            }
+            // }
         }
 
      

@@ -2,12 +2,14 @@
 
 <div class="d-flex flex-column">
     <div class="header p-3 align-items-center bg-surface">
-        <div class="h1">theApp</div>
+        <div class="h1">
+            @AppTitle
+        </div>
     </div>
 
     <div class="scrollable flex-fill">
         <nav class="flex-column">
-            @MenuContent
+            @Navigation
         </nav>
     </div>
 
@@ -22,5 +24,19 @@
 @code {
 
     [Parameter]
-    public RenderFragment MenuContent { get; set; }
+    public RenderFragment Navigation { get; set; }
+
+    string AppTitle { get; set; } = "the App";
+
+    private SystemConfiguration Configuration { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Configuration = Serializer.Load<SystemConfiguration>("system.config");
+        AppTitle = Configuration.Title;
+
+
+    }
 }

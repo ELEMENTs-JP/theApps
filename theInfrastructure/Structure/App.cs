@@ -9,9 +9,8 @@ namespace theInfrastructure
     {
         string Name { get; set; }
         string Group { get; set; } // Gruppierung in der Navigation // Allgemeine Typisierung
-        List<IItemType> ItemTypes { get; set; }
+        Task<List<IItemType>> GetItemTypes();
 
-        Task Init();
     }
     public class BaseApp : IApp
     {
@@ -21,13 +20,12 @@ namespace theInfrastructure
         }
         public string Name { get; set; } = string.Empty;
         public string Group { get; set; } = string.Empty;
-        public List<IItemType> ItemTypes { get; set; } = new();
 
-        public virtual async Task Init()
+        public virtual async Task<List<IItemType>> GetItemTypes()
         {
-            // ItemTypes 
+            List<IItemType> ItemTypes = new();
 
-
+            return ItemTypes;
         }
     }
 

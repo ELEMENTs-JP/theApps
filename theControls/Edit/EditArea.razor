@@ -19,7 +19,7 @@
         </Related>
         <Content>
             <div class="row g-0">
-                @foreach (IField field in ItemType.Fields)
+                @foreach (IField field in ItemType.GetFields().Result)
                 {
                     @if (field.Typ == FieldTyp.HR)
                     {

@@ -1,0 +1,77 @@
+﻿@page "/Setting"
+
+@using theComponents.Items
+@using theControls.Add
+@using theControls.Container
+@using theControls.Edit
+@using theControls.Input
+@using theControls.Layout
+@using theControls.Tables
+@using theControls.Text
+@using theDatabase
+@using theInfrastructure
+
+@inject ISqlDatabaseService sql
+@inject IAppService apps
+
+
+
+
+<div class="container">
+
+    <ControlHeader Title="Einstellungen" Border="true" />
+
+    @if (Configuration != null)
+    {
+        <TabsFrame Orientation="Orientation.Vertical" FrameCSS=" row g-0 w-100">
+            <HeaderContent>
+                <TabsItem ID="@( ID + "1")" Title="Einstellungen" IsActive="true" Layout="TabsLayout.Buttons" />
+                <TabsItem ID="@( ID + "2")" Title="Anschrift" Layout="TabsLayout.Buttons" />
+                <TabsItem ID="@( ID + "3")" Title="Shop" Layout="TabsLayout.Buttons" />
+            </HeaderContent>
+            <ChildContent>
+                <TabsPanel ID="@( ID + "1")" IsActive="true">
+
+                    <TextBox Label="Titel" Value="@SystemTitle"
+                            ValueChanged="@(e =>  { Configuration.Title = e;
+                            Serializer.Save<SystemConfiguration>(Configuration, "system.config"); })" />
+
+                </TabsPanel>
+
+                <TabsPanel ID="@( ID + "2")">
+
+                </TabsPanel>
+
+                <TabsPanel ID="@( ID + "3")">
+
+                </TabsPanel>
+            </ChildContent>
+        </TabsFrame>
+    }
+
+</div>
+
+
+
+@code {
+
+    private string ID = "" + Guid.NewGuid();
+
+    private SystemConfiguration Configuration { get; set; } = null;
+
+    private string SystemTitle { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Configuration = Serializer.Load<SystemConfiguration>("system.config");
+        SystemTitle = Configuration.Title;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+}

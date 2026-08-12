@@ -1,0 +1,25 @@
+﻿<div class="@( " tab-pane fade " + ((IsActive == true) ? " show active fw-bold " : " " ) )"
+     role="tabpanel"
+     id="@( "nav-" + ID )"
+     aria-labelledby="@( "nav-" + ID + "-tab" )"
+     tabindex="0">
+    <div class="@CssClass">
+        @ChildContent
+     </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string ID { get; set; } = "home";
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public bool IsActive { get; set; } = false;
+
+    [Parameter]
+    public string CssClass { get; set; } = " px-2 py-3";
+
+}

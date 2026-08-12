@@ -114,7 +114,7 @@ namespace theApp
             app.MapRazorComponents<App>()
                .AddInteractiveServerRenderMode()
                .AddAdditionalAssemblies(typeof(theDatabase.Controls.DatabaseSetup).Assembly,
-                                            typeof(theComponents.Pages.Item).Assembly,
+                                            typeof(theComponents.Pages.Item_Page).Assembly,
                                             typeof(theControls.Edit.EditBox).Assembly);
 
             app.UseAuthentication();

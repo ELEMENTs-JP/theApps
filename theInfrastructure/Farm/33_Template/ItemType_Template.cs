@@ -14,17 +14,15 @@ namespace theInfrastructure
             Item = dto;
 
             this.Name = dto.Title;
-
-            Init();
         }
 
-        public override async Task Init()
+        public override async Task<List<IItemType>> GetItemTypes()
         {
-            await base.Init();
+            List<IItemType> ItemTypes = new List<IItemType>();
 
             // ItemTypes 
             if (sqlService == null)
-                return;
+                return ItemTypes;
 
             // Query 
             IQueryParameter query = new QueryParameter();
@@ -37,11 +35,26 @@ namespace theInfrastructure
             foreach (IDTO it in result.Items)
             {
                 IItemType itemtype = new ItemType_Template(it, sqlService);
-                this.ItemTypes.Add(itemtype);
+                ItemTypes.Add(itemtype);
             }
 
+            return ItemTypes;
+        }
+        public override async Task<List<IField>> GetFields()
+        {
+            List<IField> Fields = new();
+
             // Fields 
-            result = await sqlService.GetRelatedItems(Item, "Field");
+            if (sqlService == null)
+                return Fields;
+
+            // Query 
+            IQueryParameter query = new QueryParameter();
+            query.Matchcode = string.Empty;
+            query.MasterGUID = sqlService.MasterGUID;
+            query.ItemType = "Field";
+            // Fields 
+            IQueryResult result = await sqlService.GetRelatedItems(Item, "Field");
 
             // Iteration 
             foreach (IDTO it in result.Items)
@@ -51,8 +64,11 @@ namespace theInfrastructure
                 field.Column = it.Title;
                 field.Typ = FieldTyp.Text;
 
-                this.Fields.Add(field);
+                Fields.Add(field);
             }
+
+            return Fields;
         }
+
     }
 }

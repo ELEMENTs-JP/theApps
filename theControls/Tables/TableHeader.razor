@@ -5,7 +5,7 @@
     <th scope="col-050">ID</th>
     <th scope="col">Title</th>
 
-    @foreach (IField col in Context.ItemType.Fields.Where(f => f.Typ != FieldTyp.HR))
+    @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR))
     {
         <th scope="col" class="@(  Helper.GetClassByDevice(col) )">@( col.Title)</th>
     }

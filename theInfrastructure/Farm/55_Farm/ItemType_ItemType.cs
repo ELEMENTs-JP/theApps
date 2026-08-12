@@ -9,23 +9,25 @@ namespace theInfrastructure
         public ItemType_ItemType()
         {
             Name = "ItemType";
-            Init();
         }
         public List<IField> Fields { get; set; } = new();
 
-        public override async Task Init()
+        public override async Task<List<IItemType>> GetItemTypes()
         {
-            await base.Init();
-
             // ItemTypes 
-            ItemTypes = new List<IItemType>();
+            List<IItemType>  ItemTypes = new List<IItemType>();
             ItemTypes.Add(new ItemType_Field());
-
+            return ItemTypes;
+        }
+        public override async Task<List<IField>> GetFields()
+        {
             // Fields 
             Fields = new List<IField>();
 
-            Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR  });
+            Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });
             Fields.Add(new Field() { Title = "Description", Typ = FieldTyp.TextArea, Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
+
+            return Fields;
         }
     }
 }

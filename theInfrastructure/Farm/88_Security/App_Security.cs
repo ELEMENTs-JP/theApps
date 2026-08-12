@@ -11,9 +11,18 @@ namespace theInfrastructure
         { 
             Name = "Security";
 
+            
+        }
+
+        public override async Task<List<IItemType>> GetItemTypes()
+        {
+            List<IItemType> ItemTypes = new();
+
             // ItemTypes 
-            this.ItemTypes.Add(new ItemType_Principal());
-            this.ItemTypes.Add(new ItemType_User());
+            ItemTypes.Add(new ItemType_Principal());
+            ItemTypes.Add(new ItemType_User());
+
+            return ItemTypes;
         }
     }
 }

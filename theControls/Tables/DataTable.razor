@@ -8,7 +8,7 @@
 
 @if (Context != null && ItemType != null)
 {
-    @if (Context.ItemType != null && Context.ItemType.Fields != null)
+    @if (Context.ItemType != null && Context.ItemType.GetFields().Result != null)
     {
         <div class="table-responsive">
             <table class="table table-hover">
@@ -30,6 +30,8 @@
 
 
 @code {
+
+   
 
     [Parameter]
     public IItemType ItemType { get; set; }

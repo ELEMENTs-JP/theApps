@@ -10,14 +10,18 @@ namespace theInfrastructure
         public App_Farm()
         { 
             Name = "Farm";
+        }
+        public override async Task<List<IItemType>> GetItemTypes()
+        {
+            List<IItemType> ItemTypes = new List<IItemType>();
 
             // ItemTypes 
-            this.ItemTypes.Add(new ItemType_App());
-            this.ItemTypes.Add(new ItemType_ItemType());
-            this.ItemTypes.Add(new ItemType_Field());
-        }
+            ItemTypes.Add(new ItemType_App());
+            ItemTypes.Add(new ItemType_ItemType());
+            ItemTypes.Add(new ItemType_Field());
 
-      
+            return ItemTypes;
+        }
     }
 
 }

@@ -1,0 +1,17 @@
+﻿
+.nav-tabs .nav-item .nav-link {
+    padding: 0.2rem 0.4rem !important;
+    font-size: small;
+}
+
+.nav-tabs .nav-link {
+    border-top-left-radius: 2px !important;
+    border-top-right-radius: 2px !important;
+    overflow: hidden;
+}
+
+    .nav-tabs .nav-link.active {
+        border-top-left-radius: 2px !important;
+        border-top-right-radius: 2px !important;
+        overflow: hidden;
+    }

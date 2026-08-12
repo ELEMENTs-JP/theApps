@@ -4,6 +4,21 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum Orientation
+    {
+        NULL = 0,
+        Vertical = 1,
+        Horizontal = 2,
+        Center = 3,
+    }
+    public enum TabsLayout
+    {
+        NULL = 0,
+
+        Regular = 1,
+        Buttons = 2,
+    }
+
     public enum StaticPosition
     {
         NULL = 0,

@@ -1,0 +1,43 @@
+﻿
+
+@if (!string.IsNullOrEmpty(PreTitle))
+{
+    <div class="page-pretitle">
+        @PreTitle
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Title))
+{
+    <h1 class="display-6">
+        @Title
+    </h1>
+}
+
+@if (!string.IsNullOrEmpty(PostTitle))
+{
+    <div class="text-muted">
+        @PostTitle
+    </div>
+}
+
+@if (Border)
+{
+    <div class="border-bottom"></div>    
+}
+
+@code {
+
+    [Parameter]
+    public string PreTitle { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string PostTitle { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool Border { get; set; } = false;
+
+}

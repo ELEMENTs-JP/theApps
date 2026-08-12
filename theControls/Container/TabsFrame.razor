@@ -1,0 +1,114 @@
+
+<div id="@( "tabs_frame_div " + ID )" class="@FrameCSS">
+
+    @if (Orientation == Orientation.Center)
+    {
+        <div class="row g-0">
+        <div class="col-auto mx-auto d-flex mb-2 mx-auto border rounded-2 align-items-center overflow-hidden">
+
+            @if (!string.IsNullOrEmpty(this.Icon))
+            {
+                <div class="ps-2 pe-0">
+                    @( ((MarkupString)this.Icon.ToSecureString())  )
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(this.Title))
+            {
+                <div class="px-1">
+                    <label>@this.Title.ToSecureString()</label>
+                </div>
+            }
+
+            <div class="px-1">
+                <div class="@( " nav " + ((ShowAsTabs) ? " nav-tabs " : " ") )" id="nav-tab" role="tablist">
+                    @HeaderContent
+                </div>
+            </div>
+
+            @if (RelatedContent.HasContent())
+            {
+                <div class="px-2">
+                    @RelatedContent
+                </div>
+            }
+        </div>
+        </div>
+
+        <div class="row g-0 mt-2">
+            <div class="col mx-auto">
+                <div class="tab-content" id="nav-tabContent">
+                    @ChildContent
+                </div>
+            </div>
+        </div>
+    }
+
+
+    @if (Orientation == Orientation.Horizontal)
+    {
+        <div class="row g-0 border hover rounded-2 overflow-hidden mb-2 p-1 align-items-center">
+            <div class="col">
+                <div class="@( " border-bottom-0 nav " + ((ShowAsTabs) ? " nav-tabs " : " ") )" id="nav-tab" role="tablist">
+                    @HeaderContent
+                </div>
+            </div>
+            @if (RelatedContent.HasContent())
+            {
+                <div class="col-auto">
+                    @RelatedContent
+                </div>
+            }
+        </div>
+
+        <div class="tab-content" id="nav-tabContent">
+            @ChildContent
+        </div>
+    }
+
+
+    @if (Orientation == Orientation.Vertical)
+    {
+        <div class="row g-0">
+            <div class="@( "col-2 border-bottom-0 nav flex-column pe-2 " + ((ShowAsTabs) ? " nav-tabs " : " ") )" id="nav-tab" role="tablist">
+                @HeaderContent
+            </div>
+            <div class="col-10 border-start ps-2 tab-content" id="nav-tabContent">
+                @ChildContent
+            </div>
+        </div>
+    }
+
+
+</div>
+
+@code
+{
+    private string ID { get; set; } = Guid.NewGuid().ToSecureString();
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment HeaderContent { get; set; }
+
+    [Parameter]
+    public RenderFragment RelatedContent { get; set; }
+
+    [Parameter]
+    public string Icon { get; set; } = "<i class='bi bi-folder fw-bold text-muted'></i>";
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool ShowAsTabs { get; set; } = true;
+
+    [Parameter]
+    public string FrameCSS { get; set; } = string.Empty;
+
+    [Parameter]
+    public Orientation Orientation { get; set; } = Orientation.Horizontal;
+
+
+}

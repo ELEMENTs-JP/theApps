@@ -12,7 +12,7 @@
             @(Item.Title.ToSecureString())
         </td>
 
-        @foreach (IField col in Context.ItemType.Fields.Where(f => f.Typ != FieldTyp.HR))
+        @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR))
         {
             <td class="@Helper.GetClassByDevice(col) align-items-center">
                 <TableCell Value="@(Item[col.Column].ToSecureString())" Field="@col" />

@@ -1,0 +1,61 @@
+
+
+
+@if (this.Layout == TabsLayout.Regular)
+{
+    <button class="@( ((ShowAsTab) ? " nav-link " : " " ) + ((Ausrichtung == Orientation.Vertical) ? " rounded " : " ") + ((IsActive == true) ? " active " : " "))"
+            type="button" role="tab" data-bs-toggle="tab"
+            id="@( "nav-" + ID + "-tab" )"
+            data-bs-target="@( "#" + "nav-" + ID )"
+            aria-controls="@( "nav-" + ID )" aria-selected="@( IsActive.ToSecureString() )">
+        @Title.ToSecureString()
+    </button>
+
+}
+@if (this.Layout == TabsLayout.Buttons)
+{
+    <button class="@( " nav-link m-1 "  + " rounded-1 "  + ((IsActive == true) ? " active " : "  "))"
+            type="button" role="tab" data-bs-toggle="tab"
+            id="@( "nav-" + ID + "-tab" )"
+            data-bs-target="@( "#" + "nav-" + ID )"
+            aria-controls="@( "nav-" + ID )" aria-selected="@( IsActive.ToSecureString() )">
+
+        <div class="row g-0">
+
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <div class="col-auto ms-auto px-1">
+                    @( ((MarkupString)Icon) )
+                </div>
+            }
+
+            <div class="col-auto px-1 me-auto">
+                @Title.ToSecureString()
+            </div>
+        </div>
+
+    </button>
+}
+
+@code {
+    [Parameter]
+    public string ID { get; set; } = "home";
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Icon { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool IsActive { get; set; } = false;
+
+    [Parameter]
+    public bool ShowAsTab { get; set; } = true;
+
+    [Parameter]
+    public Orientation Ausrichtung { get; set; } = Orientation.Horizontal;
+
+    [Parameter]
+    public TabsLayout Layout { get; set; } = TabsLayout.Regular;
+}

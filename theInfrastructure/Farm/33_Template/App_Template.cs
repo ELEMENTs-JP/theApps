@@ -17,17 +17,14 @@ namespace theInfrastructure
             // Metadata 
             this.Name = Item.Title;
             this.Group = Item["Group"].ToSecureString();
-
-            Init();
         }
 
-        public override async Task Init()
+        public override async Task<List<IItemType>> GetItemTypes()
         {
-            await base.Init();
-
+            List<IItemType> ItemTypes = new();
             // ItemTypes 
             if (sqlService == null)
-                return;
+                return ItemTypes;
 
             // Query 
             IQueryParameter query = new QueryParameter();
@@ -40,8 +37,10 @@ namespace theInfrastructure
             foreach (IDTO it in result.Items)
             {
                 IItemType itemtype = new ItemType_Template(it, sqlService);
-                this.ItemTypes.Add(itemtype);
+                ItemTypes.Add(itemtype);
             }
+
+            return ItemTypes;
         }
     }
 

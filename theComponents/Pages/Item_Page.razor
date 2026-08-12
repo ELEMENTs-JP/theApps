@@ -20,7 +20,7 @@
 
             <EditArea ItemType="@this.ItemType" ID="@ID" />
 
-            @foreach (IItemType it in this.ItemType.ItemTypes)
+            @foreach (IItemType it in this.ItemType.GetItemTypes().Result)
             {
                 <div class="my-3"></div>
                 <RelatedItemsComp ItemType="@it" RelatedItem="@RelatedItem" />

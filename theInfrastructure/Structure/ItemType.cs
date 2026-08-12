@@ -9,9 +9,9 @@ namespace theInfrastructure
     public interface IItemType
     {
         string Name { get; set; }
-        List<IItemType> ItemTypes { get; set; }
-        List<IField> Fields { get; set; }
-        Task Init();
+
+        public Task<List<IItemType>> GetItemTypes();
+        public Task<List<IField>> GetFields();
     }
     public class  BaseItemType : IItemType
     {
@@ -21,13 +21,19 @@ namespace theInfrastructure
         
         }
 
-        public List<IItemType> ItemTypes { get; set; } = new();
-        public List<IField> Fields { get; set; } = new();
-
-        public virtual async Task Init()
+        public virtual async Task<List<IItemType>> GetItemTypes()
         {
-            // ItemTypes 
+            List<IItemType> ItemTypes = new();
 
+            return ItemTypes;
         }
+        public virtual async Task<List<IField>> GetFields()
+        {
+            List<IField> Fields = new();
+
+            return Fields;
+        }
+
+       
     }
 }

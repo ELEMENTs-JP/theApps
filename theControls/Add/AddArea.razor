@@ -33,19 +33,22 @@
             </div>
 
             <div class="row g-0">
+
+                @if (!string.IsNullOrEmpty(Message))
+                {
+                    <div class="col-12 p-2">
+                        <div class="alert alert-danger p-2 m-2">@Message</div>
+                    </div>
+                }
+
                 <div class="col-12 p-2">
                     <TextBox Label="Titel" Value="@Title"
                              ValueChanged="@( async e => { Title = e; await SearchForDuplicates(); })" />
                 </div>
 
-                @if (!string.IsNullOrEmpty(Message))
-                {
-                    <div class="col-12 p-2">
-                       @Message
-                    </div>
-                }
+             
 
-                @foreach (IField field in ItemType.Fields.Where(s => s.Typ != FieldTyp.HR))
+                @foreach (IField field in ItemType.GetFields().Result.Where(s => s.Typ != FieldTyp.HR))
                 {
                     <div class="col-12">
                         <AddBox Field="@field" CssClass="" Border="false"
@@ -103,7 +106,7 @@
         if (item != null)
         {
             // Message 
-            Message = "Datensatz existiert bereits";
+            Message = string.Format("Datensatz: {0} existiert bereits", Context.Matchcode);
         }
 
         await Task.CompletedTask;    

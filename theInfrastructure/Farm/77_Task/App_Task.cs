@@ -11,8 +11,17 @@ namespace theInfrastructure
         { 
             Name = "Task";
 
+            
+        }
+
+        public override async Task<List<IItemType>> GetItemTypes()
+        {
+            List<IItemType> ItemTypes = new();
+
             // ItemTypes 
-            this.ItemTypes.Add(new ItemType_Task());
+            ItemTypes.Add(new ItemType_Task());
+
+            return ItemTypes;
         }
     }
 }
