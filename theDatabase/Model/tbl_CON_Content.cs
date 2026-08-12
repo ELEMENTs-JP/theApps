@@ -11,7 +11,7 @@ using theInfrastructure;
 
 namespace theDatabase
 {
-    public partial class tbl_CON_Content : IDTO
+    public partial class tbl_CON_Content : IDTO, ISE
     {
         // Fields 
         #region Properties

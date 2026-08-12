@@ -32,10 +32,10 @@
       
             <div class="@( " overflow-y-auto " )" style="@( MaxHeightCSS )">
 
-                @foreach (IDTO item in Items)
+                @foreach (ISE item in Items)
                 {
                     <div class="dropdown-item"
-                         @onclick="@(e => { SelectedItem = item; Value = item.Title; })">
+                         @onclick="@( async e => { SelectedItem = item; Value = item.Title; await HandleInput(item); })">
 
                         @if (ItemTemplate is not null)
                         {
@@ -86,7 +86,7 @@
 @code {
 
     [Parameter]
-    public RenderFragment<IDTO>? ItemTemplate { get; set; }
+    public RenderFragment<ISE>? ItemTemplate { get; set; }
 
     [Parameter]
     public RenderFragment? Overlay { get; set; }
@@ -121,14 +121,20 @@
     public string MaxHeightCSS { get; set; } = "max-height:44rem;";
 
     [Parameter]
-    public List<IDTO> Items { get; set; } = new();
+    public List<ISE> Items { get; set; } = new();
 
 
     [Parameter]
-    public IDTO SelectedItem { get; set; }
+    public ISE SelectedItem { get; set; }
 
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<string> IDChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<ISE> ItemChanged { get; set; }
 
     [Parameter]
     public string Placeholder { get; set; } = string.Empty;
@@ -137,11 +143,19 @@
     [Parameter]
     public bool IsEditable { get; set; } = true;
 
-    private async Task HandleInput(IDTO dto)
+    private async Task HandleInput(ISE dto)
     {
+        // Item 
         SelectedItem = dto;
+
+        // Value 
         Value = dto.Title;
+
+        await IDChanged.InvokeAsync(dto.ID);
+
         await ValueChanged.InvokeAsync(Value);
+
+        await ItemChanged.InvokeAsync(dto);
     }
 
 

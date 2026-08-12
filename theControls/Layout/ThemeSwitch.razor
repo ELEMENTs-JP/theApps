@@ -1,6 +1,7 @@
 ﻿@inject IJSRuntime JS
+@inject ILanguageService lng
 
-<label class="form-label">Theme</label>
+<label class="form-label text-secondary">Theme</label>
 
 <div class="pointer hover rounded-2 p-2"
      @onclick="ToggleTheme">
@@ -48,7 +49,7 @@
         </div>
 
         <div class="col px-3">
-            ändern
+            @( lng.GetLabel("ändern", "change", "espaniol") )
         </div>
     </div>
 

@@ -7,5 +7,10 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace theInfrastructure
 {
-
+    public class DTO : ISE
+    {
+        public string? ID { get; set; }
+        public string Title { get; set; }
+        public string? Content { get; set; }
+    }
 }

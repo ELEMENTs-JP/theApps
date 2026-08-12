@@ -41,6 +41,17 @@ namespace theApp
                 return new SQLiteService(rootPath);
             });
 
+            // Language Service 
+            builder.Services.AddScoped<ILanguageService>(provider =>
+            {
+                // Abruf des WebHostEnvironment aus dem DI-Container
+                var environment = provider.GetRequiredService<IWebHostEnvironment>();
+                string rootPath = environment.ContentRootPath;
+
+                // Manuelle Instanziierung und Übergabe 
+                return new LanguageService(environment, new SQLiteService(rootPath));
+            });
+
             // Security Service 
             builder.Services.AddScoped<ISecurityService>(provider =>
             {

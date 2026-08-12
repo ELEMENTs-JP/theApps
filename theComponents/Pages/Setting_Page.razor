@@ -32,11 +32,21 @@
             <ChildContent>
                 <TabsPanel ID="@( ID + "1")" IsActive="true">
 
-                    <TextBox Label="Titel" Value="@SystemTitle"
-                            ValueChanged="@(e =>  { Configuration.Title = e;
-                            Serializer.Save<SystemConfiguration>(Configuration, "system.config"); })" />
-
-                    <ThemeSwitch />
+                    <div class="row">
+                        <div class="col-4">
+                            <TextBox Label="Titel" Value="@SystemTitle"
+                                     ValueChanged="@(e => { Configuration.Title = e;
+                                        Serializer.Save<SystemConfiguration>(Configuration, "system.config"); })" />
+                        </div>
+                        <div class="col-4">
+                            <ThemeSwitch />
+                        </div>
+                        <div class="col-4">
+                            <LanguageSelector Value="@Configuration.Sprache" 
+                                ValueChanged="@(  e => { Configuration.Sprache = e.ID;
+                                    Serializer.Save<SystemConfiguration>(Configuration, "system.config"); })" />
+                        </div>
+                    </div>
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "2")">

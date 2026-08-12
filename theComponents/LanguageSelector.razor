@@ -1,0 +1,42 @@
+﻿@using theControls.Input
+
+<DropDown Label="Sprache" Items="Items" 
+    Value="@( Text )" ValueChanged="@( e => { Value = e;  } )"
+        ItemChanged="@( async e => { await ValueChanged.InvokeAsync(e); } )" />
+
+@code {
+
+    List<ISE> Items { get; set; } = new();
+    string Text { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Items.Clear();
+        Items.Add(new DTO { ID = "de", Title = "Deutsch" });
+        Items.Add(new DTO { ID = "en", Title = "Englisch" });
+        Items.Add(new DTO { ID = "es", Title = "Spanisch" });
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Text = string.Empty;
+
+        if (Items == null)
+            return;
+
+        ISE se = Items.Where(se => se.ID == Value).FirstOrDefault();
+        if (se == null)
+            return;
+
+        Text = se.Title;    
+    }
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<ISE> ValueChanged { get; set; }
+ }

@@ -22,6 +22,11 @@ namespace theInfrastructure
         bool Validate();
     }
 
+    public interface ILanguageService
+    {
+        string GetLabel(string de, string en, string es);
+    }
+
     public interface ISecurityService
     {
         IDTO Principal { get; set; }
@@ -61,6 +66,16 @@ namespace theInfrastructure
         List<IDTO> Items { get; set; }
         Guid GUID { get; set; }
         void Validate();
+    }
+
+    /// <summary>
+    /// Simple Element
+    /// </summary>
+    public interface ISE
+    {
+        string? ID { get; set; }
+        string Title { get; set; }
+        string? Content { get; set; }
     }
     public interface IDTO
     {

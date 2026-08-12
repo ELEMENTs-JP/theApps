@@ -11,5 +11,6 @@ namespace theInfrastructure
     public class SystemConfiguration
     {
         public string Title { get; set; } = string.Empty;
+        public string Sprache { get; set; } = string.Empty;
     }
 }
