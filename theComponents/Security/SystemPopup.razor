@@ -2,13 +2,17 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using theControls.Icons
 @using theControls.Layout
+@using theInfrastructure
+@inject IAppService app
+@inject NavigationManager nm
+@inject IMessagingBusService msg
 
 
 <div id="@( "frame_popup_" + ID )" class="@(" " +
-                       ((Centered) ? " dropdown-center " : " dropdown ")) ">
+                           ((Centered) ? " dropdown-center " : " dropdown ")) ">
 
     <div id="@( "link_popup_" + ID )" class="@(" d-flex p-1 align-items-center " + ButtonCssClass
-                                   + ((TextColorReset) ? " text-reset " : "") )  " data-bs-toggle="dropdown">
+                                           + ((TextColorReset) ? " text-reset " : "") )  " data-bs-toggle="dropdown">
 
         @if (!string.IsNullOrEmpty(ImageUrl))
         {
@@ -52,15 +56,23 @@
                 <Authorized>
 
                     <a class="dropdown-item" href="/Setting">Einstellungen</a>
-                    
+
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="/Setup">Database</a>
 
                     <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" @onclick="@( async e => { await OnAppSelect("Farm"); })">
+                        Farm
+                    </div>
+                    <div class="dropdown-item" @onclick="@( async e => { await OnAppSelect("Security"); })">
+                        Security
+                    </div>
+
+                    <div class="dropdown-divider"></div>
                     <form action="/api/auth/logout" method="post">
                         <AntiforgeryToken />
-                        <button type="submit" 
-                            class="hover pointer rounded-2 p-1 text-center bg-light text-dark border-0 w-100">
+                        <button type="submit"
+                                class="hover pointer rounded-2 p-1 text-center bg-light text-dark border-0 w-100">
                             Abmelden
                         </button>
                     </form>
@@ -132,5 +144,22 @@
 
     [Parameter]
     public string ContentStyle { get; set; } = "  ";
+
+    private async Task OnAppSelect(string appName)
+    {
+
+        IApp _app = app.AllApps.Where(se => se.Name == appName).FirstOrDefault();
+        if (_app != null)
+        {
+            await app.SetApp(_app);
+
+            nm.NavToApp(_app.Name);
+
+            // Refresh 
+            msg.Publish(new AppMessage("App", BusAction.Refresh));
+        }
+
+        await Task.CompletedTask;
+    }
 
 }

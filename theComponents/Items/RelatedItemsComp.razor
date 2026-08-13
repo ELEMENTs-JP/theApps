@@ -1,6 +1,7 @@
 ﻿@using theControls.Add
 @using theControls.Connect
 @using theControls.Layout
+@using theControls.List
 @using theControls.Tables
 @inject ISqlDatabaseService sql
 
@@ -21,7 +22,7 @@
             </div>
         </Related>
         <Content>
-            <DataTable ItemType="@ItemType" RelatedItem="@RelatedItem" />
+            <ItemsList ItemType="@ItemType" RelatedItem="@RelatedItem" />
         </Content>
     </Frame>
 }

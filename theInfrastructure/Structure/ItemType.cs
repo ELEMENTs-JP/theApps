@@ -9,6 +9,7 @@ namespace theInfrastructure
     public interface IItemType
     {
         string Name { get; set; }
+        string Description { get; set; }
 
         public Task<List<IItemType>> GetItemTypes();
         public Task<List<IField>> GetFields();
@@ -16,6 +17,7 @@ namespace theInfrastructure
     public class  BaseItemType : IItemType
     {
         public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public BaseItemType()
         { 
         

@@ -2,6 +2,7 @@
 @inject IAppService app
 @inject NavigationManager nm
 @inject IMessagingBusService msg
+@implements IAsyncDisposable
 
 <div class="p-3">
 
@@ -28,7 +29,7 @@
         {
             <div class="text-muted small fw-bold ps-2 mt-2">@group</div>
             <div class="row g-0">
-                @foreach (IApp app in app.AllApps.Where(se => se.Group == group))
+                @foreach (IApp app in app.AllApps.Where(se => se.Group == group && se.IsNavigation == true))
                 {
                     <div class="col-12 p-1">
                         <div class="rounded-2 hover pointer p-1 px-2 fw-bold"
@@ -63,6 +64,23 @@
 
     private List<IItemType> ItemTypes { get; set; } = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessage;
+    }
+    public async void OnMessage(AppMessage message)
+    {
+        if (message.Id == "App")
+        {
+            if (message.Action == BusAction.Refresh)
+            {
+                await InvokeAsync(StateHasChanged);
+            }            
+        }
+    }
+
     private async Task OnAppSelect(IApp _app)
     {
         await app.SetApp(_app);
@@ -80,6 +98,18 @@
         nm.NavToLibrary(it.Name);
 
         await Task.CompletedTask;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessage;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
     }
 
 }

@@ -10,8 +10,8 @@ namespace theInfrastructure
         public App_Security()
         { 
             Name = "Security";
+            IsNavigation = false;
 
-            
         }
 
         public override async Task<List<IItemType>> GetItemTypes()

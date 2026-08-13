@@ -14,6 +14,10 @@ html, body {
     border-right: 1px solid var(--tblr-border-color);
 }
 
+.menu {
+    height: var(--tsp-menu-height);
+}
+
 .main {
     flex: 1;
     min-width: 0;

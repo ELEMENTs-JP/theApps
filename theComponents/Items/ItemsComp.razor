@@ -1,13 +1,14 @@
 ﻿@using theControls.Add
 @using theControls.Layout
 @using theControls.Tables
+@using theControls.Text
 @inject ISqlDatabaseService sql
 
 @if (ItemType != null)
 {
     <Frame Border="true" Rounded="true">
         <Header>
-            <div class="h1">@ItemType.Name</div>
+            <ControlHeader PreTitle="List" Title="@ItemType.Name" PostTitle="@ItemType.Description" />
         </Header>
         <Related>
             <AddArea ItemType="@ItemType" />

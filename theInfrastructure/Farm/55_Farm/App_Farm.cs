@@ -10,6 +10,7 @@ namespace theInfrastructure
         public App_Farm()
         { 
             Name = "Farm";
+            IsNavigation = false;
         }
         public override async Task<List<IItemType>> GetItemTypes()
         {

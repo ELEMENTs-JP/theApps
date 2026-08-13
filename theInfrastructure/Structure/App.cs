@@ -9,6 +9,7 @@ namespace theInfrastructure
     {
         string Name { get; set; }
         string Group { get; set; } // Gruppierung in der Navigation // Allgemeine Typisierung
+        bool IsNavigation { get; set; } // wird im App Selector // Navigation angezeigt oder nicht 
         Task<List<IItemType>> GetItemTypes();
 
     }
@@ -20,6 +21,7 @@ namespace theInfrastructure
         }
         public string Name { get; set; } = string.Empty;
         public string Group { get; set; } = string.Empty;
+        public bool IsNavigation { get; set; } = true;
 
         public virtual async Task<List<IItemType>> GetItemTypes()
         {
