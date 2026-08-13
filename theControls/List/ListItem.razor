@@ -1,0 +1,36 @@
+﻿@using theControls.Icons
+
+@inherits BaseRow
+
+@if (Context != null)
+{
+    <div class="row g-0 p-1">
+        <div class="col-auto p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
+        
+        <div class="col p-1 fw-bold pointer" title="@Item.ItemType"
+            @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
+            @(Item.Title.ToSecureString())
+        </div>
+
+  @*       @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR))
+        {
+            <div class="@Helper.GetClassByDevice(col) align-items-center">
+                @Item[col.Column].ToSecureString())
+            </div>
+        } *@
+
+        @if (IsRelated)
+        {
+            <div class="col-auto p-1">
+                <SymbolIcon Symbol="Icon.Disconnect" CSS="pointer hover"
+                            OnClick="@( async  e => { await Disconnect(); })" />
+            </div>
+        }
+    </div>
+}
+
+@code {
+
+ 
+
+}

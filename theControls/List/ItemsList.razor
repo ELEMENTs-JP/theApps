@@ -1,0 +1,24 @@
+﻿@inherits BaseList
+
+@inject NavigationManager nm
+
+@if (Context != null && ItemType != null)
+{
+    @if (Context.ItemType != null && Context.ItemType.GetFields().Result != null)
+    {
+        <div class="table-responsive">
+
+            @foreach (IDTO item in Context.Items)
+            {
+                <ListItem Context="@Context" Item="@item" IsRelated="@( (RelatedItem != null))" />
+            }
+        </div>
+    }
+}
+
+
+@code {
+
+ 
+
+}

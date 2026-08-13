@@ -1,8 +1,6 @@
-﻿@using theControls.Icons
-@using theInfrastructure
-@inject IMessagingBusService bus
-@inject ISqlDatabaseService sql
-@implements IAsyncDisposable
+﻿
+
+@inherits BaseList
 
 @inject NavigationManager nm
 
@@ -31,89 +29,6 @@
 
 @code {
 
-   
-
-    [Parameter]
-    public IItemType ItemType { get; set; }
-
-    [Parameter]
-    public IDTO RelatedItem { get; set; }
-
-    IQueryContext Context { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        bus.OnMessage += OnMessageIncome;
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
-
-        // Context
-        Context = new QueryContext(sql);
-        Context.ItemType = ItemType;
-
-        if (RelatedItem != null)
-        {
-            // Related Items
-            Context.RelatedItem = RelatedItem;
-            await Context.RelatedItems(ItemType.Name);
-        }
-        else
-        {
-            await Context.Search();
-        }
-
-    }
-
-    private async void OnMessageIncome(AppMessage msg)
-    {
-        if (msg.Action == BusAction.Refresh)
-        {
-            if (RelatedItem != null)
-            {
-                // Related Items
-                Context.RelatedItem = RelatedItem;
-                await Context.RelatedItems(ItemType.Name);
-            }
-            else
-            {
-                await Context.Search();
-            }
-
-            await InvokeAsync(this.StateHasChanged);
-
-            // Logik: Prüfen ob Wechsel erlaubt...
-            bool canChange = true;
-
-            if (canChange)
-            {
-                msg.Reply?.Invoke(new AppMessage(msg.Id, BusAction.ResponseOk));
-            }
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        try
-        {
-            bus.OnMessage -= OnMessageIncome;
-
-            ItemType = null;
-            RelatedItem = null;
-
-            if (Context != null)
-            {
-                ((IDisposable)Context).Dispose();
-                Context = null;
-            }
-
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
-        }
-    }
+ 
 
 }

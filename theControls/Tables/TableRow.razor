@@ -1,6 +1,7 @@
 ﻿@using theControls.Icons
-@inject NavigationManager nm
-@inject IMessagingBusService msg
+
+
+@inherits BaseRow
 
 @if (Context != null)
 {
@@ -31,27 +32,6 @@
 
 @code {
 
-    [Parameter]
-    public IQueryContext Context { get; set; }
-
-    [Parameter]
-    public IDTO Item { get; set; }
-
-    [Parameter]
-    public bool IsRelated { get; set; } = false;
-
-    private async Task Disconnect()
-    {
-        if (Context == null)
-        {
-            return;
-        }
-
-        await Context.Remove(Item);
-
-        // Message
-        AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz verbunden");
-        msg.Publish(am);
-    }
+  
 
 }
