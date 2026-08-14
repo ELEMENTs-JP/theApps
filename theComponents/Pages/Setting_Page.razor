@@ -9,6 +9,7 @@
 @using theControls.Tables
 @using theControls.Text
 @using theDatabase
+@using theDatabase.Controls
 @using theInfrastructure
 
 @inject ISqlDatabaseService sql
@@ -26,8 +27,8 @@
         <TabsFrame Orientation="Orientation.Vertical" FrameCSS=" row g-0 w-100">
             <HeaderContent>
                 <TabsItem ID="@( ID + "1")" Title="Einstellungen" IsActive="true" Layout="TabsLayout.Buttons" />
-                <TabsItem ID="@( ID + "2")" Title="Features" Layout="TabsLayout.Buttons"  />
-                <TabsItem ID="@( ID + "3")" Title="Shop" Layout="TabsLayout.Buttons" IsVisible="false" />
+                <TabsItem ID="@( ID + "2")" Title="Datenbank" Layout="TabsLayout.Buttons"  />
+                <TabsItem ID="@( ID + "3")" Title="Features" Layout="TabsLayout.Buttons" />
             </HeaderContent>
             <ChildContent>
                 <TabsPanel ID="@( ID + "1")" IsActive="true">
@@ -54,7 +55,7 @@
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "2")">
-
+                    <DatabaseSetup />
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "3")">

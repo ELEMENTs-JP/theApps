@@ -11,6 +11,7 @@ namespace theInfrastructure
         string Title { get; set; }
         string Name { get; set; }
         string Description { get; set; }
+        ItemTypeTyp Typ { get; set; }
 
         public Task<List<IItemType>> GetItemTypes();
         public Task<List<IField>> GetFields();
@@ -20,6 +21,7 @@ namespace theInfrastructure
         public string Title { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public ItemTypeTyp Typ { get; set; } = ItemTypeTyp.Item;
         public BaseItemType()
         { 
         

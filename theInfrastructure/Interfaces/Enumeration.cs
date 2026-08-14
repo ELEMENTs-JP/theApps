@@ -4,6 +4,13 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum ItemTypeTyp
+    {
+        NULL = 0,
+
+        Item = 1,
+        File = 2,
+    }
     public enum Orientation
     {
         NULL = 0,

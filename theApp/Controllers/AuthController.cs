@@ -120,6 +120,39 @@ public class AuthController : ControllerBase
         return Redirect("/login?error=true");
     }
 
+    [HttpPost("setup")]
+    public async Task<IActionResult> Setup([FromForm] string principal, [FromForm] string username, [FromForm] string password)
+    {
+        // Principal 
+        if (string.IsNullOrEmpty(principal))
+        {
+            return Redirect("/setup?error=true");
+
+        }
+        // Password 
+        if (string.IsNullOrEmpty(password))
+        {
+            return Redirect("/setup?error=true");
+        }
+
+        // Mail Format 
+        if (username.IsMailFormat() == false)
+        {
+            return Redirect("/setup?error=true");
+        }
+
+        IQueryParameter query = new QueryParameter();
+        query.Matchcode = string.Empty;
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.ItemType = "Principal";
+        IQueryResult result = await sqlService.GetItems(query);
+
+  
+
+        return Redirect("/setup?error=true");
+    }
+
+
     private async Task AssignToPrincipal(IDTO user)
     {
         // Check 

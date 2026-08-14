@@ -13,7 +13,8 @@
         <Header>
             <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)" Field="@TitleField" Binding="ValueBindingTyp.Title"
                     Context="@Context" Border="false" />
-            <small class="text-muted small ps-2">@Context.ItemType.Name</small>
+            <small class="text-muted small px-2">ItemType: @Context.ItemType.Name.ToSecureString()</small>
+            <small class="text-muted small px-2 border-start">Typ: @Context.ItemType.Typ.ToSecureString()</small>
         </Header>
         <Related>
             <ContextMenu Context="@Context" ItemType="@ItemType" />
