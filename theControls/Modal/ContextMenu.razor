@@ -1,4 +1,7 @@
 ﻿@inject NavigationManager nm
+@inject ILocalizationService loc
+@inject IMessagingBusService msg
+@implements IAsyncDisposable
 
 <div class="dropdown-center " role="group">
 
@@ -10,21 +13,24 @@
 
         <div class="px-2 pt-2 fw-bold">Aktionen</div>
 
-        @if (Context.Item.ItemType != "Trash")
+        @if (loc.Configuration.Trash == true)
         {
-            <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
-                 @onclick="ToTash">
-                in den Papierkorb...
-            </div>
+            @if (Context.Item.ItemType != "Trash")
+            {
+                <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
+                     @onclick="ToTash">
+                    in den Papierkorb...
+                </div>
+            }
+            @if (Context.Item.ItemType == "Trash")
+            {
+                <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
+                     @onclick="ToOriginalList">
+                    widerherstellen...
+                </div>
+            }
         }
-        @if (Context.Item.ItemType == "Trash")
-        {
-            <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
-                 @onclick="ToOriginalList">
-                widerherstellen...
-            </div>
-        }
-        
+
         <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
              @onclick="DeleteItem">
             löschen...
@@ -42,6 +48,21 @@
 
     [Parameter]
     public IQueryContext Context { get; set; } // Injection
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageIncome;
+    }
+
+    private async void OnMessageIncome(AppMessage message)
+    {
+        if (message.Id == "Features" && message.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
 
     private async Task ToOriginalList()
     {
@@ -72,6 +93,18 @@
             await Context.Delete(Context.Item);
 
             nm.NavToLibrary(ItemType.Name);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageIncome;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
         }
     }
 }

@@ -1,0 +1,33 @@
+﻿@using theControls.Input
+@inject ILocalizationService loc
+@inject IMessagingBusService msg
+
+@if (loc.Configuration != null)
+{
+    <div class="">
+        <h3 class="fw-bold">Features</h3>
+        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+            <div class="col p-2">
+                Papierkorb
+            </div>
+            <div class="col-auto p-2">
+                <CheckBox Value="@loc.Configuration.Trash.ToSecureString()"
+                          ValueChanged="@( async e => {
+                          loc.Configuration.Trash = e.ToSecureBool();
+                          loc.Configuration.Save();
+                          await PushFeatureUpdate();
+                      })" />
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+
+    private async Task PushFeatureUpdate()
+    {
+        msg.Publish(new AppMessage("Feature", BusAction.Refresh));
+    }
+
+}

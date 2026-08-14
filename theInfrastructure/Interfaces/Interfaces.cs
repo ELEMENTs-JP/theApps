@@ -40,6 +40,7 @@ namespace theInfrastructure
         IApp App { get; set; }
         List<IApp> AllApps { get; set; }
         Task SetApp(IApp app);
+  
     }
     public interface ISqlDatabaseService
     {

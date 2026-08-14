@@ -40,7 +40,7 @@ namespace theInfrastructure
         {
             if (Configuration == null)
             {
-                Configuration = Serializer.Load<SystemConfiguration>("system.config");
+                Configuration = SystemConfiguration.Load();
             }
         }
 

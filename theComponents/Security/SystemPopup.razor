@@ -6,7 +6,8 @@
 @inject IAppService app
 @inject NavigationManager nm
 @inject IMessagingBusService msg
-
+@inject ILocalizationService loc
+@implements IAsyncDisposable
 
 <div id="@( "frame_popup_" + ID )" class="@(" " +
                            ((Centered) ? " dropdown-center " : " dropdown ")) ">
@@ -66,9 +67,13 @@
                     <div class="dropdown-item" @onclick="@( async e => { await OnAppSelect("Security"); })">
                         Security
                     </div>
-                    <div class="dropdown-item" @onclick="@( async e => { await OnItemTypeSelect("Trash"); })">
-                        Papierkorb
-                    </div>
+
+                    @if (loc.Configuration.Trash == true)
+                    {
+                        <div class="dropdown-item" @onclick="@( async e => { await OnItemTypeSelect("Trash"); })">
+                            Papierkorb
+                        </div>
+                    }
 
                     <div class="dropdown-divider"></div>
                     <form action="/api/auth/logout" method="post">
@@ -147,6 +152,21 @@
     [Parameter]
     public string ContentStyle { get; set; } = "  ";
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageIncome;
+    }
+
+    private async void OnMessageIncome(AppMessage message)
+    {
+        if (message.Id == "Feature" && message.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
     private async Task OnItemTypeSelect(string itemType)
     {
         nm.NavToLibrary(itemType);    
@@ -171,6 +191,18 @@
         }
 
         await Task.CompletedTask;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageIncome;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
     }
 
 }

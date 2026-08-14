@@ -16,6 +16,7 @@ namespace theInfrastructure
         // Fields 
         IWebHostEnvironment Environment;
         ISqlDatabaseService SqlService;
+     
 
         // Properties 
         private IApp _app = null;

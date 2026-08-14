@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
@@ -13,5 +14,18 @@ namespace theInfrastructure
         public string Title { get; set; } = string.Empty;
         public string Sprache { get; set; } = string.Empty;
         public bool Akzente { get; set; } = false; // weiße Akzente anzeigen oder nicht 
+        public bool Trash { get; set; } = false; // zeigt den Papierkorb an oder nicht 
+
+        public void Save()
+        {
+            SystemConfiguration config = this as SystemConfiguration;
+
+            Serializer.Save<SystemConfiguration>(config, "system.config");
+        }
+        public static SystemConfiguration Load()
+        {
+            return Serializer.Load<SystemConfiguration>("system.config");
+        }
+
     }
 }

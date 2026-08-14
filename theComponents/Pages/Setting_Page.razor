@@ -1,5 +1,6 @@
 ﻿@page "/Setting"
 
+@using theComponents.CMS
 @using theComponents.Items
 @using theControls.Add
 @using theControls.Container
@@ -14,6 +15,7 @@
 
 @inject ISqlDatabaseService sql
 @inject IAppService apps
+@inject ILocalizationService loc
 
 <PageTitle>the App | Einstellungen</PageTitle>
 
@@ -22,7 +24,7 @@
 
     <ControlHeader Title="Einstellungen" Border="true" />
 
-    @if (Configuration != null)
+    @if (loc.Configuration != null)
     {
         <TabsFrame Orientation="Orientation.Vertical" FrameCSS=" row g-0 w-100">
             <HeaderContent>
@@ -35,21 +37,24 @@
 
                     <div class="row">
                         <div class="col-4 px-2">
-                            <TextBox Label="Titel" Value="@Configuration.Title"
-                                     ValueChanged="@(e => { Configuration.Title = e;
-                                        Serializer.Save<SystemConfiguration>(Configuration, "system.config"); })" />
+                            <TextBox Label="Titel" Value="@loc.Configuration.Title"
+                                     ValueChanged="@(e => { loc.Configuration.Title = e;
+                                     loc.Configuration.Save();
+                                 })" />
                         </div>
                         <div class="col-4 px-2 border-start border-end">
                             <ThemeSwitch />
                             <hr />
-                            <CheckBox Label="Akzente" Value="@Configuration.Akzente.ToSecureString()" 
-                                      ValueChanged="@(e => { Configuration.Akzente = e.ToSecureBool();
-                                        Serializer.Save<SystemConfiguration>(Configuration, "system.config"); })" />
+                            <CheckBox Label="Akzente" Value="@loc.Configuration.Akzente.ToSecureString()" 
+                                      ValueChanged="@(e => { loc.Configuration.Akzente = e.ToSecureBool();
+                                      loc.Configuration.Save();
+                                  })" />
                         </div>
                         <div class="col-4 px-2">
-                            <LanguageSelector Value="@Configuration.Sprache" 
-                                ValueChanged="@(  e => { Configuration.Sprache = e.ID;
-                                    Serializer.Save<SystemConfiguration>(Configuration, "system.config"); })" />
+                            <LanguageSelector Value="@loc.Configuration.Sprache" 
+                                ValueChanged="@(  e => { loc.Configuration.Sprache = e.ID;
+                                              loc.Configuration.Save();
+                                          })" />
                         </div>
                     </div>
                 </TabsPanel>
@@ -59,7 +64,7 @@
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "3")">
-
+                    <FeaturesComp  />
                 </TabsPanel>
             </ChildContent>
         </TabsFrame>
@@ -73,13 +78,10 @@
 
     private string ID = "" + Guid.NewGuid();
 
-    private SystemConfiguration Configuration { get; set; } = null;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
-        Configuration = Serializer.Load<SystemConfiguration>("system.config");
     }
 
     protected override async Task OnParametersSetAsync()
