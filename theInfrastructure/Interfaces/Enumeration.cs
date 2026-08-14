@@ -59,6 +59,7 @@ namespace theInfrastructure
         Connect,
         Disconnect,
         Neu,
+        File,
     }
     public enum ValueBindingTyp
     { 

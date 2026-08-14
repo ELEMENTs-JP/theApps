@@ -1,0 +1,227 @@
+@using System
+@using System.IO
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Hosting
+@implements IDisposable
+@inject IJSRuntime JS
+
+@inject IWebHostEnvironment env
+@inject ISqlDatabaseService sql
+
+<div class="pointer rounded hover overflow-hidden bg-surface text-white position-relative mx-2"
+       style="@( "border: 1px dashed #333 !important; " + InternalStyle )">
+
+    @if (isLoading)
+    {
+        <div class="@( ProgressCSS + " position-absolute top-50 start-50 translate-middle " )"
+             style="@( "  " + InternalStyle )"
+             title="@(Progress + "% Complete")">
+            <div class="@ProgressLineCSS" style="width: @(Progress + "%")" role="progressbar"
+                 aria-valuenow="@Progress" aria-valuemin="0" aria-valuemax="100">
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="px-1 position-absolute top-50 start-50 translate-middle">
+            <SymbolIcon Symbol="Icon.File"/>
+        </div>
+        <InputFile @key="inputFileKey" id="@ID" multiple OnChange="@Upload"
+                   class="@( ControlCSS + " position-absolute top-50 start-50 translate-middle " )"
+                   style="@( ControlStyle + " opacity:0.0005; " + InternalStyle )" />
+    }
+</div>
+
+
+
+
+@code {
+
+    private string ID = "file_input_" + Guid.NewGuid();
+    private Guid inputFileKey = Guid.NewGuid();
+
+    private int maxAllowedFiles = 5;
+    private bool isLoading;
+    //private decimal progressPercent;
+
+    [Parameter]
+    public string DefaultFilePath { get; set; } = "FILES";
+
+    [Parameter]
+    public EventCallback<FileNotification> OnFileUploaded { get; set; }
+
+    [Parameter]
+    public string FrameCSS { get; set; } = "";
+
+
+    [Parameter]
+    public string ControlCSS { get; set; } = "form-control";
+
+    [Parameter]
+    public string ProgressCSS { get; set; } = "progress mt-1";
+
+    [Parameter]
+    public string ProgressLineCSS { get; set; } = "progress-bar";
+
+    [Parameter]
+    public int Progress { get; set; } = 0;
+
+    [Parameter]
+    public string ControlStyle { get; set; } = "height: 36px; ";
+
+    private string InternalStyle { get; set; } = " width:36px !important; height:28px !important; ";
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    int MaxFileUploadSizeInMB = 10;
+
+    // Events
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await SetStyle();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+    }
+
+    // Method
+    private async Task Upload(InputFileChangeEventArgs e)
+    {
+        inputFileKey = Guid.NewGuid();
+
+        isLoading = true;
+
+        await InvokeAsync(StateHasChanged);
+
+        Progress = 0;
+
+        IReadOnlyList<IBrowserFile> files = e.GetMultipleFiles(maxAllowedFiles);
+
+        foreach (var file in files)
+        {
+            try
+            {
+                string contentRootPath = env.ContentRootPath;
+
+                Guid itemGUID = Guid.NewGuid();
+                string relativeSaveFilePath = Path.Combine(contentRootPath, DefaultFilePath);
+
+                // check Directory
+                if (!Directory.Exists(relativeSaveFilePath))
+                {
+                    // Create Directory
+                    Directory.CreateDirectory(relativeSaveFilePath);
+                }
+
+                // check again
+                if (!Directory.Exists(relativeSaveFilePath))
+                    return;
+
+                // Voller Dateipfad
+                var extension = Helper.SplitGetLast(file.Name);
+                var fullFilePath = Path.Combine(relativeSaveFilePath, itemGUID.ToString() + "." + extension);
+
+                try
+                {
+                    await using FileStream writeStream = new(fullFilePath, FileMode.Create);
+                    using var readStream = file.OpenReadStream(Helper.MaxFileSize());
+                    var bytesRead = 0;
+                    var totalRead = 0;
+                    var buffer = new byte[1024 * 10];
+
+                    // https://docs.microsoft.com/de-de/aspnet/core/blazor/file-uploads?view=aspnetcore-6.0&pivots=server
+                    while ((bytesRead = await readStream.ReadAsync(buffer)) != 0)
+                    {
+                        // Write to HD 
+                        await writeStream.WriteAsync(buffer, 0, bytesRead);
+
+                        // Math stuff 
+                        totalRead += bytesRead;
+                        decimal val = Decimal.Divide(totalRead, file.Size);
+                        val = val * 100;
+                        Progress = val.ToSecureInt();
+
+                        // Update 
+                        await InvokeAsync(StateHasChanged);
+                    }
+
+                    // writeStream.Close();
+                    // writeStream.Dispose();
+                    // await writeStream.DisposeAsync();
+
+                    // readStream.Close();
+                    // readStream.Dispose();
+                    // await readStream.DisposeAsync();
+                }
+                catch (Exception exInner)
+                {
+                    System.Diagnostics.Debug.WriteLine("Fail Upload Image: " + exInner.Message);
+                }
+
+                // Notification
+                FileNotification token = new FileNotification();
+                token.FileGUID = itemGUID;
+                token.FullFilePath = fullFilePath;
+                token.OriginalFileName = file.Name;
+                token.FileSizeInByte = file.Size;
+                token.FileSizeInKB = file.Size / 1024m;
+                token.FileSizeInMB = file.Size / (1024m * 1024m);
+                token.FileExtension = file.Name.SplitGetLast();
+
+                await OnFileUploaded.InvokeAsync(token);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("FAIL: " + ex.Message);
+            }
+        }
+
+        await InvokeAsync(StateHasChanged);
+        isLoading = false;
+
+        await InvokeAsync(StateHasChanged);
+        // Nach dem Upload das InputFile neu rendern
+        inputFileKey = Guid.NewGuid();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    // Helper
+    private async Task SetStyle()
+    {
+        InternalStyle = " width:36px !important; height:28px !important; ";
+        await Task.CompletedTask;
+    }
+
+    // Notification
+
+    public void Dispose()
+    {
+        try
+        {
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL Dispose: " + ex.Message);
+        }
+    }
+}

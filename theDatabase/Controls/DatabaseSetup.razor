@@ -2,20 +2,19 @@
 @using theInfrastructure
 @inject ISqlDatabaseService sql
 
-<div class="border rounded-2 p-3 my-3">
+<div class="">
 
-    <h4 class="fw-bold">Database Management</h4>
-    <div class="row align-items-center">
+    <h3 class="fw-bold">Database Management</h3>
+
+    <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
         <div class="col p-2">
-            <button class="btn btn-sm btn-primary m-3" @onclick="CreateDatabase">Datenbank erstellen</button>
+            Datenbank Zustand
         </div>
-        <div class="col p-2">
-            <button class="btn btn-sm btn-primary m-3" @onclick="DeleteDatabase">Datenbank löschen</button>
-        </div>
-        <div class="col p-2">
+
+        <div class="col-auto p-2">
             @if (sql.DatabaseExists == true)
             {
-                <span class="badge bg-success">Datenbank existiert</span>
+                <span class="badge bg-success text-white">Datenbank existiert</span>
             }
             else
             {
@@ -23,6 +22,31 @@
             }
         </div>
     </div>
+
+
+
+    @if (sql.DatabaseExists == true)
+    {
+        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+            <div class="col p-2">
+                Datenbank löschen
+            </div>
+            <div class="col-auto p-2">
+                <button class="btn btn-sm btn-primary m-3" @onclick="DeleteDatabase">löschen</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+            <div class="col p-2">
+                Datenbank erstellen
+            </div>
+            <div class="col-auto p-2">
+                <button class="btn btn-sm btn-primary m-3" @onclick="CreateDatabase">erstellen</button>
+            </div>
+        </div>
+    }
 
     <div class="m-3">@Info</div>
 </div>

@@ -51,6 +51,7 @@ namespace theInfrastructure
 
             // Default Apps 
             AllApps.Add(new App_Farm());
+            AllApps.Add(new App_System());
             AllApps.Add(new App_Security());
             AllApps.Add(new App_Task());
 

@@ -1,0 +1,46 @@
+﻿@using theControls.Input
+@inject IMessagingBusService msg
+@inject ISqlDatabaseService sql
+
+<FileInputBox OnFileUploaded="OnFileUpload" />
+
+@code {
+
+    private async Task OnFileUpload(FileNotification fn)
+    {
+        if (fn == null)
+            return;
+
+        IQueryParameter qp = new QueryParameter();
+        qp.GUID = fn.FileGUID;
+        qp.MasterGUID = sql.MasterGUID;
+        qp.Title = fn.OriginalFileName;
+        qp.ItemType = "File";
+        IQueryResult result = await sql.Create(qp);
+        if (result == null)
+            return;
+
+        IQueryResult itemResult = await sql.GetItem(qp);
+        if (itemResult == null)
+            return;
+
+        IDTO item = itemResult.Items.FirstOrDefault();
+        if (item == null)
+            return;
+
+        // Extension 
+        item["FullFilePath"] = fn.FullFilePath;
+        item["FileExtension"] = fn.FileExtension;
+
+        // Size 
+        item["FileSizeInByte"] = fn.FileSizeInByte.ToSecureString();
+        item["FileSizeInKB"] = fn.FileSizeInKB.ToSecureString();
+        item["FileSizeInMB"] = fn.FileSizeInMB.ToSecureString();
+
+        // Update 
+        await sql.Update(item);
+
+        // Refresh 
+        msg.Publish(new AppMessage("List", BusAction.Refresh));
+    }
+}

@@ -132,6 +132,16 @@ namespace theDatabase
 
             await sqlService.Update(dto);
         }
+        public async Task ChangeItemType(IDTO dto, string newItemType)
+        {
+            if (sqlService == null)
+                return;
+
+            if (dto == null)
+                return;
+
+            await sqlService.ChangeItemType(dto, newItemType);
+        }
         public async Task Assign(IDTO dto)
         {
             if (sqlService == null)

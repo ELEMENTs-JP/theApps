@@ -13,6 +13,11 @@ namespace theInfrastructure
 {
     public static class Helper
     {
+        public static long MaxFileSize(int defaultValue = 10)
+        {
+            long defaultFileSizeInBytes = 1024 * 1024 * defaultValue;
+            return defaultFileSizeInBytes;
+        }
         public static Guid ToSecureGUID(this object text)
         {
             try

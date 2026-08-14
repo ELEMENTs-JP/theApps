@@ -5,12 +5,13 @@ using System.Text;
 namespace theInfrastructure
 {
     // App 
-    public class App_Task : BaseApp, IApp
+    public class App_System : BaseApp, IApp
     {
-        public App_Task()
+        public App_System()
         { 
-            Name = "Task";
+            Name = "System";
             IsNavigation = false;
+
         }
 
         public override async Task<List<IItemType>> GetItemTypes()
@@ -18,9 +19,7 @@ namespace theInfrastructure
             List<IItemType> ItemTypes = new();
 
             // ItemTypes 
-            ItemTypes.Add(new ItemType_Note());
-            ItemTypes.Add(new ItemType_File());
-            ItemTypes.Add(new ItemType_Task());
+            ItemTypes.Add(new ItemType_Trash());
 
             return ItemTypes;
         }

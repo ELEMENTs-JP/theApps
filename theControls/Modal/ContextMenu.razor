@@ -1,23 +1,37 @@
 ﻿@inject NavigationManager nm
 
+<div class="dropdown-center " role="group">
 
-    <div class="dropdown-center " role="group">
+    <div class="pointer hover rounded-2 p-1 px-2" data-bs-toggle="dropdown">
+        <small class="text-muted"><i class="ti ti-chevron-down"></i></small>
+    </div>
 
-        <div class="pointer hover rounded-2 p-1 px-2" data-bs-toggle="dropdown">
-            <small class="text-muted"><i class="ti ti-chevron-down"></i></small>
-        </div>
-
-        <div class="dropdown-menu" style="min-width:15rem;">
+    <div class="dropdown-menu" style="min-width:15rem;">
 
         <div class="px-2 pt-2 fw-bold">Aktionen</div>
 
+        @if (Context.Item.ItemType != "Trash")
+        {
             <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
-                 @onclick="DeleteItem">
-                löschen...
+                 @onclick="ToTash">
+                in den Papierkorb...
             </div>
-
+        }
+        @if (Context.Item.ItemType == "Trash")
+        {
+            <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
+                 @onclick="ToOriginalList">
+                widerherstellen...
+            </div>
+        }
+        
+        <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
+             @onclick="DeleteItem">
+            löschen...
         </div>
+
     </div>
+</div>
 
 
 @code {
@@ -29,7 +43,28 @@
     [Parameter]
     public IQueryContext Context { get; set; } // Injection
 
+    private async Task ToOriginalList()
+    {
+        if (Context != null)
+        {
+            string originalItemType = Context.Item["OriginalItemType"];
+            if (!string.IsNullOrEmpty(originalItemType))
+            {
+                await Context.ChangeItemType(Context.Item, originalItemType);
+                nm.NavToLibrary(originalItemType);
+            }
+        }
+    }
+    private async Task ToTash()
+    {
+        if (Context != null)
+        {
+            Context.Item["OriginalItemType"] = Context.Item.ItemType;
+            await Context.ChangeItemType(Context.Item, "Trash");
 
+            nm.NavToLibrary(ItemType.Name);
+        }
+    }
     private async Task DeleteItem()
     {
         if (Context != null)

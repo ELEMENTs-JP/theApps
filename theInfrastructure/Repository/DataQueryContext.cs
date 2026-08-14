@@ -20,6 +20,7 @@ namespace theInfrastructure
         Task<Guid> Create(string title);
         Task Delete(IDTO dto);
         Task Update(IDTO dto);
+        Task ChangeItemType(IDTO dto, string newItemType);
         Task Assign(IDTO dto);
         Task Remove(IDTO dto);
     }

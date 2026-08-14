@@ -1,4 +1,5 @@
 ﻿@using theControls.Add
+@using theControls.Input
 @using theControls.Layout
 @using theControls.Tables
 @using theControls.Text
@@ -11,7 +12,18 @@
             <ControlHeader PreTitle="List" Title="@ItemType.Name" PostTitle="@ItemType.Description" />
         </Header>
         <Related>
-            <AddArea ItemType="@ItemType" />
+            @if (this.ItemType.Name != "Trash")
+            {
+                @if (this.ItemType.Typ == ItemTypeTyp.Item)
+                {
+                    <AddArea ItemType="@ItemType" />
+                }
+                @if (this.ItemType.Typ == ItemTypeTyp.File)
+                {
+                    <FileUploadComp />
+
+                }
+            }
         </Related>
         <Content>
             <DataTable ItemType="@this.ItemType">
@@ -40,4 +52,6 @@
             // this.StateHasChanged();
         }
     }
+
+  
 }

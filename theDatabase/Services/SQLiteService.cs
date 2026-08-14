@@ -486,6 +486,44 @@ namespace theDatabase
             return result;
         }
 
+        public async Task<IQueryResult> ChangeItemType(IDTO dto, string newItemType)
+        {
+            IQueryResult result = new QueryResult { Status = "OK", Message = "" };
+
+            try
+            {
+                await using (SQLiteContext ctx = GetContext())
+                {
+                    var dbitem = await (from query in ctx.tbl_CON_Content
+                                        where query.GUID == dto.GUID
+                                        select query).FirstOrDefaultAsync();
+
+                    if (dbitem != null)
+                    {
+                        dbitem.ItemType = newItemType;
+                        dto.ItemType = newItemType;
+                        
+                        // CONTENT 
+                        dbitem = (tbl_CON_Content)Helper.MapProperties(dto, dbitem);
+                    }
+
+                    // SAVE 
+                    await ctx.SaveChangesAsync();
+
+                    // Close 
+                    ctx.Database.CloseConnection();
+                    ctx.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Status = "FAIL";
+                result.Message = ex.Message;
+            }
+
+            return result;
+        }
+
         // Relation 
         public async Task<IQueryResult> GetRelatedItems(IDTO dto, string ItemType, string Typ = "Association")
         {

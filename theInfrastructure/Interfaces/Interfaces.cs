@@ -54,6 +54,7 @@ namespace theInfrastructure
         Task<IQueryResult> GetItem(IQueryParameter query);
         Task<IQueryResult> Delete(IDTO dto);
         Task<IQueryResult> Update(IDTO dto);
+        Task<IQueryResult> ChangeItemType(IDTO dto, string newItemType);
 
         Task<IQueryResult> Assign(IDTO parent, IDTO child);
         Task<IQueryResult> Remove(IDTO parent, IDTO child);

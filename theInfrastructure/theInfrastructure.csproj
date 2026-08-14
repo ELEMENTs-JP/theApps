@@ -11,10 +11,6 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Farm\99_System\" />
-  </ItemGroup>
-
 
 
 </Project>
