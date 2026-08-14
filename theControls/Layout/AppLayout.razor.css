@@ -39,6 +39,14 @@ main:focus {
     border-bottom: 1px solid var(--tblr-border-color);
 }
 
+.bar {
+    position: fixed;
+    bottom: 2.5rem;
+    right: 1.65rem;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
 @media (min-width: 992px) {
     .frame {
         flex-direction: row;

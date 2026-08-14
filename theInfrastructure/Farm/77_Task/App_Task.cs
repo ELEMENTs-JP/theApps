@@ -10,8 +10,7 @@ namespace theInfrastructure
         public App_Task()
         { 
             Name = "Task";
-
-            
+            IsNavigation = false;
         }
 
         public override async Task<List<IItemType>> GetItemTypes()
@@ -20,6 +19,7 @@ namespace theInfrastructure
 
             // ItemTypes 
             ItemTypes.Add(new ItemType_Task());
+            ItemTypes.Add(new ItemType_Note());
 
             return ItemTypes;
         }

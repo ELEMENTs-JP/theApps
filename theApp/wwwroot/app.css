@@ -27,6 +27,11 @@ a {
     cursor: pointer;
 }
 
+.transulent {
+    background-color: var(--tsp-hover) !important;
+    color: #cccccc !important;
+}
+
 .hover:hover {
     background-color: var(--tsp-hover) !important;
     transition: background-color 0.25s ease;

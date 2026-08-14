@@ -5,8 +5,8 @@
 @attribute [Authorize]
 
 
-  <AuthorizeView>
-      <Authorized>
+<AuthorizeView>
+    <Authorized>
         <div class="frame">
             <div class="sidebar">
                 <Sidebar>
@@ -28,6 +28,9 @@
                 <div class="footer">
                     @Footer
                 </div>
+                <div class="bar p-2 transulent rounded-2 align-items-center overflow-hidden">
+                    @Bar
+                </div>
             </main>
         </div>
 
@@ -37,16 +40,22 @@
                      ShowCloseButton="true" />
 
         </StaticPositionContainer>
-      </Authorized>
-      <NotAuthorized>
-          
-          <div class="hover pointer rounded-2 p-2 m-5" @onclick="@( e => { nm.NavigateTo("/Login", false); } )">
-              go to Login
-          </div>
+    </Authorized>
+    <NotAuthorized>
 
-      </NotAuthorized>
-  </AuthorizeView>
-                
+        <div class="container p-5">
+
+            <h1 class="display-1">Access Denied</h1>
+
+            <div class="hover pointer rounded-2 p-2" 
+                @onclick="@( e => { nm.NavigateTo("/Login", false); })">
+                go to Login
+            </div>
+        </div>
+
+    </NotAuthorized>
+</AuthorizeView>
+
 @code {
 
     [Parameter]
@@ -64,12 +73,15 @@
     [Parameter]
     public RenderFragment Footer { get; set; }
 
-    [CascadingParameter] 
+    [Parameter]
+    public RenderFragment Bar { get; set; }
+
+    [CascadingParameter]
     private Task<AuthenticationState> AuthStateTask { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        // Token 
+        // Token
         var authState = await AuthStateTask;
         var token = authState.User.FindFirst("SecureToken")?.Value;
         if (!string.IsNullOrEmpty(token))

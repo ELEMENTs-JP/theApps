@@ -8,6 +8,7 @@ namespace theInfrastructure
     // Interface 
     public interface IItemType
     {
+        string Title { get; set; }
         string Name { get; set; }
         string Description { get; set; }
 
@@ -16,6 +17,7 @@ namespace theInfrastructure
     }
     public class  BaseItemType : IItemType
     {
+        public string Title { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public BaseItemType()
@@ -35,7 +37,10 @@ namespace theInfrastructure
 
             return Fields;
         }
+        public override string ToString()
+        {
+            return ((string.IsNullOrEmpty(Title)) ? Name : Title);
+        }
 
-       
     }
 }
