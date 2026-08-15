@@ -1,6 +1,7 @@
 
 :root {
-    
+    --tblr-dropdown-item-padding-x: 0.65rem !important;
+    --tblr-dropdown-item-padding-y: 0.35rem !important;
 }
 
 
@@ -33,6 +34,11 @@
 .tox :not(svg):not(rect) {
     color: #ccc !important;
     fill: #ccc !important;
+}
+
+
+.dropdown-item:focus, .dropdown-item:hover {
+    border-radius: 0.35rem !important;
 }
 
 .icon {

@@ -39,22 +39,23 @@
                         <div class="col-4 px-2">
                             <TextBox Label="Titel" Value="@loc.Configuration.Title"
                                      ValueChanged="@(e => { loc.Configuration.Title = e;
-                                     loc.Configuration.Save();
-                                 })" />
+                                     loc.Configuration.Save(); })" />
                         </div>
                         <div class="col-4 px-2 border-start border-end">
                             <ThemeSwitch />
-                            <hr />
+                            <div class="border-bottom my-2"></div>
                             <CheckBox Label="Akzente" Value="@loc.Configuration.Akzente.ToSecureString()" 
                                       ValueChanged="@(e => { loc.Configuration.Akzente = e.ToSecureBool();
-                                      loc.Configuration.Save();
-                                  })" />
+                                      loc.Configuration.Save();  })" />
                         </div>
                         <div class="col-4 px-2">
                             <LanguageSelector Value="@loc.Configuration.Sprache" 
                                 ValueChanged="@(  e => { loc.Configuration.Sprache = e.ID;
-                                              loc.Configuration.Save();
-                                          })" />
+                                              loc.Configuration.Save();   })" />
+                                                  <div class="border-bottom my-2"></div>
+                            <CurrencySelector Value="@loc.Configuration.Currency" 
+                                ValueChanged="@(  e => { loc.Configuration.Currency = e.ID;
+                                              loc.Configuration.Save();   })" />
                         </div>
                     </div>
                 </TabsPanel>
