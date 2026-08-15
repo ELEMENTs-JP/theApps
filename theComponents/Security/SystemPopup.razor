@@ -38,7 +38,7 @@
             <div class="col">
                 @if (ShowTitleInPopupMenu)
                 {
-                    <div class="px-2 pt-2 fw-bold">@Title</div>
+                    <div class="dropdown-header">@Title</div>
                 }
                 @if (ShowSubTitleInPopupMenu == true)
                 {
@@ -68,8 +68,17 @@
                         Security
                     </div>
 
-                    @if (loc.Configuration.Trash == true)
+                    @if (loc.Configuration.Archive)
                     {
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" @onclick="@( async e => { await OnItemTypeSelect("Archive"); })">
+                            Archiv
+                        </div>
+                    }
+
+                    @if (loc.Configuration.Trash)
+                    {
+                        <div class="dropdown-divider"></div>
                         <div class="dropdown-item" @onclick="@( async e => { await OnItemTypeSelect("Trash"); })">
                             Papierkorb
                         </div>

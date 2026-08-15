@@ -6,6 +6,25 @@
 {
     <div class="">
         <h3 class="fw-bold">Features</h3>
+
+
+
+        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+            <div class="col p-2">
+                Archiv
+            </div>
+            <div class="col-auto p-2">
+                <CheckBox Value="@loc.Configuration.Archive.ToSecureString()"
+                          ValueChanged="@(async e => {
+                          loc.Configuration.Archive = e.ToSecureBool();
+                          loc.Configuration.Save();
+                          await PushFeatureUpdate();
+                      })" />
+            </div>
+        </div>
+
+
+
         <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
             <div class="col p-2">
                 Papierkorb
@@ -19,6 +38,39 @@
                       })" />
             </div>
         </div>
+
+        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+            <div class="col p-2">
+                Taskbar
+            </div>
+            <div class="col-auto p-2">
+                <CheckBox Value="@loc.Configuration.TaskBar.ToSecureString()"
+                          ValueChanged="@(async e => {
+                          loc.Configuration.TaskBar = e.ToSecureBool();
+                          loc.Configuration.Save();
+                          await PushFeatureUpdate();
+                      })" />
+            </div>
+        </div>
+
+        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+            <div class="col p-2">
+                Datum und Uhrzeit
+            </div>
+            <div class="col-auto p-2">
+                <CheckBox Value="@loc.Configuration.Clock.ToSecureString()"
+                          ValueChanged="@(async e => {
+                          loc.Configuration.Clock = e.ToSecureBool();
+                          loc.Configuration.Save();
+                          await PushFeatureUpdate();
+                      })" />
+            </div>
+        </div>
+
+
+
+
+
     </div>
 }
 

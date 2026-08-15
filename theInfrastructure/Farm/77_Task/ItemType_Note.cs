@@ -16,6 +16,9 @@ namespace theInfrastructure
             // Fields 
             List<IField> Fields = new List<IField>();
 
+            Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });
+            Fields.Add(new Field() { Title = "Notiz", Typ = FieldTyp.Html, Column = "Note", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
+
             return Fields;
         }
 

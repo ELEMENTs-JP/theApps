@@ -1,6 +1,18 @@
 ﻿
 
 
+function InitHtmlEditor() {
+    hugerte.init({
+        selector: '#editor',
+        plugins: 'lists link image table code emoticons fullscreen',
+        toolbar: 'undo redo | bold italic | bullist numlist | link image | code',
+        content_style: '.mce-content-body { background-color: #24272d !important; color: #aaa !important; outline:none !important; }'
+        
+    });
+}
+
+
+
 const timeOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
 
 function DateTimeShortClockFull() {

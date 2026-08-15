@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="HugeRTE.Blazor" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\theDatabase\theDatabase.csproj" />
     <ProjectReference Include="..\theInfrastructure\theInfrastructure.csproj" />
   </ItemGroup>

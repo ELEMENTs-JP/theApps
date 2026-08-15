@@ -79,6 +79,7 @@ namespace theInfrastructure
     {
         Text,
         TextArea,
+        Html,
         DropDown,
         CheckBox,
         Heading,

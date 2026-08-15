@@ -1,0 +1,12 @@
+﻿/* Container und Werkzeugleiste transparent machen */
+.hugerte,
+.hugerte .hugerte-editor-header,
+.hugerte .hugerte-toolbar,
+.hugerte .hugerte-statusbar {
+    background-color: transparent !important;
+}
+
+    /* Hintergrund im Iframe (Eingabebereich) transparent setzen */
+    .hugerte .hugerte-edit-area iframe {
+        background-color: transparent !important;
+    }

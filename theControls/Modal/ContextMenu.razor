@@ -13,6 +13,25 @@
 
         <div class="px-2 pt-2 fw-bold">Aktionen</div>
 
+        @if (loc.Configuration.Archive == true)
+        {
+            @if (Context.Item.ItemType != "Archive")
+            {
+                <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
+                     @onclick="ToArchive">
+                    ins Archiv...
+                </div>
+            }
+            @if (Context.Item.ItemType == "Archive")
+            {
+                <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
+                     @onclick="ToOriginalList">
+                    widerherstellen...
+                </div>
+            }
+        }
+
+
         @if (loc.Configuration.Trash == true)
         {
             @if (Context.Item.ItemType != "Trash")
@@ -74,6 +93,16 @@
                 await Context.ChangeItemType(Context.Item, originalItemType);
                 nm.NavToLibrary(originalItemType);
             }
+        }
+    }
+    private async Task ToArchive()
+    {
+        if (Context != null)
+        {
+            Context.Item["OriginalItemType"] = Context.Item.ItemType;
+            await Context.ChangeItemType(Context.Item, "Archive");
+
+            nm.NavToLibrary(ItemType.Name);
         }
     }
     private async Task ToTash()

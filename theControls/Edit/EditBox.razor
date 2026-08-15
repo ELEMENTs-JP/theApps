@@ -63,6 +63,20 @@
                 </Overlay>
             </Heading>
         }
+        else if (Field.Typ == FieldTyp.Html)
+        {
+            <HtmlBox @key="@( "Html-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
+                     Label="@Title" Description="@Description" Value="@Value"
+                     ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
+                     CssClass="@CssClass"
+                     IsEditable="@IsEditable">
+                <Overlay>
+                    <div class="hover pointer rounded-2 p-1 me-2" @onclick="Save">
+                        <SymbolIcon Symbol="@Icon.Check" />
+                    </div>
+                </Overlay>
+            </HtmlBox>
+        }
         else
         {
             <TextBox @key="@( "TextBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"

@@ -4,11 +4,11 @@ using System.Text;
 
 namespace theInfrastructure
 {
-    public class  ItemType_Trash : BaseItemType, IItemType
+    public class  ItemType_Archive : BaseItemType, IItemType
     {
-        public ItemType_Trash()
+        public ItemType_Archive()
         {
-            Name = "Trash";
+            Name = "Archive";
         }
         public override async Task<List<IField>> GetFields()
         {

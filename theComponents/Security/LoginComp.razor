@@ -8,18 +8,23 @@
 <div class="container mt-5">
     <div class="card mx-auto" style="max-width: 400px;">
         <div class="card-body">
-            <h4>Cookie Anmeldung</h4>
+            <h3>Anmeldung</h3>
             <form action="/api/auth/login" method="post">
                 <AntiforgeryToken />
                 <div class="mb-3">
-                    <label>Benutzername</label>
+                    <label>Mail</label>
                     <input type="text" name="username" class="form-control" />
                 </div>
                 <div class="mb-3">
                     <label>Passwort</label>
                     <input type="password" name="password" class="form-control" />
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Login</button>
+
+                <div class="d-flex flex-row-reverse align-items-center">
+                    <button type="submit" class="btn btn-sm btn-primary">Login</button>
+                    <a href="/register" class="mx-5">Registrierung</a>
+                    <a href="/requestnewpwd" class="mx-2">Passwort ändern</a>
+                </div>  
             </form>
 
             @if (nm.Uri.Contains("error"))

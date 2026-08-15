@@ -14,8 +14,25 @@
     --tblr-bg-surface: #24272d;
 }
 
-.modal-content {
-    box-shadow: none !important;
+
+/* not */
+[class*="tox"] {
+    background-color: var(--tblr-bg-surface) !important;
+    border: 0px solid transparent !important;
+    outline:none !important;
+}
+.tox .tox-tbtn svg {
+    fill: #ccc !important;
+}
+.tox .tox-mbtn {
+    color: #ccc !important;
+}
+.tox .tox-collection__item {
+    color: #ccc !important;
+}
+.tox :not(svg):not(rect) {
+    color: #ccc !important;
+    fill: #ccc !important;
 }
 
 .icon {

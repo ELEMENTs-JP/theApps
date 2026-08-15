@@ -20,6 +20,7 @@ namespace theInfrastructure
 
             // ItemTypes 
             ItemTypes.Add(new ItemType_Trash());
+            ItemTypes.Add(new ItemType_Archive());
 
             return ItemTypes;
         }

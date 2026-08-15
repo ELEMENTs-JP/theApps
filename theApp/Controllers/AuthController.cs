@@ -153,6 +153,71 @@ public class AuthController : ControllerBase
     }
 
 
+
+    [HttpPost("requestpwd")]
+    public async Task<IActionResult> RequestNewPassword([FromForm] string username)
+    {
+        // Mail Format 
+        if (username.IsMailFormat() == false)
+        {
+            return Redirect("/setup?error=true");
+        }
+
+        IQueryParameter query = new QueryParameter();
+        query.Matchcode = string.Empty;
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.ItemType = "Principal";
+        IQueryResult result = await sqlService.GetItems(query);
+
+
+
+        return Redirect("/setup?error=true");
+    }
+
+
+    [HttpPost("setnewpwd")]
+    public async Task<IActionResult> SetNewPassword([FromForm] string username)
+    {
+        // Mail Format 
+        if (username.IsMailFormat() == false)
+        {
+            return Redirect("/setup?error=true");
+        }
+
+        IQueryParameter query = new QueryParameter();
+        query.Matchcode = string.Empty;
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.ItemType = "Principal";
+        IQueryResult result = await sqlService.GetItems(query);
+
+
+
+        return Redirect("/setup?error=true");
+    }
+
+    [HttpPost("requestaccess")]
+    public async Task<IActionResult> RequestAccess([FromForm] string username)
+    {
+        // Mail Format 
+        if (username.IsMailFormat() == false)
+        {
+            return Redirect("/setup?error=true");
+        }
+
+        IQueryParameter query = new QueryParameter();
+        query.Matchcode = string.Empty;
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.ItemType = "Principal";
+        IQueryResult result = await sqlService.GetItems(query);
+
+
+
+        return Redirect("/setup?error=true");
+    }
+    
+
+
+
     private async Task AssignToPrincipal(IDTO user)
     {
         // Check 

@@ -2,6 +2,9 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager nm
 @inject ISecurityService sec
+@inject IMessagingBusService msg
+@inject ILocalizationService loc
+@implements IAsyncDisposable
 @attribute [Authorize]
 
 
@@ -28,9 +31,13 @@
                 <div class="footer">
                     @Footer
                 </div>
-                <div class="bar p-2 transulent rounded-2 align-items-center overflow-hidden">
-                    @Bar
-                </div>
+
+                @if (loc.Configuration.TaskBar)
+                {
+                    <div class="bar p-2 transulent rounded-2 align-items-center overflow-hidden">
+                        @Bar
+                    </div>
+                }
             </main>
         </div>
 
@@ -95,6 +102,29 @@
         if (!string.IsNullOrEmpty(token))
         {
             await sec.SetUser(token.ToSecureGUID());
+        }
+
+
+        msg.OnMessage += OnMessageIncome;
+    }
+
+    private async void OnMessageIncome(AppMessage message)
+    {
+        if (message.Id == "Feature" && message.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageIncome;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
         }
     }
 }

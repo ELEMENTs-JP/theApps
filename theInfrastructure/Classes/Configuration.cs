@@ -15,6 +15,9 @@ namespace theInfrastructure
         public string Sprache { get; set; } = string.Empty;
         public bool Akzente { get; set; } = false; // weiße Akzente anzeigen oder nicht 
         public bool Trash { get; set; } = false; // zeigt den Papierkorb an oder nicht 
+        public bool Archive { get; set; } = false; // zeigt das Archiv an 
+        public bool TaskBar { get; set; } = true; // zeigt die Taskbar unten rechts an
+        public bool Clock { get; set; } = true; // zeigt die Uhr an 
 
         public void Save()
         {

@@ -1,0 +1,34 @@
+﻿@page "/RequestNewPwd"
+@using Microsoft.AspNetCore.Components.Forms
+@using theControls.Layout
+@layout EmptyLayout
+@inject NavigationManager nm
+
+
+<div class="container mt-5">
+    <div class="card mx-auto" style="max-width: 400px;">
+        <div class="card-body">
+            <h4>Neues Passwort anfragen</h4>
+            <form action="/api/auth/requestpwd" method="post">
+                <AntiforgeryToken />
+
+                <div class="mb-3">
+                    <label>E-Mail</label>
+                    <input type="text" name="username" class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Request new password</button>
+            </form>
+
+            @if (nm.Uri.Contains("error"))
+            {
+                <div class="alert alert-danger mt-3">Zugriff verweigert!</div>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+
+}

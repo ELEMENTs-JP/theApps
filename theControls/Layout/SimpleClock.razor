@@ -1,13 +1,33 @@
 @inject IJSRuntime JS
+@implements IAsyncDisposable
+@inject ILocalizationService loc
+@inject IMessagingBusService msg
 
-<div class="bg-surface p-2 align-items-center border-bottom border-start border-end">
-    <small id="datetimeclock">Samstag, 11. August 2026 - 11:20 Uhr</small>
-</div>
+@if (loc.Configuration.Clock)
+{
+    <div class="bg-surface p-2 align-items-center border-bottom border-start border-end">
+        <small id="datetimeclock">Samstag, 11. August 2026 - 11:20 Uhr</small>
+    </div>
+}
 
 
 
 @code {
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageIncome;
+    }
+
+    private async void OnMessageIncome(AppMessage message)
+    {
+        if (message.Id == "Feature" && message.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
@@ -21,5 +41,15 @@
         
         }
     }
-
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageIncome;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
 }
