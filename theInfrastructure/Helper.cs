@@ -13,6 +13,44 @@ namespace theInfrastructure
 {
     public static class Helper
     {
+        public static List<IDTO> InitDropDown(IField field)
+        {
+            List<IDTO> Items = new List<IDTO>();
+
+            if (field.Typ == FieldTyp.DropDown)
+            {
+
+            }
+            else if (field.Typ == FieldTyp.Priority)
+            {
+                Items.Add(new DTO() { ID = "9", Title = "Geschäftskritisch" });
+                Items.Add(new DTO() { ID = "7", Title = "kritisch" });
+                Items.Add(new DTO() { ID = "5", Title = "hoch" });
+                Items.Add(new DTO() { ID = "3", Title = "mittel" });
+                Items.Add(new DTO() { ID = "1", Title = "niedrig" });
+                Items.Add(new DTO() { ID = "0", Title = "irrelevant" });
+            }
+            else if (field.Typ == FieldTyp.Progress)
+            {
+                Items.Add(new DTO() { ID = "9", Title = "100 %" });
+                Items.Add(new DTO() { ID = "7", Title = "70 %" });
+                Items.Add(new DTO() { ID = "5", Title = "50 %" });
+                Items.Add(new DTO() { ID = "3", Title = "30 %" });
+                Items.Add(new DTO() { ID = "1", Title = "10 %" });
+                Items.Add(new DTO() { ID = "0", Title = "0 %" });
+            }
+            else if (field.Typ == FieldTyp.Status)
+            {
+                Items.Add(new DTO() { ID = "9", Title = "abgeschlossen" });
+                Items.Add(new DTO() { ID = "7", Title = "zurückgestellt" });
+                Items.Add(new DTO() { ID = "5", Title = "in Arbeit" });
+                Items.Add(new DTO() { ID = "3", Title = "in Vorbereitung" });
+                Items.Add(new DTO() { ID = "1", Title = "in Planung" });
+                Items.Add(new DTO() { ID = "0", Title = "neu" });
+            }
+
+            return Items;
+        }
         public static long MaxFileSize(int defaultValue = 10)
         {
             long defaultFileSizeInBytes = 1024 * 1024 * defaultValue;

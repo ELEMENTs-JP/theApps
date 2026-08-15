@@ -76,6 +76,8 @@ namespace theInfrastructure
     /// </summary>
     public interface ISE
     {
+        Guid GUID { get; set; } 
+        Guid MasterGUID { get; set; } 
         string? ID { get; set; }
         string Title { get; set; }
         string? Content { get; set; }

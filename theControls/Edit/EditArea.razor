@@ -44,6 +44,7 @@
 
 @code {
 
+
     [Parameter]
     public IItemType ItemType { get; set; } // Injectiopn
 
@@ -65,6 +66,8 @@
         Context.ItemType = ItemType;
         await Context.Load(ID);
     }
+
+     
 
     public async ValueTask DisposeAsync()
     {

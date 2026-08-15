@@ -83,6 +83,10 @@ namespace theInfrastructure
         CheckBox,
         Heading,
 
+        Priority,
+        Status,
+        Progress,
+
         Number,
         Integer,
         Decimal,

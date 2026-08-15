@@ -10,10 +10,11 @@
         <div id="@( "link_popup_" + ID )" class="@(" row align-items-center ")" data-bs-toggle="dropdown">
 
             @*  d-none d-xl-block   *@
-            <div id="@( "head_popup_" + ID )" class=" col p-1">
-                <span class="@( " px-1 ")">
-                    @((MarkupString)Value)
-                </span>
+            <div id="@( "head_popup_" + ID )" class="col p-1 px-2">
+                @if (SelectedItem != null)
+                {
+                    @SelectedItem.Title
+                }
             </div>
             <div class="@( "col-auto pointer hover rounded-2 px-1 me-2  dropdown-toggle")">
             </div>
@@ -24,7 +25,8 @@
             <div class="row g-0">
                 <div class="col">
                     <div class="dropdown-header">@Label</div>
-                    <div class="px-2 mb-1 small text-muted text-truncate-container-2 overflow-hidden">@Description</div>
+                    <div class="mb-1 small text-muted text-truncate-container-2 overflow-hidden" 
+                            style="margin-left:12px;">@Description</div>
                 </div>
             </div>
 
@@ -32,11 +34,9 @@
       
             <div class="@( " overflow-y-auto " )" style="@( MaxHeightCSS )">
 
-                @foreach (ISE item in Items)
+                @foreach (IDTO item in Items)
                 {
-                    <div class="dropdown-item"
-                         @onclick="@( async e => { SelectedItem = item; Value = item.Title; await HandleInput(item); })">
-
+                    <div class="dropdown-item" @onclick="@(() => HandleInput(item))">
                         @if (ItemTemplate is not null)
                         {
                             @ItemTemplate(item)
@@ -45,7 +45,6 @@
                         {
                             @item.Title
                         }
-
                     </div>
                 }
 
@@ -86,7 +85,7 @@
 @code {
 
     [Parameter]
-    public RenderFragment<ISE>? ItemTemplate { get; set; }
+    public RenderFragment<IDTO>? ItemTemplate { get; set; }
 
     [Parameter]
     public RenderFragment? Overlay { get; set; }
@@ -121,11 +120,11 @@
     public string MaxHeightCSS { get; set; } = "max-height:44rem;";
 
     [Parameter]
-    public List<ISE> Items { get; set; } = new();
+    public List<IDTO> Items { get; set; } = new();
 
 
     [Parameter]
-    public ISE SelectedItem { get; set; }
+    public IDTO SelectedItem { get; set; }
 
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
@@ -134,7 +133,7 @@
     public EventCallback<string> IDChanged { get; set; }
 
     [Parameter]
-    public EventCallback<ISE> ItemChanged { get; set; }
+    public EventCallback<IDTO> ItemChanged { get; set; }
 
     [Parameter]
     public string Placeholder { get; set; } = string.Empty;
@@ -143,19 +142,39 @@
     [Parameter]
     public bool IsEditable { get; set; } = true;
 
-    private async Task HandleInput(ISE dto)
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await Init();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task Init()
+    {
+        if (Items != null)
+        {
+            SelectedItem = Items.Where(se => se.Title == Value).FirstOrDefault();    
+        }
+
+        await Task.CompletedTask;    
+    }
+
+    private async Task HandleInput(IDTO dto)
     {
         // Item 
         SelectedItem = dto;
 
-        // Value 
-        Value = dto.Title;
-
         await IDChanged.InvokeAsync(dto.ID);
 
-        await ValueChanged.InvokeAsync(Value);
+        await ValueChanged.InvokeAsync(dto.Title);
 
         await ItemChanged.InvokeAsync(dto);
+
+        // await InvokeAsync(StateHasChanged);
     }
 
 

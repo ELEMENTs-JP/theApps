@@ -24,10 +24,13 @@
 
             </TextArea>
         }
-        else if (Field.Typ == FieldTyp.DropDown)
+        else if (Field.Typ == FieldTyp.DropDown ||
+                 Field.Typ == FieldTyp.Priority ||
+                 Field.Typ == FieldTyp.Status ||
+                 Field.Typ == FieldTyp.Progress)
         {
             <DropDown @key="@( "DropDown-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-                      Label="@Title" Description="@Description" Value="@Value"
+                      Label="@Title" Description="@Description" Value="@Value" Items="@Items"
                       ValueChanged="@(async e =>{ onValueChanged(e); await Change(); await Save(); })"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
@@ -139,11 +142,11 @@
     [Parameter]
     public bool IsEditable { get; set; } = true;
 
+    // Events 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
     }
-
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -151,9 +154,18 @@
         Title = Field.Title;
         Description = Field.Description;
 
+        await Init();
+
         Value = onValueBinding();
     }
 
+    // Methods 
+    public async Task Init()
+    {
+        this.Items = Helper.InitDropDown(Field);
+    }
+
+    // Helper 
     private async Task<IDTO> Save()
     {
         // Update
@@ -172,6 +184,7 @@
         return Context.Item;
     }
 
+    // ... 
     private string onValueBinding()
     {
         if (Binding == ValueBindingTyp.Property)

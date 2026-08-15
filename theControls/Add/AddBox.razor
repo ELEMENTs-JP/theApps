@@ -17,7 +17,10 @@
                       Rows="@Rows">
             </TextArea>
         }
-        else if (Field.Typ == FieldTyp.DropDown)
+        else if (Field.Typ == FieldTyp.DropDown ||
+                 Field.Typ == FieldTyp.Priority ||
+                 Field.Typ == FieldTyp.Status ||
+                 Field.Typ == FieldTyp.Progress)
         {
             <DropDown Label="@Field.Title"
                     Description="@Field.Description"
@@ -65,7 +68,7 @@
 @code {
 
     [Parameter]
-    public List<ISE> Items { get; set; } = new();
+    public List<IDTO> Items { get; set; } = new();
 
     [Parameter]
     public IField Field { get; set; }
@@ -105,6 +108,14 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+        await Init();
+    }
+
+       // Methods 
+    public async Task Init()
+    {
+        this.Items = Helper.InitDropDown(Field);
     }
 
     [Parameter]

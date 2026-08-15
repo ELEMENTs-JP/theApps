@@ -6,7 +6,7 @@
 
 @code {
 
-    List<ISE> Items { get; set; } = new();
+    List<IDTO> Items { get; set; } = new();
     string Text { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
@@ -27,7 +27,7 @@
         if (Items == null)
             return;
 
-        ISE se = Items.Where(se => se.ID == Value).FirstOrDefault();
+        IDTO se = Items.Where(se => se.ID == Value).FirstOrDefault();
         if (se == null)
             return;
 
@@ -38,5 +38,5 @@
     public string Value { get; set; } = string.Empty;
 
     [Parameter]
-    public EventCallback<ISE> ValueChanged { get; set; }
+    public EventCallback<IDTO> ValueChanged { get; set; }
  }
