@@ -56,9 +56,10 @@
             <AuthorizeView>
                 <Authorized>
 
-                    <a class="dropdown-item" href="/Setting">Einstellungen</a>
-
-   
+                    <div class="dropdown-item" 
+                            @onclick="@( async e => { nm.NavigateTo("/Setting"); })">
+                        Einstellungen
+                    </div>
 
                     <div class="dropdown-divider"></div>
                     <div class="dropdown-item" @onclick="@( async e => { await OnAppSelect("Farm"); })">

@@ -91,6 +91,7 @@ namespace theInfrastructure
         Number,
         Integer,
         Decimal,
+        Money,
         
         Password,
         Email,
@@ -110,6 +111,7 @@ namespace theInfrastructure
         
         Hidden,
         HR,
+        FieldTyp, // EditBox FieldTyp 
     }
 
     public enum DatabaseTyp

@@ -92,6 +92,7 @@ namespace theApp
 
                     options.Cookie.HttpOnly = true;
                     options.ExpireTimeSpan = TimeSpan.FromHours(12);
+                    options.SlidingExpiration = true; // Erneuert das Cookie bei Aktivität
                 });
 
             builder.Services.AddHttpContextAccessor(); // Wichtig für den Zugriff auf den User

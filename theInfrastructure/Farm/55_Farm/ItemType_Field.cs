@@ -15,8 +15,9 @@ namespace theInfrastructure
         {
             // Fields 
             List<IField> Fields = new();
+            Fields.Add(new Field() { Title = "Typ", Typ = FieldTyp.FieldTyp, Column = "Typ", CSS = " col-12 ", OnDevice = DeviceDisplay.Desktop });
             Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });
-            Fields.Add(new Field() { Title = "Description", Typ = FieldTyp.TextArea, Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
+            Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.TextArea, Column = "Description", CSS = " col-12", OnDevice = DeviceDisplay.Desktop });
             
             return Fields;
         }

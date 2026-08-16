@@ -5,6 +5,7 @@
     background-color: transparent !important;
     outline:none;
     padding: 0.35rem 0.5rem;
+    flex:1;
 }
     .editbox:hover {
         background-color: var(--tsp-hover) !important;

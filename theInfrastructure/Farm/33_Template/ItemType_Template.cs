@@ -62,7 +62,7 @@ namespace theInfrastructure
                 IField field = new Field();
                 field.Title = it.Title;
                 field.Column = it.Title;
-                field.Typ = FieldTyp.Text;
+                field.Typ = (FieldTyp)Enum.Parse(typeof(FieldTyp), it["Typ"].ToSecureString());
 
                 Fields.Add(field);
             }

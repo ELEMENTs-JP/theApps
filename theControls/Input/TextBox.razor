@@ -1,10 +1,24 @@
 ﻿@using theControls.Icons
+@inject ILocalizationService loc
+@using System.Globalization
+
 @if (!string.IsNullOrEmpty(this.Label))
 {
     <label class="form-label text-secondary no-select" for="@Id">@Label</label>
 }
 
-<div class="position-relative overlay-container">
+<div class="input-group position-relative overlay-container">
+
+    @if (this.Type == FieldTyp.Money)
+    {
+        <span class="input-group-text">
+            @if (this.Type == FieldTyp.Money)
+            {
+                @loc.Configuration.Currency
+            }
+        </span>    
+    }
+
     <input id="@Id" name="@InputName" data-value="@Value"
            class=" pe-5 @CssClass @( ((IsEditable) ? " editbox " : " viewbox no-select ") )"
            type="@Type.ToHtmlValue()"
@@ -38,6 +52,7 @@
             <SymbolIcon Symbol="Icon.Search" />
         </div>
     }
+
 </div>
 
 @if (!string.IsNullOrEmpty(Description))
@@ -107,6 +122,28 @@
 
     [Parameter]
     public bool IsEditable { get; set; } = true;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (this.Type == FieldTyp.Money)
+        {
+        
+        }
+    }
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        return base.OnAfterRenderAsync(firstRender);
+    }
 
     private async Task HandleInput(ChangeEventArgs e)
     {

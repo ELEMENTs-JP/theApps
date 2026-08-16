@@ -48,6 +48,25 @@ namespace theInfrastructure
                 Items.Add(new DTO() { ID = "1", Title = "in Planung" });
                 Items.Add(new DTO() { ID = "0", Title = "neu" });
             }
+            else if (field.Typ == FieldTyp.FieldTyp)
+            {
+                Items.Add(new DTO() { ID = "Text", Title = "Text" });
+                Items.Add(new DTO() { ID = "TextArea", Title = "TextArea" });
+                Items.Add(new DTO() { ID = "Html", Title = "Html" });
+                Items.Add(new DTO() { ID = "DropDown", Title = "DropDown" });
+                Items.Add(new DTO() { ID = "CheckBox", Title = "CheckBox" });
+                Items.Add(new DTO() { ID = "Priority", Title = "Priority" });
+                Items.Add(new DTO() { ID = "Status", Title = "Status" });
+                Items.Add(new DTO() { ID = "Progress", Title = "Progress" });
+                Items.Add(new DTO() { ID = "Number", Title = "Number" });
+                Items.Add(new DTO() { ID = "Integer", Title = "Integer" });
+                Items.Add(new DTO() { ID = "Money", Title = "Money" });
+                Items.Add(new DTO() { ID = "Email", Title = "Email" });
+                Items.Add(new DTO() { ID = "Url", Title = "Url" });
+                Items.Add(new DTO() { ID = "DateTime", Title = "DateTime" });
+                Items.Add(new DTO() { ID = "Date", Title = "Date" });
+                Items.Add(new DTO() { ID = "Time", Title = "Time" });
+            }
 
             return Items;
         }
@@ -335,6 +354,7 @@ namespace theInfrastructure
                 FieldTyp.Number => "number",
                 FieldTyp.Integer => "number",
                 FieldTyp.Decimal => "number",
+                FieldTyp.Money => "number",
                 FieldTyp.Tel => "tel",
                 FieldTyp.Url => "url",
                 FieldTyp.Search => "search",

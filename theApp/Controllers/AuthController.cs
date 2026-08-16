@@ -17,12 +17,12 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromForm] string username, [FromForm] string password)
+    public async Task<IActionResult> Login([FromForm] string username, [FromForm] string password, [FromForm] bool remember)
     {
         // Password 
         if (string.IsNullOrEmpty(password))
         {
-            return Redirect("/register?error=true");
+            return Redirect("/login?error=true");
         }
 
         // Mail Format 
@@ -37,8 +37,14 @@ public class AuthController : ControllerBase
         query.ItemType = "User";
         IQueryResult result = await sqlService.GetItems(query);
 
-        IDTO user = result.Items.Where(se => se["Mail"].ToSecureString() == username
+        IDTO? user = result.Items.Where(se => se["Mail"].ToSecureString() == username
                                           && se["Password"].ToSecureString() == password).FirstOrDefault();
+
+        // User nicht vorhanden 
+        if (user == null)
+        {
+            return Redirect("/login?error=true");
+        }
 
         if (user != null)
         {
@@ -46,7 +52,7 @@ public class AuthController : ControllerBase
             await AssignToPrincipal(user);
 
             // Einloggen 
-            await SignIn(username, user.GUID);
+            await SignIn(username, user.GUID, remember);
             return LocalRedirect("/");
         }
 
@@ -112,7 +118,7 @@ public class AuthController : ControllerBase
             await AssignToPrincipal(newUser);
 
             // SignIn 
-            await SignIn(username, newUser.GUID);
+            await SignIn(username, newUser.GUID, false);
 
             return LocalRedirect("/");
         }
@@ -268,7 +274,7 @@ public class AuthController : ControllerBase
             await sqlService.Assign(principal, user);
         }
     }
-    private async Task SignIn(string username, Guid userGUID)
+    private async Task SignIn(string username, Guid userGUID, bool remember)
     {
         var claims = new List<Claim>
             {
@@ -277,7 +283,15 @@ public class AuthController : ControllerBase
             };
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var authProperties = new AuthenticationProperties { IsPersistent = true };
+        var authProperties = new AuthenticationProperties 
+        { 
+            IsPersistent = remember,
+
+            ExpiresUtc = remember
+                ? DateTimeOffset.UtcNow.AddDays(1)
+                : DateTimeOffset.UtcNow.AddHours(3)
+
+        };
 
         await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,

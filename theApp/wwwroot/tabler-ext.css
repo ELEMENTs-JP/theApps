@@ -36,6 +36,16 @@
     fill: #ccc !important;
 }
 
+.input-group {
+    border: none !important;
+    box-shadow: none !important;
+    
+}
+
+.input-group-text {
+    background-color:transparent !important;
+    border: none;
+}
 
 .dropdown-item:focus, .dropdown-item:hover {
     border-radius: 0.35rem !important;
@@ -85,6 +95,11 @@
     width: 6.25%;
 }
 
+.dropdown-item:active,
+.dropdown-item.active {
+    color: #999999 !important;
+    background-color: rgba(215, 215, 215, 0.1) !important;
+}
 
 
 

@@ -13,9 +13,17 @@ html, body {
     overflow: hidden;
 }
 
-a {
+a, a:hover, a:visited {
     color: #aaaaaa;
+    text-decoration: none !important;
+    padding: 0.2rem 0.5rem;
+    margin:0.2rem;
 }
+    a:hover {
+        background-color:#77777711;
+        border-radius:0.35rem;
+    }
+    
 
 .scrollable {
     display: block;
