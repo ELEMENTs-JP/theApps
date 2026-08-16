@@ -72,7 +72,7 @@ namespace theControls.Elements
 
                 if (canChange)
                 {
-                    msg.Reply?.Invoke(new AppMessage(msg.Id, BusAction.ResponseOk));
+                    msg.Reply?.Invoke(new AppMessage(msg.Id, BusAction.Refresh));
                 }
             }
         }

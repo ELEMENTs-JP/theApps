@@ -1,4 +1,5 @@
-﻿@using theControls.Layout
+﻿@using theComponents.Security
+@using theControls.Layout
 @using theControls.Modal
 @using theControls.Pages
 @using theInfrastructure
@@ -16,17 +17,31 @@
             <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)" Field="@TitleField" Binding="ValueBindingTyp.Title"
                      Context="@Context" Border="false" />
             <div class="d-flex align-items-center">
-                <a href="@("/app/" + app.App.Name)" class="text-muted small" title="Application">
-                    @app.App.Name.ToSecureString()</a>
-                <div class="vr"></div>
-                <a href="@("/Items/" + Context.ItemType.Name)" class="text-muted small" title="ItemType">
-                    @Context.ItemType.Name.ToSecureString()</a>
-                <div class="vr"></div>
+
+                @if (app != null && app.App != null)
+                {
+                    <a href="@("/app/" + app.App.Name)" class="text-muted small" title="Application">
+                        @app.App.Name.ToSecureString()
+                    </a>
+                    <div class="vr"></div>
+                }
+
+                @if (Context != null && Context.ItemType != null)
+                {
+                    <a href="@("/Items/" + Context.ItemType.Name)" class="text-muted small" title="ItemType">
+                        @Context.ItemType.Name.ToSecureString()
+                    </a>
+                    <div class="vr"></div>
+                }
                 <small class="text-muted small px-2 no-select">Typ: @Context.ItemType.Typ.ToSecureString()</small>
             </div>
         </Header>
         <Related>
             <ContextMenu Context="@Context" ItemType="@ItemType" />
+            @if (Context.ItemType.Name == "User")
+            {
+                <SetPasswordComp Context="@Context" />
+            }
         </Related>
         <Content>
             <div class="row g-0">

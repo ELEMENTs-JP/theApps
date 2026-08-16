@@ -1,4 +1,4 @@
-﻿@page "/Items/{IT}"
+﻿@page "/{Typ}/{IT}"
 @using theComponents.Items
 @using theControls.Add
 @using theControls.Layout
@@ -12,7 +12,16 @@
 
 <div class="container-flex">
 
-    <ItemsComp ItemType="@ItemType" />
+    @if (Typ == "Items")
+    {
+        <ItemsComp ItemType="@ItemType" />
+    }
+    @if (Typ == "Hierarchy")
+    {
+                <HierarchyComp ItemType="@ItemType" />
+        
+    }
+
 
 </div>
 
@@ -20,9 +29,14 @@
 @code {
 
     [Parameter]
+    public string Typ { get; set; } = string.Empty;
+
+    [Parameter]
     public string IT { get; set; } = string.Empty;
 
     private IItemType ItemType { get; set; } = null;
+
+
 
     protected override async Task OnParametersSetAsync()
     {

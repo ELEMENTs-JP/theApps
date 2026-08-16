@@ -57,6 +57,16 @@ namespace theInfrastructure
 
             return de;
         }
+        public string GetLabel(string de, string en)
+        {
+            if (Configuration.Sprache == "de")
+                return de;
+
+            if (Configuration.Sprache == "en")
+                return en;
+
+            return de;
+        }
 
         // Property Changed 
         private void AppService_PropertyChanged(object? sender, PropertyChangedEventArgs e)

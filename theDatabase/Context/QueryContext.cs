@@ -92,28 +92,32 @@ namespace theDatabase
                 
             }
         }
-        public async Task RelatedItems(string itemType)
+        public async Task<List<IDTO>> RelatedItems(string itemType)
         {
+            List<IDTO> _items = new List<IDTO>();
+
             if (sqlService == null)
-                return;
+                return _items;
 
             if (ItemType == null)
-                return;
+                return _items;
 
             if (RelatedItem == null)
-                return;
+                return _items;
 
             IsLoading = true;
 
-            Items.Clear();
+            _items.Clear();
             IQueryParameter query = new QueryParameter();
             query.Matchcode = string.Empty;
             query.MasterGUID = SQLiteService.GeneralMasterGUID;
             query.ItemType = ItemType.Name;
             IQueryResult result = await sqlService.GetRelatedItems(RelatedItem, itemType);
-            Items = result.Items;
+            _items = result.Items;
 
             IsLoading = false;
+
+            return _items;
         }
         public async Task Delete(IDTO dto)
         {

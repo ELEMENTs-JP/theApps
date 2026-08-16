@@ -1,0 +1,21 @@
+﻿@inherits BaseList
+
+@inject NavigationManager nm
+
+@if (Context != null && ItemType != null)
+{
+    @if (Context.ItemType != null && Context.ItemType.GetFields().Result != null)
+    {
+        @foreach (IDTO item in Context.Items)
+        {
+            <HierarchyItem Context="@Context" Item="@item" ItemType="ItemType" />
+        }
+    }
+}
+
+
+@code {
+
+ 
+
+}

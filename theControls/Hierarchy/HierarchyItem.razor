@@ -1,0 +1,68 @@
+﻿@using theControls.Icons
+@inject IMessagingBusService msg
+
+@inherits BaseRow
+
+@if (Context != null)
+{
+    <div class="row g-0 hover p-1 px-2 fw-bold pointer my-2" title="@Item.ItemType"
+         @onclick="@( async e => { await Select(Item);  })">
+
+        @if (IsChild)
+        {
+            <div class="col-auto px-2">
+                <SymbolIcon Symbol="Icon.Corner" />
+            </div>
+        }
+
+        <div class="col">
+            @(Item.Title.ToSecureString())
+        </div>
+    </div>
+
+    @if (RelatedItems.Any())
+    {
+        @foreach (IDTO relItem in RelatedItems)
+        {
+            <HierarchyItem Context="@Context" Item="@relItem" ItemType="ItemType" IsChild="true" />
+        }
+    }
+
+}
+
+@code {
+
+
+    [Parameter]
+    public string ItemType { get; set; } /// Related ItemType
+
+    [Parameter]
+    public bool IsChild { get; set; } = false;
+
+    List<IDTO> RelatedItems { get; set; } = new();
+
+    private async Task Select(IDTO item)
+    {
+        if (item != null)
+        {
+            msg.Publish(new AppMessage("Item", BusAction.Select, item));
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Context.RelatedItem = Item;
+        RelatedItems = await Context.RelatedItems(ItemType);
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+}

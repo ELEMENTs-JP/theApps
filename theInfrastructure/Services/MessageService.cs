@@ -53,9 +53,7 @@ namespace theInfrastructure
     public enum BusAction
     {
         // Requests / Benachrichtigungen
-        Refresh,  Selected, Updated, Deleted, RequestData,
-        // Responses
-        ResponseOk, ResponseError, ResponseData
+        Refresh,  Select
     }
 
     public record AppMessage(

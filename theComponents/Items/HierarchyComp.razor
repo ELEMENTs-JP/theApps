@@ -1,0 +1,100 @@
+﻿@using theComponents.Add
+@using theControls.Add
+@using theControls.Hierarchy
+@using theControls.Input
+@using theControls.Layout
+@using theControls.Tables
+@using theControls.Text
+@inject ISqlDatabaseService sql
+@inject IMessagingBusService msg
+
+@if (ItemType != null)
+{
+    <div class="row g-0">
+        <div class="col-auto pe-2" style="min-width:24rem;">
+            <Frame Border="true" Rounded="true">
+                <Header>
+                    <ControlHeader PreTitle="List" Title="@ItemType.Name" PostTitle="@ItemType.Description" />
+                </Header>
+                <Related>
+                    @if (this.ItemType.Name != "Trash")
+                    {
+                        @if (this.ItemType.Typ == ItemTypeTyp.Item)
+                        {
+                            <AddArea ItemType="@ItemType" />
+                        }
+                        @if (this.ItemType.Typ == ItemTypeTyp.File)
+                        {
+                            <FileUploadComp />
+                        }
+                    }
+                </Related>
+                <Content>
+                    <HierarchyList ItemType="@this.ItemType">
+
+                    </HierarchyList>
+                </Content>
+            </Frame>
+        </div>
+        @if (Item != null)
+        {
+            <div class="col ps-2">
+                <EditArea ItemType="@EditItemType" ID="@( ((Item != null) ? Item.GUID.ToString() : string.Empty) )" />
+            </div>
+        }
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    private IItemType EditItemType { get; set; }
+
+    private IDTO Item { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageIncome;
+    }
+
+    private async void OnMessageIncome(AppMessage message)
+    {
+        if (message.Id == "Item" && message.Action == BusAction.Select)
+        {
+            if (message.Payload != null)
+            {
+                Item = (IDTO)message.Payload;
+
+                EditItemType = await new Factory(sql).BuildItemType(Item.ItemType);
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            // this.StateHasChanged();
+        }
+    }
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageIncome;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+
+}

@@ -26,6 +26,7 @@ namespace theInfrastructure
     {
         SystemConfiguration Configuration { get; set; }
         string GetLabel(string de, string en, string es);
+        string GetLabel(string de, string en);
     }
 
     public interface ISecurityService

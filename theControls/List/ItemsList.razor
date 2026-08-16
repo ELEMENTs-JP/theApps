@@ -19,6 +19,11 @@
 
 @code {
 
- 
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Context.Items = await Context.RelatedItems(Context.ItemType.Name);
+    }
 
 }

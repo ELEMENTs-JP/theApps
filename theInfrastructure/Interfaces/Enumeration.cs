@@ -60,6 +60,8 @@ namespace theInfrastructure
         Disconnect,
         Neu,
         File,
+        Corner,
+        Password,
     }
     public enum ValueBindingTyp
     { 

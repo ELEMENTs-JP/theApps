@@ -186,7 +186,7 @@
         // Update
         await Context.Update(Context.Item);
 
-        msg.Publish("", BusAction.Updated, "Eintrag aktualisiert");
+        msg.Publish("", BusAction.Refresh, "Eintrag aktualisiert");
 
         // Events
         await ItemSaved.InvokeAsync(Context.Item);
