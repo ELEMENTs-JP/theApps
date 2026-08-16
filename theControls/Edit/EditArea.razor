@@ -3,6 +3,8 @@
 @using theControls.Pages
 @using theInfrastructure
 @inject ISqlDatabaseService sql
+@inject ISecurityService sec
+@inject IAppService app
 
 @implements IAsyncDisposable
 
@@ -12,9 +14,16 @@
     <Frame Border="true" Rounded="true">
         <Header>
             <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)" Field="@TitleField" Binding="ValueBindingTyp.Title"
-                    Context="@Context" Border="false" />
-            <small class="text-muted small px-2">ItemType: @Context.ItemType.Name.ToSecureString()</small>
-            <small class="text-muted small px-2 border-start">Typ: @Context.ItemType.Typ.ToSecureString()</small>
+                     Context="@Context" Border="false" />
+            <div class="d-flex align-items-center">
+                <a href="@("/app/" + app.App.Name)" class="text-muted small" title="Application">
+                    @app.App.Name.ToSecureString()</a>
+                <div class="vr"></div>
+                <a href="@("/Items/" + Context.ItemType.Name)" class="text-muted small" title="ItemType">
+                    @Context.ItemType.Name.ToSecureString()</a>
+                <div class="vr"></div>
+                <small class="text-muted small px-2 no-select">Typ: @Context.ItemType.Typ.ToSecureString()</small>
+            </div>
         </Header>
         <Related>
             <ContextMenu Context="@Context" ItemType="@ItemType" />
@@ -30,8 +39,8 @@
                     else
                     {
                         <div class="@( field.CSS + " p-2 " )">
-                            <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column + "-" + Context.Item.GUID)" 
-                                    Field="@field" Context="@Context"
+                            <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column + "-" + Context.Item.GUID)"
+                                     Field="@field" Context="@Context"
                                      IsEditable="@field.IsEditable" Border="false" />
                         </div>
                     }
@@ -58,10 +67,10 @@
     {
         await base.OnParametersSetAsync();
 
-        // Field 
+        // Field
         TitleField = new Factory(sql).BuildField(FieldTyp.Heading);
 
-        // Context 
+        // Context
         Context = new QueryContext(sql);
         Context.ItemType = ItemType;
         await Context.Load(ID);
@@ -86,5 +95,5 @@
             System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
         }
     }
-  
+
 }

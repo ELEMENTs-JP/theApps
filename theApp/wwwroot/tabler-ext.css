@@ -7,7 +7,6 @@
 
 
 [data-bs-theme=light] {
-
 }
 
 [data-bs-theme=dark] {
@@ -20,17 +19,21 @@
 [class*="tox"] {
     background-color: var(--tblr-bg-surface) !important;
     border: 0px solid transparent !important;
-    outline:none !important;
+    outline: none !important;
 }
+
 .tox .tox-tbtn svg {
     fill: #ccc !important;
 }
+
 .tox .tox-mbtn {
     color: #ccc !important;
 }
+
 .tox .tox-collection__item {
     color: #ccc !important;
 }
+
 .tox :not(svg):not(rect) {
     color: #ccc !important;
     fill: #ccc !important;
@@ -39,11 +42,10 @@
 .input-group {
     border: none !important;
     box-shadow: none !important;
-    
 }
 
 .input-group-text {
-    background-color:transparent !important;
+    background-color: transparent !important;
     border: none;
 }
 
@@ -51,8 +53,21 @@
     border-radius: 0.35rem !important;
 }
 
+.form-check-input {
+    box-shadow: none;
+}
+
+    .form-check-input:focus {
+        border-color: var(--tblr-border-color-translucent);
+    }
+
+    .form-check-input:checked {
+        background-color: #555;
+        border-color: var(--tblr-border-color-translucent);
+    }
+
 .icon {
-    --tblr-icon-size: 1.1rem !important;
+    --tblr-icon-size: 1.0rem !important;
     vertical-align: middle !important;
 }
 
@@ -100,6 +115,3 @@
     color: #999999 !important;
     background-color: rgba(215, 215, 215, 0.1) !important;
 }
-
-
-

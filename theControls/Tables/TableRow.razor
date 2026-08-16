@@ -8,9 +8,10 @@
     <tr class="">
         <td class="text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</td>
         
-        <td class="fw-bold pointer" title="@Item.ItemType"
-            @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
-            @(Item.Title.ToSecureString())
+        <td class="text-muted td-hover" title="@Item.ItemType">
+            <a class="fw-bold pointer" 
+                href="@( "/Item/" + Context.ItemType.Name + "/" + Item.GUID )">
+                @(Item.Title.ToSecureString())</a>
         </td>
 
         @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR))

@@ -1,4 +1,6 @@
-﻿@if (!string.IsNullOrEmpty(this.Label))
+﻿@implements IAsyncDisposable
+
+@if (!string.IsNullOrEmpty(this.Label))
 {
     <label class="form-label text-secondary" for="@ID">@Label</label>
 }
@@ -183,6 +185,25 @@
         ? Name
         : Helper.GenerateName(Label);
 
-   
 
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (Items != null)
+            {
+                Items.Clear();
+                Items = null;
+            }
+
+            if (SelectedItem != null)
+            {
+                SelectedItem = null;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
 }

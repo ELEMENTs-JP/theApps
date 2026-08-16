@@ -50,19 +50,20 @@
     </Authorized>
     <NotAuthorized>
 
-        <div class="container p-5">
+        <div class="container p-5 mt-5">
 
             <h1 class="display-1">Access Denied...</h1>
             <h1 class="display-1">Zugriff verweigert...</h1>
+
             <div class="text-muted">
                 Es wurde offenbar ein Link aufgerufen, der so nicht existiert, oder ihr Account hierfür nicht berechtigt ist.
             </div>
 
-            <div class="hover pointer rounded-2 p-2 m-2" 
+            <div class="hover pointer rounded-2 p-2 my-3" 
                 @onclick="@( e => { nm.NavigateTo("/Login", false); })">
                 go to Login...
             </div>
-            <div class="hover pointer rounded-2 p-2 m-2"
+            <div class="hover pointer rounded-2 p-2 my-3"
                  @onclick="@( e => { nm.NavigateTo("/", false); })">
                 go to App...
             </div>

@@ -14,7 +14,7 @@ html, body {
 }
 
 a, a:hover, a:visited {
-    color: #aaaaaa;
+    color: #ffffff;
     text-decoration: none !important;
     padding: 0.2rem 0.5rem;
     margin:0.2rem;
@@ -40,6 +40,9 @@ a, a:hover, a:visited {
     color: #cccccc !important;
 }
 
+.td-hover:hover {
+    border-bottom:1px solid #fff;
+}
 .hover:hover {
     background-color: var(--tsp-hover) !important;
     transition: background-color 0.25s ease;

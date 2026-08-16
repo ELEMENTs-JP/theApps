@@ -1,9 +1,16 @@
-﻿@if (Position == LoadingPosition.Head)
+﻿@* ----- HEAD ----- *@
+
+
+@if (Position == LoadingPosition.Head)
 {
      @* Tabler *@
     <link rel="stylesheet" href="@Assets["lib/tabler/dist/css/tabler.min.css"]" />
     <script src="@Assets["lib/tabler/dist/js/tabler.min.js"]"></script>
 
+    <title>the App Plattform</title>
+
+    <meta name="author" content="the STRIDEs Path by Jürgen Pott" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
     <script>
         (function () {
@@ -20,6 +27,8 @@
     </script>
 }
 
+
+@* ----- BODY ----- *@
 @if (Position == LoadingPosition.Body)
 {
     @* Controls JS *@
