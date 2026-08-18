@@ -55,6 +55,16 @@
                         @it.ToString()
                     </div>
                 </div>
+
+                @foreach (IItemType child in it.GetItemTypes().Result)
+                {
+                    <div class="col-12 p-1 ps-3">
+                        <div class="rounded-2 hover pointer p-1 px-2 fw-bold"
+                             @onclick="@( async e => { await OnItemType(child); })">
+                            @child.ToString()
+                        </div>
+                    </div>
+                }
             }
         </div>
     }
