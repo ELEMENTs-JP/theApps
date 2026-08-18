@@ -17,6 +17,7 @@ namespace theInfrastructure
             // Metadata 
             this.Name = Item.Title;
             this.Group = Item["Group"].ToSecureString();
+            this.IsActive = Item["IsActive"].ToSecureBool();
         }
 
         public override async Task<List<IItemType>> GetItemTypes()

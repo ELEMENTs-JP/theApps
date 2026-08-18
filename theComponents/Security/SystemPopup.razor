@@ -1,3 +1,4 @@
+@using System.ComponentModel
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using theControls.Icons
@@ -7,6 +8,7 @@
 @inject NavigationManager nm
 @inject IMessagingBusService msg
 @inject ILocalizationService loc
+@inject ISecurityService sec
 @implements IAsyncDisposable
 
 <div id="@( "frame_popup_" + ID )" class="@(" " +
@@ -56,18 +58,21 @@
             <AuthorizeView>
                 <Authorized>
 
-                    <div class="dropdown-item" 
-                            @onclick="@( async e => { nm.NavigateTo("/Setting"); })">
-                        Einstellungen
-                    </div>
+                    @if (sec.User["IsAdmin"].ToSecureBool())
+                    {
+                        <div class="dropdown-item" 
+                                @onclick="@( async e => { nm.NavigateTo("/Setting"); })">
+                            Einstellungen
+                        </div>
 
-                    <div class="dropdown-divider"></div>
-                    <div class="dropdown-item" @onclick="@( async e => { await OnAppSelect("Farm"); })">
-                        Farm
-                    </div>
-                    <div class="dropdown-item" @onclick="@( async e => { await OnAppSelect("Security"); })">
-                        Security
-                    </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" @onclick="@( async e => { await OnAppSelect("Farm"); })">
+                            Farm
+                        </div>
+                        <div class="dropdown-item" @onclick="@( async e => { await OnAppSelect("Security"); })">
+                            Security
+                        </div>
+                    }
 
                     @if (loc.Configuration.Archive)
                     {
@@ -167,8 +172,16 @@
         await base.OnInitializedAsync();
 
         msg.OnMessage += OnMessageIncome;
-    }
 
+        sec.PropertyChanged += OnSecPropChange;
+    }
+    private async void OnSecPropChange(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "User")
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
     private async void OnMessageIncome(AppMessage message)
     {
         if (message.Id == "Feature" && message.Action == BusAction.Refresh)

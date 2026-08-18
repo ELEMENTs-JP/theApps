@@ -12,6 +12,7 @@ html, body {
 
 .sidebar {
     border-right: 1px solid var(--tblr-border-color);
+    background-color: var(--tblr-body-bg);
 }
 
 .menu {

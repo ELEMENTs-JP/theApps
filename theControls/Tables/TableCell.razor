@@ -1,9 +1,10 @@
-﻿
+﻿@inject ILocalizationService loc
+
 @if (Field != null)
 {
     @if (Field.Typ == FieldTyp.CheckBox)
     {
-
+        <span class="badge">@Text</span>
     }
     else if (Field.Typ == FieldTyp.Password)
     {
@@ -60,7 +61,7 @@
         {
             case FieldTyp.Date:
                 {
-                    
+
                     Text = Value.ToSecureDateTime().ToString("dddd, dd. MMMM yyyy");
                     break;
                 }
@@ -73,6 +74,21 @@
                 {
                     Text = Value.ToSecureDateTime().ToString("HH:mm");
                     break;
+                }
+            case FieldTyp.CheckBox:
+                {
+                    bool val = Value.ToSecureBool();
+
+                    if (val == true)
+                    {
+                        Text = loc.GetLabel("ja", "true");
+                    }
+                    else
+                    {
+                        Text = loc.GetLabel("nein", "false");
+                    }
+
+                    break;    
                 }
             default:
                 {

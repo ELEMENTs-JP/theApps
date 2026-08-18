@@ -16,6 +16,7 @@ namespace theInfrastructure
         // Fields 
         IWebHostEnvironment Environment;
         ISqlDatabaseService SqlService;
+        public string DefaultFilePath { get; set; } = "FILES";
 
         public SystemConfiguration Configuration { get; set; } = null;
 

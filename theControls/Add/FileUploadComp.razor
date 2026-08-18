@@ -1,21 +1,33 @@
 ﻿@using theControls.Input
 @inject IMessagingBusService msg
 @inject ISqlDatabaseService sql
+@inject ILocalizationService loc 
 
-<FileInputBox OnFileUploaded="OnFileUpload" />
+@if (loc.Configuration.AllowFileUploads)
+{
+    <FileInputBox OnFileUploaded="OnFileUpload" />
+}
 
 @code {
 
     private async Task OnFileUpload(FileNotification fn)
     {
+        // Check 
         if (fn == null)
             return;
 
+        // Allow File Uploads 
+        if (loc.Configuration.AllowFileUploads == false)
+            return;
+
+        // Parameter 
         IQueryParameter qp = new QueryParameter();
         qp.GUID = fn.FileGUID;
         qp.MasterGUID = sql.MasterGUID;
         qp.Title = fn.OriginalFileName;
         qp.ItemType = "File";
+        
+        // Create 
         IQueryResult result = await sql.Create(qp);
         if (result == null)
             return;
@@ -24,7 +36,7 @@
         if (itemResult == null)
             return;
 
-        IDTO item = itemResult.Items.FirstOrDefault();
+        IDTO? item = itemResult.Items.FirstOrDefault();
         if (item == null)
             return;
 

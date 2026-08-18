@@ -11,6 +11,11 @@ html, body {
     /*    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
     height: 100vh;
     overflow: hidden;
+
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    background-attachment: fixed;
 }
 
 a, a:hover, a:visited {

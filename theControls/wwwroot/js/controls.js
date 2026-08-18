@@ -1,5 +1,8 @@
 ﻿
 
+function setBodyBackground(url) {
+    document.body.style.backgroundImage = "url('" + url + "')";
+}
 
 function InitHtmlEditor() {
     hugerte.init({

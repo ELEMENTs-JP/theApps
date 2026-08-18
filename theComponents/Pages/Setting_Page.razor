@@ -40,6 +40,20 @@
                             <TextBox Label="Titel" Value="@loc.Configuration.Title"
                                      ValueChanged="@(e => { loc.Configuration.Title = e;
                                      loc.Configuration.Save(); })" />
+
+                          
+
+                                             <div class="border-bottom my-2"></div>
+                            <CheckBox Label="Datei Uploads" Value="@loc.Configuration.AllowFileUploads.ToSecureString()"
+                                      ValueChanged="@(e => {
+                                      loc.Configuration.AllowFileUploads = e.ToSecureBool();
+                                      loc.Configuration.Save(); })" />
+                                                  <div class="my-2"></div>
+                            <TextBox Label="Max. Dateigröße" Type="FieldTyp.Integer"
+                                    Value="@loc.Configuration.MaxFileSizeInMB.ToSecureString()" 
+                                     ValueChanged="@(e => { loc.Configuration.MaxFileSizeInMB = e.ToSecureInt();
+                                     loc.Configuration.Save(); })" />
+
                         </div>
                         <div class="col-4 px-2 border-start border-end">
                             <ThemeSwitch />
@@ -47,6 +61,10 @@
                             <CheckBox Label="Akzente" Value="@loc.Configuration.Akzente.ToSecureString()" 
                                       ValueChanged="@(e => { loc.Configuration.Akzente = e.ToSecureBool();
                                       loc.Configuration.Save();  })" />
+                                            <div class="my-2"></div>
+                            <TextBox Label="Hintergrundbild" Value="@loc.Configuration.Background"
+                                     ValueChanged="@(e => { loc.Configuration.Background = e;
+                                     loc.Configuration.Save(); })" />
                         </div>
                         <div class="col-4 px-2">
                             <LanguageSelector Value="@loc.Configuration.Sprache" 

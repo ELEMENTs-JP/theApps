@@ -68,11 +68,12 @@
 
     private async void OnMessageIncome(AppMessage msg)
     {
-        Message = msg.Payload.ToSecureString();
-        
-        this.StateHasChanged();
-
-        await HideInfoAfterDelay();
+        if (msg.Action == BusAction.Info)
+        {
+            Message = msg.Payload.ToSecureString();
+            await InvokeAsync(StateHasChanged);
+            await HideInfoAfterDelay();
+        }
     }
     private async Task HideInfoAfterDelay()
     {

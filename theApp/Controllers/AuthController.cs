@@ -127,7 +127,8 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("setup")]
-    public async Task<IActionResult> Setup([FromForm] string principal, [FromForm] string username, [FromForm] string password)
+    public async Task<IActionResult> Setup(
+        [FromForm] string principal, [FromForm] string username, [FromForm] string password)
     {
         // Principal 
         if (string.IsNullOrEmpty(principal))
@@ -140,20 +141,34 @@ public class AuthController : ControllerBase
         {
             return Redirect("/setup?error=true");
         }
-
         // Mail Format 
         if (username.IsMailFormat() == false)
         {
             return Redirect("/setup?error=true");
         }
 
-        IQueryParameter query = new QueryParameter();
-        query.Matchcode = string.Empty;
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
-        query.ItemType = "Principal";
-        IQueryResult result = await sqlService.GetItems(query);
+        // Datenbank 
+        IQueryResult dbResult = sqlService.CreateDatabase();
 
-  
+        IQueryParameter qp = new QueryParameter();
+        qp.Matchcode = string.Empty;
+        qp.MasterGUID = SQLiteService.GeneralMasterGUID;
+        qp.GUID = SQLiteService.GeneralMasterGUID;
+        qp.ItemType = "Principal";
+        IQueryResult result = await sqlService.GetItem(qp);
+
+        int count = result.Items.Count();
+        if (count >= 1)
+        {
+            // Principal existiert bereits 
+            return Redirect("/setup?error=true");
+        }
+
+        // Principal erzeugen 
+        qp.GUID = SQLiteService.GeneralMasterGUID;
+        qp.Title = "Default";
+        result = await sqlService.Create(qp);
+
 
         return Redirect("/setup?error=true");
     }

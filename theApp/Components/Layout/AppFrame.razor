@@ -4,8 +4,10 @@
 @using theControls.Input
 @using theControls.Modal
 
+@inject ILocalizationService loc
 @inject ISqlDatabaseService sql
 @inherits LayoutComponentBase
+@inject IJSRuntime js
 
 <AppLayout>
     <Header>
@@ -46,8 +48,23 @@
     {
         await base.OnParametersSetAsync();
 
+
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            if (!string.IsNullOrEmpty(loc.Configuration.Background))
+            {
+                await js.InvokeVoidAsync("setBodyBackground", loc.Configuration.Background);
+            }
+        }
+    }
+    private async Task ChangeBackground()
+    {
+
         
     }
-
-
 }

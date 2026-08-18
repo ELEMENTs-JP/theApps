@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace theInfrastructure
@@ -27,6 +28,7 @@ namespace theInfrastructure
         SystemConfiguration Configuration { get; set; }
         string GetLabel(string de, string en, string es);
         string GetLabel(string de, string en);
+        string DefaultFilePath { get; set; } 
     }
 
     public interface ISecurityService
@@ -34,6 +36,8 @@ namespace theInfrastructure
         IDTO Principal { get; set; }
         IDTO User { get; set; }
         Task SetUser(Guid GUID);
+        Task RefreshUser();
+        event PropertyChangedEventHandler PropertyChanged;
     }
 
     public interface IAppService

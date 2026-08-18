@@ -1,6 +1,8 @@
-﻿@inject NavigationManager nm
+﻿@using Microsoft.AspNetCore.Hosting
+@inject NavigationManager nm
 @inject ILocalizationService loc
 @inject IMessagingBusService msg
+@inject IWebHostEnvironment env
 @implements IAsyncDisposable
 
 <div class="dropdown-center " role="group">
@@ -119,9 +121,23 @@
     {
         if (Context != null)
         {
+            string info = "";
+            string ext = Context.Item["FileExtension"].ToSecureString();
+            string file = Context.Item.GUID.ToSecureString() + "." + ext;
+            
+            string fullFilePath = Path.Combine(env.ContentRootPath, loc.DefaultFilePath, file);
+            if (File.Exists(fullFilePath))
+            {
+                File.Delete(fullFilePath);
+                info = "Datei und ";
+            }
+
             await Context.Delete(Context.Item);
+            info += "Datensatz wurde gelöscht";
 
             nm.NavToLibrary(ItemType.Name);
+
+            msg.Publish("", BusAction.Info, info);
         }
     }
 

@@ -7,6 +7,7 @@
 
 @inject IWebHostEnvironment env
 @inject ISqlDatabaseService sql
+@inject ILocalizationService loc
 
 <div class="pointer rounded hover overflow-hidden bg-surface text-white position-relative mx-2"
        style="@( "border: 1px dashed #333 !important; " + InternalStyle )">
@@ -44,8 +45,8 @@
     private bool isLoading;
     //private decimal progressPercent;
 
-    [Parameter]
-    public string DefaultFilePath { get; set; } = "FILES";
+
+  
 
     [Parameter]
     public EventCallback<FileNotification> OnFileUploaded { get; set; }
@@ -117,27 +118,35 @@
 
         IReadOnlyList<IBrowserFile> files = e.GetMultipleFiles(maxAllowedFiles);
 
-        foreach (var file in files)
+        string contentRootPath = env.ContentRootPath;
+        string relativeSaveFilePath = Path.Combine(contentRootPath, loc.DefaultFilePath);
+
+        // check Directory
+        if (!Directory.Exists(relativeSaveFilePath))
+        {
+            // Create Directory
+            Directory.CreateDirectory(relativeSaveFilePath);
+        }
+
+        // check again
+        if (!Directory.Exists(relativeSaveFilePath))
+            return;
+
+        foreach (IBrowserFile file in files)
         {
             try
             {
-                string contentRootPath = env.ContentRootPath;
+                // Umrechnung von Bytes in Megabyte (ganzzahlig)
+                int sizeInMb = (int)(file.Size / (1024 * 1024));
 
+                // Datei ist größer als MAX Filesize 
+                if (sizeInMb > loc.Configuration.MaxFileSizeInMB)
+                    continue;
+                
+                // GUID 
                 Guid itemGUID = Guid.NewGuid();
-                string relativeSaveFilePath = Path.Combine(contentRootPath, DefaultFilePath);
 
-                // check Directory
-                if (!Directory.Exists(relativeSaveFilePath))
-                {
-                    // Create Directory
-                    Directory.CreateDirectory(relativeSaveFilePath);
-                }
-
-                // check again
-                if (!Directory.Exists(relativeSaveFilePath))
-                    return;
-
-                // Voller Dateipfad
+                // Voller Dateipfad 
                 var extension = Helper.SplitGetLast(file.Name);
                 var fullFilePath = Path.Combine(relativeSaveFilePath, itemGUID.ToString() + "." + extension);
 

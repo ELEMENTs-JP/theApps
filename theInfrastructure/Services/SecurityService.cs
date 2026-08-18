@@ -73,8 +73,17 @@ namespace theInfrastructure
 
             await Task.CompletedTask;
         }
+        public async Task RefreshUser()
+        {
+            Guid userGUID = User.GUID;
 
-        // Property Changed 
+            Init();
+
+            await SetUser(userGUID);
+        }
+
+        // Events 
+
         private void AppService_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "User")

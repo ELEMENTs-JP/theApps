@@ -1,6 +1,7 @@
 ﻿@using theControls.Icons
 @using theControls.Input
 @inject IMessagingBusService msg
+@inject ISecurityService sec
 @implements IAsyncDisposable
 
 @if (Field != null && Context != null && Context.Item != null)
@@ -186,7 +187,17 @@
         // Update
         await Context.Update(Context.Item);
 
-        msg.Publish("", BusAction.Refresh, "Eintrag aktualisiert");
+        // Update 
+        msg.Publish("", BusAction.Info, "Eintrag aktualisiert");
+
+        if (Context.Item.ItemType == "User")
+        {
+            if (Context.Item.GUID == sec.User.GUID)
+            {
+                // User Neu laden 
+                await sec.RefreshUser();
+            }
+        }
 
         // Events
         await ItemSaved.InvokeAsync(Context.Item);
