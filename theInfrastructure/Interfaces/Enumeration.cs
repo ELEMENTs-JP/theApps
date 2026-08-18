@@ -49,7 +49,7 @@ namespace theInfrastructure
     }
     public enum ModalFormSize { Small, Normal, Large, Extra, Full }
     public enum Icon
-    { 
+    {
         NULL = 0,
         Empty,
         Search,
@@ -62,13 +62,22 @@ namespace theInfrastructure
         File,
         Corner,
         Password,
+        Home,
     }
     public enum ValueBindingTyp
-    { 
+    {
         NULL = 0,
         Title = 1,
         Description = 2,
         Property = 3,
+    }
+    public enum DefaultFieldTypes
+    {
+        NULL = 0,
+
+        Description = 1,
+        Performance = 2,
+        File = 3,
     }
     public enum DeviceDisplay
     { 

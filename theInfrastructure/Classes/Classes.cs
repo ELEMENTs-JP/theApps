@@ -1,10 +1,58 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Text;
 
 namespace theInfrastructure
 {
+    public class UrlAnalysis
+    {
+        public bool IsDevelopment { get; set; }
+        public string Host { get; set; } = string.Empty;
+        public int Port { get; set; }
+        public string Scheme { get; set; } = string.Empty;
+        public string[] Segments { get; set; } = Array.Empty<string>();
+
+        /// <summary>
+        /// Prüft, ob ein bestimmter Suchbegriff in mindestens einem der Segmente enthalten ist.
+        /// </summary>
+        /// <param name="searchTerm">Der zu suchende String.</param>
+        /// <param name="comparison">Optional: Die Art des String-Vergleichs (Standard: Ignoriert Groß-/Kleinschreibung).</param>
+        /// <returns>True, wenn der Suchbegriff in irgendeinem Segment gefunden wurde.</returns>
+        public bool ContainsInSegments(string searchTerm, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        {
+            if (string.IsNullOrEmpty(searchTerm) || Segments == null)
+            {
+                return false;
+            }
+
+            return Segments.Any(segment => segment.Contains(searchTerm, comparison));
+        }
+
+        public static UrlAnalysis AnalyzeUrl(NavigationManager nm)
+        {
+            Uri uri = new Uri(nm.Uri);
+
+            // Bestimmung, ob es sich um eine Entwicklungsumgebung handelt
+            bool isDev = uri.IsLoopback || uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase);
+
+            // Säuberung des Pfades von Query-Parametern und Aufteilung in Segmente
+            string relativePath = nm.ToBaseRelativePath(nm.Uri);
+            string pathOnly = relativePath.Split('?')[0];
+            string[] cleanSegments = pathOnly.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+            return new UrlAnalysis
+            {
+                IsDevelopment = isDev,
+                Host = uri.Host,
+                Port = uri.Port,
+                Scheme = uri.Scheme,
+                Segments = cleanSegments
+            };
+        }
+    }
+
     public static class Sections
     {
         // SectionOutlet, SectionContent 

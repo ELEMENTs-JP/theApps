@@ -4,7 +4,7 @@
 
 @if(app != null && app.App != null)
 {
-    <div class="bg-surface p-2 align-items-center border-bottom border-start border-end">
+    <div class="bg-surface p-2 px-3 align-items-center border-bottom border-end">
         @app.App.Name
     </div>
 }
@@ -25,11 +25,11 @@
 
     }
 
-    private void OnMessageRun(AppMessage msg)
+    private async void OnMessageRun(AppMessage msg)
     {
         if (msg.Id == "App" && msg.Action == BusAction.Refresh)
         {
-            this.StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
     }
 

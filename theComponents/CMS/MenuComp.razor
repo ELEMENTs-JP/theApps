@@ -1,8 +1,16 @@
 ﻿@using theComponents.Security
+@using theControls.Icons
 @using theControls.Layout
+@inject NavigationManager nm
 
 <div class="row g-0">
     
+    <div class="col-auto">
+        <div class="bg-surface p-2 hover pointer align-items-center border-bottom border-start border-end"
+                @onclick="@( e => { nm.NavigateTo("/", false); } )">
+            <SymbolIcon Symbol="@Icon.Home" />
+        </div>
+    </div>
     <div class="col-auto">
         <BreadCrumpPath />
     </div>

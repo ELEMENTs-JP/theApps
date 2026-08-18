@@ -32,5 +32,57 @@ namespace theInfrastructure
         public DeviceDisplay OnDevice { get; set; } = DeviceDisplay.NULL;
 
         public bool IsEditable { get; set; } = true;
+
+        public static List<IField> DefaultFields(DefaultFieldTypes typ)
+        {
+            List<IField> Fields = new();
+
+            if (typ == DefaultFieldTypes.Performance)
+            {
+                Fields.Add(new Field()
+                {
+                    Title = "Status", Description = "definiert den Status",
+                    Typ = FieldTyp.Status,
+                    Column = "Status", CSS = " col-12 col-md-6 col-lg-4 ",
+                    OnDevice = DeviceDisplay.Tablet
+                });
+                Fields.Add(new Field() 
+                { 
+                    Title = "Fortschritt", Description = "legt den Fortschritt fest", 
+                    Typ = FieldTyp.Progress, 
+                    Column = "Progress", CSS = " col-12 col-md-6 col-lg-4 ", 
+                    OnDevice = DeviceDisplay.Tablet 
+                });
+                Fields.Add(new Field() 
+                { 
+                    Title = "Priorität", Description = "legt die Priorität fest", 
+                    Typ = FieldTyp.Priority, 
+                    Column = "Prio", CSS = " col-12 col-md-6 col-lg-4 ", 
+                    OnDevice = DeviceDisplay.Tablet });
+            }
+
+            if (typ == DefaultFieldTypes.Description)
+            {
+                Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });
+                Fields.Add(new Field() 
+                { 
+                    Title = "Description", 
+                    Typ = FieldTyp.TextArea, 
+                    Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", 
+                    OnDevice = DeviceDisplay.Desktop });
+            }
+
+            if (typ == DefaultFieldTypes.File)
+            {
+                // Fields.Add(new Field() { Title = "Pfad", Typ = FieldTyp.Text, Column = "FullFilePath", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
+                Fields.Add(new Field() { Title = "Size in Byte", Typ = FieldTyp.Text, Column = "FileSizeInByte", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
+                Fields.Add(new Field() { Title = "Size in KB", Typ = FieldTyp.Text, Column = "FileSizeInKB", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
+                Fields.Add(new Field() { Title = "Size in MB", Typ = FieldTyp.Text, Column = "FileSizeInMB", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
+                Fields.Add(new Field() { Title = "Erweiterung", Typ = FieldTyp.Text, Column = "FileExtension", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
+
+            }
+
+            return Fields;
+        }
     }
 }
