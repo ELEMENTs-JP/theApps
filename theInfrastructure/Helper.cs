@@ -15,50 +15,69 @@ namespace theInfrastructure
     {
         public static IList<T> FromTo<T>(this IList<T> list, int first, int last)
         {
-            IList<T> theNewList = new List<T>();
+            if (list == null || list.Count == 0)
+                return new List<T>();
 
-            try
+            if (first < 0 || last < 0 || first > last || first >= list.Count)
+                return new List<T>();
+
+            last = Math.Min(last, list.Count - 1);
+
+            var result = new List<T>(last - first + 1);
+
+            for (int i = first; i <= last; i++)
             {
-                if (first == -1 || last == -1)
-                    return theNewList;
-
-                // BIGGER 
-                if (first > last)
-                {
-                    return theNewList.ToList();
-                }
-                // SMALLER 
-                if (first < 0 || last < 0)
-                {
-                    return theNewList.ToList();
-                }
-
-                // CHECK 
-                if (first >= list.Count())
-                {
-                    return theNewList;
-                    // first = list.Count() - 1;
-                }
-                if (last >= list.Count())
-                {
-                    last = list.Count() - 1;
-                }
-
-                if (first == -1 || last == -1)
-                    return theNewList;
-
-                for (int i = first; i <= last; i++)
-                {
-                    theNewList.Add(list[i]);
-                }
-            }
-            catch (Exception ex)
-            {
-               
+                result.Add(list[i]);
             }
 
-            return theNewList.ToList();
+            return result;
         }
+        //public static IList<T> FromTo<T>(this IList<T> list, int first, int last)
+        //{
+        //    IList<T> theNewList = new List<T>();
+
+        //    try
+        //    {
+        //        if (first == -1 || last == -1)
+        //            return theNewList;
+
+        //        // BIGGER 
+        //        if (first > last)
+        //        {
+        //            return theNewList.ToList();
+        //        }
+        //        // SMALLER 
+        //        if (first < 0 || last < 0)
+        //        {
+        //            return theNewList.ToList();
+        //        }
+
+        //        // CHECK 
+        //        if (first >= list.Count())
+        //        {
+        //            return theNewList;
+        //            // first = list.Count() - 1;
+        //        }
+        //        if (last >= list.Count())
+        //        {
+        //            last = list.Count() - 1;
+        //        }
+
+        //        if (first == -1 || last == -1)
+        //            return theNewList;
+
+        //        for (int i = first; i <= last; i++)
+        //        {
+        //            theNewList.Add(list[i]);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+               
+        //    }
+
+        //    return theNewList.ToList();
+        //}
 
 
   

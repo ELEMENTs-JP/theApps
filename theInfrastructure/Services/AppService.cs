@@ -26,7 +26,13 @@ namespace theInfrastructure
             set { _app = value; OnPropertyChanged(); } 
         } 
         public List<IApp> AllApps { get; set; } = new();
-        
+        private IItemType _it = null;
+        public IItemType ItemType
+        {
+            get { return _it; }
+            set { _it = value; OnPropertyChanged(); }
+        }
+
         // CTR 
         public AppService()
         {
@@ -74,7 +80,12 @@ namespace theInfrastructure
         public async Task SetApp(IApp app)
         {
             App = AllApps.Where(se => se.Name == app.Name).FirstOrDefault();
+            ItemType = null;
             await Task.CompletedTask;
+        }
+        public async Task SetItemType(IItemType it)
+        {
+            ItemType = it;
         }
 
         // Property Changed 

@@ -28,8 +28,11 @@ a, a:hover, a:visited {
         background-color:#77777711;
         border-radius:0.35rem;
     }
-    
 
+.selected {
+    border-left: 3px solid #fff;
+    background-color: var(--tsp-hover) !important;
+}
 .scrollable {
     display: block;
     height: calc(100vh - var(--tsp-header-height) - var(--tsp-menu-height) - var(--tsp-footer-height));

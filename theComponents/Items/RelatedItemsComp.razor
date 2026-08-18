@@ -13,9 +13,13 @@
         <Header>
             @if (ItemType != null)
             {
-                <div class="d-flex flex-row">
-                            @*     <h3 class="h3">@ItemType.Name</h3> *@
-                    <ItemTypeSelector Items="@Items" OnClick="@( e => { ItemType = e; })" />
+                <div class="d-flex flex-row align-items-center">
+
+                    @if (!string.IsNullOrEmpty(Title))
+                    {
+                        <div class="fw-bold pe-2 me-2">@Title</div>
+                    }
+                    <ItemTypeSelector Items="@ItemTypes" OnClick="@( e => { ItemType = e; })" />
                 </div>
             }
         </Header>
@@ -36,13 +40,16 @@
 
 @code {
 
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
 
     IItemType ItemType { get; set; }  // Related ItemType // Parent ItemType 
 
     [Parameter]
     public IDTO RelatedItem { get; set; } // Related DTO 
 
-    private List<IItemType> Items { get; set; } = new();
+    [Parameter]
+    public List<IItemType> ItemTypes { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,15 +60,15 @@
     {
         await base.OnParametersSetAsync();
 
-        Items.Clear();
-        IItemType relItemType = await new Factory(sql).BuildItemType(RelatedItem.ItemType);
-        if (relItemType != null)
+        // Items.Clear();
+        // IItemType relItemType = await new Factory(sql).BuildItemType(RelatedItem.ItemType);
+        // if (relItemType != null)
+        // {
+        //     Items.AddRange(relItemType.GetItemTypes().Result);
+        // }
+        if (ItemTypes.Count() >= 1)
         {
-            Items.AddRange(relItemType.GetItemTypes().Result);
-        }
-        if (Items.Count() >= 1)
-        {
-            ItemType = Items.FirstOrDefault();
+            ItemType = ItemTypes.FirstOrDefault();
         }
 
     }

@@ -14,6 +14,7 @@ namespace theInfrastructure
             Item = dto;
 
             this.Name = dto.Title;
+            this.Group = dto["Group"].ToSecureString();
         }
 
         public override async Task<List<IItemType>> GetItemTypes()

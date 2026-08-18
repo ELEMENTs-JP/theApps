@@ -22,8 +22,18 @@
             <EditArea ItemType="@this.ItemType" ID="@ID" />
 
             <div class="my-3"></div>
-            <RelatedItemsComp RelatedItem="@RelatedItem" />
-        @*     @foreach (IItemType it in this.ItemType.GetItemTypes().Result)
+
+            <div class="row row-cols-1 row-cols-lg-2 gx-2">
+                @foreach (string group in ItemTypes.Select(se => se.Group).Distinct())
+                {
+                    <div class="col py-2">
+                        <RelatedItemsComp Title="@group" ItemTypes="@( ItemTypes.Where(se => se.Group == group).ToList())"
+                                          RelatedItem="@RelatedItem" />
+                    </div>
+                }
+            </div>
+
+            @*     @foreach (IItemType it in this.ItemType.GetItemTypes().Result)
             {
                 <div class="my-3"></div>
                 <RelatedItemsComp ItemType="@it" RelatedItem="@RelatedItem" />
@@ -43,6 +53,7 @@
     public string IT { get; set; } = string.Empty;
 
     private IItemType ItemType { get; set; } = null;
+    private List<IItemType> ItemTypes { get; set; } = new();
 
     private IQueryContext Context { get; set; } = null;
     private IQueryContext RelatedContext { get; set; } = null;
@@ -56,6 +67,7 @@
         {
             Factory f = new Factory(sql);
             ItemType = await f.BuildItemType(this.IT);
+            ItemTypes = await ItemType.GetItemTypes();
         }
 
         if (!string.IsNullOrEmpty(this.ID))

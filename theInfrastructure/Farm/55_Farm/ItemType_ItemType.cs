@@ -25,6 +25,15 @@ namespace theInfrastructure
             // Fields 
             Fields = new List<IField>();
 
+            Fields.Add(new Field()
+            {
+                Title = "Group",
+                Description = "Legt die Gruppe des ItemTyp fest.",
+                Typ = FieldTyp.Text,
+                Column = "Group",
+                CSS = " col-12 "
+            });
+
             Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });
             Fields.Add(new Field() { Title = "Description", Typ = FieldTyp.TextArea, Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
 

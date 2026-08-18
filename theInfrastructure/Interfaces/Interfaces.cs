@@ -44,8 +44,11 @@ namespace theInfrastructure
     {
         IApp App { get; set; }
         List<IApp> AllApps { get; set; }
+        IItemType ItemType { get; set; }
         Task SetApp(IApp app);
-  
+        Task SetItemType(IItemType it);
+
+
     }
     public interface ISqlDatabaseService
     {
