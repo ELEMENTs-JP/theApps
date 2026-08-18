@@ -49,8 +49,8 @@
         <div class="row g-0">
             @foreach (IItemType it in app.App.GetItemTypes().Result)
             {
-                <div class="col-12 p-1 @( GetSelection(it) )">
-                    <div class="rounded-2 hover pointer p-1 px-2 fw-bold"
+                <div class="col-12 p-1">
+                    <div class="rounded-2 hover pointer p-1 px-2 fw-bold @( GetSelection(it) )"
                          @onclick="@( async e => { await OnItemType(it); })">
                         @it.ToString()
                     </div>
@@ -58,8 +58,8 @@
 
                 @foreach (IItemType child in it.GetItemTypes().Result)
                 {
-                    <div class="col-12 p-1  @( GetSelection(child) )">
-                        <div class="rounded-2 hover pointer p-1 px-2 ps-4 text-secondary"
+                    <div class="col-12 p-1 ">
+                        <div class="rounded-2 hover pointer p-1 px-2 ps-4 text-secondary @( GetSelection(child) )"
                              @onclick="@( async e => { await OnItemType(child); })">
                             @child.ToString()
                         </div>
@@ -107,6 +107,9 @@
     {
         await app.SetItemType(it);
         nm.NavToLibrary(it.Name);
+
+        // Refresh
+        msg.Publish(new AppMessage("ItemType", BusAction.Refresh));
 
         await Task.CompletedTask;
     }

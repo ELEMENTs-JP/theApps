@@ -2,16 +2,26 @@
 @inject IAppService app
 @implements IAsyncDisposable
 
+<div class="row g-0">
+
 @if(app != null && app.App != null)
 {
-    <div class="bg-surface p-2 px-3 align-items-center border-bottom border-end">
+    <div class="col-auto bg-surface p-2 px-3 align-items-center border-bottom border-end">
         @app.App.Name
     </div>
 }
 
+@if (app != null && app.ItemType != null)
+{
+    <div class="col-auto bg-surface p-2 px-3 align-items-center border-bottom border-end">
+        @app.ItemType.Name
+    </div>
+}
+</div>
+
+
 @code {
 
-    IApp App { get; set; } = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,13 +41,16 @@
         {
             await InvokeAsync(StateHasChanged);
         }
+        if (msg.Id == "ItemType" && msg.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     public async ValueTask DisposeAsync()
     {
         try
         {
-            App = null;
             message.OnMessage -= OnMessageRun;
         }
         catch (Exception ex)

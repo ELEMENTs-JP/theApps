@@ -8,10 +8,10 @@
     <div class="col-auto">
         <div class="bg-surface p-2 hover pointer align-items-center border-bottom border-start border-end"
                 @onclick="@( e => { nm.NavigateTo("/", false); } )">
-            <SymbolIcon Symbol="@Icon.Home" />
+            <SymbolIcon Symbol="@Icon.Home" Style="" />
         </div>
     </div>
-    <div class="col-auto">
+    <div class="col-auto d-none d-xl-block">
         <BreadCrumpPath />
     </div>
     <div class="col px-3">
@@ -19,10 +19,10 @@
     <div class="col-auto px-3">
         <SimpleClock />
     </div>
-    <div class="col-auto px-3">
+    <div class="col-auto px-3 d-none d-xl-block">
         <LoggedInPrincipal />
     </div>
-    <div class="col-auto">
+    <div class="col-auto  d-none d-xl-block">
         <LoggedInUser />
     </div>
     

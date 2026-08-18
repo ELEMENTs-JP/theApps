@@ -32,7 +32,10 @@ a, a:hover, a:visited {
 .selected {
     border-left: 3px solid #fff;
     background-color: var(--tsp-hover) !important;
+    border-radius: 0px !important;
+    font-weight:bold;
 }
+
 .scrollable {
     display: block;
     height: calc(100vh - var(--tsp-header-height) - var(--tsp-menu-height) - var(--tsp-footer-height));
@@ -50,6 +53,9 @@ a, a:hover, a:visited {
 
 .td-hover:hover {
     border-bottom:1px solid #fff;
+}
+.row-hover:hover {
+    border-left: 1px solid #fff !important;
 }
 .hover:hover {
     background-color: var(--tsp-hover) !important;

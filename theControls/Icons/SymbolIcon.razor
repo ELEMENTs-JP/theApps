@@ -1,5 +1,5 @@
 ﻿
-<div class="@( CSS + "  " )" style="margin-top:-2px;" @onclick="@onBtnClck">
+<div class="@( CSS + "  " )" style="@Style" @onclick="@onBtnClck">
 
     @if (Symbol == Icon.Empty)
     {
@@ -222,6 +222,9 @@
 
     [Parameter]
     public int MaxHeight { get; set; } = 320;
+
+    [Parameter]
+    public string Style { get; set; } = " margin-top:-2px; ";
 
     [Parameter]
     public string CSS { get; set; } = string.Empty;

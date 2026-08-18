@@ -5,10 +5,10 @@
 
 @if (Context != null)
 {
-    <tr class="">
+    <tr class="row-hover" style="border-left:1px solid transparent;">
         <td class="text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</td>
         
-        <td class="text-muted td-hover" title="@Item.ItemType">
+        <td class="text-muted" title="@Item.ItemType">
             <a class="fw-bold pointer" 
                 href="@( "/Item/" + Context.ItemType.Name + "/" + Item.GUID )">
                 @(Item.Title.ToSecureString())</a>
