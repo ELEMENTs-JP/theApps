@@ -9,7 +9,11 @@
 
 <PageTitle>the App | Item</PageTitle>
 
-    @if (ItemType != null)
+
+
+
+
+@if (ItemType != null)
 {
     @if (Context != null)
     {
@@ -17,11 +21,13 @@
 
             <EditArea ItemType="@this.ItemType" ID="@ID" />
 
-            @foreach (IItemType it in this.ItemType.GetItemTypes().Result)
+            <div class="my-3"></div>
+            <RelatedItemsComp RelatedItem="@RelatedItem" />
+        @*     @foreach (IItemType it in this.ItemType.GetItemTypes().Result)
             {
                 <div class="my-3"></div>
                 <RelatedItemsComp ItemType="@it" RelatedItem="@RelatedItem" />
-            }
+            } *@
         </div>
     }
 }

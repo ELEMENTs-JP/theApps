@@ -16,6 +16,7 @@ namespace theInfrastructure
         {
             // ItemTypes 
             List<IItemType>  ItemTypes = new List<IItemType>();
+            ItemTypes.Add(new ItemType_ItemType());
             ItemTypes.Add(new ItemType_Field());
             return ItemTypes;
         }

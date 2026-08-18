@@ -13,8 +13,55 @@ namespace theInfrastructure
 {
     public static class Helper
     {
-       
+        public static IList<T> FromTo<T>(this IList<T> list, int first, int last)
+        {
+            IList<T> theNewList = new List<T>();
 
+            try
+            {
+                if (first == -1 || last == -1)
+                    return theNewList;
+
+                // BIGGER 
+                if (first > last)
+                {
+                    return theNewList.ToList();
+                }
+                // SMALLER 
+                if (first < 0 || last < 0)
+                {
+                    return theNewList.ToList();
+                }
+
+                // CHECK 
+                if (first >= list.Count())
+                {
+                    return theNewList;
+                    // first = list.Count() - 1;
+                }
+                if (last >= list.Count())
+                {
+                    last = list.Count() - 1;
+                }
+
+                if (first == -1 || last == -1)
+                    return theNewList;
+
+                for (int i = first; i <= last; i++)
+                {
+                    theNewList.Add(list[i]);
+                }
+            }
+            catch (Exception ex)
+            {
+               
+            }
+
+            return theNewList.ToList();
+        }
+
+
+  
         public static List<IDTO> InitDropDown(IField field)
         {
             List<IDTO> Items = new List<IDTO>();

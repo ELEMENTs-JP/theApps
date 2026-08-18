@@ -10,10 +10,10 @@ namespace theControls.Elements
 {
     public class BaseList : ComponentBase, IAsyncDisposable
     {
-        [Inject] 
+        [Inject]
         public IMessagingBusService bus { get; set; } = default!;
 
-        [Inject] 
+        [Inject]
         public ISqlDatabaseService sql { get; set; } = default!;
 
         [Parameter]
@@ -33,19 +33,22 @@ namespace theControls.Elements
         {
             await base.OnParametersSetAsync();
 
-            // Context
-            Context = new QueryContext(sql);
-            Context.ItemType = ItemType;
+            if (ItemType != null)
+            {
+                // Context
+                Context = new QueryContext(sql);
+                Context.ItemType = ItemType;
 
-            if (RelatedItem != null)
-            {
-                // Related Items
-                Context.RelatedItem = RelatedItem;
-                await Context.RelatedItems(ItemType.Name);
-            }
-            else
-            {
-                await Context.Search();
+                if (RelatedItem != null)
+                {
+                    // Related Items
+                    Context.RelatedItem = RelatedItem;
+                    Context.Items = await Context.RelatedItems(ItemType.Name);
+                }
+                else
+                {
+                    await Context.Search();
+                }
             }
 
         }
@@ -54,15 +57,18 @@ namespace theControls.Elements
         {
             if (msg.Action == BusAction.Refresh)
             {
-                if (RelatedItem != null)
+                if (ItemType != null)
                 {
-                    // Related Items
-                    Context.RelatedItem = RelatedItem;
-                    await Context.RelatedItems(ItemType.Name);
-                }
-                else
-                {
-                    await Context.Search();
+                    if (RelatedItem != null)
+                    {
+                        // Related Items
+                        Context.RelatedItem = RelatedItem;
+                        Context.Items = await Context.RelatedItems(ItemType.Name);
+                    }
+                    else
+                    {
+                        await Context.Search();
+                    }
                 }
 
                 await InvokeAsync(this.StateHasChanged);

@@ -3,16 +3,20 @@
 @using theControls.Connect
 @using theControls.Layout
 @using theControls.List
+@using theControls.Selection
 @using theControls.Tables
 @inject ISqlDatabaseService sql
 
-@if (RelatedItem != null)
+@if (RelatedItem != null && ItemType != null)
 {
     <Frame Border="true" Rounded="true">
         <Header>
             @if (ItemType != null)
             {
-                <h3 class="h3">@ItemType.Name</h3>
+                <div class="d-flex flex-row">
+                            @*     <h3 class="h3">@ItemType.Name</h3> *@
+                    <ItemTypeSelector Items="@Items" OnClick="@( e => { ItemType = e; })" />
+                </div>
             }
         </Header>
         <Related>
@@ -33,19 +37,32 @@
 @code {
 
 
-    [Parameter]
-    public IItemType ItemType { get; set; }
+    IItemType ItemType { get; set; }  // Related ItemType // Parent ItemType 
 
     [Parameter]
-    public IDTO RelatedItem { get; set; }
+    public IDTO RelatedItem { get; set; } // Related DTO 
+
+    private List<IItemType> Items { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
     }
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
+
+        Items.Clear();
+        IItemType relItemType = await new Factory(sql).BuildItemType(RelatedItem.ItemType);
+        if (relItemType != null)
+        {
+            Items.AddRange(relItemType.GetItemTypes().Result);
+        }
+        if (Items.Count() >= 1)
+        {
+            ItemType = Items.FirstOrDefault();
+        }
 
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)

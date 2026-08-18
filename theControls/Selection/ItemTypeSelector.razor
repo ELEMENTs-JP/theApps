@@ -1,0 +1,66 @@
+﻿@if (Item != null)
+{
+    <div class="btn-group" role="group">
+
+        @foreach (IItemType it in Items.FromTo<IItemType>(0, 2))
+        {
+            <div class="@( "btn btn-sm " + ((it.Name == Item.Name) ? " btn-primary " : "") )"
+                 @onclick="@( async e => { Item = it; await ButtonClick(it); })">
+                @it.ToString()
+            </div>
+        }
+
+        @if (Items.Count() >= 4)
+        {
+            <div class="btn-group" role="group">
+                <div class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    ...
+                </div>
+                <div class="dropdown-menu" style="">
+
+                    @foreach (IItemType it in Items.FromTo<IItemType>(3, Items.Count() + 1))
+                    {
+                        <div class="@( "dropdown-item" )"
+                             @onclick="@( async e => { Item = it; await ButtonClick(it); })">
+                            @it.ToString()
+                        </div>
+                    }
+
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+
+
+    [Parameter]
+    public IItemType Item { get; set; }
+
+    [Parameter]
+    public List<IItemType> Items { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (Items.Count() >= 1)
+        {
+            Item = Items.FirstOrDefault();
+            await ButtonClick(Item);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<IItemType> OnClick { get; set; }
+
+    private async Task ButtonClick(IItemType it)
+    {
+        if (OnClick.HasDelegate)
+        {
+            await OnClick.InvokeAsync(it);
+        }
+    }
+
+}

@@ -1,0 +1,10 @@
+﻿@inject NavigationManager nm
+
+@code {
+    protected override void OnInitialized()
+    {
+        
+        string returnUrl = Uri.EscapeDataString(nm.ToBaseRelativePath(nm.Uri));
+        nm.NavigateTo("/");
+    }
+}
