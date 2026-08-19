@@ -20,6 +20,7 @@ namespace theInfrastructure
             // ItemTypes 
             ItemTypes.Add(new ItemType_Note());
             ItemTypes.Add(new ItemType_File());
+            ItemTypes.Add(new ItemType_Appointment());
             ItemTypes.Add(new ItemType_Task());
 
             return ItemTypes;

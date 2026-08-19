@@ -66,7 +66,7 @@ namespace theInfrastructure
                 Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });
                 Fields.Add(new Field() 
                 { 
-                    Title = "Description", 
+                    Title = "Beschreibung", 
                     Typ = FieldTyp.TextArea, 
                     Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", 
                     OnDevice = DeviceDisplay.Desktop });
@@ -80,6 +80,13 @@ namespace theInfrastructure
                 Fields.Add(new Field() { Title = "Size in MB", Typ = FieldTyp.Text, Column = "FileSizeInMB", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
                 Fields.Add(new Field() { Title = "Erweiterung", Typ = FieldTyp.Text, Column = "FileExtension", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
 
+            }
+
+            if (typ == DefaultFieldTypes.Appointment)
+            {
+                Fields.Add(new Field() { Title = "Datum", Typ = FieldTyp.Date, Column = "Date", CSS = " col-12 col-md-12 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
+                Fields.Add(new Field() { Title = "Start", Typ = FieldTyp.Time, Column = "Start", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
+                Fields.Add(new Field() { Title = "Ende", Typ = FieldTyp.Time, Column = "Ende", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
             }
 
             return Fields;

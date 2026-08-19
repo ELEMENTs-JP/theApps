@@ -4,12 +4,20 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum RelevantPropertyType
+    {
+        NULL = 0,
+
+        Date = 11,
+
+    }
     public enum ItemTypeTyp
     {
         NULL = 0,
 
         Item = 1,
         File = 2,
+        Appointment = 3,
     }
     public enum Orientation
     {
@@ -78,6 +86,7 @@ namespace theInfrastructure
         Description = 1,
         Performance = 2,
         File = 3,
+        Appointment = 4,
     }
     public enum DeviceDisplay
     { 
@@ -98,6 +107,7 @@ namespace theInfrastructure
         Priority,
         Status,
         Progress,
+        User,
 
         Number,
         Integer,
@@ -123,6 +133,7 @@ namespace theInfrastructure
         Hidden,
         HR,
         FieldTyp, // EditBox FieldTyp 
+        ItemTypeTyp, // Typ des ItemTyp (Item, File, etc.)
     }
 
     public enum DatabaseTyp

@@ -56,7 +56,7 @@
                     </div>
                 </div>
 
-                @foreach (IItemType child in it.GetItemTypes().Result)
+                @foreach (IItemType child in it.GetItemTypes().Result.Where(se => se.InSubNavigation == true))
                 {
                     <div class="col-12 p-1 ">
                         <div class="rounded-2 hover pointer p-1 px-2 ps-4 text-secondary @( GetSelection(child) )"
@@ -106,7 +106,7 @@
     private async Task OnItemType(IItemType it)
     {
         await app.SetItemType(it);
-        nm.NavToLibrary(it.Name);
+        nm.NavToLibrary(it.Name, it.Typ);
 
         // Refresh
         msg.Publish(new AppMessage("ItemType", BusAction.Refresh));

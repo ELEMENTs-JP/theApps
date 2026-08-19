@@ -2,6 +2,7 @@
 @using theControls.Input
 @inject IMessagingBusService msg
 @inject ISecurityService sec
+@inject ISqlDatabaseService sql
 @implements IAsyncDisposable
 
 @if (Field != null && Context != null && Context.Item != null)
@@ -27,6 +28,8 @@
         }
         else if (Field.Typ == FieldTyp.DropDown ||
                 Field.Typ == FieldTyp.FieldTyp ||
+                Field.Typ == FieldTyp.ItemTypeTyp ||
+                Field.Typ == FieldTyp.User ||
                  Field.Typ == FieldTyp.Priority ||
                  Field.Typ == FieldTyp.Status ||
                  Field.Typ == FieldTyp.Progress)
@@ -178,7 +181,7 @@
     // Methods 
     public async Task Init()
     {
-        this.Items = Helper.InitDropDown(Field);
+        this.Items = await Helper.InitDropDown(Field, sql);
     }
 
     // Helper 

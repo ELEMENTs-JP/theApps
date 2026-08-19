@@ -5,14 +5,104 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
 namespace theInfrastructure
 {
+    
     public static class Helper
     {
+  
+        public static string GetItemUrl(IDTO dto)
+        {
+            // Url 
+            return "/Item/" + dto.ItemType.ToSecureString() + "/" + dto.GUID.ToSecureString();
+        }
+        public static int GetDayOfWeek(DayOfWeek dow)
+        {
+            switch (dow)
+            {
+                case DayOfWeek.Monday:
+                    { return 1; }
+                case DayOfWeek.Tuesday:
+                    { return 2; }
+                case DayOfWeek.Wednesday:
+                    { return 3; }
+                case DayOfWeek.Thursday:
+                    { return 4; }
+                case DayOfWeek.Friday:
+                    { return 5; }
+                case DayOfWeek.Saturday:
+                    { return 6; }
+                case DayOfWeek.Sunday:
+                    { return 7; }
+            }
+
+            return 0;
+        }
+        public static List<DateTime> GetDates(int year, int month)
+        {
+            List<DateTime> dates = Enumerable.Range(1, DateTime.DaysInMonth(year, month))  // Days: 1, 2 ... 31 etc.
+                             .Select(day => new DateTime(year, month, day)) // Map each day to a date
+                             .ToList(); // Load dates into a list
+
+
+            // Vorher
+            DateTime first = dates.FirstOrDefault();
+            int before = GetDayOfWeek(first.DayOfWeek) - 1;
+            for (int b = 0; b < before; b++)
+            {
+                dates.Insert(0, first.AddDays(-b - 1));
+            }
+
+            // Nachher
+            DateTime last = dates.LastOrDefault();
+            int after = 7 - GetDayOfWeek(last.DayOfWeek);
+            for (int a = 0; a < after; a++)
+            {
+                dates.Add(last.AddDays(a + 1));
+            }
+
+            // return
+            return dates;
+        }
+        public static string ToYearMonth(this DateTime date, string trennzeichen = "")
+        {
+            return date.Date.Year + trennzeichen + date.Date.Month;
+        }
+        public static string GetAkzentStyle(this SystemConfiguration config)
+        {
+            if (config.Akzente == true)
+            { 
+                return "  border-top: 3px solid #ffffff !important;  ";
+            }
+
+            return string.Empty;
+        }
+        public static TToEnum ToEnum<TToEnum>(this string value, bool ignoreCase = true)  where TToEnum : struct, Enum
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentNullException(nameof(value), "String darf nicht leer sein.");
+            }
+
+            if (Enum.TryParse<TToEnum>(value, ignoreCase, out var result))
+            {
+                return result;
+            }
+
+            throw new ArgumentException($"Der Wert '{value}' konnte nicht in das Enum '{typeof(TToEnum).Name}' konvertiert werden.");
+        }
+
+        public static TToEnum ToEnumOrDefault<TToEnum>(this string value, TToEnum defaultValue = default, bool ignoreCase = true)
+            where TToEnum : struct, Enum
+        {
+            return Enum.TryParse<TToEnum>(value, ignoreCase, out var result) ? result : defaultValue;
+        }
+
         public static IList<T> FromTo<T>(this IList<T> list, int first, int last)
         {
             if (list == null || list.Count == 0)
@@ -81,7 +171,7 @@ namespace theInfrastructure
 
 
   
-        public static List<IDTO> InitDropDown(IField field)
+        public static async Task<List<IDTO>> InitDropDown(IField field, ISqlDatabaseService sql)
         {
             List<IDTO> Items = new List<IDTO>();
 
@@ -126,6 +216,7 @@ namespace theInfrastructure
                 Items.Add(new DTO() { ID = "Priority", Title = "Priority" });
                 Items.Add(new DTO() { ID = "Status", Title = "Status" });
                 Items.Add(new DTO() { ID = "Progress", Title = "Progress" });
+                Items.Add(new DTO() { ID = "User", Title = "User" });
                 Items.Add(new DTO() { ID = "Number", Title = "Number" });
                 Items.Add(new DTO() { ID = "Integer", Title = "Integer" });
                 Items.Add(new DTO() { ID = "Money", Title = "Money" });
@@ -134,6 +225,19 @@ namespace theInfrastructure
                 Items.Add(new DTO() { ID = "DateTime", Title = "DateTime" });
                 Items.Add(new DTO() { ID = "Date", Title = "Date" });
                 Items.Add(new DTO() { ID = "Time", Title = "Time" });
+            }
+            else if (field.Typ == FieldTyp.ItemTypeTyp)
+            {
+                Items.Add(new DTO() { ID = "Item", Title = "Item" });
+                Items.Add(new DTO() { ID = "File", Title = "File" });
+            }
+            else if (field.Typ == FieldTyp.User)
+            {
+                IQueryParameter qp = new QueryParameter();
+                qp.MasterGUID = sql.MasterGUID;
+                qp.ItemType = "User";
+                IQueryResult result = await sql.GetItems(qp);
+                Items = result.Items;
             }
 
             return Items;
@@ -191,9 +295,20 @@ namespace theInfrastructure
         {
             nm.NavigateTo("/Item/" + ItemType + "/" + GUID.ToString(), false);
         }
-        public static void NavToLibrary(this NavigationManager nm, string ItemType)
+        public static void NavToLibrary(this NavigationManager nm, string ItemType, ItemTypeTyp typ = ItemTypeTyp.Item)
         {
-            nm.NavigateTo("/Items/" + ItemType, false);
+            if (typ == ItemTypeTyp.Item)
+            {
+                nm.NavigateTo("/Items/" + ItemType, false);
+            }
+            if (typ == ItemTypeTyp.File)
+            {
+                nm.NavigateTo("/Items/" + ItemType, false);
+            }
+            if (typ == ItemTypeTyp.Appointment)
+            {
+                nm.NavigateTo("/Calendar/" + ItemType, false);
+            }
         }
         public static string GetClassByDevice(IField field)
         {

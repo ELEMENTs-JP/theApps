@@ -2,18 +2,32 @@
 @using theControls.Edit
 @using theControls.Input
 @using theControls.Text
-
+@inject ISecurityService sec
 
 
 
 <div class="container">
 
-    <ControlHeader PreTitle="Dashboard" Title="the App"
-                   PostTitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
+    <ControlHeader PreTitle="Dashboard" Title="the App" PostTitle="the App Plattform" Border="true"
+                   PreRelated="Willkommen"  Related="@user"  PostRelated="@post"  />
     
 
 </div>
 
 @code {
-    
+
+    string user = string.Empty;
+    string post = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (sec.User != null)
+        {
+            user = sec.User.Title;
+        }
+        post = DateTime.Now.ToLongDateString();
+    }
+
 }

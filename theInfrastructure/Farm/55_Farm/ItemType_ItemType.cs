@@ -9,6 +9,7 @@ namespace theInfrastructure
         public ItemType_ItemType()
         {
             Name = "ItemType";
+            InSubNavigation = false;
         }
         public List<IField> Fields { get; set; } = new();
 
@@ -31,7 +32,25 @@ namespace theInfrastructure
                 Description = "Legt die Gruppe des ItemTyp fest.",
                 Typ = FieldTyp.Text,
                 Column = "Group",
-                CSS = " col-12 "
+                CSS = " col-6 "
+            });
+
+            Fields.Add(new Field()
+            {
+                Title = "Sub Navigation",
+                Description = "Legt fest ob dieser ItemType in der Subnavigation angezeigt wird.",
+                Typ = FieldTyp.CheckBox,
+                Column = "InSubNavigation",
+                CSS = " col-3 "
+            });
+
+            Fields.Add(new Field()
+            {
+                Title = "Typ",
+                Description = "Legt den Typ des ItemType fest.",
+                Typ = FieldTyp.ItemTypeTyp,
+                Column = "ItemTypeTyp",
+                CSS = " col-3 "
             });
 
             Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });

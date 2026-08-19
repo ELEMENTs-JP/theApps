@@ -4,7 +4,7 @@
 @foreach (IItemType it in ItemTypes)
 {
     <div class="pointer hover rounded-2 p-2 fw-bold" 
-            @onclick="@( e => {  nm.NavToLibrary(it.Name); })">
+            @onclick="@( e => {  nm.NavToLibrary(it.Name, it.Typ); })">
         @it.ToString()
     </div>
 }

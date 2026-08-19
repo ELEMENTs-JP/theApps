@@ -1,5 +1,6 @@
 ﻿@using theControls.Icons
 @using theControls.Input
+@inject ISqlDatabaseService sql
 
 
 @if (Field != null)
@@ -18,6 +19,9 @@
             </TextArea>
         }
         else if (Field.Typ == FieldTyp.DropDown ||
+                 Field.Typ == FieldTyp.User ||
+                 Field.Typ == FieldTyp.FieldTyp ||
+                 Field.Typ == FieldTyp.ItemTypeTyp ||
                  Field.Typ == FieldTyp.Priority ||
                  Field.Typ == FieldTyp.Status ||
                  Field.Typ == FieldTyp.Progress)
@@ -115,7 +119,7 @@
        // Methods 
     public async Task Init()
     {
-        this.Items = Helper.InitDropDown(Field);
+        this.Items = await Helper.InitDropDown(Field, sql);
     }
 
     [Parameter]

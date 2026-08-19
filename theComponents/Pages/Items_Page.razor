@@ -1,6 +1,7 @@
 ﻿@page "/{Typ}/{IT}"
 @using theComponents.Items
 @using theControls.Add
+@using theControls.Calendar
 @using theControls.Layout
 @using theControls.Tables
 @using theDatabase
@@ -21,6 +22,10 @@
         <HierarchyComp ItemType="@ItemType" />
         
     }
+    @if (Typ == "Calendar")
+    {
+        <CalendarComp ItemType="@ItemType" />
+    }
 
 
 </div>
@@ -35,8 +40,6 @@
     public string IT { get; set; } = string.Empty;
 
     private IItemType ItemType { get; set; } = null;
-
-
 
     protected override async Task OnParametersSetAsync()
     {

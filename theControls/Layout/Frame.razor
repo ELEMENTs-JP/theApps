@@ -1,6 +1,6 @@
 ﻿@inject ILocalizationService loc
 
-<div class="@( " bg-surface " + GetCssClass() )" style="@( " " + GetFrameStyle() + " " )">
+<div class="@( " bg-surface " + GetCssClass() )" style="@( " " + loc.Configuration.GetAkzentStyle() + " " )">
 
     <div class="d-flex flex-row px-3 border-bottom align-items-center">
 
@@ -75,16 +75,5 @@
 
         return css;
     }
-    private string GetFrameStyle()
-    {
-        string style = string.Empty;
 
-        if (loc.Configuration != null)
-        {
-            style = ((loc.Configuration.Akzente) ? " border-top: 3px solid #ffffff !important; " : "");
-        }
-
-        return style;
-
-    }
 }

@@ -9,6 +9,7 @@ namespace theInfrastructure
         public ItemType_Field()
         {
             Name = "Field";
+            InSubNavigation = false;
         }
 
         public override async Task<List<IField>> GetFields()

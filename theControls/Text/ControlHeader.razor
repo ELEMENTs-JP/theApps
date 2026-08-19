@@ -1,32 +1,60 @@
-﻿
+﻿<div class="row g-0 pb-1 @( ((Border) ? " border-bottom " : "") )">
+    <div class="col-auto">
+        @if (!string.IsNullOrEmpty(PreTitle))
+        {
+            <div class="page-pretitle">
+                @PreTitle
+            </div>
+        }
 
-@if (!string.IsNullOrEmpty(PreTitle))
-{
-    <div class="page-pretitle">
-        @PreTitle
+        @if (!string.IsNullOrEmpty(Title))
+        {
+            <h1 class="h1">
+                @Title
+            </h1>
+        }
+
+        @if (!string.IsNullOrEmpty(PostTitle))
+        {
+            <span class="text-muted">
+                @PostTitle
+            </span>
+        }
     </div>
-}
-
-@if (!string.IsNullOrEmpty(Title))
-{
-    <h1 class="display-6">
-        @Title
-    </h1>
-}
-
-@if (!string.IsNullOrEmpty(PostTitle))
-{
-    <div class="text-muted">
-        @PostTitle
+    <div class="col">
     </div>
-}
+    <div class="col-auto text-end">
+        @if (!string.IsNullOrEmpty(PreRelated))
+        {
+            <div class="page-pretitle">
+                @PreRelated
+            </div>
+        }
 
-@if (Border)
-{
-    <div class="border-bottom"></div>    
-}
+        @if (!string.IsNullOrEmpty(Related))
+        {
+            <h1 class="h1">
+                @Related
+            </h1>
+        }
+
+        @if (!string.IsNullOrEmpty(PostRelated))
+        {
+            <span class="text-muted">
+                @PostRelated
+            </span>
+        }
+    </div>
+</div>
+
+<div class="row g-0 col-12 mt-2 text-muted">
+    @Description
+</div>
 
 @code {
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
 
     [Parameter]
     public string PreTitle { get; set; } = string.Empty;
@@ -36,6 +64,15 @@
 
     [Parameter]
     public string PostTitle { get; set; } = string.Empty;
+
+    [Parameter]
+    public string PreRelated { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Related { get; set; } = string.Empty;
+
+    [Parameter]
+    public string PostRelated { get; set; } = string.Empty;
 
     [Parameter]
     public bool Border { get; set; } = false;

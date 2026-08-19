@@ -1,38 +1,39 @@
+@inject ILocalizationService loc
 
-<div id="@( "tabs_frame_div " + ID )" class="@FrameCSS">
+<div id="@( "tabs_frame_div " + ID )" class=" rounded-2 bg-surface p-2 @FrameCSS" style="@( loc.Configuration.GetAkzentStyle() )">
 
     @if (Orientation == Orientation.Center)
     {
         <div class="row g-0">
-        <div class="col-auto mx-auto d-flex mb-2 mx-auto border rounded-2 align-items-center overflow-hidden">
+            <div class="col-auto mx-auto d-flex mb-2 mx-auto border rounded-2 align-items-center overflow-hidden">
 
-            @if (!string.IsNullOrEmpty(this.Icon))
-            {
-                <div class="ps-2 pe-0">
-                    @( ((MarkupString)this.Icon.ToSecureString())  )
-                </div>
-            }
+                @if (!string.IsNullOrEmpty(this.Icon))
+                {
+                    <div class="ps-2 pe-0">
+                        @( ((MarkupString)this.Icon.ToSecureString())  )
+                    </div>
+                }
 
-            @if (!string.IsNullOrEmpty(this.Title))
-            {
+                @if (!string.IsNullOrEmpty(this.Title))
+                {
+                    <div class="px-1">
+                        <label>@this.Title.ToSecureString()</label>
+                    </div>
+                }
+
                 <div class="px-1">
-                    <label>@this.Title.ToSecureString()</label>
+                    <div class="@( " nav " + ((ShowAsTabs) ? " nav-tabs " : " ") )" id="nav-tab" role="tablist">
+                        @HeaderContent
+                    </div>
                 </div>
-            }
 
-            <div class="px-1">
-                <div class="@( " nav " + ((ShowAsTabs) ? " nav-tabs " : " ") )" id="nav-tab" role="tablist">
-                    @HeaderContent
-                </div>
+                @if (RelatedContent.HasContent())
+                {
+                    <div class="px-2">
+                        @RelatedContent
+                    </div>
+                }
             </div>
-
-            @if (RelatedContent.HasContent())
-            {
-                <div class="px-2">
-                    @RelatedContent
-                </div>
-            }
-        </div>
         </div>
 
         <div class="row g-0 mt-2">
@@ -47,6 +48,15 @@
 
     @if (Orientation == Orientation.Horizontal)
     {
+        @if (!string.IsNullOrEmpty(this.Title))
+        {
+            <div class="row g-0">
+                <div class="col-12 p-2 px-3">
+                    <h2 class="h2">@this.Title</h2>
+                </div>
+            </div>
+        }
+
         <div class="row g-0 border hover rounded-2 overflow-hidden mb-2 p-1 align-items-center">
             <div class="col">
                 <div class="@( " border-bottom-0 nav " + ((ShowAsTabs) ? " nav-tabs " : " ") )" id="nav-tab" role="tablist">
@@ -69,6 +79,15 @@
 
     @if (Orientation == Orientation.Vertical)
     {
+        @if (!string.IsNullOrEmpty(this.Title))
+        {
+            <div class="row g-0">
+                <div class="col-12 p-2 px-3">
+                    <h2 class="h2">@this.Title</h2>
+                </div>
+            </div>
+        }
+
         <div class="row g-0">
             <div class="@( "col-2 border-bottom-0 nav flex-column pe-2 " + ((ShowAsTabs) ? " nav-tabs " : " ") )" id="nav-tab" role="tablist">
                 @HeaderContent
@@ -109,6 +128,8 @@
 
     [Parameter]
     public Orientation Orientation { get; set; } = Orientation.Horizontal;
+
+
 
 
 }
