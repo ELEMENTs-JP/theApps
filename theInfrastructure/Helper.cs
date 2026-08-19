@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Security.Cryptography;
@@ -15,7 +16,16 @@ namespace theInfrastructure
     
     public static class Helper
     {
-  
+        public static int WeekOfYear(this DateTime date)
+        {
+            // Verwende die Kulturinformationen, um die Kalenderwoche zu berechnen
+            Calendar calendar = CultureInfo.InvariantCulture.Calendar;
+            CalendarWeekRule weekRule = CalendarWeekRule.FirstFourDayWeek; // ISO-8601 Konvention
+            DayOfWeek firstDayOfWeek = DayOfWeek.Monday; // ISO-8601: Woche beginnt am Montag
+
+            // Berechne die Kalenderwoche und gib sie zurück
+            return calendar.GetWeekOfYear(date, weekRule, firstDayOfWeek);
+        }
         public static string GetItemUrl(IDTO dto)
         {
             // Url 
@@ -297,18 +307,24 @@ namespace theInfrastructure
         }
         public static void NavToLibrary(this NavigationManager nm, string ItemType, ItemTypeTyp typ = ItemTypeTyp.Item)
         {
+            nm.NavigateTo(LibraryUrl(ItemType, typ), false);
+        }
+        public static string LibraryUrl(string ItemType, ItemTypeTyp typ = ItemTypeTyp.Item)
+        {
             if (typ == ItemTypeTyp.Item)
             {
-                nm.NavigateTo("/Items/" + ItemType, false);
+                return "/Items/" + ItemType;
             }
             if (typ == ItemTypeTyp.File)
             {
-                nm.NavigateTo("/Items/" + ItemType, false);
+                return "/Items/" + ItemType;
             }
             if (typ == ItemTypeTyp.Appointment)
             {
-                nm.NavigateTo("/Calendar/" + ItemType, false);
+                return "/Calendar/" + ItemType;
             }
+
+            return "/Items/" + ItemType;
         }
         public static string GetClassByDevice(IField field)
         {

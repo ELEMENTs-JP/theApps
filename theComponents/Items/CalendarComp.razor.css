@@ -5,6 +5,10 @@
     color: inherit !important;
 }
 
+.border-hover:hover {
+    border-bottom: 1px solid #fff !important;
+}
+
 @media (min-width: 768px) {
     .seven-cols .col-md-1,
     .seven-cols .col-sm-1,

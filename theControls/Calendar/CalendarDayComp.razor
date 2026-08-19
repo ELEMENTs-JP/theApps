@@ -3,7 +3,9 @@
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
 
-<div class="d-flex out">
+<div class="d-flex position-relative">
+
+  
 
     @if (CurrentDate.ToYearMonth() == Date.ToYearMonth())
     {
@@ -47,16 +49,16 @@
                                         OnOKClicked="@( e => { ItemAdded(e); })" /> *@
 </div>
 
-<div class="overflow-auto" style="height:96px;">
+<div class="overflow-auto position-relative" style="height:108px;">
  
         @if (!string.IsNullOrEmpty(DateColumn))
         {
             @foreach (IDTO dto in Items)
             {
-                <div class="bg-primary py-1 px-2 text-white mb-1 rounded-1">
+                <div class="bg-secondary py-1 px-2 mb-1 rounded-1">
                     <div class="row g-0 align-items-center out">
                         <div class="col fw-bold pointer">
-                            <small class="text-white text-truncate-line" 
+                            <small class="text-truncate-line" 
                                 @onclick="@( e => { nm.NavigateTo(Helper.GetItemUrl(dto)); })">
                                 @dto.Title.ToSecureString()
                             </small>
@@ -71,17 +73,23 @@
                             </div>
                         }
 
-                        <div class="col-auto ps-1 in">
+                        <div class="col-auto ps-1 hover">
                             <div class="pointer rounded-2"
                                  @onclick="@( e => { ItemDelete(dto); })">
-                                <i class="bi bi-x"></i>
-                            </div>
+                                 <SymbolIcon Symbol="Icon.Delete" />
+                               </div>
                         </div>
                     </div>
                 </div>
             }
         }
 
+    @if (Date.Date.DayOfWeek == DayOfWeek.Monday)
+    {
+        <small class="position-absolute bottom-0 start-0 p-1 text-muted">
+            W:@Date.Date.WeekOfYear()
+        </small>
+    }
 </div>
 
 

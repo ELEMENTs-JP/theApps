@@ -5,7 +5,7 @@
 
 <div class="bg-surface p-2 rounded-2">
 
-    <div class="row d-flex align-items-center border-bottom  p-2">
+    <div class="row d-flex align-items-center px-2 pb-2">
 
         <div class="col-auto">
             <div class="hover pointer rounded-2 p-1"
@@ -15,7 +15,7 @@
         </div>
 
         <div class="col-auto px-2">
-            <small class="fw-bold">@(CurrentDate.Date.ToString("MMMM") + " " + CurrentDate.Date.Year.ToSecureString())</small>
+            <strong class="fw-bold">@(CurrentDate.Date.ToString("MMMM") + " " + CurrentDate.Date.Year.ToSecureString())</strong>
         </div>
         <div class="col-auto">
             <div class="hover pointer rounded-2 p-1"
@@ -44,7 +44,8 @@
         </div>
     </div>
 
-    <div class="row  g-0 seven-cols">
+    <div class="row g-0 seven-cols border-top">
+
         <div class="col-md-1 p-2 border-bottom border-end fw-bold border-start">Mo</div>
         <div class="col-md-1 p-2 border-bottom border-end fw-bold">Di</div>
         <div class="col-md-1 p-2 border-bottom border-end fw-bold">Mi</div>
@@ -60,8 +61,8 @@
         {
             if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
             {
-                // Samstag // Sonntag 
-                <div class="col-md-1 p-2 border-bottom border-end">
+                // Samstag // Sonntag
+                <div class="col-md-1 p-2 border-bottom border-end border-hover">
                     <CalendarDayComp OnItemAdded="OnItemAdded"
                                      OnItemDeleted="OnItemDeleted"
                                      Date="@date" Context="@Context" ItemType="@ItemType" />
@@ -69,8 +70,8 @@
             }
             else if (date.Month != CurrentDate.Month)
             {
-                // anderer Monat 
-                <div class="col-md-1 p-2 border-bottom border-end">
+                // anderer Monat
+                <div class="col-md-1 p-2 border-bottom border-end border-hover">
                     <CalendarDayComp OnItemAdded="OnItemAdded"
                                      OnItemDeleted="OnItemDeleted"
                                      Date="@date" Context="@Context" ItemType="@ItemType" />
@@ -78,14 +79,15 @@
             }
             else
             {
-                // aktueller Monat 
-                <div class="col-md-1 p-2 border-bottom border-end" style="@ControlStyle">
+                // aktueller Monat
+                <div class="col-md-1 p-2 border-bottom border-end border-hover" style="@ControlStyle">
                     <CalendarDayComp OnItemAdded="OnItemAdded"
                                      OnItemDeleted="OnItemDeleted"
                                      Date="@date" Context="@Context" ItemType="@ItemType" />
                 </div>
             }
         }
+
     </div>
 </div>
 

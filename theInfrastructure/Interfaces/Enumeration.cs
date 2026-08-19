@@ -71,6 +71,7 @@ namespace theInfrastructure
         Corner,
         Password,
         Home,
+        Delete,
     }
     public enum ValueBindingTyp
     {

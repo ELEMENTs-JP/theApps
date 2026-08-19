@@ -28,7 +28,7 @@
 
                 @if (Context != null && Context.ItemType != null)
                 {
-                    <a href="@("/Items/" + Context.ItemType.Name)" class="text-muted small" title="ItemType">
+                    <a href="@( Helper.LibraryUrl(Context.ItemType.Name, Context.ItemType.Typ) )" class="text-muted small" title="ItemType">
                         @Context.ItemType.Name.ToSecureString()
                     </a>
                     <div class="vr"></div>
