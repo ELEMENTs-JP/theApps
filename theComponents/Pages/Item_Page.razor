@@ -23,10 +23,10 @@
 
             <div class="my-3"></div>
 
-            <div class="row row-cols-1 row-cols-lg-2 gx-2">
-                @foreach (string group in ItemTypes.Select(se => se.Group).Distinct())
+            <div class="row g-2">
+                @foreach (string group in ItemTypeGroups)
                 {
-                    <div class="col py-2">
+                    <div class="@( ((ItemTypeGroups.Count() == 1) ? " col-12 " : " col-xl-6 col-12 ") )">
                         <RelatedItemsComp Title="@group" ItemTypes="@( ItemTypes.Where(se => se.Group == group).ToList())"
                                           RelatedItem="@RelatedItem" />
                     </div>
@@ -58,6 +58,7 @@
     private IQueryContext Context { get; set; } = null;
     private IQueryContext RelatedContext { get; set; } = null;
     private IDTO RelatedItem { get; set; }
+    private List<string> ItemTypeGroups { get; set; } = new();
 
     protected override async Task OnParametersSetAsync()
     {
@@ -78,6 +79,9 @@
 
             RelatedItem = Context.Item;
         }
+
+        ItemTypeGroups = ItemTypes.Select(se => se.Group).Distinct().ToList();
+
     }
 
 }

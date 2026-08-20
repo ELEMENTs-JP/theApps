@@ -20,6 +20,7 @@ namespace theInfrastructure
             ItemTypes.Add(new ItemType_App());
             ItemTypes.Add(new ItemType_ItemType());
             ItemTypes.Add(new ItemType_Field());
+            ItemTypes.Add(new ItemType_Page());
 
             return ItemTypes;
         }

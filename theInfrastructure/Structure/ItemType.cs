@@ -18,6 +18,7 @@ namespace theInfrastructure
 
         public Task<List<IItemType>> GetItemTypes();
         public Task<List<IField>> GetFields();
+    
         public Task<string> GetRelevantPropertyName(RelevantPropertyType typ = RelevantPropertyType.Date);
     }
     public class  BaseItemType : IItemType
@@ -45,6 +46,7 @@ namespace theInfrastructure
 
             return Fields;
         }
+      
         public override string ToString()
         {
             return ((string.IsNullOrEmpty(Title)) ? Name : Title);

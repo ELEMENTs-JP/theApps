@@ -4,34 +4,27 @@ using System.Text;
 
 namespace theInfrastructure
 {
-    public class  ItemType_App : BaseItemType, IItemType
+    public class  ItemType_Page : BaseItemType, IItemType
     {
-        public ItemType_App()
+        public ItemType_Page()
         {
-            Name = "App";
+            Name = "Page";
+            InSubNavigation = false;
         }
+        public List<IField> Fields { get; set; } = new();
 
         public override async Task<List<IItemType>> GetItemTypes()
         {
-            List<IItemType> ItemTypes = new();
-
             // ItemTypes 
-            ItemTypes.Add(new ItemType_ItemType());
-            ItemTypes.Add(new ItemType_Page());
-
+            List<IItemType>  ItemTypes = new List<IItemType>();
+ 
             return ItemTypes;
         }
         public override async Task<List<IField>> GetFields()
         {
-            List<IField> Fields = new();
-
             // Fields 
             Fields = new List<IField>();
-            Fields.Add(new Field() { Title = "Group", Description="Legt die Gruppe der Navigation fest.", 
-                Typ = FieldTyp.Text, Column = "Group", CSS = " col-8 " });
-            Fields.Add(new Field() { Title = "Aktiv", Description="Legt fest ob die App aktiv nutzbar ist.", 
-                Typ = FieldTyp.CheckBox, Column = "IsActive", CSS = " col-4 " });
-            
+
             Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });
             Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.TextArea, Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
 

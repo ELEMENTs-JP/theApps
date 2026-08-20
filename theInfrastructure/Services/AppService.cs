@@ -33,6 +33,13 @@ namespace theInfrastructure
             set { _it = value; OnPropertyChanged(); }
         }
 
+        private IDTO _page = null;
+        public IDTO Page
+        {
+            get { return _page; }
+            set { _page = value; OnPropertyChanged(); }
+        }
+
         // CTR 
         public AppService()
         {
@@ -80,12 +87,22 @@ namespace theInfrastructure
         public async Task SetApp(IApp app)
         {
             App = AllApps.Where(se => se.Name == app.Name).FirstOrDefault();
-            ItemType = null;
+
+            this.ItemType = null;
+            this.Page = null;
             await Task.CompletedTask;
         }
         public async Task SetItemType(IItemType it)
         {
-            ItemType = it;
+            this.ItemType = it;
+            this.Page = null;
+            await Task.CompletedTask;
+        }
+        public async Task SetPage(IDTO page)
+        {
+            this.Page = page;
+            this.ItemType = null;
+            await Task.CompletedTask;
         }
 
         // Property Changed 

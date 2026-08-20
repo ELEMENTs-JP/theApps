@@ -39,6 +39,20 @@
     fill: #ccc !important;
 }
 
+/* Standardzustand: Das Dropdown nutzt wieder Bootstraps normales An-/Ausblenden */
+.dropdown-menu {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: none;
+}
+
+    .dropdown-menu.show {
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+    }
+
+
 .input-group {
     border: none !important;
     box-shadow: none !important;

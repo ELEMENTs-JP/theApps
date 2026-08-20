@@ -6,6 +6,7 @@
 
 <div class="p-3">
 
+    @* --- App selektiert --- *@
     @if (app.App != null)
     {
         <div class="border rounded-2 hover pointer p-2 m-2"
@@ -23,6 +24,8 @@
         </div>
     }
 
+    
+    @* --- keine App --- *@
     @if (app.App == null)
     {
         @foreach (string group in app.AllApps.Where(se => se.IsNavigation == true && se.IsActive == true).Select(se => se.Group).Distinct())
@@ -42,6 +45,7 @@
         }
     }
 
+    @* --- App INHALT --- *@
     @if (app.App != null)
     {
         <div class="border-top my-3"></div>
@@ -67,6 +71,21 @@
                 }
             }
         </div>
+
+        <div class="border-top my-3"></div>
+        <div class="text-muted small fw-bold ps-2">Pages</div>
+        <div class="row g-0">
+            @foreach (IDTO _page in app.App.GetPages().Result)
+            {
+                <div class="col-12 p-1">
+                    <div class="rounded-2 hover pointer p-1 px-2 fw-bold @( GetSelection(_page) )"
+                         @onclick="@( async e => { await OnPage(_page); })">
+                        @_page.Title
+                    </div>
+                </div>
+            }
+        </div>
+
     }
 </div>
 
@@ -113,6 +132,16 @@
 
         await Task.CompletedTask;
     }
+    private async Task OnPage(IDTO page)
+    {
+        await app.SetPage(page);
+        nm.NavigateTo("/Page/" + page.GUID, false);
+
+        // Refresh
+        msg.Publish(new AppMessage("Page", BusAction.Refresh));
+
+        await Task.CompletedTask;
+    }
     private string GetSelection(IApp _app)
     {
         if (app.App == null)
@@ -129,6 +158,16 @@
             return string.Empty;
 
         if (app.ItemType.Name == it.Name)
+            return " selected ";
+
+        return string.Empty;
+    }
+    private string GetSelection(IDTO dto)
+    {
+        if (app.Page == null)
+            return string.Empty;
+
+        if (app.Page.Title == dto.Title)
             return " selected ";
 
         return string.Empty;

@@ -4,19 +4,27 @@
 
 <div class="row g-0">
 
-@if(app != null && app.App != null)
-{
-    <div class="col-auto bg-surface p-2 px-3 align-items-center border-bottom border-end">
-        @app.App.Name
-    </div>
-}
+    @if (app != null && app.App != null)
+    {
+        <div class="col-auto bg-surface p-2 px-3 align-items-center border-bottom border-end">
+            @app.App.Name
+        </div>
+    }
 
-@if (app != null && app.ItemType != null)
-{
-    <div class="col-auto bg-surface p-2 px-3 align-items-center border-bottom border-end">
-        @app.ItemType.Name
-    </div>
-}
+    @if (app != null && app.ItemType != null)
+    {
+        <div class="col-auto bg-surface p-2 px-3 align-items-center border-bottom border-end">
+            @app.ItemType.Name
+        </div>
+    }
+
+    @if (app != null && app.Page != null)
+    {
+        <div class="col-auto bg-surface p-2 px-3 align-items-center border-bottom border-end">
+            @app.Page.Title
+        </div>
+    }
+
 </div>
 
 
@@ -42,6 +50,10 @@
             await InvokeAsync(StateHasChanged);
         }
         if (msg.Id == "ItemType" && msg.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+        if (msg.Id == "Page" && msg.Action == BusAction.Refresh)
         {
             await InvokeAsync(StateHasChanged);
         }

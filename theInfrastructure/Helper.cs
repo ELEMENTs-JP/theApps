@@ -16,6 +16,34 @@ namespace theInfrastructure
     
     public static class Helper
     {
+        // Reflection 
+        public static Type SpecificType(string assemblyName = "", string className = "")
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load(assemblyName);
+                if (assembly == null)
+                {
+                    new Exception("tSP: Assembly is null");
+                }
+                Type type = assembly.GetTypes().Where(se => se.Name == className).FirstOrDefault();
+                if (type == null)
+                {
+                    new Exception("tSP: Control is null");
+                }
+                if (type != null)
+                {
+                    return type;
+                }
+            }
+            catch (Exception ex)
+            {
+                
+            }
+
+            return null;
+        }
+
         public static int WeekOfYear(this DateTime date)
         {
             // Verwende die Kulturinformationen, um die Kalenderwoche zu berechnen

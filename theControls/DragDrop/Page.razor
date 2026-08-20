@@ -1,44 +1,58 @@
 ﻿@using System.Text.Json
 @using Microsoft.JSInterop
 @using theControls.DragDrop
+@using theControls.Input
 @using theControls.Layout
+@using theControls.Modal
+@using theControls.Text
 @using theInfrastructure
 @inject IJSRuntime JS
 
+@if (Item != null)
+{
+    <Frame Border="true" Rounded="true">
+        <Header>
+            <ControlHeader PreTitle="Page" Title="@Item.Title" PostTitle="" />
+        </Header>
+        <Related>
+            <div class="hstack gap-3">
+                <ModalForm Title="Einstellungen">
+                    <ChildContent>
+                        <div class="row">
+                            <div class="col-12 px-2">
+                                <TextBox Label="Titel" Value="@Item.Title"
+                                         ValueChanged="@(e =>  { Item.Title = e; })" />
+                                <div class="border-bottom my-2"></div>
+                            </div>
+                        </div>
+                    </ChildContent>
+                </ModalForm>
 
-<ControlFrame>
-    <HeadContent>
-        <h1>the PAGE</h1>
-    </HeadContent>
-    <RelatedContent>
-
-        <div class="hstack gap-3">
-
-            <DragDropDesigner Entries="@Rows" Definitions="@LayoutDefinitions"
-                                    Zone="Layout"  DragEnd="@( async e => { Rows = e;  })" />
+                <DragDropDesigner Entries="@Rows" Definitions="@LayoutDefinitions"
+                                  Zone="Layout" DragEnd="@( async e => { Rows = e;  })" />
 
                 <DragDropDesigner Title="Steuerelemente" Entries="@Controls" Definitions="@ControlDefinitions"
-                                Zone="Controls" DragEnd="@( async e => { Controls = e;  })" HasBackdrop="false" ReAssignZones="true" />
-        </div>
-   
-             
-    </RelatedContent>
-    <ChildContent>
+                                  Zone="Controls" DragEnd="@( async e => { Controls = e;  })" HasBackdrop="false" ReAssignZones="true" />
+            </div>
+        </Related>
+        <Content>
+            <div data-zone="Page" class="bg-surface rounded-2 p-2">
+                @foreach (DragDropElement entry in Rows)
+                {
+                    <LayoutRow @key="@entry.ID" Item="@entry" Controls="@this.Controls" />
+                }
+            </div>
+        </Content>
+    </Frame>
 
-        <div data-zone="Page">
-            @foreach (DragDropElement entry in Rows)
-            {
-                <LayoutRow @key="@entry.ID" Item="@entry" Controls="@this.Controls" />
-            }
-        </div>
-    </ChildContent>
-
-</ControlFrame>
-
+}
 
 
 
 @code {
+
+    [Parameter]
+    public IDTO Item { get; set; }
 
     [Parameter]
     public List<DragDropElement> Rows { get; set; } = new();
@@ -86,7 +100,7 @@
         });
 
 
-        ControlDefinitions.Add(new DragDropElement() { Name = "the Date"  });
+        ControlDefinitions.Add(new DragDropElement() { Name = "the Date" });
         ControlDefinitions.Add(new DragDropElement() { Name = "the Time" });
         ControlDefinitions.Add(new DragDropElement() { Name = "the Address" });
         ControlDefinitions.Add(new DragDropElement() { Name = "the City" });

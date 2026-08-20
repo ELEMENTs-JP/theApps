@@ -1,0 +1,45 @@
+﻿@page "/Page/{ID}"
+@using theComponents.Items
+@using theControls.Add
+@using theControls.Calendar
+@using theControls.DragDrop
+@using theControls.Layout
+@using theControls.Tables
+@using theDatabase
+@using theInfrastructure
+
+@inject ISqlDatabaseService sql
+
+<PageTitle>the App | Page</PageTitle>
+
+<div class="container-flex">
+
+    @if (Page != null)
+    {
+         <Page Item="@Page" />
+    }
+</div>
+
+
+@code {
+
+    [Parameter]
+    public string ID { get; set; } = string.Empty;
+
+    private IDTO? Page { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        // Query
+        IQueryParameter query = new QueryParameter();
+        query.Matchcode = string.Empty;
+        query.MasterGUID = sql.MasterGUID;
+        query.ItemType = "Page";
+        query.GUID = ID.ToSecureGUID();
+        IQueryResult result = await sql.GetItem(query);
+        Page = result.Items.FirstOrDefault();
+    }
+
+}

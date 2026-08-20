@@ -43,6 +43,19 @@ namespace theInfrastructure
 
             return ItemTypes;
         }
+
+        public override async Task<List<IDTO>> GetPages()
+        {
+            // Query 
+            IQueryParameter query = new QueryParameter();
+            query.Matchcode = string.Empty;
+            query.MasterGUID = sqlService.MasterGUID;
+            query.ItemType = "Page";
+
+            // Fields 
+            IQueryResult result = await sqlService.GetRelatedItems(Item, "Page");
+            return result.Items;
+        }
     }
 
 }

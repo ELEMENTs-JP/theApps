@@ -13,6 +13,7 @@ namespace theInfrastructure
         bool IsNavigation { get; set; } // wird im App Selector // Navigation angezeigt oder nicht 
         bool IsActive { get; set; } // legt fest ob die App aktiv ist und verwendet werden kann (Feature on off) 
         Task<List<IItemType>> GetItemTypes();
+        Task<List<IDTO>> GetPages();
 
     }
     public class BaseApp : IApp
@@ -32,6 +33,12 @@ namespace theInfrastructure
             List<IItemType> ItemTypes = new();
 
             return ItemTypes;
+        }
+        public virtual async Task<List<IDTO>> GetPages()
+        {
+            List<IDTO> Pages = new();
+
+            return Pages;
         }
 
         public override string ToString()
