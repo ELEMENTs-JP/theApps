@@ -240,6 +240,7 @@ namespace theInfrastructure
             {
                 Items.Add(new DTO() { ID = "Item", Title = "Item" });
                 Items.Add(new DTO() { ID = "File", Title = "File" });
+                Items.Add(new DTO() { ID = "Appointment", Title = "Appointment" });
             }
             else if (field.Typ == FieldTyp.User)
             {

@@ -1,0 +1,35 @@
+﻿@using theInfrastructure
+
+
+
+@if (Item != null)
+{
+    <div @key="@Item.ID" id="@Item.ID" class="drag row g-0 align-items-center mt-2 hover border rounded p-2 bg-white">
+        <div class="col-12 fw-bold border-bottom p-2">
+            @Item.Control.Name
+        </div>
+        <div class="grab hover col-auto p-2">
+            ...
+        </div>
+        <div class="col p-2">
+            @Item.Name
+        </div>
+        <div class="col-auto p-2">
+            @Item.Sort.ToSecureString()
+        </div>
+        <div class="col-auto fw-bold p-2">
+            Widget
+        </div>
+    </div>
+}
+
+
+@code {
+
+    // Fields 
+    string drop = "dropControls";
+
+    [Parameter]
+    public DragDropElement Item { get; set; }
+
+}

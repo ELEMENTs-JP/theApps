@@ -9,6 +9,7 @@ namespace theInfrastructure
         public ItemType_File()
         {
             Name = "File";
+            Title = "Dateien";
             Typ = ItemTypeTyp.File;
         }
 

@@ -1,0 +1,29 @@
+﻿@using theInfrastructure
+
+
+@if (Item != null)
+{
+    <div @key="@Item.ID" id="@Item.ID" class="drag row g-0 align-items-center my-1 hover border rounded">
+        <div class="col-auto p-2 grab hover">
+            ...
+        </div>
+        <div class="col p-2">
+            @Item.Name
+        </div>
+        <div class="col-auto p-2">
+            @Item.Sort.ToSecureString()
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public string Zone { get; set; } = string.Empty;
+
+    [Parameter]
+    public DragDropElement Item { get; set; }
+
+ 
+
+}

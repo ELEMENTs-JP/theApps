@@ -9,6 +9,7 @@ namespace theInfrastructure
         public ItemType_Note()
         {
             Name = "Note";
+            Title = "Notizen";
         }
 
         public override async Task<List<IField>> GetFields()

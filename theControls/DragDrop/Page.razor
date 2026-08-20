@@ -1,0 +1,95 @@
+﻿@using System.Text.Json
+@using Microsoft.JSInterop
+@using theControls.DragDrop
+@using theControls.Layout
+@using theInfrastructure
+@inject IJSRuntime JS
+
+
+<ControlFrame>
+    <HeadContent>
+        <h1>the PAGE</h1>
+    </HeadContent>
+    <RelatedContent>
+
+        <div class="hstack gap-3">
+
+            <DragDropDesigner Entries="@Rows" Definitions="@LayoutDefinitions"
+                                    Zone="Layout"  DragEnd="@( async e => { Rows = e;  })" />
+
+                <DragDropDesigner Title="Steuerelemente" Entries="@Controls" Definitions="@ControlDefinitions"
+                                Zone="Controls" DragEnd="@( async e => { Controls = e;  })" HasBackdrop="false" ReAssignZones="true" />
+        </div>
+   
+             
+    </RelatedContent>
+    <ChildContent>
+
+        <div data-zone="Page">
+            @foreach (DragDropElement entry in Rows)
+            {
+                <LayoutRow @key="@entry.ID" Item="@entry" Controls="@this.Controls" />
+            }
+        </div>
+    </ChildContent>
+
+</ControlFrame>
+
+
+
+
+@code {
+
+    [Parameter]
+    public List<DragDropElement> Rows { get; set; } = new();
+    List<DragDropElement> LayoutDefinitions { get; set; } = new();
+
+    [Parameter]
+    public List<DragDropElement> Controls { get; set; } = new();
+
+    List<DragDropElement> ControlDefinitions { get; set; } = new();
+
+    // CTR
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        LayoutDefinitions.Add(new DragDropElement()
+        {
+            Name = "12",
+            Typ = "12",
+            Columns = new List<Column>
+            {
+                new Column { Width = 12 }
+            }
+        });
+        LayoutDefinitions.Add(new DragDropElement()
+        {
+            Name = "66",
+            Typ = "66",
+            Columns = new List<Column>
+            {
+                new Column { Width = 6 },
+                new Column { Width = 6 },
+            }
+        });
+        LayoutDefinitions.Add(new DragDropElement()
+        {
+            Name = "444",
+            Typ = "444",
+            Columns = new List<Column>
+            {
+                new Column { Width = 4 },
+                new Column { Width = 4 },
+                new Column { Width = 4 },
+            }
+        });
+
+
+        ControlDefinitions.Add(new DragDropElement() { Name = "the Date"  });
+        ControlDefinitions.Add(new DragDropElement() { Name = "the Time" });
+        ControlDefinitions.Add(new DragDropElement() { Name = "the Address" });
+        ControlDefinitions.Add(new DragDropElement() { Name = "the City" });
+    }
+
+}

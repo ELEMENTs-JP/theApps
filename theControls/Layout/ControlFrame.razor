@@ -1,0 +1,36 @@
+﻿
+
+
+
+<div class="border rounded-2 p-2">
+    <div class="border-bottom pb-2">
+        <div class="row g-0">
+            <div class="col">
+                @HeadContent
+            </div>
+            <div class="col-auto">
+                @RelatedContent
+            </div>
+        </div>
+    </div>
+    <div class="p-2">
+        @ChildContent
+    </div>
+</div>
+
+
+
+
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment HeadContent { get; set; }
+
+    [Parameter]
+    public RenderFragment RelatedContent { get; set; }
+
+}

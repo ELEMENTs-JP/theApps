@@ -40,7 +40,7 @@
 
     
 
-   @*  <tpt.Controls.v2.Collection.AddItem Title="@( "Eintrag hinzufügen" )"
+    @*  <tpt.Controls.v2.Collection.AddItem Title="@( "Eintrag hinzufügen" )"
                                         ButtonTitle="+" ItemType="@this.ItemType.Name"
                                         FieldHeader="Bezeichnung"
                                         ButtonGroupCSS=" in ms-auto "
@@ -50,39 +50,39 @@
 </div>
 
 <div class="overflow-auto position-relative" style="height:108px;">
- 
-        @if (!string.IsNullOrEmpty(DateColumn))
+
+    @if (!string.IsNullOrEmpty(DateColumn))
+    {
+        @foreach (IDTO dto in Items)
         {
-            @foreach (IDTO dto in Items)
-            {
-                <div class="bg-secondary py-1 px-2 mb-1 rounded-1">
-                    <div class="row g-0 align-items-center out">
-                        <div class="col fw-bold pointer">
-                            <small class="text-truncate-line" 
-                                @onclick="@( e => { nm.NavigateTo(Helper.GetItemUrl(dto)); })">
-                                @dto.Title.ToSecureString()
+            <div class="bg-secondary py-1 px-2 mb-1 rounded-1">
+                <div class="row g-0 align-items-center out">
+                    <div class="col fw-bold pointer">
+                        <small class="text-truncate-line"
+                               @onclick="@( e => { nm.NavigateTo(Helper.GetItemUrl(dto)); })">
+                            @dto.Title.ToSecureString()
+                        </small>
+                    </div>
+
+                    @if (dto[DateColumn].ToSecureString().ToSecureDateTime().ToString("HH:mm") != "00:00")
+                    {
+                        <div class="col-auto ps-2 fw-normal">
+                            <small>
+                                @dto[DateColumn].ToSecureString().ToSecureDateTime().ToString("HH:mm")
                             </small>
                         </div>
+                    }
 
-                        @if (dto[DateColumn].ToSecureString().ToSecureDateTime().ToString("HH:mm") != "00:00")
-                        {
-                            <div class="col-auto ps-2 fw-normal">
-                                <small>
-                                    @dto[DateColumn].ToSecureString().ToSecureDateTime().ToString("HH:mm")
-                                </small>
-                            </div>
-                        }
-
-                        <div class="col-auto ps-1 hover">
-                            <div class="pointer rounded-2"
-                                 @onclick="@( e => { ItemDelete(dto); })">
-                                 <SymbolIcon Symbol="Icon.Delete" />
-                               </div>
+                    <div class="col-auto ps-1 hover">
+                        <div class="pointer rounded-2"
+                             @onclick="@( e => { ItemDelete(dto); })">
+                            <SymbolIcon Symbol="Icon.Delete" />
                         </div>
                     </div>
                 </div>
-            }
+            </div>
         }
+    }
 
     @if (Date.Date.DayOfWeek == DayOfWeek.Monday)
     {
@@ -149,7 +149,7 @@
         }
         catch (Exception ex)
         {
-           
+
         }
     }
 
@@ -163,17 +163,16 @@
             if (dto == null)
                 return;
 
-            // IInputDTO delInput = InputDTO.GetDeleteTemplate(dto);
-            // IFactoryStatusInfo statusInfo = await sql.Factory.DeleteItemAsync(delInput);
-            // if (statusInfo.Status == "OK")
-            // {
-            //     layout.SetMessage("Termin wurde gelöscht");
-            //     await OnItemDeleted.InvokeAsync(dto);
-            // }
+        
+            await Context.Delete(dto);
+            msg.Publish("", BusAction.Refresh);
+            msg.Publish("", BusAction.Info, "Item wurde gelöscht");
+            await OnItemDeleted.InvokeAsync(dto);
+
         }
         catch (Exception ex)
         {
-         
+
         }
     }
 }

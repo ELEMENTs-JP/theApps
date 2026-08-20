@@ -1,0 +1,55 @@
+﻿@using theInfrastructure
+
+@if (Item != null)
+{
+    <div @key="Item.ID" id="@Item.ID" class="row g-2 my-1">
+
+        @foreach (var column in Item.Columns)
+        {
+            <div class="col-@column.Width">
+
+                <div class="@drop DefaultDragDropZone border rounded-2 bg-light p-2"
+                     data-zone="@column.Zone"
+                     style="min-height:6rem;">
+
+                    @foreach (var ctl in Controls
+                        .Where(c => c.Zone == column.Zone)
+                        .OrderBy(c => c.Sort))
+                    {
+                        <Widget @key="ctl.ID" Item="ctl" />
+                    }
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public DragDropElement Item { get; set; }
+
+    // Fields
+    string drop = "dropControls";
+
+    [Parameter]
+    public List<DragDropElement> Controls { get; set; } = new();
+
+    // private IEnumerable<(int Width, string Zone)> GetColumns()
+    // {
+    //     return Item.Typ switch
+    //     {
+    //         "12" => [(12, "12-full")],
+    //         "66" => [(6, "6-Left"), (6, "6-Right")],
+    //         "444" => [(4, "4-Left"), (4, "4-Center"), (4, "4-Right")],
+    //         "57" => [(5, "5-Left-"), (7, "7-Right")],
+    //         "75" => [(7, "7-Left-"), (5, "5-Right")],
+    //         _ => []
+    //     };
+    // }
+
+  
+}

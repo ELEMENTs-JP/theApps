@@ -1,0 +1,98 @@
+﻿@using Microsoft.JSInterop
+@using theControls.DragDrop
+@using theInfrastructure
+@inject IJSRuntime JS
+
+
+
+<div class="btn btn-sm btn-primary"
+     data-bs-toggle="offcanvas"
+     data-bs-target="@( "#canvasLayout" + ID )"
+     aria-controls="@( "canvasLayout" + ID )">
+    @Title
+</div>
+
+<div class="offcanvas offcanvas-end"
+     data-bs-scroll="true"
+     data-bs-backdrop="@HasBackdrop.ToSecureString().ToLower()"
+     tabindex="-1"
+     id="@( "canvasLayout" + ID )">
+    <div class="offcanvas-header">
+        <h4 class="offcanvas-title">@Title</h4>
+        <div class="btn-close" data-bs-dismiss="offcanvas"></div>
+    </div>
+    <div class="offcanvas-body">
+
+        <div class="hstack gap-3">
+            @foreach (DragDropElement def in Definitions)
+            {
+                <div class="border rounded pointer p-2"
+                     @onclick="@( async e => { await AddRow(def); })">
+                    @def.Name
+                </div>
+            }
+        </div>
+
+        <DragDropContainer @ref="container" Entries="@Entries" Zone="@Zone"
+                           DragEnd="@(async e => { Entries = e; await DragEnd.InvokeAsync(Entries); })">
+            <ItemTemplate Context="entry">
+                <DragDropRow @key="@entry.ID" Item="@entry" Zone="@Zone" />
+            </ItemTemplate>
+        </DragDropContainer>
+
+    </div>
+</div>
+
+@code {
+
+    private string ID { get; set; } = "_" + Guid.NewGuid().ToSecureString();
+    DragDropContainer container;
+
+    [Parameter]
+    public List<DragDropElement> Entries { get; set; } = new();
+
+    [Parameter]
+    public List<DragDropElement> Definitions { get; set; } = new();
+
+    private async Task AddRow(DragDropElement def)
+    {
+        DragDropElement dde = new();
+        dde.Name = def.Name.ToSecureString();
+        dde.Typ = def.Typ;
+        dde.Zone = Zone;
+   
+        dde.Columns = def.Columns.Select(c => new Column
+        {
+            Width = c.Width
+        }).ToList();
+
+        Entries.Add(dde);
+
+        // Event
+        await DragEnd.InvokeAsync(Entries);
+
+        @if (ReAssignZones == true)
+        {
+            if (container != null)
+            {
+                await container.Assign();
+            }
+        }
+    }
+
+    [Parameter]
+    public EventCallback<List<DragDropElement>> DragEnd { get; set; }
+
+    [Parameter]
+    public string Zone { get; set; } = "Layout";
+
+    [Parameter]
+    public string Title { get; set; } = "Layout";
+
+    [Parameter]
+    public bool HasBackdrop { get; set; } = true;
+
+    [Parameter]
+    public bool ReAssignZones { get; set; } = false;
+
+}
