@@ -29,10 +29,21 @@
                 </ModalForm>
 
                 <DragDropDesigner Entries="@Rows" Definitions="@LayoutDefinitions"
-                                  Zone="Layout" DragEnd="@( async e => { Rows = e;  })" />
+                                    DefinitionsTitle="Spalten hinzufügen..." EntriesTitle="Layout"
+                                  Zone="Layout" DragEnd="@( async e => { Rows = e;  })" >
+                              <Icon>
+                                <SymbolIcon Symbol="@Icon.Layout" />
+                              </Icon>
+                </DragDropDesigner>
 
-                <DragDropDesigner Title="Steuerelemente" Entries="@Controls" Definitions="@ControlDefinitions"
-                                  Zone="Controls" DragEnd="@( async e => { Controls = e;  })" HasBackdrop="false" ReAssignZones="true" />
+                <DragDropDesigner Title="Steuerelemente" 
+                                Entries="@Controls" Definitions="@ControlDefinitions"
+                                  Zone="Controls"  HasBackdrop="false"  ReAssignZones="true"
+                                  DragEnd="@( async e => { Controls = e;  })"  >
+                    <Icon>
+                        <SymbolIcon Symbol="@Icon.Controls" />
+                    </Icon>
+                              </DragDropDesigner>
             </div>
         </Related>
         <Content>
@@ -60,7 +71,6 @@
 
     [Parameter]
     public List<DragDropElement> Controls { get; set; } = new();
-
     List<DragDropElement> ControlDefinitions { get; set; } = new();
 
     // CTR
@@ -68,38 +78,50 @@
     {
         await base.OnInitializedAsync();
 
-        LayoutDefinitions.Add(new DragDropElement()
-        {
-            Name = "12",
-            Typ = "12",
-            Columns = new List<Column>
-            {
-                new Column { Width = 12 }
-            }
+        // Layouts 
+        LayoutDefinitions.Add(new DragDropElement() {
+            Name = "12", Typ = "12", Icon= Icon.COL12,
+            Columns = new List<Column> {
+                new Column { Width = 12 } }
         });
-        LayoutDefinitions.Add(new DragDropElement()
-        {
+        LayoutDefinitions.Add(new DragDropElement() {
             Name = "66",
             Typ = "66",
-            Columns = new List<Column>
-            {
+            Icon = Icon.COL66,
+            Columns = new List<Column> {
                 new Column { Width = 6 },
-                new Column { Width = 6 },
-            }
+                new Column { Width = 6 }, }
+        });
+        LayoutDefinitions.Add(new DragDropElement() {
+            Name = "444",
+            Typ = "444",
+            Icon = Icon.COL444,
+            Columns = new List<Column> {
+                new Column { Width = 4 },
+                new Column { Width = 4 },
+                new Column { Width = 4 }, }
         });
         LayoutDefinitions.Add(new DragDropElement()
         {
-            Name = "444",
-            Typ = "444",
-            Columns = new List<Column>
-            {
-                new Column { Width = 4 },
-                new Column { Width = 4 },
-                new Column { Width = 4 },
-            }
+            Name = "57",
+            Typ = "57",
+            Icon = Icon.COL57,
+            Columns = new List<Column> {
+                new Column { Width = 5 },
+                new Column { Width = 7 }, }
+        });
+        LayoutDefinitions.Add(new DragDropElement()
+        {
+            Name = "75",
+            Typ = "75",
+            Icon = Icon.COL75,
+            Columns = new List<Column> {
+                new Column { Width = 7 },
+                new Column { Width = 5 }, }
         });
 
 
+        // Controls 
         ControlDefinitions.Add(new DragDropElement() { Name = "the Date" });
         ControlDefinitions.Add(new DragDropElement() { Name = "the Time" });
         ControlDefinitions.Add(new DragDropElement() { Name = "the Address" });

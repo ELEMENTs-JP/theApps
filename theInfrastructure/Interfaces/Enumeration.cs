@@ -72,6 +72,14 @@ namespace theInfrastructure
         Password,
         Home,
         Delete,
+
+        Layout,
+        COL12,
+        COL66,
+        COL444,
+        COL57,
+        COL75,
+        Controls,
     }
     public enum ValueBindingTyp
     {

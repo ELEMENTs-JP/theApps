@@ -18,6 +18,12 @@ html, body {
     background-attachment: fixed;
 }
 
+
+.glass {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px); 
+}
 a, a:hover, a:visited {
     color: #ffffff;
     text-decoration: none !important;
@@ -25,8 +31,11 @@ a, a:hover, a:visited {
     margin:0.2rem;
 }
     a:hover {
-        background-color:#77777711;
-        border-radius:0.35rem;
+     
+        border-radius: 0.35rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
     }
 
 .selected {

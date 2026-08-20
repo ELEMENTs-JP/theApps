@@ -18,6 +18,7 @@ namespace theInfrastructure
         public string Zone { get; set; } = string.Empty;
         public ControlTyp Control { get; set; } = new();
         public List<Column> Columns { get; set; } = new List<Column>();
+        public Icon Icon { get; set; } = Icon.NULL;
     }
     public class Column
     {

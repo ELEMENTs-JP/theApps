@@ -5,11 +5,17 @@
 
 
 
-<div class="btn btn-sm btn-primary"
-     data-bs-toggle="offcanvas"
-     data-bs-target="@( "#canvasLayout" + ID )"
-     aria-controls="@( "canvasLayout" + ID )">
-    @Title
+<div class="btn btn-sm row g-0" data-bs-toggle="offcanvas"
+     data-bs-target="@( "#canvasLayout" + ID )" aria-controls="@( "canvasLayout" + ID )">
+    @if (Icon.HasContent())
+    {
+        <div class="col-auto px-1">
+            @Icon
+        </div>
+    }
+    <div class="col">
+        @Title
+    </div>
 </div>
 
 <div class="offcanvas offcanvas-end"
@@ -23,16 +29,23 @@
     </div>
     <div class="offcanvas-body">
 
-        <div class="hstack gap-3">
+        @if (!string.IsNullOrEmpty(DefinitionsTitle))
+        {
+            <label class="form-label">@DefinitionsTitle</label>    
+        }
+        <div class="row g-0">
             @foreach (DragDropElement def in Definitions)
             {
-                <div class="border rounded pointer p-2"
-                     @onclick="@( async e => { await AddRow(def); })">
-                    @def.Name
+                <div class="col-auto p-1">
+                    <DragDropDefinition Item="@def" OnClick="@( async e => { await AddRow(e); })" />
                 </div>
             }
         </div>
 
+        @if (!string.IsNullOrEmpty(EntriesTitle))
+        {
+            <label class="form-label">@EntriesTitle</label>
+        }
         <DragDropContainer @ref="container" Entries="@Entries" Zone="@Zone"
                            DragEnd="@(async e => { Entries = e; await DragEnd.InvokeAsync(Entries); })">
             <ItemTemplate Context="entry">
@@ -45,6 +58,15 @@
 
 @code {
 
+    [Parameter]
+    public string DefinitionsTitle { get; set; } = string.Empty;
+
+    [Parameter]
+    public string EntriesTitle { get; set; } = string.Empty;
+
+    [Parameter]
+    public RenderFragment Icon { get; set; }
+
     private string ID { get; set; } = "_" + Guid.NewGuid().ToSecureString();
     DragDropContainer container;
 
@@ -54,13 +76,26 @@
     [Parameter]
     public List<DragDropElement> Definitions { get; set; } = new();
 
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+
+        }
+    }
     private async Task AddRow(DragDropElement def)
     {
         DragDropElement dde = new();
         dde.Name = def.Name.ToSecureString();
         dde.Typ = def.Typ;
         dde.Zone = Zone;
-   
+
         dde.Columns = def.Columns.Select(c => new Column
         {
             Width = c.Width
@@ -94,5 +129,7 @@
 
     [Parameter]
     public bool ReAssignZones { get; set; } = false;
+
+
 
 }
