@@ -80,6 +80,11 @@ namespace theInfrastructure
         COL57,
         COL75,
         Controls,
+
+        // Prioritäten 
+        Prio_High,
+        Prio_Middle,
+        Prio_Low,
     }
     public enum ValueBindingTyp
     {

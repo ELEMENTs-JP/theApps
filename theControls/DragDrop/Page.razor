@@ -1,12 +1,14 @@
 ﻿@using System.Text.Json
 @using Microsoft.JSInterop
 @using theControls.DragDrop
+@using theControls.Dynamic
 @using theControls.Input
 @using theControls.Layout
 @using theControls.Modal
 @using theControls.Text
 @using theInfrastructure
 @inject IJSRuntime JS
+@inject ISqlDatabaseService sql
 
 @if (Item != null)
 {
@@ -29,41 +31,58 @@
                 </ModalForm>
 
                 <DragDropDesigner Entries="@Rows" Definitions="@LayoutDefinitions"
-                                    DefinitionsTitle="Spalten hinzufügen..." EntriesTitle="Layout"
-                                  Zone="Layout" DragEnd="@( async e => { Rows = e;  })" >
-                              <Icon>
-                                <SymbolIcon Symbol="@Icon.Layout" />
-                              </Icon>
+                                  DefinitionsTitle="Spalten hinzufügen..." EntriesTitle="Layout"
+                                  Zone="Layout" DragEnd="@( async e => { Rows = e;  })"
+                                  ItemAdded="@( async e => {  await AddLayoutRow(e); })">
+                    <Icon>
+                        <SymbolIcon Symbol="@Icon.Layout" />
+                    </Icon>
                 </DragDropDesigner>
 
-                <DragDropDesigner Title="Steuerelemente" 
-                                Entries="@Controls" Definitions="@ControlDefinitions"
-                                  Zone="Controls"  HasBackdrop="false"  ReAssignZones="true"
-                                  DragEnd="@( async e => { Controls = e;  })"  >
+                <DragDropDesigner Title="Steuerelemente"
+                                  Entries="@Controls" Definitions="@ControlDefinitions"
+                                  Zone="Controls" HasBackdrop="false" ReAssignZones="true"
+                                  DragEnd="@( async e => { Controls = e; await UpdateControls(e);  })"
+                                  ItemAdded="@( async e => {  await AddControl(e); })">
                     <Icon>
                         <SymbolIcon Symbol="@Icon.Controls" />
                     </Icon>
-                              </DragDropDesigner>
+                </DragDropDesigner>
             </div>
         </Related>
         <Content>
-            <div data-zone="Page" class="bg-surface rounded-2 p-2">
+
+            
+      
+     @*        <div data-zone="Page" class="bg-surface rounded-2 p-2">
                 @foreach (DragDropElement entry in Rows)
                 {
-                    <LayoutRow @key="@entry.ID" Item="@entry" Controls="@this.Controls" />
+                    <LayoutRow @key="@entry.ID" Item="@entry" Controls="@this.Controls">
+
+                    </LayoutRow>
+                }
+            </div> *@
+
+            <div data-zone="Page" class="bg-surface rounded-2 p-2 my-3">
+                @foreach (IDTO row in DatabaseRows)
+                {
+                    <LayoutRow @key="@( "olr-" + row.GUID.ToSecureString())" 
+                               Item="@row" Controls="@DatabaseControls"
+                               DragEnd="@( async e => { await UpdateControls(e); } )">
+
+                    </LayoutRow>
                 }
             </div>
+
         </Content>
     </Frame>
 
 }
 
-
-
 @code {
 
     [Parameter]
-    public IDTO Item { get; set; }
+    public IDTO Item { get; set; } // Page
 
     [Parameter]
     public List<DragDropElement> Rows { get; set; } = new();
@@ -73,18 +92,25 @@
     public List<DragDropElement> Controls { get; set; } = new();
     List<DragDropElement> ControlDefinitions { get; set; } = new();
 
+    List<IDTO> DatabaseRows { get; set; } = new();
+    List<IDTO> DatabaseControls { get; set; } = new();
+
     // CTR
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        // Layouts 
-        LayoutDefinitions.Add(new DragDropElement() {
-            Name = "12", Typ = "12", Icon= Icon.COL12,
+        // Layouts
+        LayoutDefinitions.Add(new DragDropElement()
+        {
+            Name = "12",
+            Typ = "12",
+            Icon = Icon.COL12,
             Columns = new List<Column> {
                 new Column { Width = 12 } }
         });
-        LayoutDefinitions.Add(new DragDropElement() {
+        LayoutDefinitions.Add(new DragDropElement()
+        {
             Name = "66",
             Typ = "66",
             Icon = Icon.COL66,
@@ -92,7 +118,8 @@
                 new Column { Width = 6 },
                 new Column { Width = 6 }, }
         });
-        LayoutDefinitions.Add(new DragDropElement() {
+        LayoutDefinitions.Add(new DragDropElement()
+        {
             Name = "444",
             Typ = "444",
             Icon = Icon.COL444,
@@ -121,11 +148,146 @@
         });
 
 
-        // Controls 
-        ControlDefinitions.Add(new DragDropElement() { Name = "the Date" });
-        ControlDefinitions.Add(new DragDropElement() { Name = "the Time" });
-        ControlDefinitions.Add(new DragDropElement() { Name = "the Address" });
-        ControlDefinitions.Add(new DragDropElement() { Name = "the City" });
+        // Controls
+        Builder build = new Builder(sql);
+        foreach (ComponentDefinition comp in build.Definitions)
+        {
+            ControlDefinitions.Add(new DragDropElement() { Name = comp.Name, Control = comp });
+        }
+
+        // Reload Rows
+        await LoadRows();
+        await LoadControls();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+    // Layout 
+    public async Task AddLayoutRow(DragDropElement dde)
+    {
+        // Parameter
+        IQueryParameter qp = new QueryParameter();
+        qp.MasterGUID = sql.MasterGUID;
+        qp.GUID = Guid.NewGuid();
+        qp.Title = dde.Name;
+        qp.ItemType = "Slot";
+
+        // Create
+        IQueryResult resultNew = await sql.Create(qp);
+
+        // Load
+        resultNew = await sql.GetItem(qp);
+
+        // Item
+        IDTO? row = resultNew.Items.FirstOrDefault();
+        if (row == null)
+            return;
+
+        // Set Properties
+        row["Sort"] = dde.Sort.ToSecureString();
+        row["Typ"] = dde.Typ.ToSecureString();
+        row["Zone"] = dde.Zone.ToSecureString();
+
+        // Update
+        await sql.Update(row);
+
+        // Zuordnung
+        await sql.Assign(Item, row);
+
+        // Reload Rows 
+        await LoadRows();
+    }
+    public async Task LoadRows()
+    {
+        DatabaseRows.Clear();
+
+        // Parameter
+        IQueryParameter qp = new QueryParameter();
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = "Slot";
+
+        // Create
+        IQueryResult resultRows = await sql.GetRelatedItems(Item, "Slot");
+        DatabaseRows = resultRows.Items;
+    }
+
+    // Controls
+    public async Task AddControl(DragDropElement dde)
+    {
+        // Parameter
+        IQueryParameter qp = new QueryParameter();
+        qp.MasterGUID = sql.MasterGUID;
+        qp.GUID = Guid.NewGuid();
+        qp.Title = dde.Control.Name;
+        qp.ItemType = "Control";
+
+        // Update DragDrop 
+        dde.ID = qp.GUID.ToSecureString();
+
+        // Create
+        IQueryResult resultNew = await sql.Create(qp);
+
+        // Load
+        resultNew = await sql.GetItem(qp);
+
+        // Item
+        IDTO? ctl = resultNew.Items.FirstOrDefault();
+        if (ctl == null)
+            return;
+
+        // Set Properties
+        ctl["Namespace"] = dde.Control.Namespace.ToSecureString();
+        ctl["Klasse"] = dde.Control.ClassName.ToSecureString();
+        ctl["Sort"] = dde.Sort.ToSecureString();
+        ctl["Zone"] = dde.Zone.ToSecureString();
+
+        // Update 
+        await sql.Update(ctl);
+
+        // Zuordnung
+        await sql.Assign(Item, ctl);
+
+    }
+    public async Task UpdateControls(List<DragDropElement> ctls)
+    {
+        // Check Loading 
+        if (DatabaseControls.Count() == 0)
+        {
+            await LoadControls();    
+        }
+
+        foreach (var ctl in ctls)
+        {
+            IDTO? dto = DatabaseControls.Where(se => se.GUID.ToString() == ctl.ID).FirstOrDefault();
+            if (dto == null)
+                continue;
+
+            dto["Zone"] = ctl.Zone;
+            dto["Sort"] = ctl.Sort.ToSecureString();
+
+            await sql.Update(dto);
+        }
+
+        // Reload Controls 
+        await LoadControls();
+
+        // Update 
+        await InvokeAsync(StateHasChanged);
+    }
+    public async Task LoadControls()
+    {
+        DatabaseControls.Clear();
+
+        // Parameter
+        IQueryParameter qp = new QueryParameter();
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = "Control";
+
+        // Create
+        IQueryResult resultRows = await sql.GetRelatedItems(Item, "Control");
+        DatabaseControls = resultRows.Items;
     }
 
 }

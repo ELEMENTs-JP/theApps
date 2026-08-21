@@ -1,0 +1,47 @@
+﻿@inject ISqlDatabaseService sql
+
+
+@foreach (IDynamicComponent comp in builder.GetComponents())
+{
+    <div class="@( ValidatePadding(comp.CssColumnClass) )">
+        <DynamicComponent Type="@(comp.ComponentType)" Parameters="@(comp.Parameters)" />
+
+        @if (comp.Children.Count >= 1)
+        {
+            <div class="row g-0">
+                @foreach (IDynamicComponent child in comp.Children)
+                {
+                    <div class="@( ValidatePadding(child.CssColumnClass) )">
+                        <DynamicComponent Type="@(child.ComponentType)" Parameters="@(child.Parameters)" />
+                    </div>
+                }
+            </div>
+        }
+
+    </div>
+}
+
+@code {
+
+    private Builder builder { get; set; } 
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        builder = new Builder(sql);
+    }
+
+    private string ValidatePadding(string css)
+    {
+
+        if (css.Contains("p-"))
+        {
+            return css;
+        }
+
+        return css + " p-1 ";
+
+    }
+
+}

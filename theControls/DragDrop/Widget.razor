@@ -1,24 +1,28 @@
-﻿@using theInfrastructure
+﻿@using theControls.Dynamic
+@using theInfrastructure
 
 
 
 @if (Item != null)
 {
-    <div @key="@Item.ID" id="@Item.ID" class="drag row g-0 align-items-center mt-2 hover border rounded p-2 bg-surface">
-        <div class="col-12 fw-bold border-bottom p-2">
+    <div @key="@Item.ID" id="@Item.ID" class="drag row g-0 align-items-center mt-2 hover border rounded p-1 bg-surface">
+        <div class="col fw-bold border-bottom p-1">
             @Item.Control.Name
         </div>
-        <div class="grab hover col-auto p-2">
+        <div class="grab hover col-auto p-1 px-3 text-center" style="cursor:move;">
             ...
         </div>
-        <div class="col p-2">
+        <div class="col p-1">
             @Item.Name
         </div>
-        <div class="col-auto p-2">
+        <div class="col-auto p-1">
             @Item.Sort.ToSecureString()
         </div>
         <div class="col-auto fw-bold p-2">
             Widget
+        </div>
+        <div class="col-12">
+            <DynamicBuilderComponent />
         </div>
     </div>
 }

@@ -220,6 +220,34 @@
         </svg>
         
     }
+    
+    @* --- Layout --- *@
+    @if (Symbol == Icon.Layout)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            class="icon icon-tabler icons-tabler-outline icon-tabler-layout-dashboard">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M5 4h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1" />
+            <path d="M5 16h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1" />
+            <path d="M15 12h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1" />
+            <path d="M15 4h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1" />
+        </svg>
+    }
+    @if (Symbol == Icon.Controls)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            class="icon icon-tabler icons-tabler-outline icon-tabler-box">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" />
+            <path d="M12 12l8 -4.5" />
+            <path d="M12 12l0 9" />
+            <path d="M12 12l-8 -4.5" />
+        </svg>
+        
+    }
+    
     @if (Symbol == Icon.COL12)
     {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
@@ -271,32 +299,42 @@
         </svg>
     }
 
-    @if (Symbol == Icon.Layout)
+    @* --- Prioritäten --- *@
+    @if (Symbol == Icon.Prio_High)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+        class="icon icon-tabler icons-tabler-outline icon-tabler-alert-square-rounded">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 3c7.2 0 9 1.8 9 9c0 7.2 -1.8 9 -9 9c-7.2 0 -9 -1.8 -9 -9c0 -7.2 1.8 -9 9 -9" />
+            <path d="M12 8v4" />
+            <path d="M12 16h.01" />
+        </svg>
+    }
+    @if (Symbol == Icon.Prio_Middle)
     {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-            class="icon icon-tabler icons-tabler-outline icon-tabler-layout-dashboard">
+            class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-left-right">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M5 4h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1" />
-            <path d="M5 16h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1" />
-            <path d="M15 12h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1" />
-            <path d="M15 4h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1" />
+            <path d="M21 17l-18 0" />
+            <path d="M6 10l-3 -3l3 -3" />
+            <path d="M3 7l18 0" />
+            <path d="M18 20l3 -3l-3 -3" />
+        </svg>
+    }
+    @if (Symbol == Icon.Prio_Low)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-move-down">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 11v10" />
+            <path d="M9 18l3 3l3 -3" />
+            <path d="M10 5a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
         </svg>
     }
 
-    @if (Symbol == Icon.Controls)
-    {
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-            class="icon icon-tabler icons-tabler-outline icon-tabler-box">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" />
-            <path d="M12 12l8 -4.5" />
-            <path d="M12 12l0 9" />
-            <path d="M12 12l-8 -4.5" />
-        </svg>
-        
-    }
 </div>
 
 @code {

@@ -2,24 +2,35 @@
 
 @if (Item != null)
 {
-    <div @key="Item.ID" id="@Item.ID" class="row g-2 my-1">
+    <div @key="@( "lr-" + Item.GUID.ToSecureString())" 
+            id="@Item.GUID.ToSecureString()" 
+                class="row g-2 my-1">
 
-        @foreach (var column in Item.Columns)
+        @foreach (Column column in Columns)
         {
             <div class="col-@column.Width">
 
-                <div class="@drop DefaultDragDropZone border rounded-2 p-2"
+                <DragDropContainer Entries="Widgets" Zone="@column.Zone" 
+                                   DragEnd="@( async e => { await DragEnd.InvokeAsync(e);  } )">
+                    <ItemTemplate Context="ctl">
+                        <Widget @key="ctl.ID" Item="ctl" />
+                    </ItemTemplate>
+                </DragDropContainer>
+
+
+
+           @*      <div class="@drop DefaultDragDropZone border rounded-2 p-2"
                      data-zone="@column.Zone"
                      style="min-height:6rem;">
 
-                    @foreach (var ctl in Controls
+                    @foreach (DragDropElement ctl in Widgets
                         .Where(c => c.Zone == column.Zone)
                         .OrderBy(c => c.Sort))
                     {
                         <Widget @key="ctl.ID" Item="ctl" />
-                    }
+                    } 
 
-                </div>
+                </div> *@
 
             </div>
         }
@@ -27,29 +38,117 @@
     </div>
 }
 
-@code {
 
-    [Parameter]
-    public DragDropElement Item { get; set; }
+
+@code {
 
     // Fields
     string drop = "dropControls";
 
+    // External 
     [Parameter]
-    public List<DragDropElement> Controls { get; set; } = new();
+    public IDTO Item { get; set; }
 
-    // private IEnumerable<(int Width, string Zone)> GetColumns()
-    // {
-    //     return Item.Typ switch
-    //     {
-    //         "12" => [(12, "12-full")],
-    //         "66" => [(6, "6-Left"), (6, "6-Right")],
-    //         "444" => [(4, "4-Left"), (4, "4-Center"), (4, "4-Right")],
-    //         "57" => [(5, "5-Left-"), (7, "7-Right")],
-    //         "75" => [(7, "7-Left-"), (5, "5-Right")],
-    //         _ => []
-    //     };
-    // }
+    [Parameter]
+    public List<IDTO> Controls { get; set; } = new();
 
-  
+    // Internal 
+    List<Column> Columns { get; set; } = new List<Column>();
+    List<DragDropElement> Widgets { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (Item != null)
+        {
+            await MapColumns();
+            await MapControls();
+        }
+    }
+
+    private async Task MapColumns()
+    {
+        string typ = Item["Typ"].ToSecureString();
+
+        switch (typ)
+        {
+            case "12":
+                {
+                    Columns = new List<Column> { new Column { Width = 12, Zone = "12-" + Item.GUID } };
+                    break;    
+                }
+            case "66":
+                {
+                    Columns = new List<Column> { 
+                            new Column { Width = 6, Zone = "6L-" + Item.GUID },
+                                new Column { Width = 6, Zone = "6R-" + Item.GUID }, };
+                    break;
+                }
+            case "444":
+                {
+                    Columns = new List<Column> { 
+                            new Column { Width = 4, Zone = "4L-" + Item.GUID }, 
+                            new Column { Width = 4, Zone = "4M-" + Item.GUID }, 
+                            new Column { Width = 4, Zone = "4R-" + Item.GUID }, };
+                    break;
+                }
+            case "57":
+                {
+                    Columns = new List<Column> { 
+                            new Column { Width = 5, Zone = "5L-" + Item.GUID },
+                                new Column { Width = 7, Zone = "7R-" + Item.GUID }, };
+                    break;
+                }
+            case "75":
+                {
+                    Columns = new List<Column> {
+                            new Column { Width = 7, Zone = "7L-" + Item.GUID },
+                                new Column { Width = 5, Zone = "5R-" + Item.GUID }, };
+                    break;
+                }
+            default:
+                {
+                    Columns = new List<Column> { new Column { Width = 12, Zone = "12-Default-" + Item.GUID } };
+                    break;    
+                }
+        }
+
+        await Task.CompletedTask;
+    }
+    private async Task MapControls()
+    {
+        this.Widgets.Clear();
+
+        foreach (IDTO ctl in Controls)
+        {
+            string NS = ctl["Namespace"].ToSecureString();
+            string CL = ctl["Klasse"].ToSecureString();
+            string Zone = ctl["Zone"].ToSecureString();
+            string Sort = ctl["Sort"].ToSecureString();
+
+            DragDropElement dde = new();
+            dde.ID = ctl.GUID.ToSecureString();
+            dde.Zone = Zone;
+            dde.Sort = Sort.ToSecureInt();
+
+            // Control 
+            dde.Control = new();
+            dde.Control.Name = ctl.Title;
+            dde.Control.Namespace = NS;
+            dde.Control.ClassName = CL;
+
+            // Add 
+            this.Widgets.Add(dde);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<List<DragDropElement>> DragEnd { get; set; }
 }
