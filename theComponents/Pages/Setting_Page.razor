@@ -16,6 +16,7 @@
 @inject ISqlDatabaseService sql
 @inject IAppService apps
 @inject ILocalizationService loc
+@inject ISecurityService sec
 
 <PageTitle>the App | Einstellungen</PageTitle>
 
@@ -33,50 +34,50 @@
             <ChildContent>
                 <TabsPanel ID="@( ID + "1")" IsActive="true">
 
-                    <div class="row">
-                        <div class="col-4 px-2">
-                            <TextBox Label="Titel" Value="@loc.Configuration.Title"
+                    <div class="row overflow-y-auto">
+                        <div class="col-12 col-md-4 col-lg-4 px-2">
+                            <TextBox Label="Titel" Value="@sec.Configuration.Title"
                                      ValueChanged="@(e =>
                                  {
-                                     loc.Configuration.Title = e;
-                                     loc.Configuration.Save();
+                                     sec.Configuration.Title = e;
+                                     sec.Configuration.Save();
                                  })" />
 
                             <div class="border-bottom my-2"></div>
-                            <CheckBox Label="Datei Uploads" Value="@loc.Configuration.AllowFileUploads.ToSecureString()"
+                            <CheckBox Label="Datei Uploads" Value="@sec.Configuration.AllowFileUploads.ToSecureString()"
                                       ValueChanged="@(e =>
                                   {
-                                      loc.Configuration.AllowFileUploads = e.ToSecureBool();
-                                      loc.Configuration.Save();
+                                      sec.Configuration.AllowFileUploads = e.ToSecureBool();
+                                      sec.Configuration.Save();
                                   })" />
                             <div class="my-2"></div>
                             <TextBox Label="Max. Dateigröße" Type="FieldTyp.Integer"
-                                     Value="@loc.Configuration.MaxFileSizeInMB.ToSecureString()"
+                                     Value="@sec.Configuration.MaxFileSizeInMB.ToSecureString()"
                                      ValueChanged="@(e =>
                                  {
-                                     loc.Configuration.MaxFileSizeInMB = e.ToSecureInt();
-                                     loc.Configuration.Save();
+                                     sec.Configuration.MaxFileSizeInMB = e.ToSecureInt();
+                                     sec.Configuration.Save();
                                  })" />
 
                         </div>
-                        <div class="col-4 px-2 border-start border-end">
+                        <div class="col-12 col-md-4 col-lg-4 px-2 border-start border-end">
                             <ThemeSwitch />
                             <div class="border-bottom my-2"></div>
-                            <CheckBox Label="Akzente" Value="@loc.Configuration.Akzente.ToSecureString()"
+                            <CheckBox Label="Akzente" Value="@sec.Configuration.Akzente.ToSecureString()"
                                       ValueChanged="@(e =>
                                   {
-                                      loc.Configuration.Akzente = e.ToSecureBool();
-                                      loc.Configuration.Save();
+                                      sec.Configuration.Akzente = e.ToSecureBool();
+                                      sec.Configuration.Save();
                                   })" />
                             <div class="my-2"></div>
-                            <TextBox Label="Hintergrundbild" Value="@loc.Configuration.Background" Type="FieldTyp.Url"
+                            <TextBox Label="Hintergrundbild" Value="@sec.Configuration.Background" Type="FieldTyp.Url"
                                      ValueChanged="@(e =>
                                  {
-                                     loc.Configuration.Background = e;
-                                     loc.Configuration.Save();
+                                     sec.Configuration.Background = e;
+                                     sec.Configuration.Save();
                                  })" />
                         </div>
-                        <div class="col-4 px-2">
+                        <div class="col-12 col-md-4 col-lg-4 px-2">
                             <LanguageSelector Value="@loc.Configuration.Sprache"
                                               ValueChanged="@(e =>
                                           {

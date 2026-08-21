@@ -1,5 +1,6 @@
 ﻿@using theControls.Input
 @inject ILocalizationService loc
+@inject ISecurityService sec
 @inject IMessagingBusService msg
 
 @if (loc.Configuration != null)
@@ -14,10 +15,10 @@
                 Archiv
             </div>
             <div class="col-auto p-2">
-                <CheckBox Value="@loc.Configuration.Archive.ToSecureString()"
+                <CheckBox Value="@sec.Configuration.Archive.ToSecureString()"
                           ValueChanged="@(async e => {
-                          loc.Configuration.Archive = e.ToSecureBool();
-                          loc.Configuration.Save();
+                          sec.Configuration.Archive = e.ToSecureBool();
+                          sec.Configuration.Save();
                           await PushFeatureUpdate();
                       })" />
             </div>
@@ -30,10 +31,10 @@
                 Papierkorb
             </div>
             <div class="col-auto p-2">
-                <CheckBox Value="@loc.Configuration.Trash.ToSecureString()"
+                <CheckBox Value="@sec.Configuration.Trash.ToSecureString()"
                           ValueChanged="@( async e => {
-                          loc.Configuration.Trash = e.ToSecureBool();
-                          loc.Configuration.Save();
+                          sec.Configuration.Trash = e.ToSecureBool();
+                          sec.Configuration.Save();
                           await PushFeatureUpdate();
                       })" />
             </div>
@@ -44,10 +45,10 @@
                 Taskbar
             </div>
             <div class="col-auto p-2">
-                <CheckBox Value="@loc.Configuration.TaskBar.ToSecureString()"
+                <CheckBox Value="@sec.Configuration.TaskBar.ToSecureString()"
                           ValueChanged="@(async e => {
-                          loc.Configuration.TaskBar = e.ToSecureBool();
-                          loc.Configuration.Save();
+                          sec.Configuration.TaskBar = e.ToSecureBool();
+                          sec.Configuration.Save();
                           await PushFeatureUpdate();
                       })" />
             </div>
@@ -58,10 +59,10 @@
                 Datum und Uhrzeit
             </div>
             <div class="col-auto p-2">
-                <CheckBox Value="@loc.Configuration.Clock.ToSecureString()"
+                <CheckBox Value="@sec.Configuration.Clock.ToSecureString()"
                           ValueChanged="@(async e => {
-                          loc.Configuration.Clock = e.ToSecureBool();
-                          loc.Configuration.Save();
+                          sec.Configuration.Clock = e.ToSecureBool();
+                          sec.Configuration.Save();
                           await PushFeatureUpdate();
                       })" />
             </div>

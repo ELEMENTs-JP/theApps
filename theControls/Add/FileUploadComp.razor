@@ -1,9 +1,10 @@
 ﻿@using theControls.Input
 @inject IMessagingBusService msg
 @inject ISqlDatabaseService sql
-@inject ILocalizationService loc 
+@inject ILocalizationService loc
+@inject ISecurityService sec
 
-@if (loc.Configuration.AllowFileUploads)
+@if (sec.Configuration.AllowFileUploads)
 {
     <FileInputBox OnFileUploaded="OnFileUpload" />
 }
@@ -17,7 +18,7 @@
             return;
 
         // Allow File Uploads 
-        if (loc.Configuration.AllowFileUploads == false)
+        if (sec.Configuration.AllowFileUploads == false)
             return;
 
         // Parameter 

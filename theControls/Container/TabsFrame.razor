@@ -1,6 +1,7 @@
 @inject ILocalizationService loc
+@inject ISecurityService sec
 
-<div id="@( "tabs_frame_div " + ID )" class=" rounded-2 bg-surface p-2 @FrameCSS" style="@( loc.Configuration.GetAkzentStyle() )">
+<div id="@( "tabs_frame_div " + ID )" class=" rounded-2 bg-surface p-2 @FrameCSS" style="@( sec.Configuration.GetAkzentStyle() )">
 
     @if (Orientation == Orientation.Center)
     {
@@ -89,10 +90,11 @@
         }
 
         <div class="row g-0">
-            <div class="@( "col-2 border-bottom-0 nav flex-column pe-2 " + ((ShowAsTabs) ? " nav-tabs " : " ") )" id="nav-tab" role="tablist">
+            <div class="@( "col-2 border-bottom-0 nav flex-column pe-2 " + ((ShowAsTabs) ? " nav-tabs " : " ") )" 
+                id="nav-tab" role="tablist" style="min-width:180px !important;">
                 @HeaderContent
             </div>
-            <div class="col-10 border-start ps-2 tab-content" id="nav-tabContent">
+            <div class="col border-start ps-2 tab-content" id="nav-tabContent">
                 @ChildContent
             </div>
         </div>

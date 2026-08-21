@@ -74,7 +74,7 @@
                         </div>
                     }
 
-                    @if (loc.Configuration.Archive)
+                    @if (sec.Configuration.Archive)
                     {
                         <div class="dropdown-divider"></div>
                         <div class="dropdown-item" @onclick="@( async e => { await OnItemTypeSelect("Archive"); })">
@@ -82,7 +82,7 @@
                         </div>
                     }
 
-                    @if (loc.Configuration.Trash)
+                    @if (sec.Configuration.Trash)
                     {
                         <div class="dropdown-divider"></div>
                         <div class="dropdown-item" @onclick="@( async e => { await OnItemTypeSelect("Trash"); })">

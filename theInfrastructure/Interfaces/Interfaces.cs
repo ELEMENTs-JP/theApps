@@ -26,7 +26,7 @@ namespace theInfrastructure
 
     public interface ILocalizationService
     {
-        SystemConfiguration Configuration { get; set; }
+        LocaleConfiguration Configuration { get; set; }
         string GetLabel(string de, string en, string es);
         string GetLabel(string de, string en);
         string DefaultFilePath { get; set; } 
@@ -38,7 +38,9 @@ namespace theInfrastructure
         IDTO User { get; set; }
         Task SetUser(Guid GUID);
         Task RefreshUser();
+        List<IDTO> Permissions { get; set; }
         event PropertyChangedEventHandler PropertyChanged;
+        SystemConfiguration Configuration { get; set; }
     }
 
     public interface IAppService

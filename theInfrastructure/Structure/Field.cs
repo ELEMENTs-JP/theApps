@@ -17,6 +17,10 @@ namespace theInfrastructure
 
         DeviceDisplay OnDevice { get; set; }
         bool IsEditable { get; set; }
+
+        // CheckBox 
+        string TrueText { get; set; } 
+        string FalseText { get; set; }
     }
 
     public class Field : IField
@@ -28,10 +32,15 @@ namespace theInfrastructure
         public string Description { get; set; } = string.Empty;
         public string Placeholder { get; set; } = string.Empty;
         public string Column { get; set; } = string.Empty;
+        
         public string CSS { get; set; } = "col";
         public DeviceDisplay OnDevice { get; set; } = DeviceDisplay.NULL;
 
         public bool IsEditable { get; set; } = true;
+
+        // CheckBox 
+        public string TrueText { get; set; } = string.Empty;
+        public string FalseText { get; set; } = string.Empty;
 
         public static List<IField> DefaultFields(DefaultFieldTypes typ)
         {

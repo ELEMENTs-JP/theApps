@@ -16,19 +16,21 @@ namespace theInfrastructure
         // Fields 
         IWebHostEnvironment Environment;
         ISqlDatabaseService SqlService;
+        public SystemConfiguration Configuration { get; set; } = null;
 
         public IDTO Principal { get; set; }
 
         // Properties 
         private IDTO _user = null;
         public IDTO User
-        { 
-            get { return _user; } 
-            set { _user = value; OnPropertyChanged(); } 
+        {
+            get { return _user; }
+            set { _user = value; OnPropertyChanged(); }
         }
 
         public List<IDTO> AllUser { get; set; } = new();
-        
+        public List<IDTO> Permissions { get; set; } = new(); // Berechtigungen des aktuellen Nutzers 
+
         // CTR 
         public SecurityService()
         {
@@ -48,6 +50,12 @@ namespace theInfrastructure
 
         private async void Init()
         {
+            // System Config 
+            if (Configuration == null)
+            {
+                Configuration = SystemConfiguration.Load();
+            }
+
             // User 
             IQueryParameter qp = new QueryParameter();
             qp.MasterGUID = SqlService.MasterGUID;
@@ -55,21 +63,25 @@ namespace theInfrastructure
             IQueryResult result = await SqlService.GetItems(qp);
 
             AllUser.Clear();
-            AllUser.AddRange(result.Items);
+            AllUser = result.Items;
         }
         public async Task SetUser(Guid GUID)
         {
-            User = AllUser.FirstOrDefault(x => x.GUID == GUID);
+            User = AllUser.FirstOrDefault(se => se.GUID == GUID);
+            if (User == null)
+                return;
 
-            if (User != null)
+            // Principal 
+            IQueryResult result = await SqlService.GetRelatedItems(User, "Principal");
+            if (result.Items.Count() == 1)
             {
-                IQueryResult result = await SqlService.GetRelatedItems(User, "Principal");
-                if (result.Items.Count() == 1)
-                {
-                    // Set Principal 
-                    Principal = result.Items[0];
-                }
+                // Set Principal 
+                Principal = result.Items[0];
             }
+
+            // Permissions 
+            IQueryResult resultPerm = await SqlService.GetRelatedItems(User, "Permission");
+            Permissions = resultPerm.Items;
 
             await Task.CompletedTask;
         }
@@ -87,8 +99,8 @@ namespace theInfrastructure
         private void AppService_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "User")
-            { 
-            
+            {
+
             }
         }
 

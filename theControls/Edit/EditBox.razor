@@ -48,8 +48,8 @@
             <CheckBox @key="@( "CheckBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
                       Label="@Title" Description="@Description" Value="@Value"
                       ValueChanged="@(async e =>{ onValueChanged(e); await Change(); await Save(); })"
-                      CssClass="@CssClass"
-                      IsEditable="@IsEditable">
+                      CssClass="@CssClass"  IsEditable="@IsEditable"
+                      TrueText="@Field.TrueText" FalseText="@Field.FalseText" >
 
             </CheckBox>
         }

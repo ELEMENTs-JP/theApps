@@ -10,7 +10,7 @@
     @if (app.App != null)
     {
         <div class="border rounded-2 hover pointer p-2 m-2"
-             @onclick="@( async e => { app.App = null; nm.NavigateTo("/", false); })">
+             @onclick="@( async e => { app.App = null; app.ItemType = null; app.Page = null; nm.NavigateTo("/", false); })">
             <span class="fw-bold">Home</span>
         </div>
 

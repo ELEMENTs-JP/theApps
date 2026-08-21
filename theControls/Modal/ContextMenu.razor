@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Hosting
 @inject NavigationManager nm
 @inject ILocalizationService loc
+@inject ISecurityService sec
 @inject IMessagingBusService msg
 @inject IWebHostEnvironment env
 @implements IAsyncDisposable
@@ -15,7 +16,7 @@
 
         <div class="px-2 pt-2 fw-bold">Aktionen</div>
 
-        @if (loc.Configuration.Archive == true)
+        @if (sec.Configuration.Archive == true)
         {
             @if (Context.Item.ItemType != "Archive")
             {
@@ -34,7 +35,7 @@
         }
 
 
-        @if (loc.Configuration.Trash == true)
+        @if (sec.Configuration.Trash == true)
         {
             @if (Context.Item.ItemType != "Trash")
             {

@@ -18,7 +18,8 @@ namespace theInfrastructure
         ISqlDatabaseService SqlService;
         public string DefaultFilePath { get; set; } = "FILES";
 
-        public SystemConfiguration Configuration { get; set; } = null;
+        public LocaleConfiguration Configuration { get; set; } = null;
+     
 
         // CTR 
         public LocalizationService()
@@ -41,7 +42,7 @@ namespace theInfrastructure
         {
             if (Configuration == null)
             {
-                Configuration = SystemConfiguration.Load();
+                Configuration = LocaleConfiguration.Load();
             }
         }
 

@@ -8,6 +8,7 @@
 @inject IWebHostEnvironment env
 @inject ISqlDatabaseService sql
 @inject ILocalizationService loc
+@inject ISecurityService sec
 
 <div class="pointer rounded hover overflow-hidden bg-surface text-white position-relative mx-2"
        style="@( "border: 1px dashed #333 !important; " + InternalStyle )">
@@ -140,7 +141,7 @@
                 int sizeInMb = (int)(file.Size / (1024 * 1024));
 
                 // Datei ist größer als MAX Filesize 
-                if (sizeInMb > loc.Configuration.MaxFileSizeInMB)
+                if (sizeInMb > sec.Configuration.MaxFileSizeInMB)
                     continue;
                 
                 // GUID 

@@ -6,6 +6,7 @@
 @inject ISecurityService sec
 @inject IMessagingBusService msg
 @inject ILocalizationService loc
+@inject ISecurityService sec
 @inject IAppService app
 
 @implements IAsyncDisposable
@@ -36,7 +37,7 @@
                     @Footer
                 </div>
 
-                @if (loc.Configuration.TaskBar)
+                @if (sec.Configuration.TaskBar)
                 {
                     <div class="bar p-2 glass rounded-2 align-items-center overflow-hidden">
                         @Bar

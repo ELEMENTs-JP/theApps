@@ -1,9 +1,10 @@
 @inject IJSRuntime JS
 @implements IAsyncDisposable
 @inject ILocalizationService loc
+@inject ISecurityService sec
 @inject IMessagingBusService msg
 
-@if (loc.Configuration.Clock)
+@if (sec.Configuration.Clock)
 {
     <div class="bg-surface p-2 align-items-center border-bottom border-start border-end">
         <small id="datetimeclock">Samstag, 11. August 2026 - 11:20 Uhr</small>

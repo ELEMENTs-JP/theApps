@@ -21,6 +21,7 @@ namespace theInfrastructure
             // ItemTypes 
             ItemTypes.Add(new ItemType_Principal());
             ItemTypes.Add(new ItemType_User());
+            ItemTypes.Add(new ItemType_Permission());
 
             return ItemTypes;
         }

@@ -14,6 +14,19 @@
            checked="@IsChecked"
            @onchange="HandleInput" />
 
+    @if (IsChecked && !string.IsNullOrEmpty(TrueText))
+    {
+        <label class="form-check-label ms-2" for="@Id">
+            @TrueText
+        </label>
+    }
+    else if (!IsChecked && !string.IsNullOrEmpty(FalseText))
+    {
+        <label class="form-check-label ms-2" for="@Id">
+            @FalseText
+        </label>
+    }
+
     @if (Inlay != null)
     {
         <div class="ms-2">
