@@ -1,15 +1,18 @@
 ﻿@using theControls.Dynamic
 @using theInfrastructure
+@inject ISqlDatabaseService sql
+@inject IMessagingBusService msg
 
 
 
 @if (Item != null)
 {
-    <div @key="@Item.ID" id="@Item.ID" class="drag row g-0 align-items-center mt-2 hover border rounded p-1 bg-surface">
+    <div @key="@Item.ID" id="@Item.ID" 
+        class="drag row g-0 align-items-center mt-2 hover border rounded p-1 bg-surface">
         <div class="col fw-bold border-bottom p-1">
             @Item.Control.Name
         </div>
-        <div class="grab hover col-auto p-1 px-3 text-center" style="cursor:move;">
+        <div class="grab hover rounded-2 col-auto p-1 text-center" style="cursor:move;">
             ...
         </div>
         <div class="col p-1">
@@ -18,9 +21,15 @@
         <div class="col-auto p-1">
             @Item.Sort.ToSecureString()
         </div>
-        <div class="col-auto fw-bold p-2">
-            Widget
-        </div>
+
+        @if (DTO != null)
+        {
+            <div class="col-auto p-2">
+                <SymbolIcon Symbol="Icon.Delete" 
+                    OnClick="@( async e => { await DeletItem(); })" 
+                    CSS="hover pointer rounded-2 p-1" Style="" />
+            </div>
+        }
         <div class="col-12">
             <DynamicBuilderComponent />
         </div>
@@ -30,10 +39,24 @@
 
 @code {
 
-    // Fields 
+    // Fields
     string drop = "dropControls";
 
     [Parameter]
     public DragDropElement Item { get; set; }
+
+    [Parameter]
+    public IDTO DTO { get; set; }
+
+    public async Task DeletItem()
+    {
+        if (DTO == null)
+            return;
+
+        await sql.Delete(DTO);
+
+        // Refresh 
+        msg.Publish("Item", BusAction.Refresh);
+    }
 
 }

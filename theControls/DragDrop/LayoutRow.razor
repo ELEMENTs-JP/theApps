@@ -13,24 +13,12 @@
                 <DragDropContainer Entries="Widgets" Zone="@column.Zone" 
                                    DragEnd="@( async e => { await DragEnd.InvokeAsync(e);  } )">
                     <ItemTemplate Context="ctl">
-                        <Widget @key="ctl.ID" Item="ctl" />
+                        <Widget @key="ctl.ID" Item="ctl" 
+                            DTO="@( Controls.Where(se => se.GUID.ToSecureString() == ctl.ID).FirstOrDefault() )" />
                     </ItemTemplate>
                 </DragDropContainer>
 
 
-
-           @*      <div class="@drop DefaultDragDropZone border rounded-2 p-2"
-                     data-zone="@column.Zone"
-                     style="min-height:6rem;">
-
-                    @foreach (DragDropElement ctl in Widgets
-                        .Where(c => c.Zone == column.Zone)
-                        .OrderBy(c => c.Sort))
-                    {
-                        <Widget @key="ctl.ID" Item="ctl" />
-                    } 
-
-                </div> *@
 
             </div>
         }

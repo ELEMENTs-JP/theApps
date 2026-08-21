@@ -9,6 +9,8 @@
 @using theInfrastructure
 @inject IJSRuntime JS
 @inject ISqlDatabaseService sql
+@inject IMessagingBusService msg
+@implements IAsyncDisposable
 
 @if (Item != null)
 {
@@ -51,17 +53,6 @@
             </div>
         </Related>
         <Content>
-
-            
-      
-     @*        <div data-zone="Page" class="bg-surface rounded-2 p-2">
-                @foreach (DragDropElement entry in Rows)
-                {
-                    <LayoutRow @key="@entry.ID" Item="@entry" Controls="@this.Controls">
-
-                    </LayoutRow>
-                }
-            </div> *@
 
             <div data-zone="Page" class="bg-surface rounded-2 p-2 my-3">
                 @foreach (IDTO row in DatabaseRows)
@@ -158,10 +149,24 @@
         // Reload Rows
         await LoadRows();
         await LoadControls();
+
+        msg.OnMessage += OnMessageDone;
     }
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
+    }
+
+    public async void OnMessageDone(AppMessage msg)
+    {
+        if (msg.Id == "Item" && msg.Action == BusAction.Refresh)
+        {
+            await LoadControls();
+
+            
+            // Update
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     // Layout 
@@ -288,6 +293,19 @@
         // Create
         IQueryResult resultRows = await sql.GetRelatedItems(Item, "Control");
         DatabaseControls = resultRows.Items;
+    }
+
+    
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageDone;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
     }
 
 }
