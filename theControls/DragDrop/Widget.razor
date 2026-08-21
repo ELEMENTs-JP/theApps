@@ -3,36 +3,31 @@
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
 
-
-
 @if (Item != null)
 {
     <div @key="@Item.ID" id="@Item.ID" 
-        class="drag row g-0 align-items-center mt-2 hover border rounded p-1 bg-surface">
-        <div class="col fw-bold border-bottom p-1">
-            @Item.Control.Name
-        </div>
-        <div class="grab hover rounded-2 col-auto p-1 text-center" style="cursor:move;">
+         class="drag position-relative mt-2 rounded bg-surface">
+         
+        <div class="grab hover rounded-2 pt-05 pb-05 px-2 text-muted position-absolute top-0 start-50 translate-middle-x"
+             style="cursor:move;">
             ...
         </div>
-        <div class="col p-1">
-            @Item.Name
-        </div>
-        <div class="col-auto p-1">
-            @Item.Sort.ToSecureString()
-        </div>
+
 
         @if (DTO != null)
         {
-            <div class="col-auto p-2">
-                <SymbolIcon Symbol="Icon.Delete" 
-                    OnClick="@( async e => { await DeletItem(); })" 
-                    CSS="hover pointer rounded-2 p-1" Style="" />
+            <div class="hover rounded-2 position-absolute top-0 end-0">
+                <SymbolIcon Symbol="Icon.Delete"
+                            OnClick="@( async e => { await DeletItem(); })"
+                            CSS="pointer rounded-2 p-05" />
             </div>
         }
-        <div class="col-12">
-            <DynamicBuilderComponent />
-        </div>
+    
+        @if (Component != null)
+        {
+            <DynamicComponent Type="@(Component.ComponentType)" Parameters="@(Component.Parameters)" />
+        }
+        
     </div>
 }
 
@@ -45,8 +40,29 @@
     [Parameter]
     public DragDropElement Item { get; set; }
 
+    private Builder builder { get; set; }
+
+    IDynamicComponent Component { get; set; }
+
     [Parameter]
     public IDTO DTO { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        builder = new Builder(sql);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (DTO != null)
+        {
+            Component = builder.BuildComponent(builder.GetDefinition(DTO.Title));
+        }
+    }
 
     public async Task DeletItem()
     {

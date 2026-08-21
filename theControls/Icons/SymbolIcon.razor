@@ -267,6 +267,17 @@
             <path d="M12 3v18" />
         </svg>
     }
+    @if (Symbol == Icon.COL363)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="icon icon-tabler icons-tabler-outline icon-tabler-columns-3">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 4a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v16a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1v-16" />
+            <path d="M9 3v18" />
+            <path d="M15 3v18" />
+        </svg>
+    }
     @if (Symbol == Icon.COL444)
     {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
@@ -350,7 +361,7 @@
     public int MaxHeight { get; set; } = 320;
 
     [Parameter]
-    public string Style { get; set; } = " margin-top:-2px; ";
+    public string Style { get; set; } = " margin-top:-3px; ";
 
     [Parameter]
     public string CSS { get; set; } = string.Empty;

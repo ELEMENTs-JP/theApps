@@ -1,5 +1,18 @@
 ﻿
 
+
+
+
+
+function toggleClass(className, force)
+{
+    if (className)
+    {
+        document.body.classList.toggle(className, force);
+        
+    }
+}
+
 function setBodyBackground(url) {
     document.body.style.backgroundImage = "url('" + url + "')";
 }

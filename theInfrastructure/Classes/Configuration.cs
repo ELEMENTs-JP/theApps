@@ -30,6 +30,7 @@ namespace theInfrastructure
         public string Title { get; set; } = string.Empty;
         public string Background { get; set; } = string.Empty;
         public bool Akzente { get; set; } = false; // weiße Akzente anzeigen oder nicht 
+        public bool Blur { get; set; } = false; // Legt fest ob der Hintergrund blur ist 
         public bool Trash { get; set; } = false; // zeigt den Papierkorb an oder nicht 
         public bool Archive { get; set; } = false; // zeigt das Archiv an 
         public bool TaskBar { get; set; } = true; // zeigt die Taskbar unten rechts an

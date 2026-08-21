@@ -1,12 +1,4 @@
-﻿@using System.Text.Json
-@using Microsoft.JSInterop
-@using theControls.DragDrop
-@using theControls.Dynamic
-@using theControls.Input
-@using theControls.Layout
-@using theControls.Modal
-@using theControls.Text
-@using theInfrastructure
+﻿
 @inject IJSRuntime JS
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
@@ -16,17 +8,21 @@
 {
     <Frame Border="true" Rounded="true">
         <Header>
-            <ControlHeader PreTitle="Page" Title="@Item.Title" PostTitle="" />
+            <ControlHeader PreTitle="Page" Title="@Item.Title" PostTitle="@Item.Content" />
         </Header>
         <Related>
             <div class="hstack gap-3">
-                <ModalForm Title="Einstellungen">
+                <ModalForm Title="Einstellungen" 
+                        OnOKClicked="@( async e => {  await sql.Update(Item); })">
                     <ChildContent>
                         <div class="row">
                             <div class="col-12 px-2">
                                 <TextBox Label="Titel" Value="@Item.Title"
                                          ValueChanged="@(e =>  { Item.Title = e; })" />
-                                <div class="border-bottom my-2"></div>
+                                <div class="border-bottom my-3"></div>
+                                <TextBox Label="Beschreibung" Value="@Item.Content"
+                                         ValueChanged="@(e =>  { Item.Content = e; })" />
+                                <div class="border-bottom my-3"></div>
                             </div>
                         </div>
                     </ChildContent>
@@ -54,7 +50,7 @@
         </Related>
         <Content>
 
-            <div data-zone="Page" class="bg-surface rounded-2 p-2 my-3">
+            <div data-zone="Page" class="bg-surface rounded-2 p-2">
                 @foreach (IDTO row in DatabaseRows)
                 {
                     <LayoutRow @key="@( "olr-" + row.GUID.ToSecureString())" 
@@ -118,6 +114,16 @@
                 new Column { Width = 4 },
                 new Column { Width = 4 },
                 new Column { Width = 4 }, }
+        });
+        LayoutDefinitions.Add(new DragDropElement()
+        {
+            Name = "363",
+            Typ = "363",
+            Icon = Icon.COL363,
+            Columns = new List<Column> {
+                new Column { Width = 3 },
+                new Column { Width = 6 },
+                new Column { Width = 3 }, }
         });
         LayoutDefinitions.Add(new DragDropElement()
         {

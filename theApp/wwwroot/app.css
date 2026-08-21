@@ -19,6 +19,10 @@ html, body {
 }
 
 
+.blur {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
 .glass {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(20px);

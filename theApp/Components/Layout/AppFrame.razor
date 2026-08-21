@@ -71,6 +71,9 @@
 
             await js.InvokeVoidAsync("setBodyBackground", wallpaper);
 
+            bool IsClassActive = sec.Configuration.Blur.ToSecureBool();
+            await js.InvokeVoidAsync("toggleClass", "blur", IsClassActive);
+
         }
     }
     private async Task ChangeBackground()
