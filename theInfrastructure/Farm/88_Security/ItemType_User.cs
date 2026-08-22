@@ -28,6 +28,9 @@ namespace theInfrastructure
             Fields.Add(new Field() { Title = "Administrator", Typ = FieldTyp.CheckBox, Column = "IsAdmin", CSS = " col-12 col-md-4 col-lg-4 " });
             Fields.Add(new Field() { Title = "Wallpaper", Typ = FieldTyp.Text, Column = "Wallpaper", CSS = " col-12 col-md-12 col-lg-12 " });
 
+            // Fields.Add(new Field() { Title = "Anzeige", Typ = FieldTyp.Text, Column = "Anzeige", CSS = " col-6 ", Condition = new FieldCondition("Condition","Test") });
+            // Fields.Add(new Field() { Title = "Condition", Typ = FieldTyp.Text, Column = "Condition", CSS = " col-6 " });
+
             return Fields;
         }
     }

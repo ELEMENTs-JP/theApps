@@ -6,6 +6,7 @@ using System.Text;
 
 namespace theInfrastructure
 {
+  
     public class UrlAnalysis
     {
         public bool IsDevelopment { get; set; }

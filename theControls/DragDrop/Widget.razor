@@ -6,9 +6,11 @@
 @if (Item != null)
 {
     <div @key="@Item.ID" id="@Item.ID" 
-         class="drag position-relative mt-2 rounded bg-surface">
+         class="drag row g-0 mt-2 rounded bg-surface">
          
-        <div class="grab hover rounded-2 pt-05 pb-05 px-2 text-muted position-absolute top-0 start-50 translate-middle-x"
+      
+
+        <div class="col-auto ms-auto me-auto grab hover rounded-2 px-2 text-muted"
              style="cursor:move;">
             ...
         </div>
@@ -16,7 +18,7 @@
 
         @if (DTO != null)
         {
-            <div class="hover rounded-2 position-absolute top-0 end-0">
+            <div class="col-auto hover rounded-2">
                 <SymbolIcon Symbol="Icon.Delete"
                             OnClick="@( async e => { await DeletItem(); })"
                             CSS="pointer rounded-2 p-05" />
@@ -25,7 +27,9 @@
     
         @if (Component != null)
         {
-            <DynamicComponent Type="@(Component.ComponentType)" Parameters="@(Component.Parameters)" />
+            <div class="col-12">
+                <DynamicComponent Type="@(Component.ComponentType)" Parameters="@(Component.Parameters)" />
+            </div>
         }
         
     </div>

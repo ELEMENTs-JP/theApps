@@ -278,6 +278,17 @@ namespace theInfrastructure
                 IQueryResult result = await sql.GetItems(qp);
                 Items = result.Items;
             }
+            else if (field.Typ == FieldTyp.ItemTypeList)
+            {
+                if (!string.IsNullOrEmpty(field.ItemType))
+                { 
+                    IQueryParameter qp = new QueryParameter();
+                    qp.MasterGUID = sql.MasterGUID;
+                    qp.ItemType = field.ItemType;
+                    IQueryResult result = await sql.GetItems(qp);
+                    Items = result.Items;
+                }
+            }
 
             return Items;
         }

@@ -7,7 +7,7 @@
 
 @if (Field != null && Context != null && Context.Item != null)
 {
-    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-1 px-2 @CssClass">
+    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-1 px-2 @CheckCondition() @CssClass">
 
         @if (Field.Typ == FieldTyp.TextArea)
         {
@@ -29,6 +29,7 @@
         else if (Field.Typ == FieldTyp.DropDown ||
                 Field.Typ == FieldTyp.FieldTyp ||
                 Field.Typ == FieldTyp.ItemTypeTyp ||
+                Field.Typ == FieldTyp.ItemTypeList ||
                 Field.Typ == FieldTyp.User ||
                  Field.Typ == FieldTyp.Priority ||
                  Field.Typ == FieldTyp.Status ||
@@ -109,7 +110,6 @@
             </TextBox>
         }
     </div>
-
 }
 
 @code {
@@ -117,7 +117,6 @@
     private string Title { get; set; } = string.Empty;
     private string Description { get; set; } = string.Empty;
     private string Value { get; set; } = string.Empty;
-
 
     [Parameter]
     public List<IDTO> Items { get; set; } = new();
@@ -182,6 +181,28 @@
     public async Task Init()
     {
         this.Items = await Helper.InitDropDown(Field, sql);
+
+        msg.OnMessage += OnMessageRun;
+    }
+    private string CheckCondition()
+    {
+        // Kein Condition angelegt 
+        if (Field.Condition == null)
+            return string.Empty;
+
+        // Kein Cnodition enthalten 
+        if (Field.Condition.Field == string.Empty 
+            || Field.Condition.Value == string.Empty)
+            return string.Empty;
+
+        // Bedingungen enthalten 
+        if (Context.Item[Field.Condition.Field].ToSecureString() != Field.Condition.Value.ToSecureString())
+        {
+            // Bedingung erfüllt 
+            return " d-none ";
+        }
+
+        return string.Empty;
     }
 
     // Helper 
@@ -192,6 +213,9 @@
 
         // Update 
         msg.Publish("", BusAction.Info, "Eintrag aktualisiert");
+
+        // andere EditBox aufgrund Update oder Condition aktualisieren 
+        msg.Publish("EditBox", BusAction.Refresh);
 
         if (Context.Item.ItemType == "User")
         {
@@ -211,6 +235,15 @@
         // Events
         await ItemChanged.InvokeAsync(Context.Item);
         return Context.Item;
+    }
+
+    // Events 
+    public async void OnMessageRun(AppMessage message)
+    {
+        if (message.Id == "EditBox" && message.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     // ... 
@@ -287,6 +320,8 @@
                 ((IDisposable)Context).Dispose();
                 Context = null;
             }
+
+            msg.OnMessage -= OnMessageRun;
         }
         catch (Exception ex)
         {

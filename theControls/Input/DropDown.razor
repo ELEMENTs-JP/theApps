@@ -1,4 +1,5 @@
-﻿@implements IAsyncDisposable
+﻿@inject ISqlDatabaseService sql
+@implements IAsyncDisposable
 
 @if (!string.IsNullOrEmpty(this.Label))
 {

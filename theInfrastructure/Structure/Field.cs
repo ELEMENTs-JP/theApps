@@ -21,6 +21,12 @@ namespace theInfrastructure
         // CheckBox 
         string TrueText { get; set; } 
         string FalseText { get; set; }
+
+        // DropDown List 
+        string ItemType { get; set; }
+
+        // Condition 
+        FieldCondition Condition { get; set; } // Definiert eine Field Wert Condition um dieses Feld einzublenden 
     }
 
     public class Field : IField
@@ -41,6 +47,9 @@ namespace theInfrastructure
         // CheckBox 
         public string TrueText { get; set; } = string.Empty;
         public string FalseText { get; set; } = string.Empty;
+
+        // DropDown List 
+        public string ItemType { get; set; } = string.Empty;
 
         public static List<IField> DefaultFields(DefaultFieldTypes typ)
         {
@@ -100,5 +109,25 @@ namespace theInfrastructure
 
             return Fields;
         }
+
+        // Condition 
+        public FieldCondition Condition { get; set; } = new();
+    }
+
+    public class FieldCondition
+    {
+        public FieldCondition()
+        {
+            
+        }
+        public FieldCondition(string Field, string Value)
+        {
+            this.Field = Field;
+            this.Value = Value;
+        }
+        // Bedingung um ein anderes Feld einzublenden 
+        public string Field { get; set; } = string.Empty; // Definiert das Feld 
+        public string Value { get; set; } = string.Empty; // Definiert den Value 
+
     }
 }

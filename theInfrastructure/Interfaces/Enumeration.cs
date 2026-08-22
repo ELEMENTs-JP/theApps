@@ -72,7 +72,7 @@ namespace theInfrastructure
         Password,
         Home,
         Delete,
-
+        Setting,
         Layout,
         COL12,
         COL66,
@@ -149,6 +149,7 @@ namespace theInfrastructure
         HR,
         FieldTyp, // EditBox FieldTyp 
         ItemTypeTyp, // Typ des ItemTyp (Item, File, etc.)
+        ItemTypeList, // Liste der verfügbaren ItemTypes 
     }
 
     public enum DatabaseTyp
