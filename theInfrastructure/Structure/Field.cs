@@ -23,7 +23,8 @@ namespace theInfrastructure
         string FalseText { get; set; }
 
         // DropDown List 
-        string ItemType { get; set; }
+        string ItemType { get; set; } // ItemType zum laden 
+        List<string> Items { get; set; } // vordefinierte Items in der DDL 
 
         // Condition 
         FieldCondition Condition { get; set; } // Definiert eine Field Wert Condition um dieses Feld einzublenden 
@@ -50,7 +51,7 @@ namespace theInfrastructure
 
         // DropDown List 
         public string ItemType { get; set; } = string.Empty;
-
+        public List<string> Items { get; set; } = new();
         public static List<IField> DefaultFields(DefaultFieldTypes typ)
         {
             List<IField> Fields = new();

@@ -9,14 +9,14 @@
     @* --- App selektiert --- *@
     @if (app.App != null)
     {
-        <div class="border rounded-2 hover pointer p-2 m-2"
+        <div class="rounded-2 hover pointer p-2 m-2"
              @onclick="@( async e => { app.App = null; app.ItemType = null; app.Page = null; nm.NavigateTo("/", false); })">
             <span class="fw-bold">Home</span>
         </div>
 
         <div class="my-3"></div>
 
-        <div class="border rounded-2 hover pointer p-2 m-2" 
+        <div class="selected pointer p-2 m-2" 
              @onclick="@( async e => { await OnAppSelect(app.App); })">
             <span class="fw-bold">
                 @app.App.ToString()
@@ -185,4 +185,11 @@
         }
     }
 
+    private readonly List<string> PreferredGroupOrder = new()
+    {
+        "Strategy",
+        "Main",
+        "Tools",
+        "Admin"
+    };
 }

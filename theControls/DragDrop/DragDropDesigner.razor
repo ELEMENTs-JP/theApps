@@ -76,6 +76,7 @@
     [Parameter]
     public List<DragDropElement> Definitions { get; set; } = new();
 
+    // Events 
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -89,6 +90,8 @@
 
         }
     }
+    
+    // Methods 
     private async Task AddRow(DragDropElement def)
     {
         DragDropElement dde = new();

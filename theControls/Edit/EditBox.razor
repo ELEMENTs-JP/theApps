@@ -41,7 +41,23 @@
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
                       IsEditable="@IsEditable">
+                <ItemTemplate Context="entry">
+                    <div class="row g-0">
 
+                        @if (Field.Typ == FieldTyp.Priority)
+                        {
+                            <div class="col-auto px-1">
+                                <SymbolIcon Symbol="@( Helper.IconByPriority(entry.Title))" 
+                                        Color="@( Helper.ColorByPriority(entry.Title) )" />
+                            </div>
+                        }
+
+                        <div class="col px-1">
+                            @entry.Title
+                        </div>
+                    </div>
+
+                </ItemTemplate>
             </DropDown>
         }
         else if (Field.Typ == FieldTyp.CheckBox)

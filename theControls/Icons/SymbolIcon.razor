@@ -309,38 +309,70 @@
     }
 
     @* --- Prioritäten --- *@
+    @if (Symbol == Icon.Prio_Highest)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+             fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="icon icon-tabler icons-tabler-outline icon-tabler-triangle">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0" />
+        </svg>
+    }
+    @if (Symbol == Icon.Prio_Higher)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+             fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="icon icon-tabler icons-tabler-outline icon-tabler-chevrons-up">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M7 11l5 -5l5 5" />
+            <path d="M7 17l5 -5l5 5" />
+        </svg>
+    }
     @if (Symbol == Icon.Prio_High)
     {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
-        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-        class="icon icon-tabler icons-tabler-outline icon-tabler-alert-square-rounded">
+             fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-up">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M12 3c7.2 0 9 1.8 9 9c0 7.2 -1.8 9 -9 9c-7.2 0 -9 -1.8 -9 -9c0 -7.2 1.8 -9 9 -9" />
-            <path d="M12 8v4" />
-            <path d="M12 16h.01" />
+            <path d="M6 15l6 -6l6 6" />
         </svg>
     }
     @if (Symbol == Icon.Prio_Middle)
     {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-            class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-left-right">
+             fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="icon icon-tabler icons-tabler-outline icon-tabler-equal">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M21 17l-18 0" />
-            <path d="M6 10l-3 -3l3 -3" />
-            <path d="M3 7l18 0" />
-            <path d="M18 20l3 -3l-3 -3" />
+            <path d="M5 10h14" />
+            <path d="M5 14h14" />
         </svg>
     }
     @if (Symbol == Icon.Prio_Low)
     {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-            class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-move-down">
+             fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M12 11v10" />
-            <path d="M9 18l3 3l3 -3" />
-            <path d="M10 5a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+            <path d="M6 9l6 6l6 -6" />
+        </svg>
+    }
+    @if (Symbol == Icon.Prio_Lower)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+             fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="icon icon-tabler icons-tabler-outline icon-tabler-chevrons-down">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M7 7l5 5l5 -5" />
+            <path d="M7 13l5 5l5 -5" />
+        </svg>
+    }
+    @if (Symbol == Icon.Prio_Lowest)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+             fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="icon icon-tabler icons-tabler-outline icon-tabler-circle">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
         </svg>
     }
 
@@ -373,6 +405,9 @@
     // https://undraw.co/search/empty
     [Parameter]
     public Icon Symbol { get; set; } = Icon.Empty;
+
+    [Parameter]
+    public string Color { get; set; } = "currentColor";
 
     [Parameter]
     public int MaxWidth { get; set; } = 320;

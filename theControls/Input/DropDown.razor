@@ -39,14 +39,14 @@
 
                 @foreach (IDTO item in Items)
                 {
-                    <div class="dropdown-item" @onclick="@(() => HandleInput(item))">
+                    <div class="m-1 hover pointer rounded-2 p-1" @onclick="@(() => HandleInput(item))">
                         @if (ItemTemplate is not null)
                         {
                             @ItemTemplate(item)
                         }
                         else
                         {
-                                    @item.Title
+                            @item.Title
                         }
                     </div>
                 }

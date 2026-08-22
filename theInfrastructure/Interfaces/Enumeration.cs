@@ -84,9 +84,13 @@ namespace theInfrastructure
         Controls,
 
         // Prioritäten 
+        Prio_Highest,
+        Prio_Higher,
         Prio_High,
         Prio_Middle,
         Prio_Low,
+        Prio_Lower,
+        Prio_Lowest,
     }
     public enum ValueBindingTyp
     {

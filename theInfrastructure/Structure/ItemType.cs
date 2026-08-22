@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authentication;
+using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Text;
@@ -16,9 +17,23 @@ namespace theInfrastructure
         ItemTypeTyp Typ { get; set; }
         bool InSubNavigation { get; set; }
 
+        // ItemType 
         public Task<List<IItemType>> GetItemTypes();
+
+        // Events 
+        Task<IDTO> OnCreateItem(IItemEventArgs args);
+        Task<IDTO> AfterCreateItem(IItemEventArgs args);
+        Task<IDTO> OnUpdateItem(IItemEventArgs args);
+        Task<IDTO> OnDeleteItem(IItemEventArgs args);
+        Task<IDTO> OnDragDropItem(IItemEventArgs args);
+
+        Task<(IDTO, IDTO)> OnAssignItem(IItemEventArgs args);
+        Task<(IDTO, IDTO)> OnRemoveItem(IItemEventArgs args);
+
+
+
+        // Fields 
         public Task<List<IField>> GetFields();
-    
         public Task<string> GetRelevantPropertyName(RelevantPropertyType typ = RelevantPropertyType.Date);
     }
     public class  BaseItemType : IItemType
@@ -34,24 +49,57 @@ namespace theInfrastructure
         
         }
 
+        // ItemTypes 
         public virtual async Task<List<IItemType>> GetItemTypes()
         {
             List<IItemType> ItemTypes = new();
 
             return ItemTypes;
         }
+
+        public virtual async Task<IDTO> OnCreateItem(IItemEventArgs args)
+        {
+            // return 
+            return args.Item;
+        }
+        public virtual async Task<IDTO> AfterCreateItem(IItemEventArgs args)
+        {
+            // return 
+            return args.Item;
+        }
+        public virtual async Task<IDTO> OnUpdateItem(IItemEventArgs args)
+        {
+            // return 
+            return args.Item;
+        }
+        public virtual async Task<IDTO> OnDeleteItem(IItemEventArgs args)
+        {
+            // return 
+            return args.Item;
+        }
+        public virtual async Task<IDTO> OnDragDropItem(IItemEventArgs args)
+        {
+            // return 
+            return args.Item;
+        }
+        public virtual async Task<(IDTO, IDTO)> OnAssignItem(IItemEventArgs args)
+        {
+            // return 
+            return (args.Item, args.Related);
+        }
+        public virtual async Task<(IDTO, IDTO)> OnRemoveItem(IItemEventArgs args)
+        {
+            // return 
+            return (args.Item, args.Related);
+        }
+
+        // Fields 
         public virtual async Task<List<IField>> GetFields()
         {
             List<IField> Fields = new();
 
             return Fields;
         }
-      
-        public override string ToString()
-        {
-            return ((string.IsNullOrEmpty(Title)) ? Name : Title);
-        }
-
         public async Task<string> GetRelevantPropertyName(RelevantPropertyType typ = RelevantPropertyType.Date)
         {
 
@@ -92,6 +140,54 @@ namespace theInfrastructure
             return propertyName;
         }
 
+        // To String 
+        public override string ToString()
+        {
+            return ((string.IsNullOrEmpty(Title)) ? Name : Title);
+        }
+    }
 
+
+
+    public interface IItemEventArgs
+    {
+        ISqlDatabaseService SqlService { get; set; }
+        ISecurityService SecurityService { get; set; }
+        IAppService AppService { get; set; }
+        IDTO Item { get; set; }
+        IDTO Related { get; set; }
+
+    }
+    public class ItemEventArgs : IItemEventArgs
+    {
+        public ISqlDatabaseService SqlService { get; set; }
+        public ISecurityService SecurityService { get; set; }
+        public IAppService AppService { get; set; }
+        public IDTO Item { get; set; }
+        public IDTO Related { get; set; }
+
+        public ItemEventArgs(IDTO main, IDTO related,
+                ISqlDatabaseService sql, ISecurityService auth, IAppService app)
+        {
+            SqlService = sql;
+            SecurityService = auth;
+            AppService = app;
+
+            Item = main;
+            Related = related;
+
+            if (SqlService == null)
+                throw new Exception("Sql Service");
+
+            if (SecurityService == null)
+                throw new Exception("Security Service");
+
+            if (AppService == null)
+                throw new Exception("App Service");
+
+            if (Item == null)
+                throw new Exception("Item");
+        }
+     
     }
 }

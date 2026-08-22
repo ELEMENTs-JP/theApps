@@ -27,8 +27,12 @@ namespace theInfrastructure
 
             // Fields 
             Fields = new List<IField>();
+            
             Fields.Add(new Field() { Title = "Group", Description="Legt die Gruppe der Navigation fest.", 
-                Typ = FieldTyp.Text, Column = "Group", CSS = " col-8 " });
+                Typ = FieldTyp.DropDown, Column = "Group", CSS = " col-8 ", 
+                Items = new() {  "Strategy", "Tactic", "Operation", "Cross", "Support" } });
+            
+            
             Fields.Add(new Field() { Title = "Aktiv", Description="Legt fest ob die App aktiv nutzbar ist.", 
                 Typ = FieldTyp.CheckBox, Column = "IsActive", CSS = " col-4 " });
             
