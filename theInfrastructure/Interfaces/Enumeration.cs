@@ -70,6 +70,7 @@ namespace theInfrastructure
         File,
         Corner,
         Password,
+        User,
         Home,
         Delete,
         Setting,

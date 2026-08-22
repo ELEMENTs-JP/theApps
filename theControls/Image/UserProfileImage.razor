@@ -1,0 +1,164 @@
+@inject ISqlDatabaseService sql
+@inject IAppService app
+@inject ISecurityService sec
+
+@if (sec.User != null)
+{
+    if (string.IsNullOrEmpty(this.Base64String))
+    {
+        <FileInputBox OnFileUploaded="@( async e => { await OnFileUpload(e); })" />
+    }
+    else
+    {
+        <div id="@( "user_image_relative_" + ID )" class="align-items-center p-2" style="@MinStyle">
+
+            <div class="@( UserImageCSS  + " row col-auto mx-auto " )"  style="@(UserImageStyle + " "
+                                       + BackgroundColor +
+                                       " background-image: url(" + this.Base64String + "); " )">
+
+                @if (string.IsNullOrEmpty(this.Base64String))
+                {
+                    <SymbolIcon Symbol="Icon.User" />
+                }
+            </div>
+            <div class="row g-0 col-12 p-2">
+                <h3 class="h3 text-center">@sec.User.Title</h3>
+            </div>
+        </div>
+    }
+
+}
+
+
+
+
+@code {
+
+
+
+    private string ID = "" + Guid.NewGuid();
+
+    // Image
+    private string Base64String { get; set; } = "";
+
+    [Parameter]
+    public string UserImageCSS { get; set; } = "  ";
+
+    [Parameter]
+    public string UserImageStyle { get; set; } = "height: 96px; width: 96px; border-radius: 50%; border: 3px solid #ffffff; background-size: cover; background-position: center center; background-repeat: no-repeat;";
+
+    [Parameter]
+    public string MinStyle { get; set; } = "min-height: 32px; min-width:32px;";
+
+    string BackgroundColor { get; set; } = "  ";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            await LoadUserImage();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+
+    private async Task LoadUserImage()
+    {
+        // Check
+        if (sec.User == null)
+            return;
+
+        // Create
+        IQueryResult result = await sql.GetRelatedItems(sec.User, "File", "UserImage");
+        if (result == null)
+            return;
+
+        IDTO? image = result.Items.FirstOrDefault();
+        if (image == null)
+            return;
+
+        await ToBase64String(image);
+    }
+    private async Task OnFileUpload(FileNotification fn)
+    {
+        // Check
+        if (sec.User == null)
+            return;
+
+        if (fn == null)
+            return;
+
+        // Allow File Uploads
+        if (sec.Configuration.AllowFileUploads == false)
+            return;
+
+        // Parameter
+        IQueryParameter qp = new QueryParameter();
+        qp.GUID = fn.FileGUID;
+        qp.MasterGUID = sql.MasterGUID;
+        qp.Title = fn.OriginalFileName;
+        qp.ItemType = "File";
+
+        // Create
+        IQueryResult result = await sql.Create(qp);
+        if (result == null)
+            return;
+
+        IQueryResult itemResult = await sql.GetItem(qp);
+        if (itemResult == null)
+            return;
+
+        IDTO? item = itemResult.Items.FirstOrDefault();
+        if (item == null)
+            return;
+
+        // Extension
+        item["FullFilePath"] = fn.FullFilePath;
+        item["FileExtension"] = fn.FileExtension;
+
+        // Size
+        item["FileSizeInByte"] = fn.FileSizeInByte.ToSecureString();
+        item["FileSizeInKB"] = fn.FileSizeInKB.ToSecureString();
+        item["FileSizeInMB"] = fn.FileSizeInMB.ToSecureString();
+
+        // Update
+        await sql.Update(item);
+
+        // Assign
+        await sql.Assign(sec.User, item, "UserImage");
+
+        // Refresh
+        await ToBase64String(item);
+    }
+
+    private async Task ToBase64String(IDTO image)
+    {
+        if (image == null)
+            return;
+
+        string FilePath = image["FullFilePath"].ToSecureString();
+        string ext = image["FileExtension"].ToSecureString();
+
+        if (System.IO.File.Exists(FilePath))
+        {
+            // Read
+            byte[] arr = System.IO.File.ReadAllBytes(FilePath);
+
+            string base64String = Convert.ToBase64String(arr, 0, arr.Length);
+
+            Base64String = "data:" + ext + ";base64," + base64String;
+        }
+
+        // Update
+        await InvokeAsync(StateHasChanged);
+    }
+}

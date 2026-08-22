@@ -4,6 +4,7 @@
     --tsp-header-height: 3.5rem;
     --tsp-footer-height: 1.5rem;
     --tsp-menu-height: 2.5rem;
+    --tsp-user-profile-height: 9.5rem;
 }
 
 
@@ -52,7 +53,7 @@ a, a:visited {
 
 .scrollable {
     display: block;
-    height: calc(100vh - var(--tsp-header-height) - var(--tsp-menu-height) - var(--tsp-footer-height));
+    height: calc(100vh - var(--tsp-header-height) - var(--tsp-user-profile-height) - var(--tsp-menu-height) - var(--tsp-footer-height));
     overflow-y: auto;
 }
 

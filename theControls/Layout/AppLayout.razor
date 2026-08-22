@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Routing
+@using theControls.Image
 
 @inject NavigationManager nm
 @inject ISecurityService sec
@@ -18,6 +19,9 @@
         <div class="frame">
             <div class="sidebar">
                 <Sidebar>
+                    <Profile>
+                        <UserProfileImage />
+                    </Profile>
                     <Navigation>
                         @Navigation
                     </Navigation>

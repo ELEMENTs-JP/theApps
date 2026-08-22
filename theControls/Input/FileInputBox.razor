@@ -11,7 +11,7 @@
 @inject ISecurityService sec
 
 <div class="pointer rounded hover overflow-hidden bg-surface text-white position-relative mx-2"
-       style="@( "border: 1px dashed #333 !important; " + InternalStyle )">
+     style="@( "border: 1px dashed #333 !important; " + InternalStyle )">
 
     @if (isLoading)
     {
@@ -26,16 +26,16 @@
     else
     {
         <div class="px-1 position-absolute top-50 start-50 translate-middle">
-            <SymbolIcon Symbol="Icon.File"/>
+            <SymbolIcon Symbol="Icon.File" />
         </div>
-        <InputFile @key="inputFileKey" id="@ID" multiple OnChange="@Upload"
-                   class="@( ControlCSS + " position-absolute top-50 start-50 translate-middle " )"
-                   style="@( ControlStyle + " opacity:0.0005; " + InternalStyle )" />
     }
+
+    <!-- InputFile darf während des Uploads NICHT aus dem DOM entfernt werden -->
+    <InputFile @key="inputFileKey" id="@ID" multiple OnChange="@Upload"
+               disabled="@isLoading"
+               class="@( ControlCSS + " position-absolute top-50 start-50 translate-middle " )"
+               style="@( ControlStyle + " opacity:0.0005; " + (isLoading ? "display:none;" : "") + InternalStyle )" />
 </div>
-
-
-
 
 @code {
 
@@ -44,17 +44,12 @@
 
     private int maxAllowedFiles = 5;
     private bool isLoading;
-    //private decimal progressPercent;
-
-
-  
 
     [Parameter]
     public EventCallback<FileNotification> OnFileUploaded { get; set; }
 
     [Parameter]
     public string FrameCSS { get; set; } = "";
-
 
     [Parameter]
     public string ControlCSS { get; set; } = "form-control";
@@ -76,162 +71,132 @@
     [Parameter]
     public IItemType ItemType { get; set; }
 
-    int MaxFileUploadSizeInMB = 10;
-
-    // Events
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
     }
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-
         await SetStyle();
     }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-
-        if (firstRender)
-        {
-            try
-            {
-
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
     }
 
-    // Method
     private async Task Upload(InputFileChangeEventArgs e)
     {
-        inputFileKey = Guid.NewGuid();
-
+        // Key darf ERST NACH dem Upload geändert werden!
         isLoading = true;
-
-        await InvokeAsync(StateHasChanged);
-
         Progress = 0;
+        await InvokeAsync(StateHasChanged);
 
         IReadOnlyList<IBrowserFile> files = e.GetMultipleFiles(maxAllowedFiles);
 
         string contentRootPath = env.ContentRootPath;
         string relativeSaveFilePath = Path.Combine(contentRootPath, loc.DefaultFilePath);
 
-        // check Directory
         if (!Directory.Exists(relativeSaveFilePath))
         {
-            // Create Directory
             Directory.CreateDirectory(relativeSaveFilePath);
         }
 
-        // check again
         if (!Directory.Exists(relativeSaveFilePath))
+        {
+            isLoading = false;
+            await InvokeAsync(StateHasChanged);
             return;
+        }
 
         foreach (IBrowserFile file in files)
         {
             try
             {
-                // Umrechnung von Bytes in Megabyte (ganzzahlig)
-                int sizeInMb = (int)(file.Size / (1024 * 1024));
-
-                // Datei ist größer als MAX Filesize 
-                if (sizeInMb > sec.Configuration.MaxFileSizeInMB)
+                long maxAllowedBytes = (long)sec.Configuration.MaxFileSizeInMB * 1024 * 1024;
+                if (file.Size > maxAllowedBytes)
+                {
                     continue;
-                
-                // GUID 
-                Guid itemGUID = Guid.NewGuid();
+                }
 
-                // Voller Dateipfad 
-                var extension = Helper.SplitGetLast(file.Name);
-                var fullFilePath = Path.Combine(relativeSaveFilePath, itemGUID.ToString() + "." + extension);
+                Guid itemGUID = Guid.NewGuid();
+                string extension = Helper.SplitGetLast(file.Name);
+                string fullFilePath = Path.Combine(relativeSaveFilePath, $"{itemGUID}.{extension}");
 
                 try
                 {
-                    await using FileStream writeStream = new(fullFilePath, FileMode.Create);
-                    using var readStream = file.OpenReadStream(Helper.MaxFileSize());
-                    var bytesRead = 0;
-                    var totalRead = 0;
-                    var buffer = new byte[1024 * 10];
+                    byte[] buffer = new byte[1024 * 80];
+                    int bytesRead = 0;
+                    long totalRead = 0;
+                    int lastProgress = -1;
 
-                    // https://docs.microsoft.com/de-de/aspnet/core/blazor/file-uploads?view=aspnetcore-6.0&pivots=server
-                    while ((bytesRead = await readStream.ReadAsync(buffer)) != 0)
+                    await using FileStream writeStream = new(
+                        fullFilePath,
+                        FileMode.Create,
+                        FileAccess.Write,
+                        FileShare.None,
+                        bufferSize: 8192,
+                        useAsync: true);
+
+                    using Stream readStream = file.OpenReadStream(maxAllowedSize: Helper.MaxFileSize());
+
+                    while ((bytesRead = await readStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                     {
-                        // Write to HD 
-                        await writeStream.WriteAsync(buffer, 0, bytesRead);
+                        await writeStream.WriteAsync(buffer.AsMemory(0, bytesRead));
 
-                        // Math stuff 
                         totalRead += bytesRead;
-                        decimal val = Decimal.Divide(totalRead, file.Size);
-                        val = val * 100;
-                        Progress = val.ToSecureInt();
+                        int currentProgress = file.Size > 0 ? (int)((double)totalRead / file.Size * 100) : 0;
 
-                        // Update 
-                        await InvokeAsync(StateHasChanged);
+                        if (currentProgress != lastProgress)
+                        {
+                            Progress = currentProgress;
+                            lastProgress = currentProgress;
+                            await InvokeAsync(StateHasChanged);
+                        }
                     }
 
-                    // writeStream.Close();
-                    // writeStream.Dispose();
-                    // await writeStream.DisposeAsync();
-
-                    // readStream.Close();
-                    // readStream.Dispose();
-                    // await readStream.DisposeAsync();
+                    await writeStream.FlushAsync();
                 }
                 catch (Exception exInner)
                 {
-                    System.Diagnostics.Debug.WriteLine("Fail Upload Image: " + exInner.Message);
+                    System.Diagnostics.Debug.WriteLine("Fail Upload Image: " + exInner.ToString());
+                    continue;
                 }
 
-                // Notification
-                FileNotification token = new FileNotification();
-                token.FileGUID = itemGUID;
-                token.FullFilePath = fullFilePath;
-                token.OriginalFileName = file.Name;
-                token.FileSizeInByte = file.Size;
-                token.FileSizeInKB = file.Size / 1024m;
-                token.FileSizeInMB = file.Size / (1024m * 1024m);
-                token.FileExtension = file.Name.SplitGetLast();
+                FileNotification token = new FileNotification
+                {
+                    FileGUID = itemGUID,
+                    FullFilePath = fullFilePath,
+                    OriginalFileName = file.Name,
+                    FileSizeInByte = file.Size,
+                    FileSizeInKB = file.Size / 1024m,
+                    FileSizeInMB = file.Size / (1024m * 1024m),
+                    FileExtension = file.Name.SplitGetLast()
+                };
 
                 await OnFileUploaded.InvokeAsync(token);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("FAIL: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine("FAIL: " + ex.ToString());
             }
         }
 
-        await InvokeAsync(StateHasChanged);
         isLoading = false;
-
-        await InvokeAsync(StateHasChanged);
-        // Nach dem Upload das InputFile neu rendern
+        // Key nach erfolgreichem Stream zurücksetzen, um das Input-Element für weitere Uploads zu leeren
         inputFileKey = Guid.NewGuid();
         await InvokeAsync(StateHasChanged);
     }
 
-    // Helper
     private async Task SetStyle()
     {
         InternalStyle = " width:36px !important; height:28px !important; ";
         await Task.CompletedTask;
     }
 
-    // Notification
-
     public void Dispose()
     {
-        try
-        {
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine("FAIL Dispose: " + ex.Message);
-        }
     }
 }

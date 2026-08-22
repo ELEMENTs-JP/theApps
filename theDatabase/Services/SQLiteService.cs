@@ -557,10 +557,8 @@ namespace theDatabase
 
             return info;
         }
-        public async Task<IQueryResult> Assign(IDTO parent, IDTO child)
+        public async Task<IQueryResult> Assign(IDTO parent, IDTO child, string associationType = "Association")
         {
-            string associationType = "Association";
-
             IQueryResult info = new QueryResult { Status = "OK", Message = "" };
 
             try

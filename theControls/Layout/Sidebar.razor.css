@@ -33,7 +33,8 @@
 
     .scrollable {
         display: block;
-        height: calc(100vh - var(--tsp-header-height) - var(--tsp-footer-height));
+        
+        height: calc(100vh - var(--tsp-header-height) - var(--tsp-user-profile-height) - var(--tsp-footer-height));
         overflow-y: auto;
     }
     .footer {

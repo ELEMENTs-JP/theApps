@@ -70,7 +70,7 @@ namespace theInfrastructure
         Task<IQueryResult> Update(IDTO dto);
         Task<IQueryResult> ChangeItemType(IDTO dto, string newItemType);
 
-        Task<IQueryResult> Assign(IDTO parent, IDTO child);
+        Task<IQueryResult> Assign(IDTO parent, IDTO child, string associationTyp = "Association");
         Task<IQueryResult> Remove(IDTO parent, IDTO child);
         Task<IQueryResult> GetRelatedItems(IDTO dto, string ItemType, string Typ = "Association");
 
