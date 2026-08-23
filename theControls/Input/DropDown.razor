@@ -1,4 +1,5 @@
 ﻿@inject ISqlDatabaseService sql
+@inject ILocalizationService loc
 @implements IAsyncDisposable
 
 @if (!string.IsNullOrEmpty(this.Label))
@@ -33,11 +34,20 @@
                 </div>
             </div>
 
+            @* Es geht um folgende TextBox *@
+            <div class="p-2" @onclick:stopPropagation="true">
+                <input type="text"
+                       class="form-control form-control-sm"
+                       placeholder="@loc.GetLabel("Suchen...", "find...")"
+                       @bind="searchTerm"
+                       @bind:event="oninput" />
+            </div>
+
             <div class="dropdown-divider"></div>
       
             <div class="@( " overflow-y-auto " )" style="@( MaxHeightCSS )">
 
-                @foreach (IDTO item in Items)
+                @foreach (IDTO item in GetFilteredItems())
                 {
                     <div class="m-1 hover pointer rounded-2 p-1" @onclick="@(() => HandleInput(item))">
                         @if (ItemTemplate is not null)
@@ -180,6 +190,19 @@
         // await InvokeAsync(StateHasChanged);
     }
 
+    private string searchTerm = string.Empty;
+
+    private IEnumerable<IDTO> GetFilteredItems()
+    {
+        if (Items is null)
+            return Enumerable.Empty<IDTO>();
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return Items;
+
+        return Items.Where(x => x.Title != null &&
+                                x.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+    }
 
     private string InputName =>
     !string.IsNullOrWhiteSpace(Name)
