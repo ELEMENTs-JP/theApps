@@ -16,6 +16,46 @@ namespace theInfrastructure
     
     public static class Helper
     {
+        public static bool IsValidImageExtension(string ext)
+        {
+            if (string.IsNullOrWhiteSpace(ext))
+                return false;
+
+            ReadOnlySpan<char> span = ext.AsSpan().TrimStart('.');
+
+            return span.Equals("jpg", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("jpeg", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("png", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("gif", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("webp", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("svg", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("bmp", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("ico", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("avif", StringComparison.OrdinalIgnoreCase);
+        }
+        public static async Task<string> ToBase64String(IDTO image)
+        {
+            string Base64String = string.Empty;
+            if (image == null)
+                return Base64String;
+
+            string FilePath = image["FullFilePath"].ToSecureString();
+            string ext = image["FileExtension"].ToSecureString();
+
+            if (System.IO.File.Exists(FilePath))
+            {
+                // Read
+                byte[] arr = System.IO.File.ReadAllBytes(FilePath);
+
+                string base64String = Convert.ToBase64String(arr, 0, arr.Length);
+
+                Base64String = "data:" + ext + ";base64," + base64String;
+            }
+
+            return Base64String;
+            
+        }
+
         // Reflection 
         public static Type SpecificType(string assemblyName = "", string className = "")
         {
@@ -160,52 +200,6 @@ namespace theInfrastructure
 
             return result;
         }
-        //public static IList<T> FromTo<T>(this IList<T> list, int first, int last)
-        //{
-        //    IList<T> theNewList = new List<T>();
-
-        //    try
-        //    {
-        //        if (first == -1 || last == -1)
-        //            return theNewList;
-
-        //        // BIGGER 
-        //        if (first > last)
-        //        {
-        //            return theNewList.ToList();
-        //        }
-        //        // SMALLER 
-        //        if (first < 0 || last < 0)
-        //        {
-        //            return theNewList.ToList();
-        //        }
-
-        //        // CHECK 
-        //        if (first >= list.Count())
-        //        {
-        //            return theNewList;
-        //            // first = list.Count() - 1;
-        //        }
-        //        if (last >= list.Count())
-        //        {
-        //            last = list.Count() - 1;
-        //        }
-
-        //        if (first == -1 || last == -1)
-        //            return theNewList;
-
-        //        for (int i = first; i <= last; i++)
-        //        {
-        //            theNewList.Add(list[i]);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-
-        //    return theNewList.ToList();
-        //}
 
         public static Icon IconByPriority(string Prio)
         {
@@ -437,7 +431,7 @@ namespace theInfrastructure
             }
             if (typ == ItemTypeTyp.File)
             {
-                return "/Items/" + ItemType;
+                return "/File/" + ItemType;
             }
             if (typ == ItemTypeTyp.Appointment)
             {

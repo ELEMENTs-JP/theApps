@@ -86,7 +86,10 @@
         if (image == null)
             return;
 
-        await ToBase64String(image);
+        this.Base64String = await Helper.ToBase64String(image);
+
+        // Update
+        await InvokeAsync(StateHasChanged);
     }
     private async Task OnFileUpload(FileNotification fn)
     {
@@ -137,28 +140,11 @@
         await sql.Assign(sec.User, item, "UserImage");
 
         // Refresh
-        await ToBase64String(item);
-    }
-
-    private async Task ToBase64String(IDTO image)
-    {
-        if (image == null)
-            return;
-
-        string FilePath = image["FullFilePath"].ToSecureString();
-        string ext = image["FileExtension"].ToSecureString();
-
-        if (System.IO.File.Exists(FilePath))
-        {
-            // Read
-            byte[] arr = System.IO.File.ReadAllBytes(FilePath);
-
-            string base64String = Convert.ToBase64String(arr, 0, arr.Length);
-
-            Base64String = "data:" + ext + ";base64," + base64String;
-        }
+        this.Base64String = await Helper.ToBase64String(item);
 
         // Update
         await InvokeAsync(StateHasChanged);
     }
+
+   
 }

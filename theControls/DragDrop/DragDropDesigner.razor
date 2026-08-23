@@ -37,7 +37,7 @@
             @foreach (DragDropElement def in Definitions)
             {
                 <div class="col-auto p-1">
-                    <DragDropDefinition Item="@def" OnClick="@( async e => { await AddRow(e); })" />
+                    <DragDropDefinition @key="def.ID" Item="@def" OnClick="@( async e => { await AddRow(e); })" />
                 </div>
             }
         </div>

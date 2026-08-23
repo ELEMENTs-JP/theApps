@@ -2,7 +2,15 @@
 
 
 
+window.setFocusById = function (id)
+{
+    var element = document.getElementById(id);
 
+    if (element)
+    {
+        element.focus();
+    }
+};
 
 function toggleClass(className, force)
 {
@@ -13,8 +21,23 @@ function toggleClass(className, force)
     }
 }
 
+// function setBodyBackground(url) {
+//     document.body.style.backgroundImage = "url('" + url + "')";
+// }
+
 function setBodyBackground(url) {
-    document.body.style.backgroundImage = "url('" + url + "')";
+    // 1. Ausfaden
+    document.body.style.transition = "opacity 3s ease";
+    document.body.style.opacity = "0";
+
+    const img = new Image();
+    img.src = url;
+
+    // 2. Warten bis Bild geladen ist, dann Bild tauschen & Einfaden
+    img.onload = function () {
+        document.body.style.backgroundImage = "url('" + url + "')";
+        document.body.style.opacity = "1";
+    };
 }
 
 function InitHtmlEditor() {

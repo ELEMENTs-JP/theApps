@@ -21,7 +21,7 @@
 <PageTitle>the App | Einstellungen</PageTitle>
 
 
-<div class="container-flex">
+<div class="container">
 
     @if (loc.Configuration != null)
     {
@@ -29,12 +29,17 @@
             <HeaderContent>
                 <TabsItem ID="@( ID + "1")" Title="Einstellungen" IsActive="true" Layout="TabsLayout.Buttons" />
                 <TabsItem ID="@( ID + "2")" Title="Datenbank" Layout="TabsLayout.Buttons" />
-                <TabsItem ID="@( ID + "3")" Title="Features" Layout="TabsLayout.Buttons" />
+                <TabsItem ID="@( ID + "3")" Title="Dateien" Layout="TabsLayout.Buttons" />
+                <TabsItem ID="@( ID + "4")" Title="Features" Layout="TabsLayout.Buttons" />
+                <TabsItem ID="@( ID + "5")" Title="Sicherheit" Layout="TabsLayout.Buttons" />
             </HeaderContent>
             <ChildContent>
                 <TabsPanel ID="@( ID + "1")" IsActive="true">
 
-                    <div class="row overflow-y-auto">
+                    <div class="border-bottom pb-2 mb-2">
+                        <h1 class="h1 w-100">Allgemeine Einstellungen</h1>
+                    </div>
+                    <div class="row">
                         <div class="col-12 col-md-4 col-lg-4 px-2">
                             <TextBox Label="Titel" Value="@sec.Configuration.Title"
                                      ValueChanged="@(e =>
@@ -43,21 +48,7 @@
                                      sec.Configuration.Save();
                                  })" />
 
-                            <div class="border-bottom my-2"></div>
-                            <CheckBox Label="Datei Uploads" Value="@sec.Configuration.AllowFileUploads.ToSecureString()"
-                                      ValueChanged="@(e =>
-                                  {
-                                      sec.Configuration.AllowFileUploads = e.ToSecureBool();
-                                      sec.Configuration.Save();
-                                  })" />
-                            <div class="my-2"></div>
-                            <TextBox Label="Max. Dateigröße" Type="FieldTyp.Integer"
-                                     Value="@sec.Configuration.MaxFileSizeInMB.ToSecureString()"
-                                     ValueChanged="@(e =>
-                                 {
-                                     sec.Configuration.MaxFileSizeInMB = e.ToSecureInt();
-                                     sec.Configuration.Save();
-                                 })" />
+                          
 
                         </div>
                         <div class="col-12 col-md-4 col-lg-4 px-2 border-start border-end">
@@ -103,11 +94,91 @@
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "2")">
+                    <div class="border-bottom pb-2 mb-2">
+                        <h1 class="h1 w-100">Allgemeine Einstellungen</h1>
+                    </div>
                     <DatabaseSetup />
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "3")">
+
+                    <div class="border-bottom pb-2 mb-2">
+                        <h1 class="h1 w-100">Speicher und Dateien</h1>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-12">
+
+                            <CheckBox Label="Datei Uploads" Value="@sec.Configuration.AllowFileUploads.ToSecureString()"
+                                      ValueChanged="@(e =>
+                                                          {
+                                                              sec.Configuration.AllowFileUploads = e.ToSecureBool();
+                                                              sec.Configuration.Save();
+                                                          })" />
+                            <div class="my-2"></div>
+                            <TextBox Label="Max. Dateigröße" Type="FieldTyp.Integer"
+                                     Value="@sec.Configuration.MaxFileSizeInMB.ToSecureString()"
+                                     ValueChanged="@(e =>
+                                                         {
+                                                             sec.Configuration.MaxFileSizeInMB = e.ToSecureInt();
+                                                             sec.Configuration.Save();
+                                                         })" />
+                        </div>
+
+
+                    </div>
+                </TabsPanel>
+
+                <TabsPanel ID="@( ID + "4")">
+
+                    <div class="border-bottom pb-2 mb-2">
+                        <h1 class="h1 w-100">Allgemeine Einstellungen</h1>
+                    </div>
+
                     <FeaturesComp />
+
+                </TabsPanel>
+
+                <TabsPanel ID="@( ID + "5")">
+
+                    <div class="border-bottom pb-2 mb-2">
+                        <h1 class="h1 w-100">Sicherheit</h1>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="border-bottom pb-2 mb-2">
+                                <h3 class="h3 w-100">Anmeldung</h3>
+                            </div>
+
+                            <CheckBox Label="Fokus auf Username" Value="@sec.Configuration.FocusOnLogin.ToSecureString()"
+                                      ValueChanged="@(e => { sec.Configuration.FocusOnLogin = e.ToSecureBool();
+                                                              sec.Configuration.Save(); })" />
+                            <div class="border-bottom my-3"></div>
+                        </div>
+
+                        <div class="col-4 border-start border-end">
+                            <div class="border-bottom pb-2 mb-2">
+                                <h3 class="h3 w-100">Registrierung</h3>
+                            </div>
+
+                            <CheckBox Label="Fokus auf Username" Value="@sec.Configuration.FocusOnRegister.ToSecureString()"
+                                      ValueChanged="@(e =>
+                                  {
+                                      sec.Configuration.FocusOnRegister = e.ToSecureBool();
+                                      sec.Configuration.Save();
+                                  })" />
+                            <div class="border-bottom my-3"></div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="border-bottom pb-2 mb-2">
+                                <h3 class="h3 w-100">Passwort</h3>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </TabsPanel>
             </ChildContent>
         </TabsFrame>

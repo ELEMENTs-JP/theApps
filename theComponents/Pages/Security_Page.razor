@@ -1,0 +1,50 @@
+﻿@page "/Security/{Typ}"
+@layout EmptyLayout
+
+@using theInfrastructure
+
+@inject ISqlDatabaseService sql
+
+<PageTitle>the App | Anmeldung und Registrierung</PageTitle>
+
+<div class="container-flex">
+
+    @if (Typ.ToLowerInvariant() == "Login".ToLowerInvariant())
+    {
+        <LoginComp />
+    }
+    @if (Typ.ToLowerInvariant() == "Register".ToLowerInvariant())
+    {
+        <RegisterComp />
+    }
+    @if (Typ.ToLowerInvariant() == "RequestNewPwd".ToLowerInvariant())
+    {
+        <RequestNewPwdComp />    
+    }
+    @if (Typ.ToLowerInvariant() == "RequestAccess".ToLowerInvariant())
+    {
+        <RequestAccessComp />    
+    }
+    @if (Typ.ToLowerInvariant() == "SetNewPwd".ToLowerInvariant())
+    {
+        <SetNewPwdComp />
+    }
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public string Typ { get; set; } = string.Empty;
+
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        string val = Typ;
+    }
+
+}

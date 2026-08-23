@@ -1,5 +1,6 @@
 ﻿@using theComponents.Add
 @using theControls.Add
+@using theControls.Files
 @using theControls.Input
 @using theControls.Layout
 @using theControls.Tables
@@ -27,9 +28,18 @@
             }
         </Related>
         <Content>
-            <DataTable ItemType="@this.ItemType">
 
-            </DataTable>
+            @if (this.ItemType.Typ == ItemTypeTyp.Item)
+            {
+                <DataTable ItemType="@this.ItemType">
+
+                </DataTable>
+            }
+            @if (this.ItemType.Typ == ItemTypeTyp.File)
+            {
+                <FileList ItemType="@ItemType" />
+            }
+           
         </Content>
     </Frame>
 }

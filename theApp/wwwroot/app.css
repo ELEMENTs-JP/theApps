@@ -23,11 +23,13 @@ html, body {
 .blur {
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    transition: backdrop-filter 200ms ease-in-out;
 }
 .glass {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px); 
+    -webkit-backdrop-filter: blur(20px);
+    transition: backdrop-filter 200ms ease-in-out;
 }
 a, a:visited {
     color: #ffffff;

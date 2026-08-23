@@ -26,7 +26,7 @@
     else
     {
         <div class="px-1 position-absolute top-50 start-50 translate-middle">
-            <SymbolIcon Symbol="Icon.File" />
+            <SymbolIcon Symbol="Icon.File" Width="@Width" Height="@Height" />
         </div>
     }
 
@@ -39,6 +39,13 @@
 
 @code {
 
+    public enum FileInputSizeMode
+    {
+        NULL = 0,
+        Fixed = 1,
+        Maximized = 2,
+    }
+
     private string ID = "file_input_" + Guid.NewGuid();
     private Guid inputFileKey = Guid.NewGuid();
 
@@ -47,6 +54,9 @@
 
     [Parameter]
     public EventCallback<FileNotification> OnFileUploaded { get; set; }
+
+    [Parameter]
+    public FileInputSizeMode SizeMode { get; set; } = FileInputSizeMode.Fixed;
 
     [Parameter]
     public string FrameCSS { get; set; } = "";
@@ -67,6 +77,12 @@
     public string ControlStyle { get; set; } = "height: 36px; ";
 
     private string InternalStyle { get; set; } = " width:36px !important; height:28px !important; ";
+
+    [Parameter]
+    public int Width { get; set; } = 24;
+
+    [Parameter]
+    public int Height { get; set; } = 24;
 
     [Parameter]
     public IItemType ItemType { get; set; }
@@ -192,7 +208,23 @@
 
     private async Task SetStyle()
     {
-        InternalStyle = " width:36px !important; height:28px !important; ";
+        if (SizeMode == FileInputSizeMode.Fixed)
+        {
+            ControlStyle = "height: 36px; ";
+            InternalStyle = " width:36px !important; height:28px !important; ";
+        }
+        else if (SizeMode == FileInputSizeMode.NULL)
+        {
+            ControlStyle = "height: 36px; ";
+            InternalStyle = " width:36px !important; height:28px !important; ";
+        }
+        else if (SizeMode == FileInputSizeMode.Maximized)
+        {
+            // Dehnt das Control vollständig auf die Spaltenbreite/Höhe des Eltern-Containers aus
+            ControlStyle = "width: 100%; height: 100%; top: 0; left: 0; transform: none;";
+            InternalStyle = "width: 100% !important; height: 100% !important; min-height: 36px;";
+        }
+
         await Task.CompletedTask;
     }
 

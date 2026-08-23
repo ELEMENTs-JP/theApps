@@ -6,10 +6,20 @@
 
 @if (sec.Configuration.AllowFileUploads)
 {
-    <FileInputBox OnFileUploaded="OnFileUpload" />
+    <FileInputBox OnFileUploaded="OnFileUpload" 
+                  SizeMode="@SizeMode" Width="@Width" Height="@Height" />
 }
 
 @code {
+
+    [Parameter]
+    public FileInputBox.FileInputSizeMode SizeMode { get; set; } = FileInputBox.FileInputSizeMode.Fixed;
+
+    [Parameter]
+    public int Width { get; set; } = 24;
+
+    [Parameter]
+    public int Height { get; set; } = 24;
 
     private async Task OnFileUpload(FileNotification fn)
     {

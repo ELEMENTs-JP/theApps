@@ -1,5 +1,6 @@
 ﻿@using theControls.Icons
 @inject ILocalizationService loc
+@inject IJSRuntime js
 @using System.Globalization
 
 @if (!string.IsNullOrEmpty(this.Label))
@@ -12,10 +13,7 @@
     @if (this.Type == FieldTyp.Money)
     {
         <span class="input-group-text">
-            @if (this.Type == FieldTyp.Money)
-            {
-                @loc.Configuration.Currency
-            }
+            @loc.Configuration.Currency
         </span>    
     }
 
@@ -32,6 +30,13 @@
            autocomplete="@GetAutocomplete()"
            @oninput="HandleInput" />
 
+    @if (!string.IsNullOrEmpty(this.Extension))
+    {
+        <span class="input-group-text me-3">
+            @this.Extension.ToSecureString()
+        </span>    
+
+    }
     @if (Inlay != null && IsEditable == true)
     {
         <div class="position-absolute top-50 end-0 translate-middle-y me-1">
@@ -94,7 +99,13 @@
     public string Value { get; set; } = string.Empty;
 
     [Parameter]
+    public string Extension { get; set; } = string.Empty;
+
+    [Parameter]
     public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool FocusOnInit { get; set; } = false;
 
     [Parameter]
     public FieldTyp Type { get; set; } = FieldTyp.Text;
@@ -137,12 +148,20 @@
 
         if (this.Type == FieldTyp.Money)
         {
-        
+
         }
     }
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        return base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            if (FocusOnInit)
+            {
+                await js.InvokeVoidAsync("setFocusById", this.Id);
+            }
+        }
     }
 
     private async Task HandleInput(ChangeEventArgs e)

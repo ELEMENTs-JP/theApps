@@ -1,22 +1,23 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @inherits LayoutComponentBase
+@inject ILocalizationService loc
+@inject ISecurityService sec
+@inject IJSRuntime js
 
 <PageTitle>the App</PageTitle>
 
 <div class="page">
-
-
     <main>
         <div class="header px-4 glass">
             <AuthorizeView>
                 <Authorized>
                     <span class="me-2">Hallo, @context.User.Identity?.Name!</span>
-                    <a href="/api/auth/logout" class="btn btn-sm btn-outline-danger">Abmelden</a>
+                    <a href="/api/auth/logout" class="btn btn-sm btn-outline-danger">@loc.GetLabel("Abmelden", "Logout")</a>
                 </Authorized>
                 <NotAuthorized>
-                    <a href="/login" class="btn btn-sm btn-primary">Login</a>
+                    <a href="/Security/Login" class="btn btn-sm btn-primary">@loc.GetLabel("Anmeldung", "Login")</a>
                     <div class="mx-2"></div>
-                    <a href="/register" class="btn btn-sm btn-primary">Registrierung</a>
+                    <a href="/Security/Register" class="btn btn-sm btn-primary">@loc.GetLabel("Registrierung", "Register")</a>
                 </NotAuthorized>
             </AuthorizeView>
         </div>
@@ -26,3 +27,32 @@
         </article>
     </main>
 </div>
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            // Default == Mandant
+            string wallpaper = sec.Configuration.Background;
+
+            if (sec.User != null)
+            {
+                string userBG = sec.User["Wallpaper"].ToSecureString();
+                if (!string.IsNullOrEmpty(userBG))
+                {
+                    wallpaper = userBG;
+                }
+            }
+
+            await js.InvokeVoidAsync("setBodyBackground", wallpaper);
+
+            bool IsClassActive = sec.Configuration.Blur.ToSecureBool();
+            await js.InvokeVoidAsync("toggleClass", "blur", IsClassActive);
+
+        }
+    }
+}

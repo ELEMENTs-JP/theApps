@@ -53,6 +53,11 @@
     }
 
 
+.form-control:focus {
+    box-shadow:none !important;
+    border-color:#fff;
+}
+
 .input-group {
     border: none !important;
     box-shadow: none !important;

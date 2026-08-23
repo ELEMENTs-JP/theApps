@@ -136,7 +136,7 @@
             await Context.Delete(Context.Item);
             info += "Datensatz wurde gelöscht";
 
-            nm.NavToLibrary(ItemType.Name);
+            nm.NavToLibrary(ItemType.Name, ItemType.Typ);
 
             msg.Publish("", BusAction.Info, info);
         }

@@ -1,0 +1,84 @@
+﻿@using theControls.Icons
+
+@inherits BaseRow
+
+@if (Context != null)
+{
+
+    <div class="hover pointer rounded-2 p-2 m-1" @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
+
+        @if (string.IsNullOrEmpty(this.Base64String))
+        {
+            <SymbolIcon Symbol="Icon.Empty" />
+        }
+        else
+        {
+        @* w-100 sorgt dafür, dass sich das Bild voll an den äußeren Container anpasst *@
+        <div class="@( UserImageCSS + " w-100 mx-auto " )"
+             style="@(UserImageStyle + " "
+                        + BackgroundColor +
+                        " background-image: url(" + this.Base64String + "); " )"></div>
+        }
+
+        <div class="row g-0 p-1">
+            <div class="border-top">
+                <div class="p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
+            </div>
+            <div class="col p-1 fw-bold" title="@Item.ItemType">
+                @(Item.Title.ToSecureString())
+            </div>
+
+            @if (IsRelated)
+            {
+                <div class="col-auto p-1">
+                    <SymbolIcon Symbol="Icon.Disconnect" CSS="pointer hover"
+                                OnClick="@( async  e => { await Disconnect(); })" />
+                </div>
+            }
+        </div>
+
+    </div>
+
+}
+
+@code {
+
+    // Image
+    private string Base64String { get; set; } = "";
+
+    public string UserImageCSS { get; set; } = "  ";
+    public string UserImageStyle { get; set; } =
+    "aspect-ratio: 1 / 1; " +
+    "max-width: 100%; " +
+    // "border-radius: 50%; " +
+    "border: 3px solid #ffffff; " +
+    "background-size: cover; " +
+    "background-position: center center; " +
+    "background-repeat: no-repeat;";
+    public string MinStyle { get; set; } = "min-height: 32px; min-width:32px;";
+
+    string BackgroundColor { get; set; } = "  ";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+
+        string ext = Item["FileExtension"].ToSecureString();
+        this.Base64String = string.Empty;
+        if (Helper.IsValidImageExtension(ext) == true)
+        {
+            this.Base64String = await Helper.ToBase64String(this.Item);
+        }
+
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+}

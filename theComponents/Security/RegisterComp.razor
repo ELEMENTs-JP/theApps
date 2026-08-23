@@ -1,19 +1,20 @@
-﻿@page "/Register"
-@using Microsoft.AspNetCore.Components.Forms
+﻿@using Microsoft.AspNetCore.Components.Forms
 @using theControls.Layout
-@layout EmptyLayout
 @inject NavigationManager nm
+@inject ISecurityService sec
+@inject IJSRuntime js
 
 
 <div class="container mt-5">
     <div class="card mx-auto" style="max-width: 400px;">
         <div class="card-body">
-            <h4>Registrierung</h4>
+            <h2 class="h2 text-center fw-bold">Registrierung</h2>
+            <div class="hr-text">Geschäftsaccount</div>
             <form action="/api/auth/register" method="post">
                 <AntiforgeryToken />
                 <div class="mb-3">
                     <label>Benutzername</label>
-                    <input type="text" name="username" class="form-control" />
+                    <input id="input_txt_username" type="text" name="username" class="form-control" />
                 </div>
                 <div class="mb-3">
                     <label>Passwort</label>
@@ -33,5 +34,16 @@
 
 
 @code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
 
+        if (firstRender)
+        {
+            if (sec.Configuration.FocusOnLogin)
+            {
+                await js.InvokeVoidAsync("setFocusById", "input_txt_username");
+            }
+        }
+    }
 }

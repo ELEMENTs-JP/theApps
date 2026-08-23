@@ -1,25 +1,27 @@
-﻿@page "/Login"
-@using Microsoft.AspNetCore.Components.Forms
+﻿@using Microsoft.AspNetCore.Components.Forms
 @using theControls.Input
 @using theControls.Layout
-@layout EmptyLayout
 @inject NavigationManager nm
+@inject IJSRuntime js
+@inject ISecurityService sec
 
 
 <div class="container mt-5">
     <div class="card mx-auto" style="max-width: 400px;">
         <div class="card-body">
+
             <h2 class="h2 text-center fw-bold">Anmeldung</h2>
             <div class="hr-text">Geschäftsaccount</div>
+
             <form action="/api/auth/login" method="post">
                 <AntiforgeryToken />
                 <div class="mb-3">
                     <label class="form-label">Mail</label>
-                    <input type="text" name="username" class="form-control" />
+                    <input id="input_txt_username" type="text" name="username" class="form-control" />
                 </div>
                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                     <label class="form-label">Passwort</label>
-                    <a href="/requestnewpwd" class="ms-auto">neues Passwort anfordern</a>
+                    <a href="/Security/requestnewpwd" class="ms-auto">neues Passwort anfordern</a>
                     <input type="password" name="password" class="form-control w-100" />
                 </div>
 
@@ -51,5 +53,18 @@
 
 
 @code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            if (sec.Configuration.FocusOnLogin)
+            {
+                await js.InvokeVoidAsync("setFocusById", "input_txt_username");
+            }
+        }
+    }
 
 }

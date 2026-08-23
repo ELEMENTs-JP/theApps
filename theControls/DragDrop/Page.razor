@@ -152,15 +152,15 @@
             ControlDefinitions.Add(new DragDropElement() { Name = comp.Name, Control = comp });
         }
 
-        // Reload Rows
-        await LoadRows();
-        await LoadControls();
-
         msg.OnMessage += OnMessageDone;
     }
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
+
+        // Reload Rows
+        await LoadRows();
+        await LoadControls();
     }
 
     public async void OnMessageDone(AppMessage msg)

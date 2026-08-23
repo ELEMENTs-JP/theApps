@@ -2,6 +2,7 @@
 @using theComponents.Items
 @using theControls.Add
 @using theControls.Calendar
+@using theControls.Files
 @using theControls.Layout
 @using theControls.Tables
 @using theDatabase
@@ -25,6 +26,10 @@
     @if (Typ == "Calendar")
     {
         <CalendarComp ItemType="@ItemType" />
+    }
+    @if (Typ == "File")
+    {
+        <ItemsComp ItemType="@ItemType" />
     }
 
 

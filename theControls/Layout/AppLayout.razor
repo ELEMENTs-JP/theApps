@@ -69,8 +69,12 @@
             </div>
 
             <div class="hover pointer rounded-2 p-2 my-3" 
-                @onclick="@( e => { nm.NavigateTo("/Login", false); })">
+                @onclick="@( e => { nm.NavigateTo("/Security/Login", false); })">
                 go to Login...
+            </div>
+            <div class="hover pointer rounded-2 p-2 my-3"
+                 @onclick="@( e => { nm.NavigateTo("/Security/Register", false); })">
+                go to Registration...
             </div>
             <div class="hover pointer rounded-2 p-2 my-3"
                  @onclick="@( e => { nm.NavigateTo("/", false); })">

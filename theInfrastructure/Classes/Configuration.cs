@@ -35,8 +35,14 @@ namespace theInfrastructure
         public bool Archive { get; set; } = false; // zeigt das Archiv an 
         public bool TaskBar { get; set; } = true; // zeigt die Taskbar unten rechts an
         public bool Clock { get; set; } = true; // zeigt die Uhr an 
+        
+        // Dateien 
         public bool AllowFileUploads { get; set; } = true;
         public int MaxFileSizeInMB { get; set; } = 20;
+
+        // Sicherheit 
+        public bool FocusOnLogin { get; set; } = false;
+        public bool FocusOnRegister { get; set; } = false;
         public void Save()
         {
             SystemConfiguration config = this as SystemConfiguration;
