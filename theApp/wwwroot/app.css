@@ -69,6 +69,10 @@ a, a:visited {
     font-weight: bold;
 }
 
+.hierarchy {
+    height: calc(100vh - var(--tsp-header-height) - (var(--tsp-user-profile-height) / 3) - var(--tsp-menu-height) - var(--tsp-footer-height));
+}
+
 .scrollable {
     display: block;
     height: calc(100vh - var(--tsp-header-height) - var(--tsp-user-profile-height) - var(--tsp-menu-height) - var(--tsp-footer-height));

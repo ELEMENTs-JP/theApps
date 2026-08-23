@@ -15,6 +15,7 @@ namespace theInfrastructure
         string Placeholder { get; set; }
         string CSS { get; set; }
         string Extension { get; set; }
+        bool IsNecessary { get; set; }
 
         DeviceDisplay OnDevice { get; set; }
         bool IsEditable { get; set; }
@@ -43,7 +44,8 @@ namespace theInfrastructure
         public string Description { get; set; } = string.Empty;
         public string Placeholder { get; set; } = string.Empty;
         public string Column { get; set; } = string.Empty;
-        
+        public bool IsNecessary { get; set; } = false;
+
         public string CSS { get; set; } = "col";
         public string Extension { get; set; } = string.Empty;
         public DeviceDisplay OnDevice { get; set; } = DeviceDisplay.NULL;

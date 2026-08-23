@@ -124,7 +124,7 @@ namespace theInfrastructure
             }
             catch (Exception ex)
             {
-                
+
             }
 
             return null;
@@ -399,6 +399,7 @@ namespace theInfrastructure
                 Items.Add(new DTO() { ID = "Item", Title = "Item" });
                 Items.Add(new DTO() { ID = "File", Title = "File" });
                 Items.Add(new DTO() { ID = "Appointment", Title = "Appointment" });
+                Items.Add(new DTO() { ID = "Hierarchy", Title = "Hierarchy" });
             }
             else if (field.Typ == FieldTyp.User)
             {
@@ -410,14 +411,26 @@ namespace theInfrastructure
             }
             else if (field.Typ == FieldTyp.ItemTypeList)
             {
-                if (!string.IsNullOrEmpty(field.ItemType))
-                {
-                    IQueryParameter qp = new QueryParameter();
-                    qp.MasterGUID = sql.MasterGUID;
-                    qp.ItemType = field.ItemType;
-                    IQueryResult result = await sql.GetItems(qp);
-                    Items = result.Items;
-                }
+                IQueryParameter qp = new QueryParameter();
+                qp.MasterGUID = sql.MasterGUID;
+                qp.ItemType = "ItemType";
+                IQueryResult result = await sql.GetItems(qp);
+                Items = result.Items;
+            }
+            else if (field.Typ == FieldTyp.AppList)
+            {
+                IQueryParameter qp = new QueryParameter();
+                qp.MasterGUID = sql.MasterGUID;
+                qp.ItemType = "App";
+                IQueryResult result = await sql.GetItems(qp);
+                Items = result.Items;
+            }
+            else if (field.Typ == FieldTyp.FunctionList)
+            {
+                Items.Add(new DTO() { ID = "Create", Title = "Create" });
+                Items.Add(new DTO() { ID = "Read", Title = "Read" });
+                Items.Add(new DTO() { ID = "Update", Title = "Update" });
+                Items.Add(new DTO() { ID = "Delete", Title = "Delete" });
             }
 
             return Items;
@@ -492,6 +505,10 @@ namespace theInfrastructure
             if (typ == ItemTypeTyp.Appointment)
             {
                 return "/Calendar/" + ItemType;
+            }
+            if (typ == ItemTypeTyp.Hierarchy)
+            {
+                return "/Hierarchy/" + ItemType;
             }
 
             return "/Items/" + ItemType;

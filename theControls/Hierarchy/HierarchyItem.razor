@@ -1,11 +1,12 @@
 ﻿@using theControls.Icons
 @inject IMessagingBusService msg
+@inject ISqlDatabaseService sql
 
 @inherits BaseRow
 
 @if (Context != null)
 {
-    <div class="row g-0 hover p-1 px-2 fw-bold pointer my-2" title="@Item.ItemType"
+    <div class="row g-0 rounded-1 hover p-1 px-2 fw-bold pointer my-2" title="@Item.ItemType"
          @onclick="@( async e => { await Select(Item);  })">
 
         @if (IsChild)
@@ -15,16 +16,40 @@
             </div>
         }
 
-        <div class="col">
+        <div class="col pe-2">
             @(Item.Title.ToSecureString())
+        </div>
+
+        <div class="col-auto text-muted border-start ps-2">
+            @(Item.ItemType.ToSecureString())
         </div>
     </div>
 
     @if (RelatedItems.Any())
     {
-        @foreach (IDTO relItem in RelatedItems)
+        @if (Mode == HierarchyMode.Strict)
         {
-            <HierarchyItem Context="@Context" Item="@relItem" ItemType="ItemType" IsChild="true" />
+            @foreach (IDTO relItem in RelatedItems)
+            {
+                <HierarchyItem Context="@Context" Item="@relItem" ItemType="ItemType" IsChild="true" Mode="HierarchyMode.Strict" />
+            }
+        }
+        @if (Mode == HierarchyMode.Related)
+        {
+            @foreach (IItemType itemType in RelatedItemTypes)
+            {
+                <div class="text-muted fw-bold">
+                    @itemType.Name
+                </div>
+                @foreach (var groupIT in RelatedItems.Select(se => se.ItemType).Distinct())
+                {
+                    @foreach (IDTO childItem in RelatedItems.Where(se => se.ItemType == groupIT))
+                    {
+                        <HierarchyItem Context="@Context" Item="@childItem" Mode="HierarchyMode.Related"
+                                ItemType="@itemType.Name" IsChild="true" />
+                    }
+                }
+            }
         }
     }
 
@@ -34,18 +59,25 @@
 
 
     [Parameter]
-    public string ItemType { get; set; } /// Related ItemType
+    public string ItemType { get; set; } // String Parameter für den ItemType 
+
+    [Parameter]
+    public HierarchyMode Mode { get; set; } = HierarchyMode.Strict;
 
     [Parameter]
     public bool IsChild { get; set; } = false;
 
     List<IDTO> RelatedItems { get; set; } = new();
 
+    List<IItemType> RelatedItemTypes { get; set; } = new();
+
     private async Task Select(IDTO item)
     {
         if (item != null)
         {
             msg.Publish(new AppMessage("Item", BusAction.Select, item));
+
+            await LoadHierarchy();
         }
     }
 
@@ -56,13 +88,34 @@
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-
-        Context.RelatedItem = Item;
-        RelatedItems = await Context.RelatedItems(ItemType);
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task LoadHierarchy()
+    {
+        if (Mode == HierarchyMode.Strict)
+        {
+            // gleicher ItemType
+            Context.RelatedItem = Item;
+            RelatedItems = await Context.RelatedItems(ItemType);
+        }
+
+        if (Mode == HierarchyMode.Related)
+        {
+            IItemType parent = await new Factory(sql).BuildItemType(this.ItemType);
+            RelatedItemTypes = await parent.GetItemTypes();
+            RelatedItems.Clear();
+
+            foreach (IItemType it in RelatedItemTypes)
+            {
+                Context.RelatedItem = Item;
+                List<IDTO> relatedItems = await Context.RelatedItems(it.Name);
+                RelatedItems.AddRange(relatedItems);
+            }
+        }
     }
 
 }

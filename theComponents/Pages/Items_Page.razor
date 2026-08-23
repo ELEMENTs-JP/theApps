@@ -14,24 +14,15 @@
 
 <div class="container-flex">
 
-    @if (Typ == "Items")
-    {
-        <ItemsComp ItemType="@ItemType" />
-    }
     @if (Typ == "Hierarchy")
     {
         <HierarchyComp ItemType="@ItemType" />
         
     }
-    @if (Typ == "Calendar")
-    {
-        <CalendarComp ItemType="@ItemType" />
-    }
-    @if (Typ == "File")
+    else
     {
         <ItemsComp ItemType="@ItemType" />
     }
-
 
 </div>
 

@@ -4,6 +4,13 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum HierarchyMode
+    {
+        NULL = 0,
+
+        Strict = 1, // lädt immer wieder den gleichen ItemType als hierarchisches Unterelement 
+        Related = 2,  // Lädt mit dem itemType verbundene ItemTypes als hierarchische Unterlement 
+    }
     public enum TextFormat
     {
         NULL = 0,
@@ -27,6 +34,7 @@ namespace theInfrastructure
         Item = 1,
         File = 2,
         Appointment = 3,
+        Hierarchy = 4,
     }
     public enum Orientation
     {
@@ -165,6 +173,8 @@ namespace theInfrastructure
         FieldTyp, // EditBox FieldTyp 
         ItemTypeTyp, // Typ des ItemTyp (Item, File, etc.)
         ItemTypeList, // Liste der verfügbaren ItemTypes 
+        AppList, // Liste aller CMS Apps im System 
+        FunctionList, // Liste der Funktionen die allow oder deny werden können 
     }
 
     public enum DatabaseTyp

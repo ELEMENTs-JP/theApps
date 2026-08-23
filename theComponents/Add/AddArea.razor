@@ -13,6 +13,7 @@
     <ModalForm @key="@(new Guid().ToSecureString())" Title="neuen Eintrag erstellen"
                ShowTitleInButton="false"
                ButtonText="Neu"
+               OnBeforeOK="BeforeOK"
                OnOKClicked="@( async e => { await OnOK(); } )">
         <Icon>
             <SymbolIcon Symbol="Icon.Neu" CSS="me-2 float-start" />
@@ -101,18 +102,61 @@
         if (Context == null)
             return;
 
-        // 
+        //
         Context.Matchcode = this.Title;
         await Context.Search();
 
         IDTO item = Context.Items.Where(se => se.Title == this.Title).FirstOrDefault();
         if (item != null)
         {
-            // Message 
+            // Message
             Message = string.Format("Datensatz: {0} existiert bereits", Context.Matchcode);
         }
 
-        await Task.CompletedTask;    
+        await Task.CompletedTask;
+    }
+
+    private async Task<bool> BeforeOK()
+    {
+        if (string.IsNullOrEmpty(Title))
+        {
+            msg.Publish("Notwendige Felder", BusAction.Info, "Titel muss gesetzt sein.");
+            return false;
+        }
+
+        List<IField> necessaryFields = (await ItemType.GetFields()).Where(se => se.IsNecessary).ToList();
+        if (necessaryFields.Count() >= 1)
+        {
+            if (Values.Count() == 0)
+            {
+                string info = "Die folgenden Felder sind notwendig: ";
+
+                foreach (IField field in necessaryFields)
+                {
+                    info += " " + field.Title;
+                }
+
+                msg.Publish("Notwendige Felder", BusAction.Info, info);
+
+                return false;
+            }
+
+            foreach (IField field in necessaryFields)
+            {
+                IDataValue? dv = Values.FirstOrDefault(se => se.Field.Column == field.Column);
+                if (dv != null)
+                {
+                    if (dv.Value == string.Empty)
+                    {
+                        msg.Publish("Notwendiges Feld", BusAction.Info, "Das Feld: " + dv.Field.Title + " enthält keinen Wert.");
+                        return false;
+                    }
+                }
+            }
+
+        }
+
+        return true;
     }
 
     private async Task OnOK()
@@ -120,8 +164,8 @@
         if (Context == null)
             return;
 
-        if (string.IsNullOrEmpty(Title))
-            return;
+
+     
 
         // Erstellen
         Guid ID = await Context.Create(Title);

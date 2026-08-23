@@ -2,9 +2,9 @@
 @inject ISecurityService sec
 @inject IAppService app
 
-<div class="@( " bg-surface " + GetCssClass() )" style="@( " " + app.Configuration.GetAkzentStyle() + " " )">
+<div class="@( " bg-surface " + CSS + "   " + GetCssClass() )" style="@( " " + app.Configuration.GetAkzentStyle() + " " )">
 
-    <div class="d-flex flex-row px-3 border-bottom align-items-center">
+    <div class="d-flex flex-row border-bottom align-items-center">
 
         @if (Icon.HasContent())
         {
@@ -46,6 +46,9 @@
 
     [Parameter]
     public bool Rounded { get; set; } = false;
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
 
     [Parameter]
     public RenderFragment Icon { get; set; }

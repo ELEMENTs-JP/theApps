@@ -3,6 +3,7 @@
 @inject IMessagingBusService msg
 @inject ISecurityService sec
 @inject ISqlDatabaseService sql
+@inject IAppService app
 @implements IAsyncDisposable
 
 @if (Field != null && Context != null && Context.Item != null)
@@ -30,6 +31,8 @@
                 Field.Typ == FieldTyp.FieldTyp ||
                 Field.Typ == FieldTyp.ItemTypeTyp ||
                 Field.Typ == FieldTyp.ItemTypeList ||
+                Field.Typ == FieldTyp.AppList ||
+                Field.Typ == FieldTyp.FunctionList ||
                 Field.Typ == FieldTyp.User ||
                  Field.Typ == FieldTyp.Priority ||
                  Field.Typ == FieldTyp.Status ||
@@ -235,6 +238,10 @@
         // Update
         await Context.Update(Context.Item);
 
+        // ItemType Event 
+        IItemEventArgs args = new ItemEventArgs(Context.Item, null, sql, sec, app);
+        Context.Item = await Context.ItemType.OnUpdateItem(args);
+
         // Update 
         msg.Publish("", BusAction.Info, "Eintrag aktualisiert");
 
@@ -266,6 +273,7 @@
     {
         if (message.Id == "EditBox" && message.Action == BusAction.Refresh)
         {
+            Value = onValueBinding();
             await InvokeAsync(StateHasChanged);
         }
     }

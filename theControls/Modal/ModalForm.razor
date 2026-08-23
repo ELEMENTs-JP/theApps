@@ -3,10 +3,10 @@
 @inject ILocalizationService loc
 @inject ISecurityService sec
 @inject IAppService app
+@inject IJSRuntime js
 
 <!-- Button -->
 <div class="@( GetButtonGroupClass() + " " + FrameCSS )"
-   
      data-bs-toggle="modal" title="@ButtonToolTip"
      data-bs-target="@( "#modal_" + modalGUID.ToString() )">
 
@@ -71,56 +71,58 @@
 </div>
 
 
-    <!-- Modal -->
-    <div class="@FormCSS" id="@( "modal_" + modalGUID.ToString() )" tabindex="-1"
-         aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false">
-        <div class="@( ModalCSS + " " + SetSize() )" style="@( "" )">
-            <div class="modal-content rounded-2 border-start border-end border-bottom border-top-primary-3"
+<!-- Modal -->
+<div class="@FormCSS" id="@( "modal_" + modalGUID.ToString() )" tabindex="-1"
+     aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false">
+    <div class="@( ModalCSS + " " + SetSize() )" style="@( "" )">
+        <div class="modal-content rounded-2 border-start border-end border-bottom border-top-primary-3"
              style="@( " " + GetFrameStyle() + " " + SetHeight()  )">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">@((MarkupString)Title)</h5>
-                    <div class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="closeclick"></div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@((MarkupString)Title)</h5>
+                <div class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="closeclick"></div>
+            </div>
+            @if (!string.IsNullOrEmpty(Description))
+            {
+                <div class="w-100 border-bottom bg-surface-secondary p-2 ps-4 overflow-hidden">
+                    <small class="text-muted text-truncate-line">@Description.ToSecureString()</small>
                 </div>
-                @if (!string.IsNullOrEmpty(Description))
+
+            }
+            <div class="@ContentCSS modal-body" style="height:625px;">
+
+                @if (RelatedContent.HasContent())
                 {
-                    <div class="w-100 border-bottom bg-surface-secondary p-2 ps-4 overflow-hidden">
-                        <small class="text-muted text-truncate-line">@Description.ToSecureString()</small>
+                    <div>
+                        @RelatedContent
                     </div>
-
                 }
-                <div class="@ContentCSS modal-body" style="height:625px;">
 
-                    @if (RelatedContent.HasContent())
-                    {
-                        <div>
-                            @RelatedContent
-                        </div>
-                    }
-
-                    @ChildContent
-                </div>
-                <div class="modal-footer">
-                    <div class="row g-0 align-items-center">
-                        <div class="col">
-                            @FooterContent
-                        </div>
-                        <div class="col-auto">
-                            <div class="hover pointer p-2 px-3 rounded me-3" data-bs-dismiss="modal" @onclick="cancelclick">@CancelTitle</div>
-                        </div>
-                        <div class="col-auto">
-                            <div class="btn btn-primary" data-bs-dismiss="modal" @onclick="okclick">@OKTitle</div>
-                        </div>
+                @ChildContent
+            </div>
+            <div class="modal-footer">
+                <div class="row g-0 align-items-center">
+                    <div class="col">
+                        @FooterContent
+                    </div>
+                    <div class="col-auto">
+                        <div class="hover pointer p-2 px-3 rounded me-3" data-bs-dismiss="modal" @onclick="cancelclick">@CancelTitle</div>
+                    </div>
+                    <div class="col-auto">
+                        @* data-bs-dismiss="@dismissObject" *@
+                        <div class="btn btn-primary"  @onclick="okclick">@OKTitle</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
 
 @code {
 
     private string modalGUID = Guid.NewGuid() + "_modal_form_" + DateTime.Now.ToShortDateString();
+     // private string dismissObject = ""; // modal
 
     [Parameter]
     public string Title { get; set; } = string.Empty;
@@ -170,6 +172,11 @@
     [Parameter]
     public string ModalCSS { get; set; } = "modal-dialog modal-dialog-centered modal-dialog-scrollable";
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+    }
 
     [Parameter]
     public RenderFragment Icon { get; set; }
@@ -201,18 +208,44 @@
     [Parameter]
     public EventCallback<string> OnOKClicked { get; set; }
 
-    private void okclick()
+    [Parameter]
+    public Func<Task<bool>>? OnBeforeOK { get; set; }
+
+    private async Task okclick()
     {
         try
         {
-            OnOKClicked.InvokeAsync("OK");
-            OnClickedGeneral.InvokeAsync("OK");
+            // Externe Prüfung
+            if (OnBeforeOK is not null)
+            {
+                var canClose = await OnBeforeOK();
+
+                if (!canClose)
+                {
+                    return;
+                }
+            }
+            
+            // Tabler JS-Instanz abrufen und Modal schließen
+            var modalId = $"modal_{modalGUID}";
+            await js.InvokeVoidAsync("eval", 
+                $"var el = document.getElementById('{modalId}'); var m = (window.tabler && window.tabler.Modal ? window.tabler.Modal.getOrCreateInstance(el) : bootstrap.Modal.getOrCreateInstance(el)); if(m) m.hide();");
+
+            // Erst jetzt OK tatsächlich ausführen
+            await OnOKClicked.InvokeAsync("OK");
+            await OnClickedGeneral.InvokeAsync("OK");
         }
         catch (Exception ex)
         {
             Console.WriteLine("FAIL: " + ex.Message);
         }
     }
+
+
+
+
+
+
 
     [Parameter]
     public EventCallback<string> OnCancelClicked { get; set; }
@@ -249,6 +282,11 @@
     [Parameter]
     public EventCallback<string> OnClickedGeneral { get; set; }
 
+
+
+
+
+
     [Parameter]
     public string OKTitle { get; set; } = "OK";
 
@@ -274,8 +312,8 @@
     private string SetHeight()
     {
         if (Size == ModalFormSize.Small)
-        { 
-            return " max-height:380px; "; 
+        {
+            return " max-height:380px; ";
         }
 
         return string.Empty;

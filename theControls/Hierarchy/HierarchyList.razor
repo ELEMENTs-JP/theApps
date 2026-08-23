@@ -6,16 +6,19 @@
 {
     @if (Context.ItemType != null && Context.ItemType.GetFields().Result != null)
     {
+        <div class="overflow-y-auto">
         @foreach (IDTO item in Context.Items)
         {
-            <HierarchyItem Context="@Context" Item="@item" ItemType="ItemType" />
+            <HierarchyItem Context="@Context" Item="@item" ItemType="@ItemType.Name" Mode="@Mode" />
         }
+        </div>
     }
 }
 
 
 @code {
 
- 
+    [Parameter]
+    public HierarchyMode Mode { get; set; } = HierarchyMode.Related;
 
 }

@@ -1,4 +1,5 @@
 ﻿@using theComponents.Add
+@using theComponents.Edit
 @using theControls.Add
 @using theControls.Hierarchy
 @using theControls.Input
@@ -12,7 +13,7 @@
 {
     <div class="row g-0">
         <div class="col-auto pe-2" style="min-width:24rem;">
-            <Frame Border="true" Rounded="true">
+            <Frame Border="true" Rounded="true" CSS="hierarchy">
                 <Header>
                     <ControlHeader PreTitle="List" Title="@ItemType.Name" PostTitle="@ItemType.Description" />
                 </Header>

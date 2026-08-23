@@ -16,6 +16,10 @@ namespace theInfrastructure
             // Fields 
             List<IField> Fields = new List<IField>();
 
+            Fields.Add(new Field() { Title = "Projekt", Typ = FieldTyp.Text, Column = "Projekt",
+                CSS = " col-12 col-md-6 col-lg-12 ",
+                IsNecessary =true, OnDevice = DeviceDisplay.Desktop });
+            
             // Performance 
             Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
 

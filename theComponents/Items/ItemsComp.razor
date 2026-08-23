@@ -39,6 +39,11 @@
             {
                 <FileList ItemType="@ItemType" />
             }
+
+            @if (this.ItemType.Typ == ItemTypeTyp.Appointment)
+            {
+                <CalendarComp ItemType="@ItemType" />
+            }
            
         </Content>
     </Frame>
