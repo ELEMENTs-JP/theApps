@@ -1,5 +1,8 @@
-﻿<div class="row g-0 pb-1 @( ((Border) ? " border-bottom " : "") )">
-    <div class="col-auto">
+﻿@inject IAppService app
+
+
+<div class="@app.Configuration.GetGlassClass()  row g-0 p-2 rounded-2  @( ((Border) ? " border-bottom " : "")  )">
+    <div class="col-auto p-1">
         @if (!string.IsNullOrEmpty(PreTitle))
         {
             <div class="page-pretitle">
@@ -21,9 +24,9 @@
             </span>
         }
     </div>
-    <div class="col">
+    <div class="col p-1">
     </div>
-    <div class="col-auto text-end">
+    <div class="col-auto text-end p-1">
         @if (!string.IsNullOrEmpty(PreRelated))
         {
             <div class="page-pretitle">

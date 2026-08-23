@@ -53,6 +53,7 @@ namespace theInfrastructure
         Task SetItemType(IItemType it);
         Task SetPage(IDTO page);
         Task AppByItemType(IItemType it);
+        LayoutConfiguration Configuration { get; set; }
 
 
     }

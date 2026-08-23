@@ -19,7 +19,7 @@
         await base.OnInitializedAsync();
 
         ItemTypes.Clear();
-        IApp app = apps.AllApps.Where(se => se.Name == "Task").FirstOrDefault();
+        IApp? app = apps.AllApps.Where(se => se.Name == "RUNer").FirstOrDefault();
         if (app != null)
         {
             ItemTypes.AddRange(app.GetItemTypes().Result);

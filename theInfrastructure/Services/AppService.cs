@@ -16,7 +16,8 @@ namespace theInfrastructure
         // Fields 
         IWebHostEnvironment Environment;
         ISqlDatabaseService SqlService;
-     
+
+        public LayoutConfiguration Configuration { get; set; } = null;
 
         // Properties 
         private IApp _app = null;
@@ -43,7 +44,7 @@ namespace theInfrastructure
         // CTR 
         public AppService()
         {
-            InitApps();
+            Init();
 
             this.PropertyChanged += AppService_PropertyChanged;
         }
@@ -52,13 +53,18 @@ namespace theInfrastructure
             Environment = env;
             SqlService = sql;
 
-            InitApps();
+            Init();
 
             this.PropertyChanged += AppService_PropertyChanged;
         }
 
-        private async void InitApps()
+        private async void Init()
         {
+            if (Configuration == null)
+            {
+                Configuration = LayoutConfiguration.Load();
+            }
+
             Factory builder = new Factory(SqlService);
 
             AllApps.Clear();
@@ -67,7 +73,7 @@ namespace theInfrastructure
             AllApps.Add(new App_Farm());
             AllApps.Add(new App_System());
             AllApps.Add(new App_Security());
-            AllApps.Add(new App_Task());
+            AllApps.Add(new App_RUNer());
 
             // Individuall Apps 
             IQueryParameter qp = new QueryParameter();

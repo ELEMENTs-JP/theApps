@@ -54,25 +54,33 @@
                         <div class="col-12 col-md-4 col-lg-4 px-2 border-start border-end">
                             <ThemeSwitch />
                             <div class="border-bottom my-3"></div>
-                            <CheckBox Label="Akzente" Value="@sec.Configuration.Akzente.ToSecureString()"
+                            <CheckBox Label="Akzente" Value="@apps.Configuration.Akzente.ToSecureString()"
                                       ValueChanged="@(e =>
                                   {
-                                      sec.Configuration.Akzente = e.ToSecureBool();
-                                      sec.Configuration.Save();
+                                                              apps.Configuration.Akzente = e.ToSecureBool();
+                                                              apps.Configuration.Save();
                                   })" />
                             <div class="my-3"></div>
-                            <TextBox Label="Hintergrundbild" Value="@sec.Configuration.Background" Type="FieldTyp.Url"
+                            <TextBox Label="Hintergrundbild" Value="@apps.Configuration.Background" Type="FieldTyp.Url"
                                      ValueChanged="@(e =>
                                  {
-                                     sec.Configuration.Background = e;
-                                     sec.Configuration.Save();
+                                                             apps.Configuration.Background = e;
+                                                             apps.Configuration.Save();
                                  })" />
                             <div class="border-bottom my-3"></div>
-                            <CheckBox Label="Blur Effekt" Value="@sec.Configuration.Blur.ToSecureString()"
+                            <CheckBox Label="Hintergrund Blur Effekt" Value="@apps.Configuration.Blur.ToSecureString()"
                                       ValueChanged="@(e =>
                                   {
-                                      sec.Configuration.Blur = e.ToSecureBool();
-                                      sec.Configuration.Save();
+                                                              apps.Configuration.Blur = e.ToSecureBool();
+                                                              apps.Configuration.Save();
+                                  })" />
+
+                            <div class="border-bottom my-3"></div>
+                            <CheckBox Label="Vordergrund Glass Effekt" Value="@apps.Configuration.Glass.ToSecureString()"
+                                      ValueChanged="@(e =>
+                                  {
+                                                              apps.Configuration.Glass = e.ToSecureBool();
+                                                              apps.Configuration.Save();
                                   })" />
                         </div>
                         <div class="col-12 col-md-4 col-lg-4 px-2">
@@ -95,7 +103,7 @@
 
                 <TabsPanel ID="@( ID + "2")">
                     <div class="border-bottom pb-2 mb-2">
-                        <h1 class="h1 w-100">Allgemeine Einstellungen</h1>
+                        <h1 class="h1 w-100">Datenbank</h1>
                     </div>
                     <DatabaseSetup />
                 </TabsPanel>
@@ -132,7 +140,7 @@
                 <TabsPanel ID="@( ID + "4")">
 
                     <div class="border-bottom pb-2 mb-2">
-                        <h1 class="h1 w-100">Allgemeine Einstellungen</h1>
+                        <h1 class="h1 w-100">Features</h1>
                     </div>
 
                     <FeaturesComp />

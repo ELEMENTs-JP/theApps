@@ -9,6 +9,7 @@
 @inject ISqlDatabaseService sql
 @inherits LayoutComponentBase
 @inject IJSRuntime js
+@inject IAppService app
 
 <AppLayout>
     <Header>
@@ -58,7 +59,7 @@
         if (firstRender)
         {
             // Default == Mandant
-            string wallpaper = sec.Configuration.Background;
+            string wallpaper = app.Configuration.Background;
 
             if (sec.User != null)
             {
@@ -71,7 +72,7 @@
 
             await js.InvokeVoidAsync("setBodyBackground", wallpaper);
 
-            bool IsClassActive = sec.Configuration.Blur.ToSecureBool();
+            bool IsClassActive = app.Configuration.Blur.ToSecureBool();
             await js.InvokeVoidAsync("toggleClass", "blur", IsClassActive);
 
         }

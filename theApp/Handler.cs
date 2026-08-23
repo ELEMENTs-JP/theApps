@@ -106,6 +106,17 @@ namespace theApp
             // Messaging Bus Service 
             builder.Services.AddScoped<IMessagingBusService, MessagingBusService>();
 
+            // Logging Service 
+            builder.Services.AddSingleton<AsyncExceptionLogger>();
+            builder.Services.AddSingleton<IExceptionLogger>(
+                sp => sp.GetRequiredService<AsyncExceptionLogger>());
+
+            builder.Services.AddHostedService(
+                sp => sp.GetRequiredService<AsyncExceptionLogger>());
+
+            // Logging Service 
+            //builder.Services.AddSingleton<AsyncExceptionBuffer>();
+            //builder.Services.AddHostedService(sp => sp.GetRequiredService<AsyncExceptionBuffer>());
 
             var app = builder.Build();
 

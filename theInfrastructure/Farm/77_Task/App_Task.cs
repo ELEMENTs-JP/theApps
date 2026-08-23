@@ -5,11 +5,11 @@ using System.Text;
 namespace theInfrastructure
 {
     // App 
-    public class App_Task : BaseApp, IApp
+    public class App_RUNer : BaseApp, IApp
     {
-        public App_Task()
+        public App_RUNer()
         { 
-            Name = "Task";
+            Name = "RUNer";
             IsNavigation = false;
         }
 

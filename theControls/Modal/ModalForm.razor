@@ -2,6 +2,7 @@
 @using theControls.Icons
 @inject ILocalizationService loc
 @inject ISecurityService sec
+@inject IAppService app
 
 <!-- Button -->
 <div class="@( GetButtonGroupClass() + " " + FrameCSS )"
@@ -296,7 +297,7 @@
 
         if (loc.Configuration != null)
         {
-            style = ((sec.Configuration.Akzente) ? " border-top: 3px solid #ffffff !important; " : "");
+            style = ((app.Configuration.Akzente) ? " border-top: 3px solid #ffffff !important; " : "");
         }
 
         return style;

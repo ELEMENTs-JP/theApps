@@ -7,12 +7,21 @@
     --tsp-user-profile-height: 9.5rem;
 }
 
+[data-bs-theme=light] {
+    --tsp-link-color: #333;
+    --tsp-glass-color: #fff;
+}
+
+[data-bs-theme=dark] {
+    --tsp-link-color: #fff;
+    --tsp-glass-color: #ddd;
+}
+
 
 html, body {
     /*    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
     height: 100vh;
     overflow: hidden;
-
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
@@ -25,20 +34,27 @@ html, body {
     -webkit-backdrop-filter: blur(20px);
     transition: backdrop-filter 200ms ease-in-out;
 }
+
 .glass {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     transition: backdrop-filter 200ms ease-in-out;
 }
+
+    .glass .hover {
+        color: var(--tsp-glass-color) !important;
+    }
+
 a, a:visited {
-    color: #ffffff;
+    color: var(--tsp-link-color);
     text-decoration: none !important;
     padding: 0.2rem 0.5rem;
-    margin:0.2rem;
+    margin: 0.2rem;
 }
+
     a:hover {
-        color: #ffffff;
+        color: var(--tsp-link-color);
         border-radius: 0.35rem;
         background: rgba(255, 255, 255, 0.15) !important;
         backdrop-filter: blur(20px) !important;
@@ -50,7 +66,7 @@ a, a:visited {
     border-left: 3px solid #fff;
     background-color: var(--tsp-hover) !important;
     border-radius: 0px !important;
-    font-weight:bold;
+    font-weight: bold;
 }
 
 .scrollable {
@@ -69,17 +85,18 @@ a, a:visited {
 }
 
 .td-hover:hover {
-    border-bottom:1px solid #fff;
+    border-bottom: 1px solid #fff;
 }
+
 .row-hover:hover {
     border-left: 1px solid #fff !important;
 }
+
 .hover:hover {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     transition: background-color 0.25s ease;
-    
 }
 
 .opacity:hover {

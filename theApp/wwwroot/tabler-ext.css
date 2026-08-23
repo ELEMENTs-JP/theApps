@@ -12,6 +12,7 @@
 [data-bs-theme=dark] {
     --tblr-body-bg: #292b33;
     --tblr-bg-surface: #24272d;
+    /*--tblr-primary: #066fd1;*/
 }
 
 
@@ -20,6 +21,15 @@
     background-color: var(--tblr-bg-surface) !important;
     border: 0px solid transparent !important;
     outline: none !important;
+}
+
+.nav-link:focus, .nav-link:hover {
+    color:inherit !important;
+}
+
+.btn-primary {
+    background-color: #fff !important;
+    color: #555 !important;
 }
 
 .tox .tox-tbtn svg {

@@ -1,7 +1,8 @@
 ﻿@inject ILocalizationService loc
 @inject ISecurityService sec
+@inject IAppService app
 
-<div class="@( " bg-surface " + GetCssClass() )" style="@( " " + sec.Configuration.GetAkzentStyle() + " " )">
+<div class="@( " bg-surface " + GetCssClass() )" style="@( " " + app.Configuration.GetAkzentStyle() + " " )">
 
     <div class="d-flex flex-row px-3 border-bottom align-items-center">
 

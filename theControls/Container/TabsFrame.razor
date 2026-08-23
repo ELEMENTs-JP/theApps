@@ -1,7 +1,8 @@
 @inject ILocalizationService loc
 @inject ISecurityService sec
+@inject IAppService app
 
-<div id="@( "tabs_frame_div " + ID )" class=" rounded-2 bg-surface p-2 @FrameCSS" style="@( sec.Configuration.GetAkzentStyle() )">
+<div id="@( "tabs_frame_div " + ID )" class=" rounded-2 bg-surface p-2 @FrameCSS" style="@( app.Configuration.GetAkzentStyle() )">
 
     @if (Orientation == Orientation.Center)
     {

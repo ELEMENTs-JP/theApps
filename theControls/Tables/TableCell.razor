@@ -8,11 +8,11 @@
     }
     else if (Field.Typ == FieldTyp.Password)
     {
-        @( "..." )    
+        @( "..." )
     }
     else
     {
-        @Text
+        @Text.ToFormat(this.Field.Formatierung)
     }
 }
 

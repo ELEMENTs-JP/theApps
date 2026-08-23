@@ -4,6 +4,15 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum TextFormat
+    {
+        NULL = 0,
+
+        // Dateien 
+        MB = 11,
+        KB = 12,
+        Byte = 13,
+    }
     public enum RelevantPropertyType
     {
         NULL = 0,
@@ -117,6 +126,7 @@ namespace theInfrastructure
     }
     public enum FieldTyp
     {
+        TextBlock,
         Text,
         TextArea,
         Html,

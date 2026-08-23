@@ -10,12 +10,55 @@ using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace theInfrastructure
 {
-    
+
     public static class Helper
     {
+        private static readonly CultureInfo GermanCulture = CultureInfo.GetCultureInfo("de-DE");
+        public static string ToFormat(this string input, TextFormat format)
+        {
+            switch (format)
+            {
+                case TextFormat.Byte:
+                    {
+                        return input.ToDecimalFormat() + " Byte";
+                    }
+                case TextFormat.KB:
+                    {
+                        return input.ToDecimalFormat() + " KB";
+                    }
+                case TextFormat.MB:
+                    {
+                        return input.ToDecimalFormat() + " MB";
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+
+            return input;
+        }
+        public static string ToDecimalFormat(this string input, int maxDecimals = 2)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return string.Empty;
+
+            // Parsing der deutschen Zahlenformatierung
+            if (decimal.TryParse(input, NumberStyles.Number, GermanCulture, out decimal parsedValue))
+            {
+                // "0.##" formatiert auf maximal 2 Nachkommastellen ohne auffüllende Nullen am Ende.
+                // Für exakt 2 Nachkommastellen (z. B. "1.234,50") stattdessen "N2" verwenden.
+                string formatPattern = "0." + new string('#', maxDecimals);
+                return parsedValue.ToString(formatPattern, GermanCulture);
+            }
+
+            return input; // Rückgabe des Originalstrings, falls das Parsing fehlschlägt
+        }
+
         public static bool IsValidImageExtension(string ext)
         {
             if (string.IsNullOrWhiteSpace(ext))
@@ -53,7 +96,7 @@ namespace theInfrastructure
             }
 
             return Base64String;
-            
+
         }
 
         // Reflection 
@@ -61,19 +104,22 @@ namespace theInfrastructure
         {
             try
             {
-                Assembly assembly = Assembly.Load(assemblyName);
+                Assembly? assembly = Assembly.Load(assemblyName);
                 if (assembly == null)
                 {
                     new Exception("tSP: Assembly is null");
                 }
-                Type type = assembly.GetTypes().Where(se => se.Name == className).FirstOrDefault();
-                if (type == null)
+                if (assembly != null)
                 {
-                    new Exception("tSP: Control is null");
-                }
-                if (type != null)
-                {
-                    return type;
+                    Type? type = assembly.GetTypes().Where(se => se.Name == className).FirstOrDefault();
+                    if (type == null)
+                    {
+                        new Exception("tSP: Control is null");
+                    }
+                    if (type != null)
+                    {
+                        return type;
+                    }
                 }
             }
             catch (Exception ex)
@@ -151,16 +197,26 @@ namespace theInfrastructure
         {
             return date.Date.Year + trennzeichen + date.Date.Month;
         }
-        public static string GetAkzentStyle(this SystemConfiguration config)
+
+        public static string GetGlassClass(this LayoutConfiguration config)
+        {
+            if (config.Glass == true)
+            {
+                return "  glass  ";
+            }
+
+            return string.Empty;
+        }
+        public static string GetAkzentStyle(this LayoutConfiguration config)
         {
             if (config.Akzente == true)
-            { 
+            {
                 return "  border-top: 3px solid #ffffff !important;  ";
             }
 
             return string.Empty;
         }
-        public static TToEnum ToEnum<TToEnum>(this string value, bool ignoreCase = true)  where TToEnum : struct, Enum
+        public static TToEnum ToEnum<TToEnum>(this string value, bool ignoreCase = true) where TToEnum : struct, Enum
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -355,7 +411,7 @@ namespace theInfrastructure
             else if (field.Typ == FieldTyp.ItemTypeList)
             {
                 if (!string.IsNullOrEmpty(field.ItemType))
-                { 
+                {
                     IQueryParameter qp = new QueryParameter();
                     qp.MasterGUID = sql.MasterGUID;
                     qp.ItemType = field.ItemType;
@@ -413,7 +469,7 @@ namespace theInfrastructure
         // Navigation 
         public static void NavToApp(this NavigationManager nm, string App)
         {
-            nm.NavigateTo("/App/" + App , false);
+            nm.NavigateTo("/App/" + App, false);
         }
         public static void NavToItem(this NavigationManager nm, string ItemType, Guid GUID)
         {
@@ -780,7 +836,7 @@ namespace theInfrastructure
                 return placeholder; // Konsistent zum Null-Fall den Placeholder zurückgeben
             }
         }
-  
+
 
         public static bool IsGuid(string input)
         {
@@ -809,7 +865,7 @@ namespace theInfrastructure
 
             return SQLite;
         }
- 
+
         public static object MapProperties(object UI, object DB)
         {
             // check Objects 
@@ -870,7 +926,7 @@ namespace theInfrastructure
 
             return DB;
         }
-    
+
         public static string GenerateShort(string itemType)
         {
             string result = string.Concat(itemType.Where(c => c >= 'A' && c <= 'Z'));

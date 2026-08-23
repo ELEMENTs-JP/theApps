@@ -19,6 +19,9 @@ namespace theInfrastructure
         DeviceDisplay OnDevice { get; set; }
         bool IsEditable { get; set; }
 
+        // Formatierung 
+        TextFormat Formatierung { get; set; }
+
         // CheckBox 
         string TrueText { get; set; } 
         string FalseText { get; set; }
@@ -46,6 +49,7 @@ namespace theInfrastructure
         public DeviceDisplay OnDevice { get; set; } = DeviceDisplay.NULL;
 
         public bool IsEditable { get; set; } = true;
+        public TextFormat Formatierung { get; set; } = TextFormat.NULL;
 
         // CheckBox 
         public string TrueText { get; set; } = string.Empty;
@@ -96,24 +100,27 @@ namespace theInfrastructure
             if (typ == DefaultFieldTypes.File)
             {
                 Fields.Add(new Field() { Title = "Typisierung", Typ = FieldTyp.HR });
-                Fields.Add(new Field() { Title = "Erweiterung", Typ = FieldTyp.Text, Column = "FileExtension", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
+                Fields.Add(new Field() { Title = "Erweiterung", Typ = FieldTyp.TextBlock, Column = "FileExtension", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
 
                 Fields.Add(new Field() { Title = "Größen", Typ = FieldTyp.HR });
                 // Fields.Add(new Field() { Title = "Pfad", Typ = FieldTyp.Text, Column = "FullFilePath", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
                 Fields.Add(new Field() { 
-                    Title = "Size in Byte", Typ = FieldTyp.Text, Column = "FileSizeInByte", 
+                    Title = "Size in Byte", Typ = FieldTyp.TextBlock, Column = "FileSizeInByte", 
                     CSS = " col-12 col-md-4 col-lg-4 ", 
                     Extension = "Byte",
+                    Formatierung = TextFormat.Byte,
                     OnDevice = DeviceDisplay.Desktop });
                 Fields.Add(new Field() { 
-                    Title = "Size in KB", Typ = FieldTyp.Text, Column = "FileSizeInKB", 
+                    Title = "Size in KB", Typ = FieldTyp.TextBlock, Column = "FileSizeInKB", 
                     CSS = " col-12 col-md-4 col-lg-4 ", 
                     Extension = "KB",
+                    Formatierung = TextFormat.KB,
                     OnDevice = DeviceDisplay.Desktop });
                 Fields.Add(new Field() { 
-                    Title = "Size in MB", Typ = FieldTyp.Text, Column = "FileSizeInMB", 
+                    Title = "Size in MB", Typ = FieldTyp.TextBlock, Column = "FileSizeInMB", 
                     CSS = " col-12 col-md-4 col-lg-4 ", 
                     Extension = "MB",
+                    Formatierung = TextFormat.MB,
                     OnDevice = DeviceDisplay.Desktop });
 
             }

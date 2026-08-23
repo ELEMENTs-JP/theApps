@@ -1,0 +1,189 @@
+﻿@using theControls.Icons
+@inject ILocalizationService loc
+@inject IJSRuntime js
+@using System.Globalization
+
+@if (!string.IsNullOrEmpty(this.Label))
+{
+    <label class="form-label text-secondary no-select" for="@Id">@Label</label>
+}
+
+<div class="input-group position-relative overlay-container">
+
+    @if (this.Type == FieldTyp.Money)
+    {
+        <span class="input-group-text">
+            @loc.Configuration.Currency
+        </span>    
+    }
+
+    <div id="@Id" name="@InputName" data-value="@Value"
+         class=" pe-5 @CssClass @( ((IsEditable) ? " editbox " : " viewbox no-select ") )">
+        @Value.ToFormat(Format)
+    </div>
+    
+
+    @if (!string.IsNullOrEmpty(this.Extension))
+    {
+        <span class="input-group-text me-3">
+            @this.Extension.ToSecureString()
+        </span>    
+
+    }
+    @if (Inlay != null && IsEditable == true)
+    {
+        <div class="position-absolute top-50 end-0 translate-middle-y me-1">
+            @Inlay
+        </div>
+    }
+
+    @if (Overlay != null && IsEditable == true)
+    {
+        <div class="overlay position-absolute top-50 end-0 translate-middle-y me-1">
+            @Overlay
+        </div>
+    }
+
+    @if (this.Type == FieldTyp.Search)
+    {
+        <div class="position-absolute top-50 end-0 translate-middle-y me-1">
+            <SymbolIcon Symbol="Icon.Search" />
+        </div>
+    }
+
+</div>
+
+@if (!string.IsNullOrEmpty(Description))
+{
+    <div class="text-muted small border-top no-select mx-1 mt-1" style="padding-left:3px; padding-top:3px;">
+        @this.Description.ToSecureString()
+    </div>
+}
+@if (!string.IsNullOrEmpty(Hint))
+{
+    <div class="form-hint" style="padding-left:3px; padding-top:3px;">
+        @Hint.ToSecureString()
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public RenderFragment? Overlay { get; set; }
+
+    [Parameter]
+    public RenderFragment? Inlay { get; set; }
+
+    [Parameter]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    [Parameter]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+    [Parameter]
+    public string Hint { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Extension { get; set; } = string.Empty;
+
+    [Parameter]
+    public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool FocusOnInit { get; set; } = false;
+
+    [Parameter]
+    public FieldTyp Type { get; set; } = FieldTyp.Text;
+
+    [Parameter]
+    public TextFormat Format { get; set; } = TextFormat.NULL;
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public string Placeholder { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? Step { get; set; }
+
+    [Parameter]
+    public string? Min { get; set; }
+
+    [Parameter]
+    public string? Max { get; set; }
+
+    [Parameter]
+    public int? MaxLength { get; set; }
+
+    [Parameter]
+    public int? MinLength { get; set; }
+
+    [Parameter]
+    public bool IsEditable { get; set; } = true;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (this.Type == FieldTyp.Money)
+        {
+
+        }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            if (FocusOnInit)
+            {
+                await js.InvokeVoidAsync("setFocusById", this.Id);
+            }
+        }
+    }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        Value = e.Value?.ToString() ?? string.Empty;
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private string? GetAutocomplete()
+    {
+        return Type switch
+        {
+            FieldTyp.Password => "new-password",
+            FieldTyp.Email => "email",
+            FieldTyp.Tel => "tel",
+            FieldTyp.Url => "url",
+            FieldTyp.Search => "off",
+            _ => null
+        };
+    }
+
+    private string InputName =>
+    !string.IsNullOrWhiteSpace(Name)
+        ? Name
+        : Helper.GenerateName(Label);
+
+   
+
+}

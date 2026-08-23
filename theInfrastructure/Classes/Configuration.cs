@@ -9,6 +9,24 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace theInfrastructure
 {
+    public class LayoutConfiguration
+    {
+        public string Background { get; set; } = string.Empty;
+        public bool Akzente { get; set; } = false; // weiße Akzente anzeigen oder nicht 
+        public bool Blur { get; set; } = false; // Legt fest ob der Hintergrund blur ist 
+        public bool Glass { get; set; } = false; // Legt fest ob der Vordergrund blur ist 
+
+        public void Save()
+        {
+            LayoutConfiguration config = this as LayoutConfiguration;
+
+            Serializer.Save<LayoutConfiguration>(config, "layout.config");
+        }
+        public static LayoutConfiguration Load()
+        {
+            return Serializer.Load<LayoutConfiguration>("layout.config");
+        }
+    }
     public class LocaleConfiguration
     {
         public string Sprache { get; set; } = string.Empty; // definiert die Sprache der UI 
@@ -28,9 +46,7 @@ namespace theInfrastructure
     public class SystemConfiguration
     {
         public string Title { get; set; } = string.Empty;
-        public string Background { get; set; } = string.Empty;
-        public bool Akzente { get; set; } = false; // weiße Akzente anzeigen oder nicht 
-        public bool Blur { get; set; } = false; // Legt fest ob der Hintergrund blur ist 
+
         public bool Trash { get; set; } = false; // zeigt den Papierkorb an oder nicht 
         public bool Archive { get; set; } = false; // zeigt das Archiv an 
         public bool TaskBar { get; set; } = true; // zeigt die Taskbar unten rechts an
