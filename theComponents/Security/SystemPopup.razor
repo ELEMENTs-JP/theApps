@@ -5,6 +5,7 @@
 @using theControls.Layout
 @using theInfrastructure
 @inject IAppService app
+@inject ISqlDatabaseService sql
 @inject NavigationManager nm
 @inject IMessagingBusService msg
 @inject ILocalizationService loc
@@ -192,7 +193,10 @@
 
     private async Task OnItemTypeSelect(string itemType)
     {
-        nm.NavToLibrary(itemType);    
+        nm.NavToLibrary(itemType);
+
+        IItemType it = await new Factory(sql).BuildItemType(itemType);
+        await app.AppByItemType(it);
 
         // Refresh
         msg.Publish(new AppMessage("App", BusAction.Refresh));

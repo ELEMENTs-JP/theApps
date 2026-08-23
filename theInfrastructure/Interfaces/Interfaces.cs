@@ -52,6 +52,7 @@ namespace theInfrastructure
         Task SetApp(IApp app);
         Task SetItemType(IItemType it);
         Task SetPage(IDTO page);
+        Task AppByItemType(IItemType it);
 
 
     }

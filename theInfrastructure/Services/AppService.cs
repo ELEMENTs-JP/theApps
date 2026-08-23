@@ -96,6 +96,9 @@ namespace theInfrastructure
         {
             this.ItemType = it;
             this.Page = null;
+
+            await AppByItemType(it);
+
             await Task.CompletedTask;
         }
         public async Task SetPage(IDTO page)
@@ -103,6 +106,30 @@ namespace theInfrastructure
             this.Page = page;
             this.ItemType = null;
             await Task.CompletedTask;
+        }
+
+        public async Task AppByItemType(IItemType it)
+        {
+            if (it == null || AllApps == null || !AllApps.Any())
+                return;
+
+            // Parallelisierung der asynchronen Abfragen
+            var tasks = AllApps.Select(async app => new
+            {
+                App = app,
+                ItemTypes = await app.GetItemTypes().ConfigureAwait(false)
+            });
+
+            var results = await Task.WhenAll(tasks).ConfigureAwait(false);
+
+            // Ersten Treffer im Speicher suchen (O(n))
+            var match = results.FirstOrDefault(r => r.ItemTypes != null &&
+                                                   r.ItemTypes.Any(se => string.Equals(se.Name, it.Name, StringComparison.Ordinal)));
+
+            if (match != null && match.App.Name != App?.Name)
+            {
+                App = match.App;
+            }
         }
 
         // Property Changed 

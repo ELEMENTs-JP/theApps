@@ -1,16 +1,14 @@
 ﻿@inject IAppService apps
 @inject NavigationManager nm
+@inject IMessagingBusService msg
 
 @foreach (IItemType it in ItemTypes)
 {
     <div class="pointer hover rounded-2 p-2 fw-bold" 
-            @onclick="@( e => {  nm.NavToLibrary(it.Name, it.Typ); })">
+            @onclick="@( async e => {  await NavigateToItemType(it); })">
         @it.ToString()
     </div>
 }
-
-
-
 
 @code {
 
@@ -29,4 +27,13 @@
 
     }
 
+    private async Task NavigateToItemType(IItemType it)
+    {
+        await apps.SetItemType(it);
+        nm.NavToLibrary(it.Name, it.Typ);
+
+        // Refresh
+        msg.Publish(new AppMessage("ItemType", BusAction.Refresh));
+
+    }
 }
