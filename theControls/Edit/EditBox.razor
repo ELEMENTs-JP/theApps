@@ -27,6 +27,16 @@
 
             </TextArea>
         }
+        else if (Field.Typ == FieldTyp.Select)
+        {
+            <Selection @key="@( "Select-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
+                      Label="@Title" Description="@Description" Value="@Value" 
+                        Item="@Context.Item" ItemType="@Field.ItemType" ItemChanged="@(async e =>{  })"
+                      Placeholder="@Field.Placeholder"
+                      CssClass="@CssClass"
+                      IsEditable="@IsEditable">
+            </Selection>
+        }
         else if (Field.Typ == FieldTyp.DropDown ||
                 Field.Typ == FieldTyp.FieldTyp ||
                 Field.Typ == FieldTyp.ItemTypeTyp ||
@@ -106,9 +116,9 @@
         else if (Field.Typ == FieldTyp.TextBlock)
         {
             <TextBlock @key="@( "TextBlock-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-                Label="@Title" Description="@Description" Value="@Value" Format="@Field.Formatierung"
-                       Extension="@Field.Extension"
-                       IsEditable="@IsEditable" />
+            Label="@Title" Description="@Description" Value="@Value" Format="@Field.Formatierung"
+            Extension="@Field.Extension"
+            IsEditable="@IsEditable" />
         }
         else
         {

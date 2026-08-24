@@ -16,8 +16,18 @@ namespace theInfrastructure
             // Fields 
             List<IField> Fields = new List<IField>();
 
+            Fields.Add(new Field()
+            {
+                Title = "Owner",
+                Typ = FieldTyp.Select,
+                ItemType = "User",
+                Column = "Owner",
+                CSS = " col-12 col-md-6 col-lg-6 ",
+                OnDevice = DeviceDisplay.Desktop
+            });
+
             Fields.Add(new Field() { Title = "Projekt", Typ = FieldTyp.Text, Column = "Projekt",
-                CSS = " col-12 col-md-6 col-lg-12 ",
+                CSS = " col-12 col-md-6 col-lg-6 ",
                 IsNecessary =true, OnDevice = DeviceDisplay.Desktop });
             
             // Performance 

@@ -174,3 +174,40 @@
 .pb-05 {
     padding-bottom: 0.125rem !important;
 }
+
+
+
+
+
+
+
+
+.p-025 {
+    padding: 0.065rem !important;
+}
+
+.px-025 {
+    padding-left: 0.065rem !important;
+    padding-right: 0.065rem !important;
+}
+
+.py-025 {
+    padding-top: 0.065rem !important;
+    padding-bottom: 0.065rem !important;
+}
+
+.ps-025 {
+    padding-left: 0.065rem !important;
+}
+
+.pe-025 {
+    padding-right: 0.065rem !important;
+}
+
+.pt-025 {
+    padding-top: 0.065rem !important;
+}
+
+.pb-025 {
+    padding-bottom: 0.065rem !important;
+}

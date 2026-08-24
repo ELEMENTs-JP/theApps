@@ -1,0 +1,324 @@
+﻿@inject ISqlDatabaseService sql
+@inject ILocalizationService loc
+@inject IMessagingBusService msg
+@implements IAsyncDisposable
+
+@if (!string.IsNullOrEmpty(this.Label))
+{
+    <label class="form-label text-secondary" for="@ID">@Label</label>
+}
+
+<div class="position-relative overlay-container">
+
+    <div id="@( "frame_popup_" + ID )" name="@InputName" class="@(" w-100 dropdown-center editbox ")) ">
+
+        <div id="@( "link_popup_" + ID )" class="@(" row align-items-center ")" data-bs-toggle="dropdown">
+
+            @*  d-none d-xl-block   *@
+            <div id="@( "head_popup_" + ID )" class="col p-025 d-flex flex-nowrap overflow-x-auto align-items-center">
+                @foreach (IDTO dto in this.AssignedItems)
+                {
+                    <div class="d-inline-flex p-025 px-1 rounded-2 hover pointer mx-1">
+                        <div class="px-1">
+                            @dto.Title
+                        </div>
+                    </div>
+
+                }
+
+            </div>
+            <div class="@( "col-auto pointer hover rounded-2 px-1 me-2  dropdown-toggle")">
+            </div>
+        </div>
+
+        <div id="@( "body_popup_" + ID )" class="@( "dropdown-menu w-100 ")" style="@MenuStyle">
+
+            <div class="row g-0">
+                <div class="col">
+                    <div class="dropdown-header">@Label</div>
+                    <div class="mb-1 small text-muted text-truncate-container-2 overflow-hidden"
+                         style="margin-left:12px;">
+                        @Description
+                    </div>
+                </div>
+            </div>
+
+            @* Es geht um folgende TextBox *@
+            <div class="p-2" @onclick:stopPropagation="true">
+                <input type="text"
+                       class="form-control form-control-sm"
+                       placeholder="@loc.GetLabel("Suchen...", "find...")"
+                       @bind="searchTerm"
+                       @bind:event="oninput" />
+            </div>
+
+            <div class="dropdown-divider"></div>
+
+            <div class="@( " overflow-y-auto " )" style="@( MaxHeightCSS )">
+
+                @foreach (IDTO item in GetFilteredItems())
+                {
+                    <div class="row g-0 m-1 hover pointer rounded-2 p-1">
+                        @if (ItemTemplate is not null)
+                        {
+                            @ItemTemplate(item)
+                        }
+                        else
+                        {
+                            <div class="col p-1">
+                                @item.Title
+                            </div>
+
+                            @if (IsAlreadyAssigned(item) == false)
+                            {
+                                <div class="col-auto p-1 pointer hover rounded-2" @onclick="@(() => AssignItem(item))">
+                                    <SymbolIcon Symbol="Icon.Connect" Color="var(--tblr-green)" />
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-auto p-1 pointer hover rounded-2" @onclick="@(() => RemoveItem(item))">
+                                    <SymbolIcon Symbol="Icon.Disconnect" Color="var(--tblr-red)" />
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+
+            </div>
+
+         
+        </div>
+    </div>
+
+    @if (Inlay != null)
+    {
+        <div class="position-absolute top-50 end-0 translate-middle-y me-2">
+            @Inlay
+        </div>
+    }
+
+    @if (Overlay != null)
+    {
+        <div class="overlay position-absolute top-50 end-0 translate-middle-y me-2">
+            @Overlay
+        </div>
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(Description))
+{
+    <div class="text-muted small border-top mt-1" style="padding-left:3px; padding-top:3px;">
+        @this.Description.ToSecureString()
+    </div>
+}
+@if (!string.IsNullOrEmpty(Hint))
+{
+    <div class="form-hint" style="padding-left:3px; padding-top:3px;">
+        @Hint.ToSecureString()
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public string Association { get; set; } = "Association";
+
+    [Parameter]
+    public string ItemType { get; set; }
+
+    [Parameter]
+    public RenderFragment<IDTO>? ItemTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment? Overlay { get; set; }
+
+    [Parameter]
+    public RenderFragment? Inlay { get; set; }
+
+    [Parameter]
+    public string ID { get; set; } = Guid.NewGuid().ToString();
+
+    [Parameter]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+    [Parameter]
+    public string Hint { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public string MenuStyle { get; set; } = "min-width:13rem;";
+
+    [Parameter]
+    public string MaxHeightCSS { get; set; } = "max-height:44rem;";
+
+    List<IDTO> AssignedItems { get; set; } = new();
+    List<IDTO> Items { get; set; } = new();
+
+    [Parameter]
+    public IDTO Item { get; set; } // Parent Item // Related Item
+
+    [Parameter]
+    public EventCallback<IDTO> ItemChanged { get; set; }
+    [Parameter]
+    public EventCallback<IDTO> ItemAssigned { get; set; }
+    [Parameter]
+    public EventCallback<IDTO> ItemRemoved { get; set; }
+
+    [Parameter]
+    public EventCallback<List<IDTO>> ItemsChanged { get; set; }
+
+    [Parameter]
+    public string Placeholder { get; set; } = string.Empty;
+
+
+    [Parameter]
+    public bool IsEditable { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await Init();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task Init()
+    {
+        await LoadItems();
+        await LoadRelatedItems();
+    }
+    private async Task LoadItems()
+    {
+        if (Item == null)
+            return;
+
+        if (ItemType == null)
+            return;
+
+        IQueryParameter qp = new QueryParameter();
+        qp.ItemType = this.ItemType;
+        qp.MasterGUID = sql.MasterGUID;
+        IQueryResult ItemsResult = await sql.GetItems(qp);
+        this.Items = ItemsResult.Items;
+    }
+    private async Task LoadRelatedItems()
+    {
+        if (Item == null)
+            return;
+
+        if (ItemType == null)
+            return;
+
+        // Related // Assigned Items
+        IQueryResult relatedResult = await sql.GetRelatedItems(this.Item, ItemType, Association);
+        this.AssignedItems = relatedResult.Items;
+    }
+
+    private bool IsAlreadyAssigned(IDTO dto)
+    {
+        IDTO? assigned = this.AssignedItems.FirstOrDefault(se => se.GUID == dto.GUID);
+        if (assigned == null)
+        {
+            return false;
+        }
+
+        return true;
+    }
+    private async Task AssignItem(IDTO dto)
+    {
+        if (Item == null)
+            return;
+
+        if (ItemType == null)
+            return;
+
+        if (dto == null)
+            return;
+
+        IQueryResult assignResult = await sql.Assign(Item, dto, Association);
+
+        // assign
+        this.AssignedItems.Add(dto);
+
+        await ItemChanged.InvokeAsync(dto);
+        await ItemAssigned.InvokeAsync(dto);
+        await ItemsChanged.InvokeAsync(this.AssignedItems);
+
+        msg.Publish("Info", BusAction.Info, "Zuordnung erfolgt");
+
+        // await InvokeAsync(StateHasChanged);
+    }
+    private async Task RemoveItem(IDTO dto)
+    {
+        if (Item == null)
+            return;
+
+        if (ItemType == null)
+            return;
+
+        if (dto == null)
+            return;
+
+        IQueryResult assignResult = await sql.Remove(this.Item, dto);
+
+        this.AssignedItems.Remove(dto);
+
+        await ItemChanged.InvokeAsync(dto);
+        await ItemRemoved.InvokeAsync(dto);
+        await ItemsChanged.InvokeAsync(this.AssignedItems);
+
+        msg.Publish("Info", BusAction.Info, "Eintrag entfernt");
+        
+        // await InvokeAsync(StateHasChanged);
+    }
+
+    private string searchTerm = string.Empty;
+
+    private IEnumerable<IDTO> GetFilteredItems()
+    {
+        if (Items is null)
+            return Enumerable.Empty<IDTO>();
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return Items;
+
+        return Items.Where(x => x.Title != null &&
+                                x.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private string InputName =>
+    !string.IsNullOrWhiteSpace(Name)
+        ? Name
+        : Helper.GenerateName(Label);
+
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (Items != null)
+            {
+                Items.Clear();
+                Items = null;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+}

@@ -138,7 +138,8 @@ namespace theInfrastructure
         Text,
         TextArea,
         Html,
-        DropDown,
+        DropDown, // Text Drop Down Auswahl 
+        Select, // Items Selection // Connection 
         CheckBox,
         Heading,
 

@@ -68,18 +68,29 @@
                 Es wurde offenbar ein Link aufgerufen, der so nicht existiert, oder ihr Account hierfür nicht berechtigt ist.
             </div>
 
-            <div class="hover pointer rounded-2 p-2 my-3" 
-                @onclick="@( e => { nm.NavigateTo("/Security/Login", false); })">
-                go to Login...
+            <div class="row g-0 pt-3">
+                <div class="col-auto pb-3 pe-3">
+                    <div class="border hover pointer rounded-2 p-2 me-2 mb-2"
+                         @onclick="@( e => { nm.NavigateTo("/Security/Login", false); })">
+                        go to Login...
+                    </div>
+                </div>
+                <div class="col-auto pb-3 pe-3">
+                    <div class="border hover pointer rounded-2 p-2  me-2 mb-2"
+                         @onclick="@( e => { nm.NavigateTo("/Security/Register", false); })">
+                        go to Registration...
+                    </div>
+                </div>
+                <div class="col-auto pb-3 pe-3">
+                    <div class="border hover pointer rounded-2 p-2  me-2 mb-2"
+                         @onclick="@( e => { nm.NavigateTo("/", false); })">
+                        go to App...
+                    </div>
+                </div>
             </div>
-            <div class="hover pointer rounded-2 p-2 my-3"
-                 @onclick="@( e => { nm.NavigateTo("/Security/Register", false); })">
-                go to Registration...
-            </div>
-            <div class="hover pointer rounded-2 p-2 my-3"
-                 @onclick="@( e => { nm.NavigateTo("/", false); })">
-                go to App...
-            </div>
+        
+        
+        
         </div>
 
     </NotAuthorized>

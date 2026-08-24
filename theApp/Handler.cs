@@ -2,6 +2,8 @@
 using theApp.Components;
 using theDatabase;
 using theInfrastructure;
+using NLog;
+using NLog.Web;
 
 namespace theApp
 {
@@ -9,144 +11,153 @@ namespace theApp
     {
         public static void Init(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            // nLog 
+            var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+            logger.Debug("Anwendung wird gestartet");
 
-            // Add services to the container.
-            builder.Services.AddRazorComponents()
-                .AddInteractiveServerComponents();
+            try
+            {
+                var builder = WebApplication.CreateBuilder(args);
 
-            // Detail Informatiopnen bei rekursiven Fehlern 
-            builder.Services.AddServerSideBlazor()
-                .AddCircuitOptions(options =>
-                {
-                    if (builder.Environment.IsDevelopment()) //Only add details when debugging.
+                // NLog als Logging-Provider hinzufügen
+                builder.Logging.ClearProviders();
+                builder.Host.UseNLog();
+
+                // Add services to the container.
+                builder.Services.AddRazorComponents()
+                    .AddInteractiveServerComponents();
+
+                // Detail Informatiopnen bei rekursiven Fehlern 
+                builder.Services.AddServerSideBlazor()
+                    .AddCircuitOptions(options =>
                     {
-                        options.DetailedErrors = true;
-                    }
-                });
+                        if (builder.Environment.IsDevelopment()) //Only add details when debugging.
+                        {
+                            options.DetailedErrors = true;
+                        }
+                    });
 
-            // Controllers für Security API 
-            builder.Services.AddControllers();
+                // Controllers für Security API 
+                builder.Services.AddControllers();
 
-            // Database Service 
-            builder.Services.AddScoped<ISqlDatabaseService>(provider =>
-            {
-                // Abruf des WebHostEnvironment aus dem DI-Container
-                var environment = provider.GetRequiredService<IWebHostEnvironment>();
-
-                // Auslesen des ContentRootPath
-                string rootPath = environment.ContentRootPath;
-
-                // Manuelle Instanziierung und Übergabe des Pfads
-                return new SQLiteService(rootPath);
-            });
-
-            // Language Service 
-            builder.Services.AddScoped<ILocalizationService>(provider =>
-            {
-                // Abruf des WebHostEnvironment aus dem DI-Container
-                var environment = provider.GetRequiredService<IWebHostEnvironment>();
-                string rootPath = environment.ContentRootPath;
-
-                // Manuelle Instanziierung und Übergabe 
-                return new LocalizationService(environment, new SQLiteService(rootPath));
-            });
-
-            // Security Service 
-            builder.Services.AddScoped<ISecurityService>(provider =>
-            {
-                // Abruf des WebHostEnvironment aus dem DI-Container
-                var environment = provider.GetRequiredService<IWebHostEnvironment>();
-                string rootPath = environment.ContentRootPath;
-
-                // Manuelle Instanziierung und Übergabe 
-                return new SecurityService(environment, new SQLiteService(rootPath));
-            });
-
-            // App Service 
-            builder.Services.AddScoped<IAppService>(provider =>
-            {
-                // Abruf des WebHostEnvironment aus dem DI-Container
-                var environment = provider.GetRequiredService<IWebHostEnvironment>();
-                string rootPath = environment.ContentRootPath;
-
-                // Manuelle Instanziierung und Übergabe 
-                return new AppService(environment, new SQLiteService(rootPath));
-            });
-
-            // A valid antiforgery token was not provided with the request. Add an antiforgery token, or disable antiforgery validation for this endpoint.
-
-            // --- 1. Cookie-Authentifizierung konfigurieren
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
+                // Database Service 
+                builder.Services.AddScoped<ISqlDatabaseService>(provider =>
                 {
-                    options.Cookie.Name = "SecureAppAuthCookie";
-                    options.LoginPath = "/Login"; // Wohin bei @attribute [Authorize]
+                    // Abruf des WebHostEnvironment aus dem DI-Container
+                    var environment = provider.GetRequiredService<IWebHostEnvironment>();
 
-                    // DYNAMISCHE ANPASSUNG:
-                    // Im Development-Mode erlauben wir Cookies über HTTP.
-                    // In Produktion erzwingen wir Secure (HTTPS).
-                    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
-                        ? CookieSecurePolicy.SameAsRequest
-                        : CookieSecurePolicy.Always;
+                    // Auslesen des ContentRootPath
+                    string rootPath = environment.ContentRootPath;
 
-                    options.Cookie.HttpOnly = true;
-                    options.ExpireTimeSpan = TimeSpan.FromHours(12);
-                    options.SlidingExpiration = true; // Erneuert das Cookie bei Aktivität
+                    // Manuelle Instanziierung und Übergabe des Pfads
+                    return new SQLiteService(rootPath);
                 });
 
-            builder.Services.AddHttpContextAccessor(); // Wichtig für den Zugriff auf den User
-                                                       // --- 1. Cookie-Authentifizierung konfigurieren
+                // Language Service 
+                builder.Services.AddScoped<ILocalizationService>(provider =>
+                {
+                    // Abruf des WebHostEnvironment aus dem DI-Container
+                    var environment = provider.GetRequiredService<IWebHostEnvironment>();
+                    string rootPath = environment.ContentRootPath;
 
-            builder.Services.AddCascadingAuthenticationState();
+                    // Manuelle Instanziierung und Übergabe 
+                    return new LocalizationService(environment, new SQLiteService(rootPath));
+                });
+
+                // Security Service 
+                builder.Services.AddScoped<ISecurityService>(provider =>
+                {
+                    // Abruf des WebHostEnvironment aus dem DI-Container
+                    var environment = provider.GetRequiredService<IWebHostEnvironment>();
+                    string rootPath = environment.ContentRootPath;
+
+                    // Manuelle Instanziierung und Übergabe 
+                    return new SecurityService(environment, new SQLiteService(rootPath));
+                });
+
+                // App Service 
+                builder.Services.AddScoped<IAppService>(provider =>
+                {
+                    // Abruf des WebHostEnvironment aus dem DI-Container
+                    var environment = provider.GetRequiredService<IWebHostEnvironment>();
+                    string rootPath = environment.ContentRootPath;
+
+                    // Manuelle Instanziierung und Übergabe 
+                    return new AppService(environment, new SQLiteService(rootPath));
+                });
+
+                // A valid antiforgery token was not provided with the request. Add an antiforgery token, or disable antiforgery validation for this endpoint.
+
+                // --- 1. Cookie-Authentifizierung konfigurieren
+                builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                    .AddCookie(options =>
+                    {
+                        options.Cookie.Name = "SecureAppAuthCookie";
+                        options.LoginPath = "/Login"; // Wohin bei @attribute [Authorize]
+
+                        // DYNAMISCHE ANPASSUNG:
+                        // Im Development-Mode erlauben wir Cookies über HTTP.
+                        // In Produktion erzwingen wir Secure (HTTPS).
+                        options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+                            ? CookieSecurePolicy.SameAsRequest
+                            : CookieSecurePolicy.Always;
+
+                        options.Cookie.HttpOnly = true;
+                        options.ExpireTimeSpan = TimeSpan.FromHours(12);
+                        options.SlidingExpiration = true; // Erneuert das Cookie bei Aktivität
+                    });
+
+                builder.Services.AddHttpContextAccessor(); // Wichtig für den Zugriff auf den User
+                                                           // --- 1. Cookie-Authentifizierung konfigurieren
+
+                builder.Services.AddCascadingAuthenticationState();
 
 
 
 
-            // Messaging Bus Service 
-            builder.Services.AddScoped<IMessagingBusService, MessagingBusService>();
+                // Messaging Bus Service 
+                builder.Services.AddScoped<IMessagingBusService, MessagingBusService>();
 
-            // Logging Service 
-            builder.Services.AddSingleton<AsyncExceptionLogger>();
-            builder.Services.AddSingleton<IExceptionLogger>(
-                sp => sp.GetRequiredService<AsyncExceptionLogger>());
 
-            builder.Services.AddHostedService(
-                sp => sp.GetRequiredService<AsyncExceptionLogger>());
+                var app = builder.Build();
 
-            // Logging Service 
-            //builder.Services.AddSingleton<AsyncExceptionBuffer>();
-            //builder.Services.AddHostedService(sp => sp.GetRequiredService<AsyncExceptionBuffer>());
+                // Configure the HTTP request pipeline.
+                if (!app.Environment.IsDevelopment())
+                {
+                    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+                    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                    app.UseHsts();
+                }
+                app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+                app.UseHttpsRedirection();
 
-            var app = builder.Build();
+                app.UseAntiforgery();
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Error", createScopeForErrors: true);
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                app.MapStaticAssets();
+
+                app.MapRazorComponents<App>()
+                   .AddInteractiveServerRenderMode()
+                   .AddAdditionalAssemblies(typeof(theDatabase.Controls.DatabaseSetup).Assembly,
+                                                typeof(theComponents.Pages.Item_Page).Assembly,
+                                                typeof(theControls.Edit.EditBox).Assembly);
+
+                app.UseAuthentication();
+                app.UseAuthorization();
+
+                // 2. Controller-Routen nach app.Build() mappen:
+                app.MapControllers();
+
+                app.Run();
             }
-            app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
-            app.UseHttpsRedirection();
-
-            app.UseAntiforgery();
-
-            app.MapStaticAssets();
-
-            app.MapRazorComponents<App>()
-               .AddInteractiveServerRenderMode()
-               .AddAdditionalAssemblies(typeof(theDatabase.Controls.DatabaseSetup).Assembly,
-                                            typeof(theComponents.Pages.Item_Page).Assembly,
-                                            typeof(theControls.Edit.EditBox).Assembly);
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            // 2. Controller-Routen nach app.Build() mappen:
-            app.MapControllers();
-
-            app.Run();
+            catch (Exception exception)
+            {
+                logger.Error(exception, "Anwendung aufgrund einer Exception gestoppt");
+                throw;
+            }
+            finally
+            {
+                LogManager.Shutdown();
+            }
 
         }
     }

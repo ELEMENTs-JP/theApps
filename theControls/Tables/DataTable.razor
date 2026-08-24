@@ -1,6 +1,7 @@
 ﻿
 
 @inherits BaseList
+@inject ILogger<Index> Logger
 
 @inject NavigationManager nm
 
@@ -29,6 +30,11 @@
 
 @code {
 
- 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        
+    }
 
 }
