@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using theInfrastructure;
@@ -467,6 +468,27 @@ namespace theDatabase
 
                         // CONTENT 
                         dbitem = (tbl_CON_Content)Helper.MapProperties(dto, dbitem);
+
+                        // Matchcode 
+                        var matchdata = new Dictionary<string, string>
+                        {
+                            { "Title", dbitem.Title ?? string.Empty },
+                            { "Content", dbitem.Content ?? string.Empty }
+                        };
+
+                        if (dbitem.Properties != null)
+                        {
+                            foreach (ItemProperty ip in dbitem.Properties)
+                            {
+                                if (!string.IsNullOrEmpty(ip.Property))
+                                {
+                                    matchdata[ip.Property] = ip.Value ?? string.Empty;
+                                }
+                            }
+                        }
+
+                        // Erzeugt ein valides JSON: {"Title":"Task","Content":"","Status":"abgeschlossen",...}
+                        dbitem.Matchcode = JsonSerializer.Serialize(matchdata);
                     }
 
                     // SAVE 

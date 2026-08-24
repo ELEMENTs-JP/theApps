@@ -92,7 +92,7 @@ namespace theDatabase
                 
             }
         }
-        public async Task<List<IDTO>> RelatedItems(string itemType)
+        public async Task<List<IDTO>> RelatedItems(string itemType, string association = "Association")
         {
             List<IDTO> _items = new List<IDTO>();
 
@@ -146,7 +146,7 @@ namespace theDatabase
 
             await sqlService.ChangeItemType(dto, newItemType);
         }
-        public async Task Assign(IDTO dto)
+        public async Task Assign(IDTO dto, string association = "Association")
         {
             if (sqlService == null)
                 return;
@@ -154,8 +154,7 @@ namespace theDatabase
             if (this.Item == null)
                 return;
 
-            IQueryResult result = await sqlService.Assign(this.Item, dto);
-
+            IQueryResult result = await sqlService.Assign(this.Item, dto, association);
         }
         public async Task Remove(IDTO dto)
         {

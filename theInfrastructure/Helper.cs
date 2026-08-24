@@ -10,95 +10,14 @@ using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace theInfrastructure
 {
-
-    public static class Helper
+ 
+    public static partial class Helper
     {
-        private static readonly CultureInfo GermanCulture = CultureInfo.GetCultureInfo("de-DE");
-        public static string ToFormat(this string input, TextFormat format)
-        {
-            switch (format)
-            {
-                case TextFormat.Byte:
-                    {
-                        return input.ToDecimalFormat() + " Byte";
-                    }
-                case TextFormat.KB:
-                    {
-                        return input.ToDecimalFormat() + " KB";
-                    }
-                case TextFormat.MB:
-                    {
-                        return input.ToDecimalFormat() + " MB";
-                    }
-                default:
-                    {
-                        break;
-                    }
-            }
-
-            return input;
-        }
-        public static string ToDecimalFormat(this string input, int maxDecimals = 2)
-        {
-            if (string.IsNullOrWhiteSpace(input))
-                return string.Empty;
-
-            // Parsing der deutschen Zahlenformatierung
-            if (decimal.TryParse(input, NumberStyles.Number, GermanCulture, out decimal parsedValue))
-            {
-                // "0.##" formatiert auf maximal 2 Nachkommastellen ohne auffüllende Nullen am Ende.
-                // Für exakt 2 Nachkommastellen (z. B. "1.234,50") stattdessen "N2" verwenden.
-                string formatPattern = "0." + new string('#', maxDecimals);
-                return parsedValue.ToString(formatPattern, GermanCulture);
-            }
-
-            return input; // Rückgabe des Originalstrings, falls das Parsing fehlschlägt
-        }
-
-        public static bool IsValidImageExtension(string ext)
-        {
-            if (string.IsNullOrWhiteSpace(ext))
-                return false;
-
-            ReadOnlySpan<char> span = ext.AsSpan().TrimStart('.');
-
-            return span.Equals("jpg", StringComparison.OrdinalIgnoreCase) ||
-                   span.Equals("jpeg", StringComparison.OrdinalIgnoreCase) ||
-                   span.Equals("png", StringComparison.OrdinalIgnoreCase) ||
-                   span.Equals("gif", StringComparison.OrdinalIgnoreCase) ||
-                   span.Equals("webp", StringComparison.OrdinalIgnoreCase) ||
-                   span.Equals("svg", StringComparison.OrdinalIgnoreCase) ||
-                   span.Equals("bmp", StringComparison.OrdinalIgnoreCase) ||
-                   span.Equals("ico", StringComparison.OrdinalIgnoreCase) ||
-                   span.Equals("avif", StringComparison.OrdinalIgnoreCase);
-        }
-        public static async Task<string> ToBase64String(IDTO image)
-        {
-            string Base64String = string.Empty;
-            if (image == null)
-                return Base64String;
-
-            string FilePath = image["FullFilePath"].ToSecureString();
-            string ext = image["FileExtension"].ToSecureString();
-
-            if (System.IO.File.Exists(FilePath))
-            {
-                // Read
-                byte[] arr = System.IO.File.ReadAllBytes(FilePath);
-
-                string base64String = Convert.ToBase64String(arr, 0, arr.Length);
-
-                Base64String = "data:" + ext + ";base64," + base64String;
-            }
-
-            return Base64String;
-
-        }
-
         // Reflection 
         public static Type SpecificType(string assemblyName = "", string className = "")
         {
@@ -130,73 +49,6 @@ namespace theInfrastructure
             return null;
         }
 
-        public static int WeekOfYear(this DateTime date)
-        {
-            // Verwende die Kulturinformationen, um die Kalenderwoche zu berechnen
-            Calendar calendar = CultureInfo.InvariantCulture.Calendar;
-            CalendarWeekRule weekRule = CalendarWeekRule.FirstFourDayWeek; // ISO-8601 Konvention
-            DayOfWeek firstDayOfWeek = DayOfWeek.Monday; // ISO-8601: Woche beginnt am Montag
-
-            // Berechne die Kalenderwoche und gib sie zurück
-            return calendar.GetWeekOfYear(date, weekRule, firstDayOfWeek);
-        }
-        public static string GetItemUrl(IDTO dto)
-        {
-            // Url 
-            return "/Item/" + dto.ItemType.ToSecureString() + "/" + dto.GUID.ToSecureString();
-        }
-        public static int GetDayOfWeek(DayOfWeek dow)
-        {
-            switch (dow)
-            {
-                case DayOfWeek.Monday:
-                    { return 1; }
-                case DayOfWeek.Tuesday:
-                    { return 2; }
-                case DayOfWeek.Wednesday:
-                    { return 3; }
-                case DayOfWeek.Thursday:
-                    { return 4; }
-                case DayOfWeek.Friday:
-                    { return 5; }
-                case DayOfWeek.Saturday:
-                    { return 6; }
-                case DayOfWeek.Sunday:
-                    { return 7; }
-            }
-
-            return 0;
-        }
-        public static List<DateTime> GetDates(int year, int month)
-        {
-            List<DateTime> dates = Enumerable.Range(1, DateTime.DaysInMonth(year, month))  // Days: 1, 2 ... 31 etc.
-                             .Select(day => new DateTime(year, month, day)) // Map each day to a date
-                             .ToList(); // Load dates into a list
-
-
-            // Vorher
-            DateTime first = dates.FirstOrDefault();
-            int before = GetDayOfWeek(first.DayOfWeek) - 1;
-            for (int b = 0; b < before; b++)
-            {
-                dates.Insert(0, first.AddDays(-b - 1));
-            }
-
-            // Nachher
-            DateTime last = dates.LastOrDefault();
-            int after = 7 - GetDayOfWeek(last.DayOfWeek);
-            for (int a = 0; a < after; a++)
-            {
-                dates.Add(last.AddDays(a + 1));
-            }
-
-            // return
-            return dates;
-        }
-        public static string ToYearMonth(this DateTime date, string trennzeichen = "")
-        {
-            return date.Date.Year + trennzeichen + date.Date.Month;
-        }
 
         public static string GetGlassClass(this LayoutConfiguration config)
         {
@@ -257,84 +109,6 @@ namespace theInfrastructure
             return result;
         }
 
-        public static Icon IconByPriority(string Prio)
-        {
-            switch (Prio)
-            {
-                case "Unternehmenskritisch":
-                    {
-                        return Icon.Prio_Highest;
-                    }
-                case "Business Critical":
-                    {
-                        return Icon.Prio_Higher;
-                    }
-                case "höher":
-                    {
-                        return Icon.Prio_High;
-                    }
-                case "ausgeglichen":
-                    {
-                        return Icon.Prio_Middle;
-                    }
-                case "niedrig":
-                    {
-                        return Icon.Prio_Low;
-                    }
-                case "niedriger":
-                    {
-                        return Icon.Prio_Lower;
-                    }
-                case "irrelevant":
-                    {
-                        return Icon.Prio_Lowest;
-                    }
-                default:
-                    {
-                        return Icon.NULL;
-                    }
-            }
-        }
-        public static string ColorByPriority(string Prio)
-        {
-            switch (Prio)
-            {
-                case "Unternehmenskritisch":
-                    {
-                        return "var(--tblr-red)";
-                    }
-                case "Business Critical":
-                    {
-                        return "var(--tblr-orange)";
-                    }
-                case "höher":
-                    {
-                        return "var(--tblr-yellow)";
-                    }
-                case "ausgeglichen":
-                    {
-                        return "var(--tblr-blue)";
-                    }
-                case "niedrig":
-                    {
-                        return "var(--tblr-green)";
-                    }
-                case "niedriger":
-                    {
-                        return "var(--tblr-purple)";
-                    }
-                case "irrelevant":
-                    {
-                        return "var(--tblr-gray-500)";
-                    }
-                default:
-                    {
-                        return "#fff";
-                    }
-            }
-        }
-
-
         public static async Task<List<IDTO>> InitDropDown(IField field, ISqlDatabaseService sql)
         {
             List<IDTO> Items = new List<IDTO>();
@@ -348,31 +122,15 @@ namespace theInfrastructure
             }
             else if (field.Typ == FieldTyp.Priority)
             {
-                Items.Add(new DTO() { ID = "9", Title = "Unternehmenskritisch" });
-                Items.Add(new DTO() { ID = "7", Title = "Business Critical" });
-                Items.Add(new DTO() { ID = "5", Title = "höher" });
-                Items.Add(new DTO() { ID = "5", Title = "ausgeglichen" });
-                Items.Add(new DTO() { ID = "3", Title = "niedrig" });
-                Items.Add(new DTO() { ID = "1", Title = "niedriger" });
-                Items.Add(new DTO() { ID = "0", Title = "irrelevant" });
+                Items = Priority.DefaultPriorities();
             }
             else if (field.Typ == FieldTyp.Progress)
             {
-                Items.Add(new DTO() { ID = "9", Title = "100 %" });
-                Items.Add(new DTO() { ID = "7", Title = "70 %" });
-                Items.Add(new DTO() { ID = "5", Title = "50 %" });
-                Items.Add(new DTO() { ID = "3", Title = "30 %" });
-                Items.Add(new DTO() { ID = "1", Title = "10 %" });
-                Items.Add(new DTO() { ID = "0", Title = "0 %" });
+                Items = Progress.DefaultProgress();
             }
             else if (field.Typ == FieldTyp.Status)
             {
-                Items.Add(new DTO() { ID = "9", Title = "abgeschlossen" });
-                Items.Add(new DTO() { ID = "7", Title = "zurückgestellt" });
-                Items.Add(new DTO() { ID = "5", Title = "in Arbeit" });
-                Items.Add(new DTO() { ID = "3", Title = "in Vorbereitung" });
-                Items.Add(new DTO() { ID = "1", Title = "in Planung" });
-                Items.Add(new DTO() { ID = "0", Title = "neu" });
+                Items = Status.DefaultStatus();
             }
             else if (field.Typ == FieldTyp.FieldTyp)
             {
@@ -432,87 +190,20 @@ namespace theInfrastructure
                 Items.Add(new DTO() { ID = "Update", Title = "Update" });
                 Items.Add(new DTO() { ID = "Delete", Title = "Delete" });
             }
+            else if (field.Typ == FieldTyp.AssociationTyp)
+            {
+                Items.Add(new DTO() { ID = "Default", Title = "Default" });
+                Items.Add(new DTO() { ID = "Parents", Title = "Parents" });
+                Items.Add(new DTO() { ID = "Children", Title = "Children" });
+                Items.Add(new DTO() { ID = "Related", Title = "Related" });
+                Items.Add(new DTO() { ID = "Parallel", Title = "Parallel" });
+            }
 
             return Items;
         }
-        public static long MaxFileSize(int defaultValue = 10)
-        {
-            long defaultFileSizeInBytes = 1024 * 1024 * defaultValue;
-            return defaultFileSizeInBytes;
-        }
-        public static Guid ToSecureGUID(this object text)
-        {
-            try
-            {
-                if (text == null)
-                    return Guid.Empty;
-
-                if (CheckGUID(text.ToString()))
-                {
-                    return new Guid(text.ToSecureString());
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("FAIL : ToSecureGUID : " + ex.Message);
-            }
-
-            return Guid.Empty;
-        }
-        public static bool CheckGUID(string text)
-        {
-            return text != null
-                   && text.Length == 36
-                   && Guid.TryParseExact(text, "D", out _);
-        }
-        // Mail 
-        public static bool IsMailFormat(this string mail)
-        {
-            if (mail.ToLower().Contains("@".ToLower()))
-            {
-                if (mail.ToLower().Contains(".".ToLower()))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        // Navigation 
-        public static void NavToApp(this NavigationManager nm, string App)
-        {
-            nm.NavigateTo("/App/" + App, false);
-        }
-        public static void NavToItem(this NavigationManager nm, string ItemType, Guid GUID)
-        {
-            nm.NavigateTo("/Item/" + ItemType + "/" + GUID.ToString(), false);
-        }
-        public static void NavToLibrary(this NavigationManager nm, string ItemType, ItemTypeTyp typ = ItemTypeTyp.Item)
-        {
-            nm.NavigateTo(LibraryUrl(ItemType, typ), false);
-        }
-        public static string LibraryUrl(string ItemType, ItemTypeTyp typ = ItemTypeTyp.Item)
-        {
-            if (typ == ItemTypeTyp.Item)
-            {
-                return "/Items/" + ItemType;
-            }
-            if (typ == ItemTypeTyp.File)
-            {
-                return "/File/" + ItemType;
-            }
-            if (typ == ItemTypeTyp.Appointment)
-            {
-                return "/Calendar/" + ItemType;
-            }
-            if (typ == ItemTypeTyp.Hierarchy)
-            {
-                return "/Hierarchy/" + ItemType;
-            }
-
-            return "/Items/" + ItemType;
-        }
+    
+   
+  
         public static string GetClassByDevice(IField field)
         {
 
@@ -527,157 +218,7 @@ namespace theInfrastructure
 
             return string.Empty;
         }
-        private static bool SafeConvertible(IConvertible convertible)
-        {
-            if (convertible == null)
-                return false;
-
-            switch (convertible.GetTypeCode())
-            {
-                case TypeCode.Boolean:
-                return (bool)convertible;
-
-                case TypeCode.String:
-                return bool.TryParse((string)convertible, out var result)
-                       && result;
-
-                case TypeCode.Int16:
-                case TypeCode.Int32:
-                case TypeCode.Int64:
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                case TypeCode.UInt64:
-                return convertible.ToInt64(null) != 0;
-
-                case TypeCode.Decimal:
-                case TypeCode.Double:
-                case TypeCode.Single:
-                return convertible.ToDouble(null) != 0;
-
-                default:
-                return false;
-            }
-        }
-        public static bool ToSecureBool(this object? obj)
-        {
-            return obj switch
-            {
-                null => false,
-                bool b => b,
-                int i => i != 0,
-                string s when bool.TryParse(s, out var b) => b,
-                string s when int.TryParse(s, out var i) => i != 0,
-                IConvertible c => SafeConvertible(c), // Fallback für Spezialtypen
-                _ => false
-            };
-        }
-        public static string ToDate(this object? obj)
-        {
-            string val = obj.ToSecureString();
-
-            if (val.Contains("T"))
-            {
-                val = val.SplitGetFirst("T");
-            }
-
-            return val;
-        }
-        public static string SplitGetFirst(this string text, string separator = "-")
-        {
-            if (!text.Contains(separator))
-            {
-                return text;
-            }
-
-            List<char> cs = new List<char>();
-            if (separator.Length > 1)
-            {
-                foreach (char c in separator)
-                {
-                    cs.Add(c);
-                }
-                return text.Split(cs.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0];
-            }
-            return text.Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries)[0];
-        }
-        public static string SplitGetLast(this string text, string separator = ".")
-        {
-            try
-            {
-                if (text == null)
-                {
-                    return string.Empty;
-                }
-
-                string[] arr = text.Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries);
-                return arr[arr.Length - 1];
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
-        public static DateTime ToSecureDateTime(this object text)
-        {
-            try
-            {
-                if (text == null)
-                    return DateTime.Now;
-
-                if (string.IsNullOrEmpty(text.ToString()))
-                {
-                    return DateTime.MinValue;
-                }
-
-                if (text.ToSecureString().ToLower().Contains("T".ToLower()))
-                {
-                    string date = text.ToSecureString().SplitGetFirst("T");
-                    string time = text.ToSecureString().SplitGetLast("T");
-
-                    // check 
-                    time = (time.SplitGetFirst(":").Length == 1) ? ("0" + time) : time;
-
-                    DateTime newDate = Convert.ToDateTime(date + "T" + time);
-                    return newDate;
-                }
-
-                return Convert.ToDateTime(text.ToString());
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("FAIL : DateTime Conversion : " + ex.Message);
-                return DateTime.Now;
-            }
-        }
-        public static decimal ToSecureDecimal(this object text, decimal defaultIfNullOrEmpty = 0m, decimal defaultIfZero = 0m)
-        {
-            try
-            {
-                if (text == null)
-                {
-                    return defaultIfNullOrEmpty;
-                }
-
-                if (string.IsNullOrEmpty(text.ToSecureString()))
-                {
-                    return defaultIfNullOrEmpty;
-                }
-
-                if (decimal.TryParse(text.ToSecureString(), out decimal result))
-                {
-                    return result == 0 ? defaultIfZero : result;
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("FAIL : ToSecureDecimal : " + ex.Message);
-            }
-
-            return defaultIfNullOrEmpty;
-        }
-        public static void AddOrUpdate(this List<IDataValue> items, IDataValue value)
+       public static void AddOrUpdate(this List<IDataValue> items, IDataValue value)
         {
             ArgumentNullException.ThrowIfNull(items);
             ArgumentNullException.ThrowIfNull(value?.Field?.Title);
@@ -765,125 +306,7 @@ namespace theInfrastructure
             };
         }
 
-        private const string Base62Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-        public static string ToShortCode(this Guid guid, int length = 5)
-        {
-            if (length < 1 || length > 6)
-                throw new ArgumentOutOfRangeException(nameof(length));
-
-            // SHA256 über die GUID bilden
-            byte[] hash = SHA256.HashData(guid.ToByteArray());
-
-            // Erste 4 Bytes als UInt32 verwenden
-            uint value = BitConverter.ToUInt32(hash, 0);
-
-            // Maximale Anzahl für die gewünschte Länge
-            uint max = (uint)Math.Pow(62, length);
-
-            value %= max;
-
-            var result = new StringBuilder(length);
-
-            for (int i = 0; i < length; i++)
-            {
-                result.Insert(0, Base62Chars[(int)(value % 62)]);
-                value /= 62;
-            }
-
-            return result.ToString();
-        }
-
-        public static int ToSecureInt(this object text, int defaultValue = 0)
-        {
-            if (text == null || text == DBNull.Value)
-                return defaultValue;
-
-            // Falls das Objekt bereits ein numerischer Typ ist (z.B. double oder float)
-            // fangen wir NaN hier direkt ab, bevor die Konvertierung fehlschlägt.
-            if (text is double d && double.IsNaN(d))
-                return defaultValue;
-            if (text is float f && float.IsNaN(f))
-                return defaultValue;
-
-            string stringValue = text.ToString()?.Trim();
-
-            if (string.IsNullOrEmpty(stringValue) || stringValue.Equals("NaN", StringComparison.OrdinalIgnoreCase))
-                return defaultValue;
-
-            // TryParse ist deutlich schneller als Convert.ToInt32 + Catch
-            if (int.TryParse(stringValue, out int result))
-            {
-                return result;
-            }
-
-            // Normalisierung: Ersetzt das Komma durch einen Punkt, damit InvariantCulture 
-            // die Fließkommazahl unabhängig von den Server-Regionaleinstellungen korrekt liest.
-            string normalizedValue = stringValue.Replace(',', '.');
-
-            if (double.TryParse(normalizedValue, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double dblResult))
-            {
-                return (int)Math.Round(dblResult);
-            }
-
-            return defaultValue;
-        }
-        public static string ToSecureString(this object? value, string placeholder = "")
-        {
-            // 1. Direktes Null-Handling (Pattern Matching)
-            if (value is null)
-                return placeholder;
-
-            // 2. Performance-Boost: Falls es bereits ein String ist, Cast statt ToString()
-            if (value is string s)
-            {
-                return string.IsNullOrWhiteSpace(s) ? placeholder : s;
-            }
-
-            // 3. Sicherer Aufruf von ToString() (nur einmal!)
-            try
-            {
-                string? result = value.ToString();
-                return string.IsNullOrWhiteSpace(result) ? placeholder : result;
-            }
-            catch (Exception ex)
-            {
-                // Fehler nur im Debug-Modus loggen
-                System.Diagnostics.Debug.WriteLine($"ToSecureString FAIL: {ex.Message}");
-                return placeholder; // Konsistent zum Null-Fall den Placeholder zurückgeben
-            }
-        }
-
-
-        public static bool IsGuid(string input)
-        {
-            // Schneller Null- und Längencheck (Standard-GUIDs haben inkl. Bindestrichen 36 Zeichen)
-            if (input == null || input.Length != 36)
-                return false;
-
-            // .NET 10 nutzt hier intern ReadOnlySpan<char> unter der Haube -> 0 Heap-Allokationen
-            return Guid.TryParse(input, out _);
-        }
-
-        public static string ToSQLiteDateTimeString(this DateTime dt)
-        {
-            // 2023-06-19T09:00:00 
-
-            string year = dt.Year.ToString();
-            string month = (dt.Month <= 9) ? "0" + dt.Month.ToString() : dt.Month.ToString();
-            string day = (dt.Day <= 9) ? "0" + dt.Day.ToString() : dt.Day.ToString();
-            string hour = (dt.Hour <= 9) ? "0" + dt.Hour.ToString() : dt.Hour.ToString();
-            string minute = (dt.Minute <= 9) ? "0" + dt.Minute.ToString() : dt.Minute.ToString();
-            string second = (dt.Second <= 9) ? "0" + dt.Second.ToString() : dt.Second.ToString();
-
-            string SQLite = year + "-" + month + "-" + day + "T" + hour + ":" + minute + ":" + second;
-
-            System.Diagnostics.Debug.WriteLine("SQLite DateConversion: " + SQLite);
-
-            return SQLite;
-        }
-
-        public static object MapProperties(object UI, object DB)
+       public static object MapProperties(object UI, object DB)
         {
             // check Objects 
             if (UI == null || DB == null)

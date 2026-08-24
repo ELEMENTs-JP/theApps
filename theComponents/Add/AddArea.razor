@@ -46,7 +46,7 @@
                 }
 
                 <div class="col-12 p-2">
-                    <TextBox Label="Titel" Value="@Title" FocusOnInit="true"
+                    <TextBox Label="Titel" Value="@Title" Description="Titel des Datensatzes"
                              ValueChanged="@( async e => { Title = e; await SearchForDuplicates(); })" />
                 </div>
 
@@ -57,6 +57,15 @@
                     <div class="col-12">
                         <AddBox Field="@field" CssClass="" Border="false"
                                 ValueChanged="@( async e => { await OnChange(field, e); })" />
+                    </div>
+                }
+
+                @if (RelatedItem != null)
+                {
+                    <div class="col-12 p-2">
+                        <TextBox  Value="@Association" 
+                            Label="Zuordnung"  Description="Legt den Typ der Verbindung fest"
+                                ValueChanged="@( async e => { Association = e;  })" />
                     </div>
                 }
             </div>
@@ -76,6 +85,7 @@
 
     // Fields
     private string Title { get; set; } = string.Empty;
+    private string Association { get; set; } = string.Empty;
     private string Message { get; set; } = string.Empty;
 
     private List<IDataValue> Values { get; set; } = new();

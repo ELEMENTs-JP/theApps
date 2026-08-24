@@ -15,13 +15,13 @@ namespace theInfrastructure
         List<IDTO> Items { get; set; }
         Task Search();
         Task Load(string ID);
-        Task<List<IDTO>> RelatedItems(string itemType);
+        Task<List<IDTO>> RelatedItems(string itemType, string association = "Association");
         void Init(ISqlDatabaseService sql);
         Task<Guid> Create(string title);
         Task Delete(IDTO dto);
         Task Update(IDTO dto);
         Task ChangeItemType(IDTO dto, string newItemType);
-        Task Assign(IDTO dto);
+        Task Assign(IDTO dto, string association = "Association");
         Task Remove(IDTO dto);
     }
    

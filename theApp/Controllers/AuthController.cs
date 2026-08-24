@@ -37,13 +37,19 @@ public class AuthController : ControllerBase
         query.ItemType = "User";
         IQueryResult result = await sqlService.GetItems(query);
 
-        IDTO? user = result.Items.Where(se => se["Mail"].ToSecureString() == username
-                                          && se["Password"].ToSecureString() == password).FirstOrDefault();
-
-        // User nicht vorhanden 
+        IDTO? user = result.Items.Where(se => se["Mail"].ToSecureString() == username).FirstOrDefault();
         if (user == null)
-        {
             return Redirect("/login?error=true");
+
+        // Password 
+        string pwd = user["Password"].ToSecureString();
+        if (pwd != password)
+        { 
+            string hash = Encryption.HashPassword(password);
+            if (Encryption.VerifyPassword(password, hash) == false)
+            {
+                return Redirect("/login?error=true");
+            }
         }
 
         if (user != null)
@@ -109,10 +115,18 @@ public class AuthController : ControllerBase
         {
             // Values 
             newUser["Mail"] = username;
-            newUser["Password"] = password;
 
             // Update 
             await sqlService.Update(newUser);
+
+            string hash = Encryption.HashPassword(password);
+            if (Encryption.VerifyPassword(password, hash))
+            {
+                newUser["Password"] = hash;
+
+                // Update 
+                await sqlService.Update(newUser);
+            }
 
             // Nutzer zuordnen falls nicht zugeordnet 
             await AssignToPrincipal(newUser);

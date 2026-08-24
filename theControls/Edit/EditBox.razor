@@ -33,6 +33,7 @@
                 Field.Typ == FieldTyp.ItemTypeList ||
                 Field.Typ == FieldTyp.AppList ||
                 Field.Typ == FieldTyp.FunctionList ||
+                Field.Typ == FieldTyp.AssociationTyp ||
                 Field.Typ == FieldTyp.User ||
                  Field.Typ == FieldTyp.Priority ||
                  Field.Typ == FieldTyp.Status ||
@@ -50,8 +51,8 @@
                         @if (Field.Typ == FieldTyp.Priority)
                         {
                             <div class="col-auto px-1">
-                                <SymbolIcon Symbol="@( Helper.IconByPriority(entry.Title))" 
-                                Color="@( Helper.ColorByPriority(entry.Title) )" />
+                                <SymbolIcon Symbol="@( Priority.IconByPriority(entry.Title))" 
+                                Color="@( Priority.ColorByPriority(entry.Title) )" />
                             </div>
                         }
 

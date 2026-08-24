@@ -175,6 +175,7 @@ namespace theInfrastructure
         ItemTypeList, // Liste der verfügbaren ItemTypes 
         AppList, // Liste aller CMS Apps im System 
         FunctionList, // Liste der Funktionen die allow oder deny werden können 
+        AssociationTyp, // Typ der Verbindungen von Datensätzen (Association Type bei Relation) 
     }
 
     public enum DatabaseTyp
