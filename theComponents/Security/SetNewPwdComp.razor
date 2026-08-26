@@ -1,32 +1,119 @@
 ﻿@using Microsoft.AspNetCore.Components.Forms
+@using theControls.Input
 @using theControls.Layout
 @inject NavigationManager nm
+@inject ISqlDatabaseService sql
+@inject ISecurityService sec
 
+@if (User != null)
+{
+    <div class="container mt-5">
+        <div class="card mx-auto" style="max-width: 400px;">
+            <div class="card-body">
 
-<div class="container mt-5">
-    <div class="card mx-auto" style="max-width: 400px;">
-        <div class="card-body">
-            <h4>Neues Passwort setzen</h4>
-            <form action="/api/auth/setnewpwd" method="post">
-                <AntiforgeryToken />
+                <h2 class="h2 text-center fw-bold">Neues Passwort setzen</h2>
+                <div class="hr-text">Geschäftsaccount</div>
+
+                @if (!string.IsNullOrEmpty(Mail))
+                {
+                    <div class="mb-3">
+                        <TextBlock Label="E-Mail" Value="@Mail" />
+                    </div>
+                }
 
                 <div class="mb-3">
-                    <label>E-Mail</label>
-                    <input type="text" name="username" class="form-control" />
+                    <TextBox Label="Password" Type="FieldTyp.Password"
+                             ValueChanged="@( e => { Password = e;} )" />
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Request new password</button>
-            </form>
 
-            @if (nm.Uri.Contains("error"))
-            {
-                <div class="alert alert-danger mt-3">Zugriff verweigert!</div>
-            }
+                <button type="button" class="btn btn-primary w-100"
+                        @onclick="SetPassword">
+                    Passwort setzen
+                </button>
+
+                @if (!string.IsNullOrEmpty(Message))
+                {
+                    <div class="alert alert-danger mt-3">@Message</div>
+                }
+
+                @if (nm.Uri.Contains("error"))
+                {
+                    <div class="alert alert-danger mt-3">Zugriff verweigert!</div>
+                }
+            </div>
         </div>
     </div>
-</div>
+}
 
 
 
 @code {
 
+    [Parameter]
+    public string Token { get; set; } = string.Empty;
+
+    string Mail { get; set; } = string.Empty;
+    string Password { get; set; } = string.Empty;
+    string Message { get; set; } = string.Empty;
+
+    private IDTO User { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        // Token // Password
+        if (string.IsNullOrEmpty(Token))
+            return;
+
+        IQueryParameter query = new QueryParameter();
+        query.Matchcode = string.Empty;
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.ItemType = "User";
+        IQueryResult result = await sql.GetItems(query);
+
+        User = result.Items.Where(se => se["RequestToken"].ToSecureString() == Token).FirstOrDefault();
+        if (User != null)
+        {
+            Mail = User["Mail"].ToSecureString();
+        }
+    }
+
+    private async Task SetPassword()
+    {
+        // Token // Password
+        if (string.IsNullOrEmpty(Token))
+        { return; }
+        if (string.IsNullOrEmpty(Password))
+        {
+            Message = "Kein Passwort vergeben";
+            return;
+        }
+
+        if (Password.Length < sec.Configuration.PasswordSize)
+        {
+            Message = $"Passwort zu kurz. Mind. {sec.Configuration.PasswordSize} Zeichen";
+            return;
+        }
+
+
+        if (User == null)
+            return;
+
+        // Hash Password
+        string hash = Encryption.HashPassword(Password);
+  
+  
+            // Set Value
+            User["Password"] = hash;
+
+            // Token = null
+            User["RequestToken"] = string.Empty;
+
+            // Update
+            await sql.Update(User);
+  
+
+        nm.NavigateTo("/Login");
+    }
 }

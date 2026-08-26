@@ -6,7 +6,69 @@ using System.Text;
 
 namespace theInfrastructure
 {
-  
+    public enum GeneralColor
+    {
+        NULL = 0,
+
+        GreenLight = 10,
+        Green = 11,
+        GreenDark = 12,
+
+        RedLight = 30,
+        Red = 31,
+        RedDark = 32,
+
+        BlueLight = 40,
+        Blue = 41,
+        BlueDark = 42,
+
+        PinkLight = 51,
+        Pink = 52,
+        PinkDark = 53,
+
+        ViolettLight = 61,
+        Violett = 62,
+        ViolettDark = 63,
+
+
+        YellowLight = 71,
+        Yellow = 72,
+        YellowDark = 73,
+
+        TurquoiseLight = 81,
+        Turquoise = 82,
+        TurquoiseDark = 83,
+
+        RoseLight = 91,
+        Rose = 92,
+        RoseDark = 93,
+
+        OrangeLight = 101,
+        Orange = 102,
+        OrangeDark = 103,
+
+        // SignalRot = 12,
+
+        Light = 201,
+        Silver = 202,
+        Grey = 203,
+        Gray30 = 204,
+        Gray50 = 205,
+        Gray70 = 206,
+        Dark = 207,
+        Deep = 208,
+        Black = 209,
+    }
+    public interface IColor
+    {
+        GeneralColor Color { get; set; }
+        string HEX { get; set; }
+    }
+    public class tspColor : IColor
+    {
+        public GeneralColor Color { get; set; } = GeneralColor.NULL;
+        public string HEX { get; set; } = string.Empty;
+    }
     public class UrlAnalysis
     {
         public bool IsDevelopment { get; set; }

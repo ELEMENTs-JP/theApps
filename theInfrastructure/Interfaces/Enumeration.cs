@@ -4,6 +4,14 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum KpiSize
+    {
+        NULL = 0,
+
+        SMALL = 1,
+        MEDIUM = 2,
+        LARGE = 3,
+    }
     public enum HierarchyMode
     {
         NULL = 0,
@@ -19,6 +27,11 @@ namespace theInfrastructure
         MB = 11,
         KB = 12,
         Byte = 13,
+
+        // Regular 
+        Text = 21,
+        Integer = 22,
+        Decimal = 23,
     }
     public enum RelevantPropertyType
     {

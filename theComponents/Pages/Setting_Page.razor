@@ -1,6 +1,7 @@
 ﻿@page "/Setting"
 
 @using theComponents.CMS
+@using theComponents.Database
 @using theComponents.Items
 @using theControls.Add
 @using theControls.Container
@@ -25,7 +26,7 @@
 
     @if (loc.Configuration != null)
     {
-        <TabsFrame Title="Einstellungen" Orientation=" Orientation.Vertical" FrameCSS=" row g-0 w-100" >
+        <TabsFrame Title="Einstellungen" Orientation=" Orientation.Vertical" FrameCSS=" row g-0 w-100">
             <HeaderContent>
                 <TabsItem ID="@( ID + "1")" Title="Einstellungen" IsActive="true" Layout="TabsLayout.Buttons" />
                 <TabsItem ID="@( ID + "2")" Title="Datenbank" Layout="TabsLayout.Buttons" />
@@ -43,60 +44,57 @@
                         <div class="col-12 col-md-4 col-lg-4 px-2">
                             <TextBox Label="Titel" Value="@sec.Configuration.Title"
                                      ValueChanged="@(e =>
-                                 {
-                                     sec.Configuration.Title = e;
-                                     sec.Configuration.Save();
-                                 })" />
-
-                          
-
+                                                                                 {
+                                                                                     sec.Configuration.Title = e;
+                                                                                     sec.Configuration.Save();
+                                                                                 })" />
                         </div>
                         <div class="col-12 col-md-4 col-lg-4 px-2 border-start border-end">
                             <ThemeSwitch />
                             <div class="border-bottom my-3"></div>
                             <CheckBox Label="Akzente" Value="@apps.Configuration.Akzente.ToSecureString()"
                                       ValueChanged="@(e =>
-                                  {
-                                                              apps.Configuration.Akzente = e.ToSecureBool();
-                                                              apps.Configuration.Save();
-                                  })" />
+                                                                                  {
+                                                                                      apps.Configuration.Akzente = e.ToSecureBool();
+                                                                                      apps.Configuration.Save();
+                                                                                  })" />
                             <div class="my-3"></div>
                             <TextBox Label="Hintergrundbild" Value="@apps.Configuration.Background" Type="FieldTyp.Url"
                                      ValueChanged="@(e =>
-                                 {
-                                                             apps.Configuration.Background = e;
-                                                             apps.Configuration.Save();
-                                 })" />
+                                                                                 {
+                                                                                     apps.Configuration.Background = e;
+                                                                                     apps.Configuration.Save();
+                                                                                 })" />
                             <div class="border-bottom my-3"></div>
                             <CheckBox Label="Hintergrund Blur Effekt" Value="@apps.Configuration.Blur.ToSecureString()"
                                       ValueChanged="@(e =>
-                                  {
-                                                              apps.Configuration.Blur = e.ToSecureBool();
-                                                              apps.Configuration.Save();
-                                  })" />
+                                                                                  {
+                                                                                      apps.Configuration.Blur = e.ToSecureBool();
+                                                                                      apps.Configuration.Save();
+                                                                                  })" />
 
                             <div class="border-bottom my-3"></div>
                             <CheckBox Label="Vordergrund Glass Effekt" Value="@apps.Configuration.Glass.ToSecureString()"
                                       ValueChanged="@(e =>
-                                  {
-                                                              apps.Configuration.Glass = e.ToSecureBool();
-                                                              apps.Configuration.Save();
-                                  })" />
+                                                                                  {
+                                                                                      apps.Configuration.Glass = e.ToSecureBool();
+                                                                                      apps.Configuration.Save();
+                                                                                  })" />
                         </div>
                         <div class="col-12 col-md-4 col-lg-4 px-2">
                             <LanguageSelector Value="@loc.Configuration.Sprache"
                                               ValueChanged="@(e =>
-                                          {
-                                              loc.Configuration.Sprache = e.ID;
-                                              loc.Configuration.Save();
-                                          })" />
+                                                                                          {
+                                                                                              loc.Configuration.Sprache = e.ID;
+                                                                                              loc.Configuration.Save();
+                                                                                          })" />
                             <div class="border-bottom my-2"></div>
                             <CurrencySelector Value="@loc.Configuration.Currency"
                                               ValueChanged="@(e =>
-                                          {
-                                              loc.Configuration.Currency = e.ID;
-                                              loc.Configuration.Save();
-                                          })" />
+                                                                                          {
+                                                                                              loc.Configuration.Currency = e.ID;
+                                                                                              loc.Configuration.Save();
+                                                                                          })" />
                         </div>
                     </div>
                 </TabsPanel>
@@ -119,18 +117,18 @@
 
                             <CheckBox Label="Datei Uploads" Value="@sec.Configuration.AllowFileUploads.ToSecureString()"
                                       ValueChanged="@(e =>
-                                                          {
-                                                              sec.Configuration.AllowFileUploads = e.ToSecureBool();
-                                                              sec.Configuration.Save();
-                                                          })" />
+                                                                                                          {
+                                                                                                              sec.Configuration.AllowFileUploads = e.ToSecureBool();
+                                                                                                              sec.Configuration.Save();
+                                                                                                          })" />
                             <div class="my-2"></div>
                             <TextBox Label="Max. Dateigröße" Type="FieldTyp.Integer"
                                      Value="@sec.Configuration.MaxFileSizeInMB.ToSecureString()"
                                      ValueChanged="@(e =>
-                                                         {
-                                                             sec.Configuration.MaxFileSizeInMB = e.ToSecureInt();
-                                                             sec.Configuration.Save();
-                                                         })" />
+                                                                                                         {
+                                                                                                             sec.Configuration.MaxFileSizeInMB = e.ToSecureInt();
+                                                                                                             sec.Configuration.Save();
+                                                                                                         })" />
                         </div>
 
 
@@ -160,8 +158,36 @@
                             </div>
 
                             <CheckBox Label="Fokus auf Username" Value="@sec.Configuration.FocusOnLogin.ToSecureString()"
-                                      ValueChanged="@(e => { sec.Configuration.FocusOnLogin = e.ToSecureBool();
-                                                              sec.Configuration.Save(); })" />
+                                      ValueChanged="@(e =>
+                                  {
+                                      sec.Configuration.FocusOnLogin = e.ToSecureBool();
+                                      sec.Configuration.Save();
+                                  })" />
+                            <div class="border-bottom my-3"></div>
+
+                            <CheckBox Label="Dauerhafte Anmeldung erlauben"
+                                      Value="@sec.Configuration.AllowDauerhafteAnmeldung.ToSecureString()"
+                                      ValueChanged="@(e =>
+                                  {
+                                      sec.Configuration.AllowDauerhafteAnmeldung = e.ToSecureBool();
+                                      sec.Configuration.Save();
+                                  })" />
+                            <div class="border-bottom my-3"></div>
+
+                            <DropDown Label="Gültigkeit der Anmeldung"
+                                      Value="@sec.Configuration.GueltigkeitAnmeldungDauer.ToSecureString()"
+                                      IDChanged="@(e =>
+                                  {
+                                      sec.Configuration.GueltigkeitAnmeldungDauer = e;
+                                      sec.Configuration.Save();
+                                  })"
+                                      Items="@(new List<IDTO>()
+                                                {
+                                                    new DTO() { ID = "1", Title = loc.GetLabel("1 Stunde", "1 hour") },
+                                                    new DTO() { ID = "4", Title = loc.GetLabel("4 Stunden", "4 hours") },
+                                                    new DTO() { ID = "8", Title = loc.GetLabel("8 Stunden", "8 hours") },
+                                                    new DTO() { ID = "12", Title = loc.GetLabel("12 Stunden", "12 hours") },
+                                                } )" />
                             <div class="border-bottom my-3"></div>
                         </div>
 
@@ -172,10 +198,10 @@
 
                             <CheckBox Label="Fokus auf Username" Value="@sec.Configuration.FocusOnRegister.ToSecureString()"
                                       ValueChanged="@(e =>
-                                  {
-                                      sec.Configuration.FocusOnRegister = e.ToSecureBool();
-                                      sec.Configuration.Save();
-                                  })" />
+                                                                                  {
+                                                                                      sec.Configuration.FocusOnRegister = e.ToSecureBool();
+                                                                                      sec.Configuration.Save();
+                                                                                  })" />
                             <div class="border-bottom my-3"></div>
                         </div>
 
@@ -184,6 +210,17 @@
                                 <h3 class="h3 w-100">Passwort</h3>
                             </div>
 
+                            <ButtonSelectionBox Label="Passwortlänge"
+                                      Value="@sec.Configuration.PasswordSize.ToSecureString()"
+                                      ItemChanged="@(e => {  sec.Configuration.PasswordSize = e.ID.ToSecureInt();
+                                            sec.Configuration.Save(); })"
+                                      Items="@(new List<IDTO>() {
+                                                    new DTO() { ID = "6", Title = loc.GetLabel("6 Zeichen", "6 digits") },
+                                                    new DTO() { ID = "8", Title = loc.GetLabel("8 Zeichen", "8 digits") },
+                                                    new DTO() { ID = "12", Title = loc.GetLabel("12 Zeichen", "12 digits") },
+                                                    new DTO() { ID = "16", Title = loc.GetLabel("16 Zeichen", "16 digits") },
+                                                } )" />
+                            <div class="border-bottom my-3"></div>
                         </div>
                     </div>
 

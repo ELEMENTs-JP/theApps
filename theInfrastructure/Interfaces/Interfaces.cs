@@ -65,6 +65,17 @@ namespace theInfrastructure
         IQueryResult CreateDatabase();
         IQueryResult DeleteDatabase();
 
+        // Optimization 
+        Task<IQueryResult> CompressDatabase();
+        Task<IQueryResult> OptimizeDatabase();
+  
+
+        // Pages 
+        Task<int> GetUsedPageCount();
+        Task<int> GetNotUsedPageCount();
+        Task<int> GetRecordCount();
+
+
         Task<IQueryResult> Create(IQueryParameter query);
         Task<IQueryResult> GetItems(IQueryParameter query);
         Task<IQueryResult> GetItem(IQueryParameter query);

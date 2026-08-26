@@ -1,10 +1,15 @@
-﻿@inject ILocalizationService loc
+﻿@using theControls.Essentials
+@inject ILocalizationService loc
 
 @if (Field != null)
 {
     @if (Field.Typ == FieldTyp.CheckBox)
     {
         <span class="badge">@Text</span>
+    }
+    else if (Field.Typ == FieldTyp.Progress)
+    {
+       <ProgressBar Value="@Value" />
     }
     else if (Field.Typ == FieldTyp.Password)
     {

@@ -10,10 +10,12 @@ using theInfrastructure;
 public class AuthController : ControllerBase
 {
     private readonly ISqlDatabaseService sqlService;
+    private readonly ISecurityService security;
 
-    public AuthController(ISqlDatabaseService sql)
+    public AuthController(ISqlDatabaseService sql, ISecurityService sec)
     {
         sqlService = sql;
+        security = sec;
     }
 
     [HttpPost("login")]
@@ -21,6 +23,11 @@ public class AuthController : ControllerBase
     {
         // Password 
         if (string.IsNullOrEmpty(password))
+        {
+            return Redirect("/login?error=true");
+        }
+
+        if (password.Length < security.Configuration.PasswordSize)
         {
             return Redirect("/login?error=true");
         }
@@ -46,7 +53,7 @@ public class AuthController : ControllerBase
         if (pwd != password)
         { 
             string hash = Encryption.HashPassword(password);
-            if (Encryption.VerifyPassword(password, hash) == false)
+            if (pwd != hash)
             {
                 return Redirect("/login?error=true");
             }
@@ -120,13 +127,12 @@ public class AuthController : ControllerBase
             await sqlService.Update(newUser);
 
             string hash = Encryption.HashPassword(password);
-            if (Encryption.VerifyPassword(password, hash))
-            {
+          
                 newUser["Password"] = hash;
 
                 // Update 
                 await sqlService.Update(newUser);
-            }
+          
 
             // Nutzer zuordnen falls nicht zugeordnet 
             await AssignToPrincipal(newUser);
@@ -187,48 +193,6 @@ public class AuthController : ControllerBase
         return Redirect("/setup?error=true");
     }
 
-
-
-    [HttpPost("requestpwd")]
-    public async Task<IActionResult> RequestNewPassword([FromForm] string username)
-    {
-        // Mail Format 
-        if (username.IsMailFormat() == false)
-        {
-            return Redirect("/setup?error=true");
-        }
-
-        IQueryParameter query = new QueryParameter();
-        query.Matchcode = string.Empty;
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
-        query.ItemType = "Principal";
-        IQueryResult result = await sqlService.GetItems(query);
-
-
-
-        return Redirect("/setup?error=true");
-    }
-
-
-    [HttpPost("setnewpwd")]
-    public async Task<IActionResult> SetNewPassword([FromForm] string username)
-    {
-        // Mail Format 
-        if (username.IsMailFormat() == false)
-        {
-            return Redirect("/setup?error=true");
-        }
-
-        IQueryParameter query = new QueryParameter();
-        query.Matchcode = string.Empty;
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
-        query.ItemType = "Principal";
-        IQueryResult result = await sqlService.GetItems(query);
-
-
-
-        return Redirect("/setup?error=true");
-    }
 
     [HttpPost("requestaccess")]
     public async Task<IActionResult> RequestAccess([FromForm] string username)
@@ -305,6 +269,8 @@ public class AuthController : ControllerBase
     }
     private async Task SignIn(string username, Guid userGUID, bool remember)
     {
+        int dauer = security.Configuration.GueltigkeitAnmeldungDauer.ToSecureInt();
+
         var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, username),
@@ -318,7 +284,7 @@ public class AuthController : ControllerBase
 
             ExpiresUtc = remember
                 ? DateTimeOffset.UtcNow.AddDays(1)
-                : DateTimeOffset.UtcNow.AddHours(3)
+                : DateTimeOffset.UtcNow.AddHours(dauer)
 
         };
 

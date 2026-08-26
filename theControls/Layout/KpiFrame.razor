@@ -1,0 +1,288 @@
+﻿@inject NavigationManager nm
+
+<div id="@( "frame_kpi_" + ID )"
+     class="@( " d-flex flex-column p-0 " + BackgroundCSS + " " + FrameCSS + " "  )"
+     style="@FrameStyle">
+
+    <div id="@( "head_kpi_" + ID )" class="@( " " + GetPaddingCSS() + " ")">
+        <div class="@(" row g-0 fw-bold align-items-center " + GetTitlePaddingCSS())">
+
+            @if (IconContent.HasContent())
+            {
+                <div class="col-auto pe-1">
+                    @IconContent
+                </div>
+            }
+
+            <div class="col">
+                @if (!string.IsNullOrEmpty(Link))
+                {
+                    @if (!string.IsNullOrEmpty(this.PreTitle))
+                    {
+                        <div class="page-pretitle">@PreTitle.ToNormalizedString()</div>
+                    }
+                    <h3 class="h3 fw-bold pointer text-truncate-line"
+                        @onclick="@(e => { nm.NavigateTo(Link); })">
+                        @(KPI.ToSecureString())
+
+
+                    </h3>
+                }
+                else
+                {
+                    @if (!string.IsNullOrEmpty(this.PreTitle))
+                    {
+                        <div class="page-pretitle">@PreTitle.ToNormalizedString()</div>
+                    }
+                    <h3 class="h3 text-truncate-line">
+                        @(KPI.ToSecureString())
+
+
+                    </h3>
+                }
+            </div>
+
+              
+            @if (RelatedContent != null)
+            {
+                <div class="col-auto">
+                    @RelatedContent
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Marker))
+            {
+                <div class="col-auto">
+                    <small class="text-muted">
+                        @( ((MarkupString)Marker) )
+                    </small>
+                </div>
+            }
+        </div>
+
+        <div class="row g-0 pb-2 overflow-hidden">
+            <div class="@( "col "  )"
+                 style="@( ((!string.IsNullOrEmpty(HexColorCode)) ? " color:" + HexColorCode + "; " : "") )">
+
+                @if (!string.IsNullOrEmpty(this.Description))
+                {
+                    <small class="text-muted fs-5 text-truncate-line"
+                           style="max-width:10rem;"
+                           title="@(((MarkupString)Description))">
+                        @(((MarkupString)Description))
+                    </small>
+                }
+                <div class="@( ValueCSS + " " + GetValueCSS() )">
+                    @(Value)
+                </div>
+            </div>
+
+            @if (DetailContent != null && DetailContent.HasContent())
+            {
+                <div class="col-auto px-2">
+                    @DetailContent
+                </div>
+            }
+
+            @if (SignContent != null && SignContent.HasContent())
+            {
+                <div class="col-auto px-2">
+                    @SignContent
+                </div>
+            }
+
+            @if (ChartContent != null && ChartContent.HasContent())
+            {
+                <div id="@( "kpi_panel_chart_area_" + ID )" class="col-auto">
+                    @ChartContent
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (ChildContent.HasContent())
+    {
+        <div id="@( "content_kpi_" + ID )" class="@( " overflow-hidden mb-auto " + ChildContentCSS  )">
+            @ChildContent
+        </div>
+    }
+
+    @if (FooterContent.HasContent())
+    {
+        <div id="@( "footer_kpi_" + ID )" class="@( " overflow-hidden mt-auto " + GetFooterCSS() )">
+            @FooterContent
+        </div>
+    }
+
+</div>
+
+
+
+
+@code {
+
+    private string ID { get; set; } = Guid.NewGuid().ToSecureString();
+
+    [Parameter]
+    public string FrameCSS { get; set; } = " border rounded-2 hover ";
+
+    [Parameter]
+    public string FrameStyle { get; set; } = string.Empty;
+
+    [Parameter]
+    public string BackgroundCSS { get; set; } = " bg-surface ";
+
+    [Parameter]
+    public string ChildContentCSS { get; set; } = " ";
+
+    [Parameter]
+    public RenderFragment IconContent { get; set; }
+
+    [Parameter]
+    public RenderFragment RelatedContent { get; set; }
+
+    [Parameter]
+    public RenderFragment PopupContent { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment DetailContent { get; set; }
+
+    [Parameter]
+    public RenderFragment SignContent { get; set; }
+
+    [Parameter]
+    public RenderFragment ChartContent { get; set; }
+
+    [Parameter]
+    public RenderFragment FooterContent { get; set; }
+
+    [Parameter]
+    public string PreTitle { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Suffix { get; set; } = string.Empty;
+
+    [Parameter]
+    public string KPI { get; set; } = "Umsatz";
+
+    [Parameter]
+    public string Value { get; set; } = "100.000 EUR";
+
+    [Parameter]
+    public string ValueCSS { get; set; } = "";
+
+    [Parameter]
+    public string Description { get; set; } = "Umsatz aus dem Jahr 2022";
+
+    [Parameter]
+    public string HexColorCode { get; set; } = "";
+
+    [Parameter]
+    public string Link { get; set; } = "";
+
+    [Parameter]
+    public string Appendix { get; set; } = "";
+
+    [Parameter]
+    public string Marker { get; set; } = "";
+
+    [Parameter]
+    public KpiSize SizeOfKPI { get; set; } = KpiSize.MEDIUM;
+
+    private string GetPaddingCSS()
+    {
+        switch (SizeOfKPI)
+        {
+            case KpiSize.LARGE:
+                {
+                    return " ps-3 pe-3 ";
+                }
+            case KpiSize.MEDIUM:
+                {
+                    return " ps-2 pe-2 ";
+                }
+            case KpiSize.SMALL:
+                {
+                    return " ps-2 pe-2 ";
+                }
+            default:
+                {
+                    return " ps-2 pe-2 ";
+                }
+        }
+    }
+
+    private string GetTitlePaddingCSS()
+    {
+        switch (SizeOfKPI)
+        {
+            case KpiSize.LARGE:
+                {
+                    return " pt-3 pb-1 ";
+                }
+            case KpiSize.MEDIUM:
+                {
+                    return " pt-2 pb-0 ";
+                }
+            case KpiSize.SMALL:
+                {
+                    return " pt-1 pb-0 ";
+                }
+            default:
+                {
+                    return " pt-2 pb-0 ";
+                }
+        }
+    }
+
+    private string GetFooterCSS()
+    {
+        switch (SizeOfKPI)
+        {
+            case KpiSize.LARGE:
+                {
+                    return " bg-surface-secondary border-top pb-0 pt-0 ";
+                }
+            case KpiSize.MEDIUM:
+                {
+                    return " bg-surface-secondary border-top pb-0 pt-0 ";
+                }
+            case KpiSize.SMALL:
+                {
+                    return " bg-surface-secondary border-top pb-0 pt-0 ";
+                }
+            default:
+                {
+                    return " bg-surface-secondary border-top pb-0 pt-0 ";
+                }
+        }
+    }
+
+    private string GetValueCSS()
+    {
+        switch (SizeOfKPI)
+        {
+            case KpiSize.LARGE:
+                {
+                    return " display-6 ";
+                }
+            case KpiSize.MEDIUM:
+                {
+                    return " display-6 ";
+                }
+            case KpiSize.SMALL:
+                {
+                    return " h1 fw-light ";
+                }
+            default:
+                {
+                    return " display-6 ";
+                }
+        }
+    }
+
+
+}

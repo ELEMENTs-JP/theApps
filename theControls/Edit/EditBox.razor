@@ -1,4 +1,5 @@
-﻿@using theControls.Icons
+﻿@using theControls.Essentials
+@using theControls.Icons
 @using theControls.Input
 @inject IMessagingBusService msg
 @inject ISecurityService sec
@@ -13,12 +14,12 @@
         @if (Field.Typ == FieldTyp.TextArea)
         {
             <TextArea @key="@( "TextArea-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-            Label="@Title" Description="@Description" Value="@Value"
-            ValueChanged="@(async e => { onValueChanged(e); await Change(); })"
-            Placeholder="@Field.Placeholder"
-            CssClass="@CssClass"
-            Rows="@Rows"
-            IsEditable="@IsEditable">
+                      Label="@Title" Description="@Description" Value="@Value"
+                      ValueChanged="@(async e => { onValueChanged(e); await Change(); })"
+                      Placeholder="@Field.Placeholder"
+                      CssClass="@CssClass"
+                      Rows="@Rows"
+                      IsEditable="@IsEditable">
                 <Overlay>
                     <div class="hover pointer rounded-2 p-1 me-1" @onclick="Save">
                         <i class="ti ti-check"></i>
@@ -30,11 +31,11 @@
         else if (Field.Typ == FieldTyp.Select)
         {
             <Selection @key="@( "Select-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-                      Label="@Title" Description="@Description" Value="@Value" 
-                        Item="@Context.Item" ItemType="@Field.ItemType" ItemChanged="@(async e =>{  })"
-                      Placeholder="@Field.Placeholder"
-                      CssClass="@CssClass"
-                      IsEditable="@IsEditable">
+                       Label="@Title" Description="@Description" Value="@Value"
+                       Item="@Context.Item" ItemType="@Field.ItemType" ItemChanged="@(async e =>{  })"
+                       Placeholder="@Field.Placeholder"
+                       CssClass="@CssClass"
+                       IsEditable="@IsEditable">
             </Selection>
         }
         else if (Field.Typ == FieldTyp.DropDown ||
@@ -50,25 +51,38 @@
                  Field.Typ == FieldTyp.Progress)
         {
             <DropDown @key="@( "DropDown-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-            Label="@Title" Description="@Description" Value="@Value" Items="@Items"
-            ValueChanged="@(async e =>{ onValueChanged(e); await Change(); await Save(); })"
-            Placeholder="@Field.Placeholder"
-            CssClass="@CssClass"
-            IsEditable="@IsEditable">
+                      Label="@Title" Description="@Description" Value="@Value" Items="@Items"
+                      ValueChanged="@(async e =>{ onValueChanged(e); await Change(); await Save(); })"
+                      Placeholder="@Field.Placeholder"
+                      CssClass="@CssClass"
+                      IsEditable="@IsEditable">
+                <HeaderTemplate Context="headitem">
+                    @if (Field.Typ == FieldTyp.Progress)
+                    {
+                        <ProgressBar Value="@headitem.Title.ToSecureString()" />
+                    }
+                    else if (Field.Typ == FieldTyp.Priority)
+                    {
+                        <PriorityBox ID="@headitem.ID" Value="@headitem.Title" />
+                    }
+                    else
+                    {
+                        @headitem.Title.ToSecureString()
+                    }
+                </HeaderTemplate>
                 <ItemTemplate Context="entry">
                     <div class="row g-0">
 
                         @if (Field.Typ == FieldTyp.Priority)
                         {
-                            <div class="col-auto px-1">
-                                <SymbolIcon Symbol="@( Priority.IconByPriority(entry.Title))" 
-                                Color="@( Priority.ColorByPriority(entry.Title) )" />
+                            <PriorityBox ID="@entry.ID" Value="@entry.Title" />
+                        }
+                        else
+                        {
+                            <div class="col px-1">
+                                @entry.Title
                             </div>
                         }
-
-                        <div class="col px-1">
-                            @entry.Title
-                        </div>
                     </div>
 
                 </ItemTemplate>
@@ -77,20 +91,20 @@
         else if (Field.Typ == FieldTyp.CheckBox)
         {
             <CheckBox @key="@( "CheckBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-            Label="@Title" Description="@Description" Value="@Value"
-            ValueChanged="@(async e =>{ onValueChanged(e); await Change(); await Save(); })"
-            CssClass="@CssClass"  IsEditable="@IsEditable"
-            TrueText="@Field.TrueText" FalseText="@Field.FalseText" >
+                      Label="@Title" Description="@Description" Value="@Value"
+                      ValueChanged="@(async e =>{ onValueChanged(e); await Change(); await Save(); })"
+                      CssClass="@CssClass" IsEditable="@IsEditable"
+                      TrueText="@Field.TrueText" FalseText="@Field.FalseText">
 
             </CheckBox>
         }
         else if (Field.Typ == FieldTyp.Heading)
         {
             <Heading @key="@( "Heading-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-            Label="@Title" ShowLabel="false" Description="@Description" Value="@Value"
-            ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
-            CssClass="@CssClass"
-            IsEditable="@IsEditable">
+                     Label="@Title" ShowLabel="false" Description="@Description" Value="@Value"
+                     ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
+                     CssClass="@CssClass"
+                     IsEditable="@IsEditable">
                 <Overlay>
                     <div class="hover pointer rounded-2 p-1 me-2" @onclick="Save">
                         <SymbolIcon Symbol="@Icon.Check" />
@@ -102,10 +116,10 @@
         else if (Field.Typ == FieldTyp.Html)
         {
             <HtmlBox @key="@( "Html-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-            Label="@Title" Description="@Description" Value="@Value"
-            ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
-            CssClass="@CssClass"
-            IsEditable="@IsEditable">
+                     Label="@Title" Description="@Description" Value="@Value"
+                     ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
+                     CssClass="@CssClass"
+                     IsEditable="@IsEditable">
                 <Overlay>
                     <div class="hover pointer rounded-2 p-1 me-2" @onclick="Save">
                         <SymbolIcon Symbol="@Icon.Check" />
@@ -116,21 +130,21 @@
         else if (Field.Typ == FieldTyp.TextBlock)
         {
             <TextBlock @key="@( "TextBlock-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-            Label="@Title" Description="@Description" Value="@Value" Format="@Field.Formatierung"
-            Extension="@Field.Extension"
-            IsEditable="@IsEditable" />
+                       Label="@Title" Description="@Description" Value="@Value" Format="@Field.Formatierung"
+                       Extension="@Field.Extension"
+                       IsEditable="@IsEditable" />
         }
         else
         {
             <TextBox @key="@( "TextBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-            Label="@Title" Description="@Description" Value="@Value"
-            ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
-            Type="@Field.Typ"
-            Placeholder="@Field.Placeholder"
-            CssClass="@CssClass"
-            Min="@Min" Max="@Max" Step="@Step"
-            Extension="@Field.Extension"
-            IsEditable="@IsEditable">
+                     Label="@Title" Description="@Description" Value="@Value"
+                     ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
+                     Type="@Field.Typ"
+                     Placeholder="@Field.Placeholder"
+                     CssClass="@CssClass"
+                     Min="@Min" Max="@Max" Step="@Step"
+                     Extension="@Field.Extension"
+                     IsEditable="@IsEditable">
                 <Inlay>
                     @if (Field.Typ == FieldTyp.Search)
                     {
@@ -198,7 +212,7 @@
     [Parameter]
     public bool IsEditable { get; set; } = true;
 
-    // Events 
+    // Events
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -215,7 +229,7 @@
         Value = onValueBinding();
     }
 
-    // Methods 
+    // Methods
     public async Task Init()
     {
         this.Items = await Helper.InitDropDown(Field, sql);
@@ -224,46 +238,46 @@
     }
     private string CheckCondition()
     {
-        // Kein Condition angelegt 
+        // Kein Condition angelegt
         if (Field.Condition == null)
             return string.Empty;
 
-        // Kein Cnodition enthalten 
-        if (Field.Condition.Field == string.Empty 
+        // Kein Cnodition enthalten
+        if (Field.Condition.Field == string.Empty
             || Field.Condition.Value == string.Empty)
             return string.Empty;
 
-        // Bedingungen enthalten 
+        // Bedingungen enthalten
         if (Context.Item[Field.Condition.Field].ToSecureString() != Field.Condition.Value.ToSecureString())
         {
-            // Bedingung erfüllt 
+            // Bedingung erfüllt
             return " d-none ";
         }
 
         return string.Empty;
     }
 
-    // Helper 
+    // Helper
     private async Task<IDTO> Save()
     {
         // Update
         await Context.Update(Context.Item);
 
-        // ItemType Event 
+        // ItemType Event
         IItemEventArgs args = new ItemEventArgs(Context.Item, null, sql, sec, app);
         Context.Item = await Context.ItemType.OnUpdateItem(args);
 
-        // Update 
+        // Update
         msg.Publish("", BusAction.Info, "Eintrag aktualisiert");
 
-        // andere EditBox aufgrund Update oder Condition aktualisieren 
+        // andere EditBox aufgrund Update oder Condition aktualisieren
         msg.Publish("EditBox", BusAction.Refresh);
 
         if (Context.Item.ItemType == "User")
         {
             if (Context.Item.GUID == sec.User.GUID)
             {
-                // User Neu laden 
+                // User Neu laden
                 await sec.RefreshUser();
             }
         }
@@ -279,7 +293,7 @@
         return Context.Item;
     }
 
-    // Events 
+    // Events
     public async void OnMessageRun(AppMessage message)
     {
         if (message.Id == "EditBox" && message.Action == BusAction.Refresh)
@@ -289,7 +303,7 @@
         }
     }
 
-    // ... 
+    // ...
     private string onValueBinding()
     {
         if (Binding == ValueBindingTyp.Property)

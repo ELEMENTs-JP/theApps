@@ -1,4 +1,5 @@
 ﻿@page "/Security/{Typ}"
+@page "/Security/{Typ}/{Token}"
 @layout EmptyLayout
 
 @using theInfrastructure
@@ -27,7 +28,7 @@
     }
     @if (Typ.ToLowerInvariant() == "SetNewPwd".ToLowerInvariant())
     {
-        <SetNewPwdComp />
+        <SetNewPwdComp Token="@Token" />
     }
 
 </div>
@@ -38,7 +39,8 @@
     [Parameter]
     public string Typ { get; set; } = string.Empty;
 
-
+    [Parameter]
+    public string Token { get; set; } = string.Empty;
 
     protected override async Task OnParametersSetAsync()
     {

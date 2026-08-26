@@ -1,0 +1,130 @@
+﻿@using theDatabase
+@using theInfrastructure
+@inject ISqlDatabaseService sql
+@inject IMessagingBusService msg
+
+<div class="">
+
+
+    <div class="row g-0">
+        <div class="col-4 py-2">
+            <KpiFrame KPI="Datenbank" Description="Anzahl an Datensätze" 
+                Value="@( sql.GetRecordCount().Result.ToSecureString() )" />
+        </div>
+        <div class="col-4 p-2">
+            <KpiFrame KPI="Page Count" Description="Anzahl verwendete Pages" 
+                Value="@( sql.GetUsedPageCount().Result.ToSecureString() )" />
+        </div>
+        <div class="col-4 py-2">
+            <KpiFrame KPI="Unused Pages" Description="Anzahl ungenutzter Pages" 
+                Value="@(  sql.GetNotUsedPageCount().Result.ToSecureString() )" />
+        </div>
+    </div>
+
+
+    <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+        <div class="col p-2">
+            Datenbank Zustand
+        </div>
+
+        <div class="col-auto p-2">
+            @if (sql.DatabaseExists == true)
+            {
+                <span class="badge bg-success text-white">Datenbank existiert</span>
+            }
+            else
+            {
+                <span class="badge bug-warning">Keine Datenbank vorhanden</span>
+            }
+        </div>
+    </div>
+
+
+
+    @if (sql.DatabaseExists == true)
+    {
+        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+            <div class="col p-2">
+                Datenbank komprimieren
+            </div>
+            <div class="col-auto p-2">
+                <button class="btn btn-sm btn-primary m-3" 
+                    @onclick="@( async e => { 
+                        await sql.CompressDatabase(); 
+                        msg.Publish("Info", BusAction.Info, "Datenbank wurde komprimiert."); } )">komprimieren</button>
+            </div>
+        </div>
+        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+            <div class="col p-2">
+                Datenbank optimieren
+            </div>
+            <div class="col-auto p-2">
+                <button class="btn btn-sm btn-primary m-3" 
+                @onclick="@( async e => {  
+                    await sql.OptimizeDatabase(); 
+                            msg.Publish("Info", BusAction.Info, "Datenbank wurde optimiert.");
+                        })">
+                    Optimieren
+                </button>
+            </div>
+        </div>
+
+
+        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+            <div class="col p-2">
+                Datenbank löschen
+            </div>
+            <div class="col-auto p-2">
+                <button class="btn btn-sm btn-warning m-3" @onclick="DeleteDatabase">löschen</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+            <div class="col p-2">
+                Datenbank erstellen
+            </div>
+            <div class="col-auto p-2">
+                <button class="btn btn-sm btn-success m-3" @onclick="CreateDatabase">erstellen</button>
+            </div>
+        </div>
+    }
+
+    <div class="m-3">@Info</div>
+</div>
+
+@code {
+
+    string Info = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+
+    }
+
+
+
+
+
+
+
+
+
+    private async Task CreateDatabase()
+    {
+        SQLiteService.Database = "Default.db";
+        IQueryResult info = sql.CreateDatabase();
+        Info = info.Message;
+    }
+
+    private async Task DeleteDatabase()
+    {
+        SQLiteService.Database = "Default.db";
+        IQueryResult info = sql.DeleteDatabase();
+        Info = info.Message;
+    }
+
+}

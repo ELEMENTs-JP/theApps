@@ -1,5 +1,6 @@
 ﻿@inject ISqlDatabaseService sql
 @inject ILocalizationService loc
+@inject IMessagingBusService msg
 @implements IAsyncDisposable
 
 @if (!string.IsNullOrEmpty(this.Label))
@@ -7,74 +8,54 @@
     <label class="form-label text-secondary" for="@ID">@Label</label>
 }
 
-<div class="position-relative overlay-container">
+<div class="position-relative overlay-container p-1">
+    <div class="btn-group" role="group">
 
-    <div id="@( "frame_popup_" + ID )" name="@InputName" class="@(" w-100 dropdown-center editbox ")) ">
-
-        <div id="@( "link_popup_" + ID )" class="@(" row align-items-center ")" data-bs-toggle="dropdown">
-
-            @*  d-none d-xl-block   *@
-            <div id="@( "head_popup_" + ID )" class="col p-1 px-2">
-                @if (HeaderTemplate is not null)
-                {
-                    @if (SelectedItem != null)
-                    {
-                        @HeaderTemplate(SelectedItem)
-                    }
-                }
-                else
-                {
-                    @if (SelectedItem != null)
-                    {
-                        @SelectedItem.Title
-                    }
-                }
+        @foreach (IDTO it in Items.FromTo<IDTO>(0, 2))
+        {
+            <div class="@($"btn btn-sm {(Item?.ID == it.ID ? "btn-primary" : "")}")"
+                 @onclick="@(async e => { Item = it; await onSelect(it); })">
+                @it.Title.ToString()
             </div>
-            <div class="@( "col-auto pointer hover rounded-2 px-1 me-2  dropdown-toggle")">
-            </div>
-        </div>
+        }
 
-        <div id="@( "body_popup_" + ID )" class="@( "dropdown-menu w-100 ")" style="@MenuStyle">
+        @if (Items.Count() >= 4)
+        {
+            <div class="btn-group" role="group">
+                <div class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    ...
+                </div>
 
-            <div class="row g-0">
-                <div class="col">
-                    <div class="dropdown-header">@Label</div>
-                    <div class="mb-1 small text-muted text-truncate-container-2 overflow-hidden" 
-                            style="margin-left:12px;">@Description</div>
+
+                <div class="dropdown-menu" style="">
+
+                    @* Es geht um folgende TextBox *@
+                    <div class="p-2" @onclick:stopPropagation="true">
+                        <input type="text"
+                               class="form-control form-control-sm"
+                               placeholder="@loc.GetLabel("Suchen...", "find...")"
+                               @bind="searchTerm"
+                               @bind:event="oninput" />
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    @foreach (IDTO item in Items.FromTo<IDTO>(3, Items.Count() + 1))
+                    {
+                        <div class="@( "dropdown-item" )"
+                             @onclick="@( async e => { Item = item; await onSelect(item); })">
+                            @if (ItemTemplate is not null)
+                            {
+                                @ItemTemplate(item)
+                            }
+                            else
+                            {
+                                @item.Title
+                            }
+                        </div>
+                    }
+
                 </div>
             </div>
-
-            @* Es geht um folgende TextBox *@
-            <div class="p-2" @onclick:stopPropagation="true">
-                <input type="text"
-                       class="form-control form-control-sm"
-                       placeholder="@loc.GetLabel("Suchen...", "find...")"
-                       @bind="searchTerm"
-                       @bind:event="oninput" />
-            </div>
-
-            <div class="dropdown-divider"></div>
-      
-            <div class="@( " overflow-y-auto " )" style="@( MaxHeightCSS )">
-
-                @foreach (IDTO item in GetFilteredItems())
-                {
-                    <div class="m-1 hover pointer rounded-2 p-1" @onclick="@(() => HandleInput(item))">
-                        @if (ItemTemplate is not null)
-                        {
-                            @ItemTemplate(item)
-                        }
-                        else
-                        {
-                            @item.Title
-                        }
-                    </div>
-                }
-
-            </div>
-
-         
-        </div>
+        }
     </div>
 
     @if (Inlay != null)
@@ -111,9 +92,6 @@
     public RenderFragment<IDTO>? ItemTemplate { get; set; }
 
     [Parameter]
-    public RenderFragment<IDTO>? HeaderTemplate { get; set; }
-
-    [Parameter]
     public RenderFragment? Overlay { get; set; }
 
     [Parameter]
@@ -148,15 +126,8 @@
     [Parameter]
     public List<IDTO> Items { get; set; } = new();
 
-
     [Parameter]
-    public IDTO SelectedItem { get; set; }
-
-    [Parameter]
-    public EventCallback<string> ValueChanged { get; set; }
-
-    [Parameter]
-    public EventCallback<string> IDChanged { get; set; }
+    public IDTO Item { get; set; } // Current // Selection 
 
     [Parameter]
     public EventCallback<IDTO> ItemChanged { get; set; }
@@ -172,41 +143,39 @@
     {
         await base.OnInitializedAsync();
 
-        await Init();
+        
     }
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
+
+        await Init();
     }
 
     private async Task Init()
     {
-        if (Items != null)
+        Item = Items.FirstOrDefault(se => se.Title == this.Value);
+        if (Item == null)
         {
-            SelectedItem = Items.Where(se => se.Title == Value).FirstOrDefault();
-
-            if (SelectedItem == null)
-            {
-                SelectedItem = Items.Where(se => se.ID == Value).FirstOrDefault();
-            }
+            Item = Items.FirstOrDefault(se => se.ID == this.Value);
         }
-
-        await Task.CompletedTask;    
     }
 
-    private async Task HandleInput(IDTO dto)
+    private async Task onSelect(IDTO dto)
     {
-        // Item 
-        SelectedItem = dto;
+        if (dto == null)
+            return;
 
-        await IDChanged.InvokeAsync(dto.ID);
-
-        await ValueChanged.InvokeAsync(dto.Title);
+        // Select 
+        this.Item = dto;
 
         await ItemChanged.InvokeAsync(dto);
 
+        msg.Publish("Info", BusAction.Info, "Auswahl getätigt.");
+
         // await InvokeAsync(StateHasChanged);
     }
+
 
     private string searchTerm = string.Empty;
 
@@ -236,11 +205,6 @@
             {
                 Items.Clear();
                 Items = null;
-            }
-
-            if (SelectedItem != null)
-            {
-                SelectedItem = null;
             }
         }
         catch (Exception ex)

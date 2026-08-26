@@ -270,6 +270,152 @@ namespace theDatabase
             return info;
         }
 
+        public async Task<IQueryResult> CompressDatabase()
+        {
+            IQueryResult info = new QueryResult { Status = "OK", Message = "" };
+
+            try
+            {
+               using (SQLiteContext ctx = GetContext())
+                {
+                    // Temporäre Dateien im RAM halten für schnelleres VACUUM
+                    await ctx.Database.ExecuteSqlRawAsync("PRAGMA temp_store = MEMORY;");
+
+                    // VACUUM ausführen
+                    await ctx.Database.ExecuteSqlRawAsync("VACUUM;");
+
+                    // WAL-File optional aufräumen/verkleinern
+                    await ctx.Database.ExecuteSqlRawAsync("PRAGMA wal_checkpoint(TRUNCATE);");
+                }
+
+                info.Status = "OK";
+                info.Message = "Migration wurde durchgeführt";
+                return info;
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.Message;
+
+                // Error 
+                info.Status = "Fehler";
+                info.Message = "" + ex.Message;
+                return info;
+            }
+        }
+        public async Task<IQueryResult> OptimizeDatabase()
+        {
+            IQueryResult info = new QueryResult { Status = "OK", Message = "" };
+
+            try
+            {
+                // Context 
+                using (SQLiteContext ctx = GetContext())
+                {
+                    // Aktualisiert die Abfrage-Statistiken in sqlite_stat1/sqlite_stat4
+                    await ctx.Database.ExecuteSqlRawAsync("ANALYZE;");
+
+                    // Wendet von ANALYZE gesammelte Statistiken auf die aktuelle Verbindung an
+                    await ctx.Database.ExecuteSqlRawAsync("PRAGMA optimize;");
+                }
+
+                info.Status = "OK";
+                info.Message = "Migration wurde durchgeführt";
+                return info;
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.Message;
+
+                // Error 
+                info.Status = "Fehler";
+                info.Message = "" + ex.Message;
+                return info;
+            }
+        }
+
+        // Pages 
+        public async Task<int> GetUsedPageCount()
+        {
+            try
+            {
+                using (SQLiteContext ctx = GetContext())
+                {
+                    var connection = ctx.Database.GetDbConnection();
+
+                    if (connection.State != System.Data.ConnectionState.Open)
+                    {
+                        await connection.OpenAsync();
+                    }
+
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.CommandText = "PRAGMA page_count;";
+                        object? result = await command.ExecuteScalarAsync();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result).ToSecureInt();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+            }
+
+            return 0;
+        }
+        public async Task<int> GetNotUsedPageCount()
+        {
+            try
+            {
+                using (SQLiteContext ctx = GetContext())
+                {
+                    var connection = ctx.Database.GetDbConnection();
+
+                    if (connection.State != System.Data.ConnectionState.Open)
+                    {
+                        await connection.OpenAsync();
+                    }
+
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.CommandText = "PRAGMA freelist_count;";
+                        object? result = await command.ExecuteScalarAsync();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result).ToSecureInt();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+            }
+
+            return 0;
+        }
+        public async Task<int> GetRecordCount()
+        {
+            try
+            {
+                using (SQLiteContext ctx = GetContext())
+                {
+                    // Nutzung von EF Core CountAsync für eine saubere, asynchrone SQL-COUNT-Abfrage
+                    return await ctx.tbl_CON_Content.CountAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+            }
+
+            return 0;
+        }
+
         // CRUD 
         public async Task<IQueryResult> Create(IQueryParameter query)
         {

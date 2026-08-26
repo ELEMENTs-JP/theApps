@@ -14,6 +14,7 @@ namespace theApp
             // nLog 
             var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
             logger.Debug("Anwendung wird gestartet");
+            logger.Error("Testweiser Fehler produziert");
 
             try
             {
@@ -137,7 +138,7 @@ namespace theApp
 
                 app.MapRazorComponents<App>()
                    .AddInteractiveServerRenderMode()
-                   .AddAdditionalAssemblies(typeof(theDatabase.Controls.DatabaseSetup).Assembly,
+                   .AddAdditionalAssemblies(typeof(theDatabase.Controls.List).Assembly,
                                                 typeof(theComponents.Pages.Item_Page).Assembly,
                                                 typeof(theControls.Edit.EditBox).Assembly);
 

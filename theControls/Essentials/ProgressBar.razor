@@ -1,0 +1,37 @@
+﻿
+
+<div class="d-flex align-items-center flex-nowrap">
+@*     <i class="ti ti-progress px-1 text-muted"></i> *@
+
+    <div class="progress me-2" style="height:0.7rem !important; width: 100px !important;" title="@("Progress: " + Number.ToSecureString() + " %")">
+        <div class="@( "progress-bar")" style="@("width: " + Number.ToSecureString() + "%; " + " background-color: " + Progress.GetProgressHexColor(this.Number) + " !important; ")"
+             role="progressbar" aria-valuenow="@(Number.ToSecureString())" aria-valuemin="0" aria-valuemax="100"
+             aria-label="@(Number.ToSecureString() + "% Complete")">
+            <span class="visually-hidden">@(Number.ToSecureString() + "% Complete")</span>
+        </div>
+    </div>
+
+    <small class="text-muted">
+        @("" + Number.ToSecureString("0") + " %")
+    </small>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    public int Number { get; set; } = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        Number = Value.ExtractNumber().ToSecureInt();
+    }
+}

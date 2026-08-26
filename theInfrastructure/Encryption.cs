@@ -125,44 +125,14 @@ namespace theInfrastructure
         }
 
         // Password Hashing 
-        private const int SaltSize = 16; // 128 bit
-        private const int KeySize = 32;   // 256 bit
-        private const int Iterations = 600_000;
-        private static readonly HashAlgorithmName HashAlgorithm = HashAlgorithmName.SHA256;
+
 
         public static string HashPassword(string password)
         {
-            byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
-            byte[] hash = Rfc2898DeriveBytes.Pbkdf2(
-                password,
-                salt,
-                Iterations,
-                HashAlgorithm,
-                KeySize);
-
-            // Format: {Iterations}.{Salt}.{Hash}
-            return $"{Iterations}.{Convert.ToBase64String(salt)}.{Convert.ToBase64String(hash)}";
+            byte[] bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
+            return Convert.ToHexString(bytes).ToLowerInvariant();
         }
-        public static bool VerifyPassword(string password, string hashedPassword)
-        {
-            string[] parts = hashedPassword.Split('.');
-            if (parts.Length != 3)
-                return false;
-
-            int iterations = int.Parse(parts[0]);
-            byte[] salt = Convert.FromBase64String(parts[1]);
-            byte[] hash = Convert.FromBase64String(parts[2]);
-
-            byte[] inputHash = Rfc2898DeriveBytes.Pbkdf2(
-                password,
-                salt,
-                iterations,
-                HashAlgorithm,
-                hash.Length);
-
-            // CryptographicOperations.FixedTimeEquals verhindert Timing-Angriffe
-            return CryptographicOperations.FixedTimeEquals(hash, inputHash);
-        }
+   
 
     }
 }

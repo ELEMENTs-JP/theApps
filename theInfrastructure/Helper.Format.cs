@@ -9,6 +9,107 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        // Colors 
+        public static List<tspColor> GetAllColors()
+        {
+            List<tspColor> colors = new List<tspColor>();
+
+            colors.Add(new tspColor { HEX = "#1BA031", Color = GeneralColor.GreenDark });
+            colors.Add(new tspColor { HEX = "#34A853", Color = GeneralColor.Green });
+            colors.Add(new tspColor { HEX = "#36DB3C", Color = GeneralColor.GreenLight });
+
+            colors.Add(new tspColor { HEX = "#D3133F", Color = GeneralColor.RedDark });
+            colors.Add(new tspColor { HEX = "#E2104A", Color = GeneralColor.Red });
+            colors.Add(new tspColor { HEX = "#EA2765", Color = GeneralColor.RedLight });
+
+            colors.Add(new tspColor { HEX = "#0067CE", Color = GeneralColor.BlueDark });
+            colors.Add(new tspColor { HEX = "#008CD8", Color = GeneralColor.Blue });
+            colors.Add(new tspColor { HEX = "#0B91E5", Color = GeneralColor.BlueLight });
+
+            colors.Add(new tspColor { HEX = "#AB117F", Color = GeneralColor.PinkLight });
+            colors.Add(new tspColor { HEX = "#AB117F", Color = GeneralColor.Pink });
+            colors.Add(new tspColor { HEX = "#AB117F", Color = GeneralColor.PinkDark });
+
+
+            colors.Add(new tspColor { HEX = "#3B2F77", Color = GeneralColor.ViolettLight });
+            colors.Add(new tspColor { HEX = "#3B2F77", Color = GeneralColor.Violett });
+            colors.Add(new tspColor { HEX = "#3B2F77", Color = GeneralColor.ViolettDark });
+
+
+            colors.Add(new tspColor { HEX = "#FCC200", Color = GeneralColor.YellowLight });
+            colors.Add(new tspColor { HEX = "#FCC200", Color = GeneralColor.Yellow });
+            colors.Add(new tspColor { HEX = "#FCC200", Color = GeneralColor.YellowDark });
+
+            colors.Add(new tspColor { HEX = "#00A9A0", Color = GeneralColor.TurquoiseLight });
+            colors.Add(new tspColor { HEX = "#00A9A0", Color = GeneralColor.Turquoise });
+            colors.Add(new tspColor { HEX = "#00A9A0", Color = GeneralColor.TurquoiseDark });
+
+            colors.Add(new tspColor { HEX = "#E2007D", Color = GeneralColor.RoseLight });
+            colors.Add(new tspColor { HEX = "#E2007D", Color = GeneralColor.Rose });
+            colors.Add(new tspColor { HEX = "#E2007D", Color = GeneralColor.RoseDark });
+
+            colors.Add(new tspColor { HEX = "#E87A2C", Color = GeneralColor.OrangeLight });
+            colors.Add(new tspColor { HEX = "#E87A2C", Color = GeneralColor.Orange });
+            colors.Add(new tspColor { HEX = "#E87A2C", Color = GeneralColor.OrangeDark });
+
+            // colors.Add(new tspColor { HEX = "#DC0A15", Color = GeneralColor.SignalRot });
+
+            colors.Add(new tspColor { HEX = "#dddddd", Color = GeneralColor.Light });
+            colors.Add(new tspColor { HEX = "#cccccc", Color = GeneralColor.Silver });
+            colors.Add(new tspColor { HEX = "#aaaaaa", Color = GeneralColor.Grey });
+            colors.Add(new tspColor { HEX = "#888888", Color = GeneralColor.Gray30 });
+            colors.Add(new tspColor { HEX = "#666666", Color = GeneralColor.Gray50 });
+            colors.Add(new tspColor { HEX = "#444444", Color = GeneralColor.Gray70 });
+            colors.Add(new tspColor { HEX = "#222222", Color = GeneralColor.Dark });
+            colors.Add(new tspColor { HEX = "#111111", Color = GeneralColor.Deep });
+            colors.Add(new tspColor { HEX = "#000000", Color = GeneralColor.Deep });
+
+            return colors;
+        }
+        public static tspColor GetColor(GeneralColor color)
+        {
+            return GetAllColors().FirstOrDefault(se => se.Color == color);
+        }
+        public static string ToNormalizedString(this string text, string toRemoveWord = "")
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return string.Empty;
+            }
+
+            // 1. Wort entfernen (falls angegeben)
+            if (!string.IsNullOrEmpty(toRemoveWord))
+            {
+                text = text.Replace(toRemoveWord, string.Empty);
+            }
+
+            if (text.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            // 2. Maximale Kapazität vorab berechnen, um Array-Resizing zu verhindern
+            // Im Worst-Case (nur Großbuchstaben) verdoppelt sich die Länge.
+            StringBuilder newString = new StringBuilder(text.Length * 2);
+
+            ReadOnlySpan<char> span = text.AsSpan();
+
+            for (int i = 0; i < span.Length; i++)
+            {
+                char c = span[i];
+
+                // Leerzeichen nur VOR Großbuchstaben einfügen, aber NICHT an Index 0
+                if (char.IsUpper(c) && i > 0 && newString.Length > 0 && newString[newString.Length - 1] != ' ')
+                {
+                    newString.Append(' ');
+                }
+
+                newString.Append(c);
+            }
+
+            return newString.ToString();
+        }
+
         private const string Base62Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
         public static string ToShortCode(this Guid guid, int length = 5)
@@ -323,6 +424,18 @@ namespace theInfrastructure
         {
             switch (format)
             {
+                case TextFormat.Text:
+                    {
+                        return input.ToSecureString();
+                    }
+                case TextFormat.Integer:
+                    {
+                        return input.ToSecureInt().ToSecureString();
+                    }
+                case TextFormat.Decimal:
+                    {
+                        return input.ToSecureDecimal().ToString("F2");
+                    }
                 case TextFormat.Byte:
                     {
                         return input.ToDecimalFormat() + " Byte";

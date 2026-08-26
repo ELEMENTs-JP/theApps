@@ -23,6 +23,14 @@
     outline: none !important;
 }
 
+.progress-bar {
+    background-color: var(--tsp-label) !important;
+}
+
+.progress {
+    border-radius: 2px 2px;
+}
+
 .nav-link:focus, .nav-link:hover {
     color:inherit !important;
 }

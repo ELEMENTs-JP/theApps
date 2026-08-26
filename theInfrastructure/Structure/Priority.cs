@@ -10,13 +10,13 @@ namespace theInfrastructure
         {
             List<IDTO> Items = new();
 
-            Items.Add(new DTO() { ID = "9", Title = "Unternehmenskritisch" });
-            Items.Add(new DTO() { ID = "7", Title = "Business Critical" });
-            Items.Add(new DTO() { ID = "5", Title = "höher" });
-            Items.Add(new DTO() { ID = "5", Title = "ausgeglichen" });
-            Items.Add(new DTO() { ID = "3", Title = "niedrig" });
-            Items.Add(new DTO() { ID = "1", Title = "niedriger" });
-            Items.Add(new DTO() { ID = "0", Title = "irrelevant" });
+            Items.Add(new DTO() { ID = "5", Title = "Unternehmenskritisch" });
+            Items.Add(new DTO() { ID = "3", Title = "Business Critical" });
+            Items.Add(new DTO() { ID = "1", Title = "höher" });
+            Items.Add(new DTO() { ID = "0", Title = "ausgeglichen" });
+            Items.Add(new DTO() { ID = "-1", Title = "niedrig" });
+            Items.Add(new DTO() { ID = "-3", Title = "niedriger" });
+            Items.Add(new DTO() { ID = "-5", Title = "irrelevant" });
 
             return Items;
         }
@@ -62,31 +62,31 @@ namespace theInfrastructure
         {
             switch (Prio)
             {
-                case "Unternehmenskritisch":
+                case "5":
                     {
                         return "var(--tblr-red)";
                     }
-                case "Business Critical":
+                case "3":
                     {
                         return "var(--tblr-orange)";
                     }
-                case "höher":
+                case "1":
                     {
                         return "var(--tblr-yellow)";
                     }
-                case "ausgeglichen":
+                case "0":
                     {
                         return "var(--tblr-blue)";
                     }
-                case "niedrig":
+                case "-1":
                     {
                         return "var(--tblr-green)";
                     }
-                case "niedriger":
+                case "-3":
                     {
                         return "var(--tblr-purple)";
                     }
-                case "irrelevant":
+                case "-5":
                     {
                         return "var(--tblr-gray-500)";
                     }
