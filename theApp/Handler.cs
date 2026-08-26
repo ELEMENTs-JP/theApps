@@ -41,6 +41,10 @@ namespace theApp
                 // Controllers für Security API 
                 builder.Services.AddControllers();
 
+
+                // Messaging Bus Service 
+                builder.Services.AddScoped<IMessagingBusService, MessagingBusService>();
+
                 // Database Service 
                 builder.Services.AddScoped<ISqlDatabaseService>(provider =>
                 {
@@ -116,8 +120,6 @@ namespace theApp
 
 
 
-                // Messaging Bus Service 
-                builder.Services.AddScoped<IMessagingBusService, MessagingBusService>();
 
 
                 var app = builder.Build();

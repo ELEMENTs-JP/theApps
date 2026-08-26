@@ -43,7 +43,7 @@ namespace theInfrastructure
 
             return ItemTypes;
         }
-        public override async Task<List<IField>> GetFields()
+        public override async Task<List<IField>> GetFields(string view = "")
         {
             List<IField> Fields = new();
 

@@ -33,7 +33,7 @@ namespace theInfrastructure
 
 
         // Fields 
-        public Task<List<IField>> GetFields();
+        public Task<List<IField>> GetFields(string view = "");
         public Task<string> GetRelevantPropertyName(RelevantPropertyType typ = RelevantPropertyType.Date);
     }
     public class  BaseItemType : IItemType
@@ -94,7 +94,7 @@ namespace theInfrastructure
         }
 
         // Fields 
-        public virtual async Task<List<IField>> GetFields()
+        public virtual async Task<List<IField>> GetFields(string view = "")
         {
             List<IField> Fields = new();
 

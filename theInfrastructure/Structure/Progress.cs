@@ -10,12 +10,18 @@ namespace theInfrastructure
         {
             List<IDTO> Items = new();
 
-            Items.Add(new DTO() { ID = "100", Title = "100 %" });
-            Items.Add(new DTO() { ID = "70", Title = "70 %" });
-            Items.Add(new DTO() { ID = "50", Title = "50 %" });
-            Items.Add(new DTO() { ID = "30", Title = "30 %" });
-            Items.Add(new DTO() { ID = "10", Title = "10 %" });
-            Items.Add(new DTO() { ID = "0", Title = "0 %" });
+            Items.Add(new DTO() { ["Icon"] = "ti ti-rectangle", ID = "0", Title = "0 %", Content = "neu / erstellt" });
+            Items.Add(new DTO() { ["Icon"] = "ti ti-tallymark-1", ID = "10", Title = "10 %", Content = "in Vorbereitung" });
+            Items.Add(new DTO() { ["Icon"] = "ti ti-tallymark-2", ID = "25", Title = "25 %", Content = "Arbeiten vollem Gange" });
+            Items.Add(new DTO() { ["Icon"] = "ti ti-tallymark-3", ID = "33", Title = "33 %", Content = "erste Fortschritte" });
+            Items.Add(new DTO() { ["Icon"] = "ti ti-chevron-right", ID = "40", Title = "40 %", Content = "erste Ergebnisse vorzeigbar" });
+            Items.Add(new DTO() { ["Icon"] = "ti ti-chevrons-right", ID = "50", Title = "50 %", Content = "es ist Halbzeit" });
+            Items.Add(new DTO() { ["Icon"] = "ti ti-player-play", ID = "66", Title = "66 %", Content = "weitere Fortschritte" });
+            Items.Add(new DTO() { ["Icon"] = "ti ti-player-skip-forward", ID = "76", Title = "75 %", Content = "vorzeigbare Ergebnisse" });
+            Items.Add(new DTO() { ["Icon"] = "ti ti-chevron-right", ID = "80", Title = "80 %", Content = "Endspurt gestartet" });
+            Items.Add(new DTO() { ["Icon"] = "ti ti-player-track-next", ID = "90", Title = "90 %", Content = "Optimierungsarbeiten" });
+            Items.Add(new DTO() { ["Icon"] = "ti ti-circle-chevrons-right", ID = "97", Title = "97 %", Content = "Abschluss begonnen" });
+            Items.Add(new DTO() { ["Icon"] = "ti ti-circle-check", ID = "100", Title = "100 %", Content = "Arbeiten fertiggestellt"});
 
             return Items;
         }

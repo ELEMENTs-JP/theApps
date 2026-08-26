@@ -13,7 +13,7 @@ namespace theInfrastructure
             Typ = ItemTypeTyp.File;
         }
 
-        public override async Task<List<IField>> GetFields()
+        public override async Task<List<IField>> GetFields(string view = "")
         {
             // Fields 
             List<IField> Fields = new List<IField>();

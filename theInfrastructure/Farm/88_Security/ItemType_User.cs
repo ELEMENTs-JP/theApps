@@ -17,7 +17,7 @@ namespace theInfrastructure
             ItemTypes.Add(new ItemType_Permission());
             return ItemTypes;
         }
-        public override async Task<List<IField>> GetFields()
+        public override async Task<List<IField>> GetFields(string view = "")
         {
             // Fields 
             List<IField> Fields = new List<IField>();
