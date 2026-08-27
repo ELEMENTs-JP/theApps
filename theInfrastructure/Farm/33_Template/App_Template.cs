@@ -32,7 +32,7 @@ namespace theInfrastructure
             query.Matchcode = string.Empty;
             query.MasterGUID = sqlService.MasterGUID;
             query.ItemType = "ItemType";
-            IQueryResult result = await sqlService.GetRelatedItems(Item, "ItemType");
+            IQueryResult result = await sqlService.GetRelatedItems(Item, "ItemType", "");
 
             // Iteration 
             foreach (IDTO it in result.Items)

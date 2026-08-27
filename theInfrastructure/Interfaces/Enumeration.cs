@@ -4,6 +4,12 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum RelationDirection
+    {
+        All = 0,
+        Children = 1,
+        Parents = 2
+    }
     public enum KpiSize
     {
         NULL = 0,

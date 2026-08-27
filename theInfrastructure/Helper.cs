@@ -15,6 +15,16 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace theInfrastructure
 {
+    public enum AssociationTyp
+    { 
+        NULL = 0,
+        Default = 1,
+        Children = 2,
+        Parents = 3,
+        Parallels = 4,
+        Related = 5,
+
+    }
  
     public static partial class Helper
     {
@@ -50,7 +60,16 @@ namespace theInfrastructure
             return null;
         }
 
+        public static List<IDTO> GetDefaultAssociations()
+        {
+            List<IDTO> idtos = new List<IDTO>();
+            foreach (AssociationTyp at in Enum.GetValues(typeof(AssociationTyp)))
+            {
+                idtos.Add(new DTO { ID = at.ToString(), Title = at.ToString() });
+            }
 
+            return idtos;
+        }
         public static string GetGlassClass(this LayoutConfiguration config)
         {
             if (config.Glass == true)

@@ -23,7 +23,7 @@
     {
         await base.OnParametersSetAsync();
 
-        Context.Items = await Context.RelatedItems(Context.ItemType.Name);
+        Context.Items = await Context.RelatedItems(Context.ItemType.Name, "");
     }
 
 }

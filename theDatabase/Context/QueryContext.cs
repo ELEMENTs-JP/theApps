@@ -92,7 +92,9 @@ namespace theDatabase
                 
             }
         }
-        public async Task<List<IDTO>> RelatedItems(string itemType, string association = "Association")
+        public async Task<List<IDTO>> RelatedItems(
+            string itemType, string association = "Association", 
+            RelationDirection direction = RelationDirection.All)
         {
             List<IDTO> _items = new List<IDTO>();
 
@@ -112,7 +114,7 @@ namespace theDatabase
             query.Matchcode = string.Empty;
             query.MasterGUID = SQLiteService.GeneralMasterGUID;
             query.ItemType = ItemType.Name;
-            IQueryResult result = await sqlService.GetRelatedItems(RelatedItem, itemType);
+            IQueryResult result = await sqlService.GetRelatedItems(RelatedItem, itemType, association);
             _items = result.Items;
 
             IsLoading = false;
@@ -146,15 +148,25 @@ namespace theDatabase
 
             await sqlService.ChangeItemType(dto, newItemType);
         }
-        public async Task Assign(IDTO dto, string association = "Association")
+        public async Task Assign(
+            IDTO dto, string association = "Association", 
+            RelationDirection direction = RelationDirection.All)
         {
             if (sqlService == null)
                 return;
 
             if (this.Item == null)
                 return;
-
-            IQueryResult result = await sqlService.Assign(this.Item, dto, association);
+            if (direction == RelationDirection.Parents)
+            {
+                // DTO = Parent, Item = Child 
+                IQueryResult result = await sqlService.Assign(dto, this.Item, association);
+            }
+            else
+            {
+                // Item = Parent, dto = Child 
+                IQueryResult result = await sqlService.Assign(this.Item, dto, association);
+            }
         }
         public async Task Remove(IDTO dto)
         {

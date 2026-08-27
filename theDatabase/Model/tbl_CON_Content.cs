@@ -70,7 +70,10 @@ namespace theDatabase
                 }
             }
         }
-        
+
+        [NotMapped]
+        public string? RelationType { get; set; } = string.Empty; // IRelationDTO 
+
 
     }
 }

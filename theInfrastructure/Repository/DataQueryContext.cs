@@ -15,13 +15,14 @@ namespace theInfrastructure
         List<IDTO> Items { get; set; }
         Task Search();
         Task Load(string ID);
-        Task<List<IDTO>> RelatedItems(string itemType, string association = "Association");
+        Task<List<IDTO>> RelatedItems(string itemType, string association = "Association", 
+                RelationDirection direction = RelationDirection.All);
         void Init(ISqlDatabaseService sql);
         Task<Guid> Create(string title);
         Task Delete(IDTO dto);
         Task Update(IDTO dto);
         Task ChangeItemType(IDTO dto, string newItemType);
-        Task Assign(IDTO dto, string association = "Association");
+        Task Assign(IDTO dto, string association = "Association", RelationDirection direction = RelationDirection.All);
         Task Remove(IDTO dto);
     }
    

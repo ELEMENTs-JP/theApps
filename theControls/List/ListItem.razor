@@ -4,7 +4,7 @@
 
 @if (Context != null)
 {
-    <div class="row g-0 p-1 hover">
+    <div class="row g-0 p-1 hover align-items-center">
         <div class="col-auto p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
         
         <div class="col p-1 px-2 fw-bold pointer" title="@Item.ItemType"
@@ -22,9 +22,14 @@
         @if (IsRelated)
         {
             <div class="col-auto p-1">
+                <small class="text-muted">@(Item.RelationType)</small>
+            </div>
+
+            <div class="col-auto p-1">
                 <SymbolIcon Symbol="Icon.Disconnect" CSS="pointer hover"
                             OnClick="@( async  e => { await Disconnect(); })" />
             </div>
+            
         }
     </div>
 }

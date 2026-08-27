@@ -13,12 +13,12 @@ namespace theDatabase
 {
     public class ContextConfig
     {
-        public string DatabaseFileName = "DEFAULT.db;Cache=Shared;Mode=ReadWriteCreate;"; // DEFAULT 
+        public string DatabaseFileName = "DEFAULT.db;"; // DEFAULT Cache=Shared;Mode=ReadWriteCreate;
 
         public ContextConfig()
         { }
 
-        public static ContextConfig Default(string dbFileName = "DEFAULT.db;Cache=Shared;Mode=ReadWriteCreate;")
+        public static ContextConfig Default(string dbFileName = "DEFAULT.db;") // Cache=Shared;Mode=ReadWriteCreate;
         {
             ContextConfig config = new ContextConfig();
 

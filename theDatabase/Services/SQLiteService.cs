@@ -693,6 +693,49 @@ namespace theDatabase
         }
 
         // Relation 
+        public async Task<IQueryResult> GetRelatedItems(
+                IDTO dto, string ItemType, string Typ = "Association",
+                    RelationDirection direction = RelationDirection.All)
+        {
+            IQueryResult info = new QueryResult { Status = "OK", Message = "" };
+
+            try
+            {
+                await using (SQLiteContext ctx = GetContext())
+                {
+                    // Richtungsbedingung vorab und kompakt kapseln
+                    var query = from content in ctx.tbl_CON_Content
+                                join relation in ctx.tbl_TEC_Relation
+                                on 1 equals 1 // Expliziter JOIN für flexible WHERE-Bedingung
+                                where content.ItemType == ItemType
+                                   && (string.IsNullOrEmpty(Typ) || relation.RelationType == Typ)
+                                   && (
+                                       (direction != RelationDirection.Parents && relation.ParentGUID == dto.GUID && relation.ChildGUID == content.GUID) ||
+                                       (direction != RelationDirection.Children && relation.ChildGUID == dto.GUID && relation.ParentGUID == content.GUID)
+                                      )
+                                select new { content, relation.RelationType };
+
+                    // Asynchrone Datenbankabfrage ohne unnötige In-Memory-Konvertierung
+                    var dbResult = await query.ToListAsync();
+
+                    List<IDTO> result = dbResult.ConvertAll(x =>
+                    {
+                        IDTO dtoItem = (IDTO)x.content;
+                        dtoItem.RelationType = x.RelationType;
+                        return dtoItem;
+                    });
+
+                    info.Items = result;
+                }
+            }
+            catch (Exception ex)
+            {
+                info.Status = "FAIL";
+                info.Message = ex.Message;
+            }
+
+            return info;
+        }
         public async Task<IQueryResult> GetRelatedItems(IDTO dto, string ItemType, string Typ = "Association")
         {
             IQueryResult info = new QueryResult { Status = "OK", Message = "" };
@@ -702,17 +745,25 @@ namespace theDatabase
                 await using (SQLiteContext ctx = GetContext())
                 {
                     var query = from content in ctx.tbl_CON_Content
-                                where ctx.tbl_TEC_Relation.Any(relation =>
-                                    (
-                                        (relation.ParentGUID == dto.GUID && relation.ChildGUID == content.GUID) ||
-                                        (relation.ChildGUID == dto.GUID && relation.ParentGUID == content.GUID)
-                                    )
-                                    && (relation.RelationType.Equals(Typ))
-                                    && (content.ItemType.Equals(ItemType))
-                                )
-                                select content;
+                                from relation in ctx.tbl_TEC_Relation
+                                where (
+                                          (relation.ParentGUID == dto.GUID && relation.ChildGUID == content.GUID) ||
+                                          (relation.ChildGUID == dto.GUID && relation.ParentGUID == content.GUID)
+                                      )
+                                    && (string.IsNullOrEmpty(Typ) || relation.RelationType == Typ)
+                                      && content.ItemType.Equals(ItemType)
+                                select new
+                                {
+                                    Content = content,
+                                    RelationType = relation.RelationType
+                                };
 
-                    List<IDTO> result = query.ToList().ConvertAll(c => (IDTO)c);
+                    List<IDTO> result = query.ToList().ConvertAll(x =>
+                    {
+                        IDTO dtoItem = (IDTO)x.Content;
+                        dtoItem.RelationType = x.RelationType; 
+                        return dtoItem;
+                    });
 
                     info.Items = result;
                 }

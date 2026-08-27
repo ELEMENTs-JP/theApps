@@ -17,6 +17,8 @@ namespace theInfrastructure
         public string? Content { get; set; } = string.Empty;
         public string ItemType { get; set; } = string.Empty;
         public string? Matchcode { get; set; } = string.Empty;
+        // not mapped 
+        public string? RelationType { get; set; } = string.Empty;
 
         // Properties 
         public List<ItemProperty> Properties { get; set; } = new List<ItemProperty>();

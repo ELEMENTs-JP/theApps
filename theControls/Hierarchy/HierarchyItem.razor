@@ -38,9 +38,9 @@
         {
             @foreach (IItemType itemType in RelatedItemTypes)
             {
-                <div class="text-muted fw-bold">
+          @*       <div class="text-muted fw-bold">
                     @itemType.Name
-                </div>
+                </div> *@
                 @foreach (var groupIT in RelatedItems.Select(se => se.ItemType).Distinct())
                 {
                     @foreach (IDTO childItem in RelatedItems.Where(se => se.ItemType == groupIT))
@@ -100,7 +100,7 @@
         {
             // gleicher ItemType
             Context.RelatedItem = Item;
-            RelatedItems = await Context.RelatedItems(ItemType);
+            RelatedItems = await Context.RelatedItems(ItemType, "", RelationDirection.Children);
         }
 
         if (Mode == HierarchyMode.Related)
@@ -112,7 +112,7 @@
             foreach (IItemType it in RelatedItemTypes)
             {
                 Context.RelatedItem = Item;
-                List<IDTO> relatedItems = await Context.RelatedItems(it.Name);
+                List<IDTO> relatedItems = await Context.RelatedItems(it.Name, "", RelationDirection.Children);
                 RelatedItems.AddRange(relatedItems);
             }
         }

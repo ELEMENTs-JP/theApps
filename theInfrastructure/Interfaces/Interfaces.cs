@@ -85,7 +85,9 @@ namespace theInfrastructure
 
         Task<IQueryResult> Assign(IDTO parent, IDTO child, string associationTyp = "Association");
         Task<IQueryResult> Remove(IDTO parent, IDTO child);
-        Task<IQueryResult> GetRelatedItems(IDTO dto, string ItemType, string Typ = "Association");
+        Task<IQueryResult> GetRelatedItems(
+            IDTO dto, string ItemType, string Typ = "Association", 
+            RelationDirection direction = RelationDirection.All);
 
     }
     public interface IQueryResult
@@ -126,6 +128,7 @@ namespace theInfrastructure
         string? Matchcode { get; set; }
 
         string this[string propertyName] { get; set; }
+        string? RelationType { get; set; }
     }
     public interface IRelationDTO
     {
