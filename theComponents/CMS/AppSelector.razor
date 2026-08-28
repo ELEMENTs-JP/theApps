@@ -117,7 +117,7 @@
 
                 if (app.App != null)
                 {
-                    CurrentItemTypes = await app.App.GetItemTypes();
+                    CurrentItemTypes = await app.App.GetItemTypes(AssociationTyp.Children);
                     CurrentPages = await app.App.GetPages();
                 }
 
@@ -133,8 +133,8 @@
     {
         await app.SetApp(_app);
 
-        CurrentItemTypes = await app.App.GetItemTypes();
-        CurrentPages = await app.App.GetPages();
+        // CurrentItemTypes = await app.App.GetItemTypes(AssociationTyp.Children);
+        // CurrentPages = await app.App.GetPages();
 
         nm.NavToApp(_app.Name);
 

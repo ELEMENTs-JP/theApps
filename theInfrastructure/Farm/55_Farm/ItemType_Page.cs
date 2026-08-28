@@ -13,7 +13,7 @@ namespace theInfrastructure
         }
         public List<IField> Fields { get; set; } = new();
 
-        public override async Task<List<IItemType>> GetItemTypes()
+        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
         {
             // ItemTypes 
             List<IItemType>  ItemTypes = new List<IItemType>();

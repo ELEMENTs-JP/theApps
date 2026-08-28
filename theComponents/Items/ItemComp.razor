@@ -5,19 +5,48 @@
 {
     @if (Context != null)
     {
-        <EditArea ItemType="@this.ItemType" ID="@ID" />
 
-        <div class="my-3"></div>
 
-        <div class="row g-2">
-            @foreach (string group in ItemTypeGroups)
-            {
-                <div class="@( ((ItemTypeGroups.Count() == 1) ? " col-12 " : " col-xl-6 col-12 ") )">
-                    <RelatedItemsComp Title="@group" ItemTypes="@( ItemTypes.Where(se => se.Group == group).ToList())"
-                                      RelatedItem="@RelatedItem" />
-                </div>
-            }
+        <div class="row g-0">
+            <div class="col-7 p-2">
+                <EditArea ItemType="@this.ItemType" ID="@ID" />
+            </div>
+            <div class="col-5 p-2">
+
+         
+                            <RelatedItemsComp ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Parents).Value.ToList())"
+                                    RelatedItem="@RelatedItem" Association="AssociationTyp.Parents" />
+                <div class="my-3"></div>
+            
+                            <RelatedItemsComp ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Parallels).Value.ToList())"
+                                              RelatedItem="@RelatedItem" Association="AssociationTyp.Parallels" />
+                <div class="my-3"></div>
+          
+                            <RelatedItemsComp ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Related).Value.ToList())"
+                                              RelatedItem="@RelatedItem" Association="AssociationTyp.Related" />
+              
+
+            </div>
         </div>
+
+        <div class="row g-0">
+            <div class="col-7 p-2">
+          
+                            <RelatedItemsComp ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Children).Value.ToList())"
+                                              RelatedItem="@RelatedItem" Association="AssociationTyp.Children" />
+               
+                                              <div class="my-3"></div>
+           
+                            <RelatedItemsComp ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Default).Value.ToList())"
+                                              RelatedItem="@RelatedItem" Association="AssociationTyp.Default" />
+                 
+            </div>
+            <div class="col-5 p-2">
+              
+            </div>
+        </div>
+
+     
     }
 }
 
@@ -28,15 +57,17 @@
     [Parameter]
     public string ID { get; set; } = string.Empty;
 
+
+    private IDTO RelatedItem { get; set; }
+
     [Parameter]
     public IItemType ItemType { get; set; } = null;
 
-    private List<IItemType> ItemTypes { get; set; } = new();
+    private List<KeyValuePair<AssociationTyp, List<IItemType>>> ItemTypes { get; set; } = new();
     private List<string> ItemTypeGroups { get; set; } = new();
 
     private IQueryContext Context { get; set; } = null;
     private IQueryContext RelatedContext { get; set; } = null;
-    private IDTO RelatedItem { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -44,8 +75,24 @@
 
         if (ItemType != null)
         {
-            ItemTypes = await ItemType.GetItemTypes();
-            ItemTypeGroups = ItemTypes.Select(se => se.Group).Distinct().ToList();
+            // Clear 
+            ItemTypes.Clear();
+
+            // List 
+            List<IItemType> its = await ItemType.GetItemTypes(AssociationTyp.Default);
+            ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(AssociationTyp.Default, its));
+
+            its = await ItemType.GetItemTypes(AssociationTyp.Children);
+            ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(AssociationTyp.Children, its));
+
+            its = await ItemType.GetItemTypes(AssociationTyp.Parallels);
+            ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(AssociationTyp.Parallels, its));
+
+            its = await ItemType.GetItemTypes(AssociationTyp.Parents);
+            ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(AssociationTyp.Parents, its));
+
+            its = await ItemType.GetItemTypes(AssociationTyp.Related);
+            ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(AssociationTyp.Related, its));
         }
 
         if (!string.IsNullOrEmpty(this.ID))

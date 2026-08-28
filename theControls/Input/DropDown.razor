@@ -59,7 +59,7 @@
 
                 @foreach (IDTO item in GetFilteredItems())
                 {
-                    <div class="m-1 hover pointer rounded-2 p-1" @onclick="@(() => HandleInput(item))">
+                    <div class="m-1 mx-2 hover pointer rounded-2 p-1" @onclick="@(() => HandleInput(item))">
                         @if (ItemTemplate is not null)
                         {
                             @ItemTemplate(item)

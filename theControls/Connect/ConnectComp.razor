@@ -28,6 +28,12 @@
                         <div class="text-secondary fw-bold">@RelatedItem.Title</div>
                         <small class="text-muted small">Verbundener Eintrag vom Typ: @RelatedItem.ItemType</small>
                     </div>
+
+                    <div class="vr"></div>
+                    <div class="vstack p-2 px-3">
+                        <div class="text-secondary fw-bold">Verbindung</div>
+                        <small class="text-muted small">Typ: @Association.ToSecureEnumString()</small>
+                    </div>
                 }
 
                 @if (SelectedItem != null)
@@ -43,15 +49,7 @@
                 </div>
             </div>
 
-            @if (RelatedItem != null)
-            {
-                <div class="col-12 p-2 border-bottom my-2">
-                    <DropDown Value="@Association"
-                              Label="Zuordnung" Description="Legt den Typ der Verbindung fest"
-                              Items="@( Helper.GetDefaultAssociations() )"
-                              ValueChanged="@( async e => { Association = e;  })" />
-                </div>
-            }
+    
 
             <div class="d-flex justify-content-center">
                 <TextBox Type="FieldTyp.Search" Placeholder="nach Einträgen suchen"
@@ -87,7 +85,9 @@
 
     // Fields
     private string Matchcode { get; set; } = string.Empty;
-    private string Association { get; set; } = string.Empty;
+
+    [Parameter]
+    public AssociationTyp Association { get; set; } = AssociationTyp.Association;
 
     protected override async Task OnInitializedAsync()
     {
@@ -138,24 +138,16 @@
 
         if (RelatedItem != null)
         {
-            if (string.IsNullOrEmpty(Association))
+            if (this.Association == AssociationTyp.NULL)
             {
                 return;    
             }
         }
 
         // Assign 
-        // await sql.Assign(RelatedItem, SelectedItem, Association);
-        AssociationTyp typ = this.Association.ToEnum<AssociationTyp>();
-        if (typ == AssociationTyp.Parents)
-        {
-            await sql.Assign(Context.Item, RelatedItem, Association);
-        }
-        else
-        {
-            // Related = Parent, Context.Item = Child
-            await sql.Assign(RelatedItem, Context.Item, Association);
-        }
+    
+            await sql.Assign(Context.Item, RelatedItem, this.Association);
+      
 
         SelectedItem = null;
 

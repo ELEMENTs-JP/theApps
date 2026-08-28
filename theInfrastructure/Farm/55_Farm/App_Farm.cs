@@ -12,7 +12,7 @@ namespace theInfrastructure
             Name = "Farm";
             IsNavigation = false;
         }
-        public override async Task<List<IItemType>> GetItemTypes()
+        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
         {
             List<IItemType> ItemTypes = new List<IItemType>();
 

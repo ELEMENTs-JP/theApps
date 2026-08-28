@@ -11,13 +11,17 @@ namespace theInfrastructure
             Name = "App";
         }
 
-        public override async Task<List<IItemType>> GetItemTypes()
+        public override async Task<List<IItemType>> GetItemTypes(
+            AssociationTyp ast = AssociationTyp.Association)
         {
             List<IItemType> ItemTypes = new();
 
-            // ItemTypes 
-            ItemTypes.Add(new ItemType_ItemType());
-            ItemTypes.Add(new ItemType_Page());
+            if (ast == AssociationTyp.Children)
+            { 
+                // ItemTypes 
+                ItemTypes.Add(new ItemType_ItemType());
+                ItemTypes.Add(new ItemType_Page());
+            }
 
             return ItemTypes;
         }

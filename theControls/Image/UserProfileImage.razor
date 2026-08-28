@@ -78,7 +78,7 @@
             return;
 
         // Create
-        IQueryResult result = await sql.GetRelatedItems(sec.User, "File", "UserImage");
+        IQueryResult result = await sql.GetRelatedItems(sec.User, "File", AssociationTyp.UserImage);
         if (result == null)
             return;
 
@@ -137,7 +137,7 @@
         await sql.Update(item);
 
         // Assign
-        await sql.Assign(sec.User, item, "UserImage");
+        await sql.Assign(sec.User, item, AssociationTyp.UserImage);
 
         // Refresh
         this.Base64String = await Helper.ToBase64String(item);

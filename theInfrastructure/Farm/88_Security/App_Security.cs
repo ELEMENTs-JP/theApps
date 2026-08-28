@@ -14,7 +14,7 @@ namespace theInfrastructure
 
         }
 
-        public override async Task<List<IItemType>> GetItemTypes()
+        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
         {
             List<IItemType> ItemTypes = new();
 

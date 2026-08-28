@@ -13,7 +13,7 @@ namespace theInfrastructure
             IsNavigation = false;
         }
 
-        public override async Task<List<IItemType>> GetItemTypes()
+        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp typ = AssociationTyp.Association)
         {
             List<IItemType> ItemTypes = new();
 

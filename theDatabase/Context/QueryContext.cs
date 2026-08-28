@@ -93,8 +93,7 @@ namespace theDatabase
             }
         }
         public async Task<List<IDTO>> RelatedItems(
-            string itemType, string association = "Association", 
-            RelationDirection direction = RelationDirection.All)
+            string itemType, AssociationTyp ast = AssociationTyp.Association)
         {
             List<IDTO> _items = new List<IDTO>();
 
@@ -114,7 +113,7 @@ namespace theDatabase
             query.Matchcode = string.Empty;
             query.MasterGUID = SQLiteService.GeneralMasterGUID;
             query.ItemType = ItemType.Name;
-            IQueryResult result = await sqlService.GetRelatedItems(RelatedItem, itemType, association);
+            IQueryResult result = await sqlService.GetRelatedItems(RelatedItem, itemType, ast);
             _items = result.Items;
 
             IsLoading = false;
@@ -148,24 +147,32 @@ namespace theDatabase
 
             await sqlService.ChangeItemType(dto, newItemType);
         }
-        public async Task Assign(
-            IDTO dto, string association = "Association", 
-            RelationDirection direction = RelationDirection.All)
+        public async Task Assign(IDTO dto, AssociationTyp ast = AssociationTyp.Association)
         {
             if (sqlService == null)
                 return;
 
             if (this.Item == null)
                 return;
-            if (direction == RelationDirection.Parents)
+
+            if (ast == AssociationTyp.Association ||
+                ast == AssociationTyp.Default ||
+                ast == AssociationTyp.Children ||
+                ast == AssociationTyp.Parallels ||
+                ast == AssociationTyp.Related)
+            {
+                // Item = Parent, dto = Child 
+                await sqlService.Assign(this.Item, dto, ast);
+            }
+            else if (ast == AssociationTyp.Parents)
             {
                 // DTO = Parent, Item = Child 
-                IQueryResult result = await sqlService.Assign(dto, this.Item, association);
+                await sqlService.Assign(dto, this.Item, ast);
             }
             else
             {
-                // Item = Parent, dto = Child 
-                IQueryResult result = await sqlService.Assign(this.Item, dto, association);
+                // NULL 
+                throw new Exception("Keine Association");
             }
         }
         public async Task Remove(IDTO dto)

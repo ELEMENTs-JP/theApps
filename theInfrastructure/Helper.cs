@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -15,20 +16,21 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace theInfrastructure
 {
-    public enum AssociationTyp
-    { 
-        NULL = 0,
-        Default = 1,
-        Children = 2,
-        Parents = 3,
-        Parallels = 4,
-        Related = 5,
 
-    }
- 
+
     public static partial class Helper
     {
-     
+      
+
+
+        public static string ToSecureEnumString(this AssociationTyp typ)
+        {
+            return typ switch
+            {
+                AssociationTyp.NULL => string.Empty,
+                _ => typ.ToString()
+            };
+        }
         // Reflection 
         public static Type SpecificType(string assemblyName = "", string className = "")
         {
@@ -221,9 +223,9 @@ namespace theInfrastructure
 
             return Items;
         }
-    
-   
-  
+
+
+
         public static string GetClassByDevice(IField field)
         {
 
@@ -238,7 +240,7 @@ namespace theInfrastructure
 
             return string.Empty;
         }
-       public static void AddOrUpdate(this List<IDataValue> items, IDataValue value)
+        public static void AddOrUpdate(this List<IDataValue> items, IDataValue value)
         {
             ArgumentNullException.ThrowIfNull(items);
             ArgumentNullException.ThrowIfNull(value?.Field?.Title);
@@ -326,7 +328,7 @@ namespace theInfrastructure
             };
         }
 
-       public static object MapProperties(object UI, object DB)
+        public static object MapProperties(object UI, object DB)
         {
             // check Objects 
             if (UI == null || DB == null)

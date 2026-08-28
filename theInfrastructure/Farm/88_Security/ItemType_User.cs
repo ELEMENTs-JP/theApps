@@ -11,7 +11,7 @@ namespace theInfrastructure
             Name = "User";
             InSubNavigation = false;
         }
-        public override async Task<List<IItemType>> GetItemTypes()
+        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
         {
             List<IItemType> ItemTypes = new List<IItemType>();
             ItemTypes.Add(new ItemType_Permission());

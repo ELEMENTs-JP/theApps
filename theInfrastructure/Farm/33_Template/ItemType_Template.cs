@@ -19,7 +19,7 @@ namespace theInfrastructure
             this.Typ = dto["ItemTypeTyp"].ToSecureString().ToEnumOrDefault<ItemTypeTyp>(ItemTypeTyp.Item);
         }
 
-        public override async Task<List<IItemType>> GetItemTypes()
+        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
         {
             List<IItemType> ItemTypes = new List<IItemType>();
 
@@ -32,7 +32,7 @@ namespace theInfrastructure
             query.Matchcode = string.Empty;
             query.MasterGUID = sqlService.MasterGUID;
             query.ItemType = "ItemType";
-            IQueryResult result = await sqlService.GetRelatedItems(Item, "ItemType", "");
+            IQueryResult result = await sqlService.GetRelatedItems(Item, "ItemType", ast);
 
             // Iteration 
             foreach (IDTO it in result.Items)
@@ -57,7 +57,7 @@ namespace theInfrastructure
             query.MasterGUID = sqlService.MasterGUID;
             query.ItemType = "Field";
             // Fields 
-            IQueryResult result = await sqlService.GetRelatedItems(Item, "Field");
+            IQueryResult result = await sqlService.GetRelatedItems(Item, "Field", AssociationTyp.Children);
 
             // Iteration 
             foreach (IDTO it in result.Items)

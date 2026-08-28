@@ -100,19 +100,19 @@
         {
             // gleicher ItemType
             Context.RelatedItem = Item;
-            RelatedItems = await Context.RelatedItems(ItemType, "", RelationDirection.Children);
+            RelatedItems = await Context.RelatedItems(ItemType, AssociationTyp.Children);
         }
 
         if (Mode == HierarchyMode.Related)
         {
             IItemType parent = await new Factory(sql).BuildItemType(this.ItemType);
-            RelatedItemTypes = await parent.GetItemTypes();
+            RelatedItemTypes = await parent.GetItemTypes(AssociationTyp.Children);
             RelatedItems.Clear();
 
             foreach (IItemType it in RelatedItemTypes)
             {
                 Context.RelatedItem = Item;
-                List<IDTO> relatedItems = await Context.RelatedItems(it.Name, "", RelationDirection.Children);
+                List<IDTO> relatedItems = await Context.RelatedItems(it.Name, AssociationTyp.Children);
                 RelatedItems.AddRange(relatedItems);
             }
         }

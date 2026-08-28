@@ -20,7 +20,7 @@ namespace theInfrastructure
             this.IsActive = Item["IsActive"].ToSecureBool();
         }
 
-        public override async Task<List<IItemType>> GetItemTypes()
+        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
         {
             List<IItemType> ItemTypes = new();
             // ItemTypes 
@@ -32,7 +32,7 @@ namespace theInfrastructure
             query.Matchcode = string.Empty;
             query.MasterGUID = sqlService.MasterGUID;
             query.ItemType = "ItemType";
-            IQueryResult result = await sqlService.GetRelatedItems(Item, "ItemType", "");
+            IQueryResult result = await sqlService.GetRelatedItems(Item, "ItemType", ast);
 
             // Iteration 
             foreach (IDTO it in result.Items)

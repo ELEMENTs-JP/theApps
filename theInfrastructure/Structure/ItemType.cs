@@ -18,7 +18,7 @@ namespace theInfrastructure
         bool InSubNavigation { get; set; }
 
         // ItemType 
-        public Task<List<IItemType>> GetItemTypes();
+        public Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association);
 
         // Events 
         Task<IDTO> OnCreateItem(IItemEventArgs args);
@@ -50,7 +50,8 @@ namespace theInfrastructure
         }
 
         // ItemTypes 
-        public virtual async Task<List<IItemType>> GetItemTypes()
+        public virtual async Task<List<IItemType>> GetItemTypes(
+            AssociationTyp ast = AssociationTyp.Association)
         {
             List<IItemType> ItemTypes = new();
 

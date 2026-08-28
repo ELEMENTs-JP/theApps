@@ -63,7 +63,7 @@ namespace theControls.Elements
                     {
                         // Related Items
                         Context.RelatedItem = RelatedItem;
-                        Context.Items = await Context.RelatedItems(ItemType.Name, "");
+                        Context.Items = await Context.RelatedItems(ItemType.Name, AssociationTyp.NULL);
                     }
                     else
                     {

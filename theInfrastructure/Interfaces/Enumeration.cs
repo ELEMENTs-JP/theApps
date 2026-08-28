@@ -4,12 +4,26 @@ using System.Text;
 
 namespace theInfrastructure
 {
-    public enum RelationDirection
+    public enum AssociationTyp
     {
-        All = 0,
-        Children = 1,
-        Parents = 2
+        NULL = 0,
+        Default = 1,
+        Children = 2,
+        Parents = 3,
+        Parallels = 4,
+        Related = 5,
+        Association = 6,
+
+        // EXTRA 
+        UserImage = 11,
     }
+    //public enum RelationDirection
+    //{
+    //    Automatic = 0, // automatische Wahl anhand des AssociationTyp 
+    //    All = 1,
+    //    Children = 2,
+    //    Parents = 3,
+    //}
     public enum KpiSize
     {
         NULL = 0,

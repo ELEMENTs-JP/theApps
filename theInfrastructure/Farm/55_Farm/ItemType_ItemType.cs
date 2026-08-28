@@ -4,7 +4,7 @@ using System.Text;
 
 namespace theInfrastructure
 {
-    public class  ItemType_ItemType : BaseItemType, IItemType
+    public class ItemType_ItemType : BaseItemType, IItemType
     {
         public ItemType_ItemType()
         {
@@ -13,12 +13,18 @@ namespace theInfrastructure
         }
         public List<IField> Fields { get; set; } = new();
 
-        public override async Task<List<IItemType>> GetItemTypes()
+        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
         {
             // ItemTypes 
-            List<IItemType>  ItemTypes = new List<IItemType>();
-            ItemTypes.Add(new ItemType_ItemType());
-            ItemTypes.Add(new ItemType_Field());
+            List<IItemType> ItemTypes = new List<IItemType>();
+
+            if (ast == AssociationTyp.Children)
+            {
+                ItemTypes.Add(new ItemType_ItemType());
+                ItemTypes.Add(new ItemType_Field());
+            }
+
+
             return ItemTypes;
         }
         public override async Task<List<IField>> GetFields(string view = "")

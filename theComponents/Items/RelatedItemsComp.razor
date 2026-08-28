@@ -24,14 +24,18 @@
             }
         </Header>
         <Related>
-            <div class="hstack">
-                <ConnectComp ItemType="@ItemType" RelatedItem="@RelatedItem" />
+            <div class="hstack align-items-center">
+                <div class="text-muted px-2">
+                    @Association.ToSecureString()
+                </div>
                 <div class="vr mx-2"></div>
-                <AddArea ItemType="@ItemType" RelatedItem="@RelatedItem" />
+                <ConnectComp ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" />
+                <div class="vr mx-2"></div>
+                <AddArea ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" />
             </div>
         </Related>
         <Content>
-            <ItemsList ItemType="@ItemType" RelatedItem="@RelatedItem" />
+            <ItemsList ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" />
         </Content>
     </Frame>
 }
@@ -51,6 +55,10 @@
     [Parameter]
     public List<IItemType> ItemTypes { get; set; } = new();
 
+    [Parameter]
+    public AssociationTyp Association { get; set; } = AssociationTyp.Association;
+
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -60,12 +68,6 @@
     {
         await base.OnParametersSetAsync();
 
-        // Items.Clear();
-        // IItemType relItemType = await new Factory(sql).BuildItemType(RelatedItem.ItemType);
-        // if (relItemType != null)
-        // {
-        //     Items.AddRange(relItemType.GetItemTypes().Result);
-        // }
         if (ItemTypes.Count() >= 1)
         {
             ItemType = ItemTypes.FirstOrDefault();

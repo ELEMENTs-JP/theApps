@@ -31,6 +31,12 @@
                         <div class="text-secondary fw-bold">@RelatedItem.Title</div>
                         <small class="text-muted small">Verbundener Eintrag vom Typ: @RelatedItem.ItemType</small>
                     </div>
+
+                    <div class="vr"></div>
+                    <div class="vstack p-2 px-3">
+                        <div class="text-secondary fw-bold">Verbindung</div>
+                        <small class="text-muted small">Typ: @Association.ToSecureEnumString()</small>
+                    </div>
                 }
                 <div class="flex-fill vstack p-2 px-3">
                 </div>
@@ -46,13 +52,13 @@
                 }
 
                 <div class="col-12 p-2">
-                    <TextBox Label="Titel" Value="@Title" Description="Titel des Datensatzes"
+                    <TextBox Label="Titel" Value="@Title" Description="Titel des Datensatzes" Placeholder="Titel hier formulieren..."
                              ValueChanged="@( async e => { Title = e; await SearchForDuplicates(); })" />
                 </div>
 
              
 
-                @foreach (IField field in ItemType.GetFields().Result.Where(s => s.Typ != FieldTyp.HR))
+                @foreach (IField field in Fields.Where(s => s.Typ != FieldTyp.HR))
                 {
                     <div class="col-12">
                         <AddBox Field="@field" CssClass="" Border="false"
@@ -60,15 +66,6 @@
                     </div>
                 }
 
-                @if (RelatedItem != null)
-                {
-                    <div class="col-12 p-2">
-                        <DropDown Value="@Association" 
-                            Label="Zuordnung"  Description="Legt den Typ der Verbindung fest"
-                                  Items="@( Helper.GetDefaultAssociations() )"
-                                ValueChanged="@( async e => { Association = e;  })" />
-                    </div>
-                }
             </div>
         </ChildContent>
     </ModalForm>
@@ -82,11 +79,14 @@
     [Parameter]
     public IDTO RelatedItem { get; set; }
 
+    [Parameter]
+    public AssociationTyp Association { get; set; } = AssociationTyp.Association;
+
+    private List<IField> Fields { get; set; } = new();
     private IQueryContext Context { get; set; }
 
     // Fields
     private string Title { get; set; } = string.Empty;
-    private string Association { get; set; } = string.Empty;
     private string Message { get; set; } = string.Empty;
 
     private List<IDataValue> Values { get; set; } = new();
@@ -101,6 +101,7 @@
 
         if (ItemType != null)
         {
+            Fields = await ItemType.GetFields();
             Context = new QueryContext(sql);
             Context.ItemType = this.ItemType;
         }
@@ -137,7 +138,7 @@
 
         if (RelatedItem != null)
         {
-            if (string.IsNullOrEmpty(this.Association))
+            if (this.Association == AssociationTyp.NULL)
             {
                 msg.Publish("Notwendige Felder", BusAction.Info, "Assoziation muss gesetzt sein.");
                 return false;
@@ -184,7 +185,7 @@
         if (Context == null)
             return;
 
-        if (string.IsNullOrEmpty(this.Association))
+        if (this.Association == AssociationTyp.NULL)
         {
             return;
         }
@@ -207,16 +208,7 @@
         // Related Item
         if (RelatedItem != null)
         {
-            AssociationTyp typ = this.Association.ToEnum<AssociationTyp>();
-            if (typ == AssociationTyp.Parents)
-            {
-                await sql.Assign(Context.Item, RelatedItem, Association);
-            }
-            else
-            {
-                // Related = Parent, Context.Item = Child 
-                await sql.Assign(RelatedItem, Context.Item, Association);
-            }
+            await sql.Assign(RelatedItem, Context.Item, Association);
         }
 
         // Clean
