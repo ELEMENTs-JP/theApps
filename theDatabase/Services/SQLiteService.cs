@@ -725,11 +725,11 @@ namespace theDatabase
                    Typ == AssociationTyp.UserImage ||
                    Typ == AssociationTyp.Default)
                 {
-                    info.Items = await GetChildren(dto, ItemType);
+                    info.Items = await GetChildren(dto, ItemType, Typ);
                 }
                 else if (Typ == AssociationTyp.Parents)
                 {
-                    info.Items = await GetParents(dto, ItemType);
+                    info.Items = await GetParents(dto, ItemType, Typ);
                 }
                 else
                 {
@@ -746,7 +746,7 @@ namespace theDatabase
         }
 
         // Helper 
-        public async Task<List<IDTO>> GetChildren(IDTO dto, string ItemType)
+        public async Task<List<IDTO>> GetChildren(IDTO dto, string ItemType, AssociationTyp typ)
         {
             List<IDTO> resultList = new List<IDTO>();
 
@@ -759,11 +759,7 @@ namespace theDatabase
                                      on relation.ChildGUID equals content.GUID // Definiert die Child Beziehung 
                                    where relation.ParentGUID == dto.GUID // Definiert die von Oben abwärts Richtung 
                                       && content.ItemType == ItemType
-                                      && (relation.RelationType == "Children" ||
-                                          relation.RelationType == "Default" ||
-                                          relation.RelationType == "Related" ||
-                                          relation.RelationType == "UserImage" ||
-                                          relation.RelationType == "Parallel")
+                                      && (relation.RelationType == typ.ToSecureEnumString())
                                    select new
                                    {
                                        Content = content,
@@ -790,7 +786,7 @@ namespace theDatabase
 
             return resultList;
         }
-        public async Task<List<IDTO>> GetParents(IDTO dto, string ItemType)
+        public async Task<List<IDTO>> GetParents(IDTO dto, string ItemType, AssociationTyp typ)
         {
             List<IDTO> resultList = new List<IDTO>();
             try
@@ -802,7 +798,7 @@ namespace theDatabase
                                      on relation.ParentGUID equals content.GUID
                                    where relation.ChildGUID == dto.GUID
                                       && content.ItemType == ItemType
-                                      && (relation.RelationType == "Parents")
+                                      && (relation.RelationType == typ.ToSecureEnumString())
                                    select new
                                    {
                                        Content = content,

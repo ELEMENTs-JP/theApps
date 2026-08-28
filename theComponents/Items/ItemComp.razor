@@ -13,36 +13,30 @@
             </div>
             <div class="col-5 p-2">
 
-         
-                            <RelatedItemsComp ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Parents).Value.ToList())"
-                                    RelatedItem="@RelatedItem" Association="AssociationTyp.Parents" />
-                <div class="my-3"></div>
-            
-                            <RelatedItemsComp ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Parallels).Value.ToList())"
-                                              RelatedItem="@RelatedItem" Association="AssociationTyp.Parallels" />
-                <div class="my-3"></div>
-          
-                            <RelatedItemsComp ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Related).Value.ToList())"
-                                              RelatedItem="@RelatedItem" Association="AssociationTyp.Related" />
-              
+                <RelatedItemsComp CSS="mb-3" ItemTypes="@(ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Parents).Value ?? new List<IItemType>())"
+                                  RelatedItem="@RelatedItem" Association="AssociationTyp.Parents" />
 
+                <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Parallels).Value ?? new List<IItemType>())"
+                                  RelatedItem="@RelatedItem" Association="AssociationTyp.Parallels" />
+
+                <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Related).Value ?? new List<IItemType>())"
+                                  RelatedItem="@RelatedItem" Association="AssociationTyp.Related" />
+
+              
             </div>
         </div>
 
         <div class="row g-0">
             <div class="col-7 p-2">
-          
-                            <RelatedItemsComp ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Children).Value.ToList())"
-                                              RelatedItem="@RelatedItem" Association="AssociationTyp.Children" />
-               
-                                              <div class="my-3"></div>
-           
-                            <RelatedItemsComp ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Default).Value.ToList())"
-                                              RelatedItem="@RelatedItem" Association="AssociationTyp.Default" />
-                 
+
+                <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Children).Value ?? new List<IItemType>())"
+                                  RelatedItem="@RelatedItem" Association="AssociationTyp.Children" />
+
+                <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Default).Value ?? new List<IItemType>())"
+                                  RelatedItem="@RelatedItem" Association="AssociationTyp.Default" />
+
             </div>
             <div class="col-5 p-2">
-              
             </div>
         </div>
 
@@ -75,24 +69,26 @@
 
         if (ItemType != null)
         {
-            // Clear 
+            // Clear
             ItemTypes.Clear();
 
-            // List 
-            List<IItemType> its = await ItemType.GetItemTypes(AssociationTyp.Default);
-            ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(AssociationTyp.Default, its));
+            var types = new[]
+              {
+                AssociationTyp.Default,
+                AssociationTyp.Children,
+                AssociationTyp.Parallels,
+                AssociationTyp.Parents,
+                AssociationTyp.Related
+            };
 
-            its = await ItemType.GetItemTypes(AssociationTyp.Children);
-            ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(AssociationTyp.Children, its));
-
-            its = await ItemType.GetItemTypes(AssociationTyp.Parallels);
-            ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(AssociationTyp.Parallels, its));
-
-            its = await ItemType.GetItemTypes(AssociationTyp.Parents);
-            ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(AssociationTyp.Parents, its));
-
-            its = await ItemType.GetItemTypes(AssociationTyp.Related);
-            ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(AssociationTyp.Related, its));
+            foreach (var type in types)
+            {
+                var its = await ItemType.GetItemTypes(type);
+                if (its?.Count > 0)
+                {
+                    ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(type, its));
+                }
+            }
         }
 
         if (!string.IsNullOrEmpty(this.ID))

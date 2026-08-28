@@ -17,6 +17,9 @@ namespace theControls.Elements
         public ISqlDatabaseService sql { get; set; } = default!;
 
         [Parameter]
+        public AssociationTyp Association { get; set; } = AssociationTyp.NULL;
+
+        [Parameter]
         public IItemType ItemType { get; set; }
 
         [Parameter]
@@ -43,7 +46,7 @@ namespace theControls.Elements
                 {
                     // Related Items
                     Context.RelatedItem = RelatedItem;
-                    Context.Items = await Context.RelatedItems(ItemType.Name);
+                    Context.Items = await Context.RelatedItems(ItemType.Name, Association);
                 }
                 else
                 {
@@ -63,7 +66,7 @@ namespace theControls.Elements
                     {
                         // Related Items
                         Context.RelatedItem = RelatedItem;
-                        Context.Items = await Context.RelatedItems(ItemType.Name, AssociationTyp.NULL);
+                        Context.Items = await Context.RelatedItems(ItemType.Name, Association);
                     }
                     else
                     {

@@ -17,13 +17,7 @@ namespace theInfrastructure
         // EXTRA 
         UserImage = 11,
     }
-    //public enum RelationDirection
-    //{
-    //    Automatic = 0, // automatische Wahl anhand des AssociationTyp 
-    //    All = 1,
-    //    Children = 2,
-    //    Parents = 3,
-    //}
+
     public enum KpiSize
     {
         NULL = 0,

@@ -23,7 +23,10 @@ namespace theInfrastructure
                 ItemTypes.Add(new ItemType_ItemType());
                 ItemTypes.Add(new ItemType_Field());
             }
-
+            if (ast == AssociationTyp.Default)
+            {
+                ItemTypes.Add(new ItemType_Task());
+            }
 
             return ItemTypes;
         }

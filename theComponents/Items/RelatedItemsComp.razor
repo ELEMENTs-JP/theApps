@@ -9,7 +9,7 @@
 
 @if (RelatedItem != null && ItemType != null)
 {
-    <Frame Border="true" Rounded="true">
+    <Frame Border="true" Rounded="true" CSS="@CSS">
         <Header>
             @if (ItemType != null)
             {
@@ -46,6 +46,9 @@
 
     [Parameter]
     public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
 
     IItemType ItemType { get; set; }  // Related ItemType // Parent ItemType 
 
