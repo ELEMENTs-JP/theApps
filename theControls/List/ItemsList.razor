@@ -6,13 +6,22 @@
 {
     @if (Context.ItemType != null && Context.ItemType.GetFields().Result != null)
     {
-        <div class="table-responsive">
+        <SortableContainer Zone="@( "Default")" 
+                            Items="@Context.Items">
+            <ItemTemplate Context="item">
+                <ListItem @key="@item.GUID" Context="@Context" Item="@item" 
+                        IsRelated="@( (RelatedItem != null))" IsSortable="true" />
+            </ItemTemplate>
+        </SortableContainer>
+
+
+        @* <div class="table-responsive" >
 
             @foreach (IDTO item in Context.Items)
             {
                 <ListItem Context="@Context" Item="@item" IsRelated="@( (RelatedItem != null))" />
             }
-        </div>
+        </div> *@
     }
 }
 
@@ -21,11 +30,16 @@
 
 
 
+    [Parameter]
+    public bool IsSortable { get; set; } = false;
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
 
         Context.Items = await Context.RelatedItems(Context.ItemType.Name, Association);
     }
+
+  
 
 }

@@ -37,6 +37,15 @@
         </div>
     }
 
+    @if (Bottom.HasContent())
+    {
+        <div class="row g-0 p-1 border-top">
+            <div class="col-12 p-1">
+                @Bottom
+            </div>
+        </div>
+    }
+
 </div>
 
 @code {
@@ -61,6 +70,9 @@
 
     [Parameter]
     public RenderFragment Content { get; set; }
+
+    [Parameter]
+    public RenderFragment Bottom { get; set; }
 
     private string GetCssClass()
     {

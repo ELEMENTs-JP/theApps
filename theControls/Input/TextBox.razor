@@ -18,6 +18,7 @@
     }
 
     <input id="@Id" name="@InputName" data-value="@Value"
+            style="@( this.Style )"
            class=" pe-5 @CssClass @( ((IsEditable) ? " editbox " : " viewbox no-select ") )"
            type="@Type.ToHtmlValue()"
            placeholder="@Placeholder"
@@ -103,6 +104,9 @@
 
     [Parameter]
     public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Style { get; set; } = string.Empty;
 
     [Parameter]
     public bool FocusOnInit { get; set; } = false;

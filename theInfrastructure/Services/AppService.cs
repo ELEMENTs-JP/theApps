@@ -119,23 +119,17 @@ namespace theInfrastructure
             if (it == null || AllApps == null || !AllApps.Any())
                 return;
 
-            // Parallelisierung der asynchronen Abfragen
-            var tasks = AllApps.Select(async app => new
+            foreach (IApp _app in AllApps)
             {
-                App = app,
-                ItemTypes = await app.GetItemTypes().ConfigureAwait(false)
-            });
-
-            var results = await Task.WhenAll(tasks).ConfigureAwait(false);
-
-            // Ersten Treffer im Speicher suchen (O(n))
-            var match = results.FirstOrDefault(r => r.ItemTypes != null &&
-                                                   r.ItemTypes.Any(se => string.Equals(se.Name, it.Name, StringComparison.Ordinal)));
-
-            if (match != null && match.App.Name != App?.Name)
-            {
-                App = match.App;
+                foreach (IItemType _it in _app.GetItemTypes(AssociationTyp.Children).Result)
+                {
+                    if (it.Name == _it.Name)
+                    {
+                        App = _app;
+                    }
+                }
             }
+
         }
 
         // Property Changed 

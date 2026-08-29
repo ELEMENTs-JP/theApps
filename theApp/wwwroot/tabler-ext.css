@@ -35,11 +35,18 @@
     color:inherit !important;
 }
 
+
+.input-group-text {
+    border: var(--tblr-border-width) solid var(--tblr-border-color) !important;
+}
+
 .btn-primary {
     background-color: #fff !important;
     color: #555 !important;
 }
-
+.btn .icon {
+    margin-right:0 !important;
+}
 .tox .tox-tbtn svg {
     fill: #ccc !important;
 }
@@ -73,7 +80,7 @@
 
 .form-control:focus {
     box-shadow:none !important;
-    border-color:#fff;
+    border-color:#cccccc;
 }
 
 .input-group {

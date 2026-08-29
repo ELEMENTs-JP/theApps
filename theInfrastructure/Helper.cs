@@ -20,7 +20,40 @@ namespace theInfrastructure
 
     public static partial class Helper
     {
+        // Static Fields 
+        public static IReadOnlyDictionary<string, string> GetPropertyDefaultValues()
+        {
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "Sort", "0" },
+                { "Zone", "Default" }
+            };
 
+        }
+
+
+        public static (List<IDTO> Matching, List<IDTO> NonMatching) SplitByProperty(this IEnumerable<IDTO> items,
+                    Func<IDTO, string> propertySelector, string targetValue)
+        {
+            // Aufruf: var (gruppeA, restliche) = SplitByProperty(Items, x => x.Category, "A"); 
+
+            var matching = new List<IDTO>();
+            var nonMatching = new List<IDTO>();
+
+            foreach (var item in items)
+            {
+                if (string.Equals(propertySelector(item), targetValue, StringComparison.OrdinalIgnoreCase))
+                {
+                    matching.Add(item);
+                }
+                else
+                {
+                    nonMatching.Add(item);
+                }
+            }
+
+            return (matching, nonMatching);
+        }
         public static bool MatchesPropertySearch(this string jsonString, string query)
         {
             if (string.IsNullOrWhiteSpace(jsonString) || string.IsNullOrWhiteSpace(query))

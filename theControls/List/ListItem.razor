@@ -4,7 +4,15 @@
 
 @if (Context != null)
 {
-    <div class="row g-0 p-1 hover align-items-center">
+    <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-1 hover align-items-center drag">
+
+        @if (IsSortable)
+        {
+            <div class="col-auto grab">
+                <SymbolIcon Symbol="Icon.Grib" CSS="" Style="cursor:move; margin-top:-3px;" Color="#999" />
+            </div>
+        }
+
         <div class="col-auto p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
         
         <div class="col p-1 px-2 fw-bold pointer" title="@Item.ItemType"
@@ -21,7 +29,7 @@
 
         @if (IsRelated)
         {
-            <div class="col-auto p-1">
+            <div class="col-auto p-1" title="@( Item["Sort"].ToSecureString() )">
                 <small class="text-muted">@(Item.RelationType)</small>
             </div>
 
@@ -35,6 +43,9 @@
 }
 
 @code {
+
+    [Parameter]
+    public bool IsSortable { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {

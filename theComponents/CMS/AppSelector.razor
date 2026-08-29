@@ -62,7 +62,7 @@
                         </div>
                     </div>
 
-                    @foreach (IItemType child in it.GetItemTypes().Result.Where(se => se.InSubNavigation == true))
+                    @foreach (IItemType child in it.GetItemTypes(AssociationTyp.Children).Result.Where(se => se.InSubNavigation == true))
                     {
                         <div class="col-12 p-1 ">
                             <div class="rounded-2 hover pointer p-1 px-2 ps-4 text-secondary @( GetSelection(child) )"

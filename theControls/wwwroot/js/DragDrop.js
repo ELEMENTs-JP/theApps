@@ -15,6 +15,7 @@ export function assignMultipleSortableJS(containerClass, draggableClass, dotNetH
                 if (ele === null || ele === undefined)
                     continue;
 
+          
                 assignSortableJS(ele, draggableClass, dotNetHelper)
             }
             catch (e) {
@@ -31,15 +32,20 @@ export function assignMultipleSortableJS(containerClass, draggableClass, dotNetH
 function assignSortableJS(containerElement, dragabbleClass, helper)
 {
     try {
-
         // Link: https://github.com/SortableJS/Sortable
-
         if (!containerElement)
+        {
+            alert("Container Element null");
             return;
+        }
+       
 
         // Bereits initialisiert?
         if (Sortable.get(containerElement))
+        {
+            alert("Sortable konnte Container nicht instanziieren");
             return;
+        }
 
         // Init swapThreshold: 0.50,
         let sortableDiv = new Sortable(containerElement, {
@@ -80,11 +86,8 @@ function assignSortableJS(containerElement, dragabbleClass, helper)
 
                 try {
 
-                
-
                     await updateSorting(evt.from, helper);
                     await updateSorting(evt.to, helper);
-                   
 
                 }
                 catch (e) {
@@ -104,6 +107,8 @@ function assignSortableJS(containerElement, dragabbleClass, helper)
 async function updateSorting(container, helper)
 {
     try {
+     
+
         let items = [];
 
         let allitems = container.children;

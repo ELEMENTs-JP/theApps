@@ -1,0 +1,141 @@
+﻿@using System.Text.Json
+@using Microsoft.JSInterop
+@using theInfrastructure
+@using theControls.DragDrop
+@inject IJSRuntime JS
+@inject ISqlDatabaseService sql
+
+
+<div class="@( drop + Zone ) DefaultDragDropZone" data-zone="@Zone" style="min-height:3rem;">
+
+    @foreach (IDTO entry in Items.Where(se =>
+                    se["Zone"].ToSecureString() == this.Zone)
+                    .OrderBy(se => se["Sort"].ToSecureInt()))
+    {
+        if (ItemTemplate != null)
+        {
+            @ItemTemplate(entry)
+        }
+    }
+
+</div>
+
+@code {
+
+    // Fields
+    string drop = "drop";
+
+    [Parameter]
+    public RenderFragment<IDTO>? ItemTemplate { get; set; }
+
+    [Parameter]
+    public string Zone { get; set; } = string.Empty;
+
+    [Parameter]
+    public List<IDTO> Items { get; set; } = new();
+
+    // Objects
+    private Lazy<Task<IJSObjectReference>> module;
+    private DotNetObjectReference<SortableContainer>? objRef;
+
+    // CTR
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Init();
+
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        try
+        {
+            // assign dragdrop
+            if (firstRender)
+            {
+                await Assign();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("FAIL: " + ex.Message);
+        }
+    }
+
+
+    // Helper
+    public void Init()
+    {
+        try
+        {
+            // Import JS File
+            module = new(() => JS.InvokeAsync<IJSObjectReference>
+                ("import", "./_content/theControls/js/DragDrop.js").AsTask());
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : Board : Init : " + ex.Message);
+        }
+
+    }
+    public async ValueTask Assign()
+    {
+        try
+        {
+            // Reference
+            objRef = DotNetObjectReference.Create(this);
+
+            // Execute function
+            if (module != null)
+            {
+                var refMethod = await module.Value;
+                await refMethod.InvokeVoidAsync("assignMultipleSortableJS",
+                    (drop + Zone), "drag", objRef);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : Board : AssignSortable : " + ex.Message);
+        }
+    }
+
+    [JSInvokable]
+    public async void OnDragEnd(JsonElement json)
+    {
+        foreach (JsonElement item in json.EnumerateArray())
+        {
+            string id = item.GetProperty("GUID").GetString();
+            string sort = item.GetProperty("Sort").GetString();
+            string zone = item.GetProperty("Zone").GetString();
+
+            IDTO entry = Items.FirstOrDefault(e => e.ID == id);
+            
+            if (entry == null)
+            {
+                entry = Items.FirstOrDefault(e => e.GUID.ToSecureString() == id);
+            }
+
+            if (entry != null)
+            {
+                entry["Sort"] = sort;
+                entry["Zone"] = zone;
+                
+                // Update 
+                await sql.Update(entry);
+            }
+        }
+
+        Items = Items.OrderBy(e => e["Sort"].ToSecureInt()).ToList();
+
+        await InvokeAsync(StateHasChanged);
+
+        // Event
+        await DragEnd.InvokeAsync(Items);
+    }
+
+    [Parameter]
+    public EventCallback<List<IDTO>> DragEnd { get; set; }
+
+}

@@ -1,0 +1,179 @@
+﻿@using theControls.Add
+@using theControls.Icons
+@using theControls.Input
+@using theControls.Modal
+@inject ISqlDatabaseService sql
+@inject IMessagingBusService msg
+@inject ILocalizationService loc
+@inject IJSRuntime js
+@implements IAsyncDisposable
+
+@if (ItemType != null)
+{
+    @if (RelatedItem != null)
+    {
+        <div class="input-group input-group-sm" style="max-width:21rem;">
+     @*        <span class="input-group-text fw-bold px-2">
+                @ItemType.Name
+            </span> *@
+            <input id="@ID" class="form-control form-control-sm" type="text" value="@Title"
+                   placeholder="@loc.GetLabel("hinzufügen...", "add...")"
+                   @oninput="@(  e => { Title = e.Value?.ToString() ?? string.Empty; })"
+                   @onkeydown="HandleKeyDown" />
+
+            @if (!string.IsNullOrEmpty(this.Title))
+            {
+                <button type="button" class="btn btn-sm"
+                        @onclick="OnOK">
+                    <SymbolIcon Symbol="Icon.Neu"/>
+                </button>
+            }
+        </div>
+
+        @if (!string.IsNullOrEmpty(Message))
+        {
+            <div class="p-2 px-3">
+                <div class="alert alert-danger p-2 m-2">@Message</div>
+            </div>
+        }
+    }
+}
+
+@code {
+
+    private string ID = $"add-fast-input-{Guid.NewGuid():N}";
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    [Parameter]
+    public IDTO RelatedItem { get; set; }
+
+    [Parameter]
+    public AssociationTyp Association { get; set; } = AssociationTyp.Association;
+
+
+    private IQueryContext Context { get; set; }
+
+    // Fields
+    private string Title { get; set; } = string.Empty;
+    private string Message { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (ItemType != null)
+        {
+
+            Context = new QueryContext(sql);
+            Context.ItemType = this.ItemType;
+        }
+    }
+
+    private async Task SearchForDuplicates()
+    {
+        Message = string.Empty;
+
+        if (Context == null)
+            return;
+
+        //
+        Context.Matchcode = this.Title;
+        await Context.Search();
+
+        IDTO item = Context.Items.Where(se => se.Title == this.Title).FirstOrDefault();
+        if (item != null)
+        {
+            // Message
+            Message = string.Format("Datensatz: {0} existiert bereits", Context.Matchcode);
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task OnOK()
+    {
+          if (string.IsNullOrEmpty(Title))
+        {
+            msg.Publish("Notwendige Felder", BusAction.Info, "Titel muss gesetzt sein.");
+            return;
+        }
+
+        if (RelatedItem != null)
+        {
+            if (this.Association == AssociationTyp.NULL)
+            {
+                msg.Publish("Notwendige Felder", BusAction.Info, "Assoziation muss gesetzt sein.");
+                return;
+            }
+        }
+
+        if (Context == null)
+            return;
+
+        if (this.Association == AssociationTyp.NULL)
+        {
+            return;
+        }
+
+        // Erstellen
+        Guid ID = await Context.Create(Title);
+
+        // Laden
+        await Context.Load(ID.ToSecureString());
+
+        // Update
+        await Context.Update(Context.Item);
+
+        // Related Item
+        if (RelatedItem != null)
+        {
+            await sql.Assign(RelatedItem, Context.Item, Association);
+        }
+
+        // Clean
+        Title = string.Empty;
+
+        // Message
+        AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
+        msg.Publish(am);
+
+        // JSInterop: Fokus beim Laden direkt in die Textbox setzen
+        await js.InvokeVoidAsync("setFocusById", ID);
+
+        // Visual Update
+        await InvokeAsync(this.StateHasChanged);
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await OnOK();
+        }
+    }
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            ItemType = null;
+            RelatedItem = null;
+
+            if (Context != null)
+            {
+                ((IDisposable)Context).Dispose();
+                Context = null;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+}

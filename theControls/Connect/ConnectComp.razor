@@ -127,10 +127,7 @@
         if (Context == null)
             return;
 
-        if (string.IsNullOrEmpty(Matchcode))
-            return;
-
-        if (RelatedItem == null)
+         if (RelatedItem == null)
             return;
 
         if (SelectedItem == null)
@@ -146,8 +143,7 @@
 
         // Assign 
     
-            await sql.Assign(Context.Item, RelatedItem, this.Association);
-      
+        await sql.Assign(this.RelatedItem, this.SelectedItem, this.Association);
 
         SelectedItem = null;
 
