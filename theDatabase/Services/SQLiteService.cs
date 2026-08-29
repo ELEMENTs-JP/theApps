@@ -273,6 +273,78 @@ namespace theDatabase
 
             return info;
         }
+        public IQueryResult BackupDatabase()
+        {
+            IQueryResult info = new QueryResult();
+
+            // Check Name 
+            if (string.IsNullOrEmpty(SQLiteService.Database))
+            {
+                info.Status = "FAIL";
+                info.Message = "Datenbankdatei wurde nicht benannt";
+                return info;
+            }
+
+            // Vollständiger Pfad zur Quell-Datenbank 
+            string filePath = Path.Combine(SQLiteService.ContentRootPath, "Database", SQLiteService.Database);
+            if (!File.Exists(filePath))
+            {
+                info.Status = "FAIL";
+                info.Message = "Datenbankdatei existiert nicht mehr";
+                return info;
+            }
+
+            // Backup Ordner
+            string backupPath = Path.Combine(SQLiteService.ContentRootPath, "Database", "Backup");
+
+            try
+            {
+                if (!Directory.Exists(backupPath))
+                {
+                    Directory.CreateDirectory(backupPath);
+                }
+
+                string timeStamp = DateTime.Now.ToString("'D-'yyyy-MM-dd'-U-'HH-mm-ss");
+                string backupFile = $"Backup-{timeStamp}.db";
+                string backupFilePath = Path.Combine(backupPath, backupFile);
+
+                // Offizielle SQLite Backup-Methode über EF Core Context & Microsoft.Data.Sqlite
+                using (SQLiteContext ctx = GetContext(isCreationMode: false))
+                {
+                    // Erforderliche Verbindungen für Quell- und Ziel-Datenbank
+                    var sourceConnection = (SqliteConnection)ctx.Database.GetDbConnection();
+
+                    if (sourceConnection.State != System.Data.ConnectionState.Open)
+                    {
+                        sourceConnection.Open();
+                    }
+
+                    // Ziel-Verbindung zur Backup-Datei aufbauen
+                    string destinationConnectionString = new SqliteConnectionStringBuilder
+                    {
+                        DataSource = backupFilePath
+                    }.ConnectionString;
+
+                    using (var destinationConnection = new SqliteConnection(destinationConnectionString))
+                    {
+                        destinationConnection.Open();
+
+                        // Offizieller SQLite Online-Backup-Befehl
+                        sourceConnection.BackupDatabase(destinationConnection);
+                    }
+                }
+
+                info.Status = "OK";
+                info.Message = $"Backup erfolgreich erstellt: {backupFile}";
+            }
+            catch (Exception ex)
+            {
+                info.Status = "FAIL";
+                info.Message = $"Fehler beim Erstellen des Backups: {ex.Message}";
+            }
+
+            return info;
+        }
 
         public async Task<IQueryResult> CompressDatabase()
         {
@@ -531,6 +603,52 @@ namespace theDatabase
             }
 
             FormattableString sql = Query.GetItems(query);
+
+            try
+            {
+                await using (SQLiteContext ctx = GetContext())
+                {
+                    var dbItems = await ctx.tbl_CON_Content
+                        .FromSql(sql)
+                        .ToListAsync();
+
+                    result.Items = dbItems.Cast<IDTO>().ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Status = "FAIL";
+                result.Message = ex.Message;
+            }
+
+            return result;
+        }
+        public async Task<IQueryResult> Search(IQueryParameter query)
+        {
+            IQueryResult result = new QueryResult { Status = "OK", Message = "" };
+
+            // Query Validation 
+            if (query.Validate() == false)
+            {
+                result.Status = "FAIL";
+                result.Message = "Query not conform";
+                return result;
+            }
+
+            // Datenbank 
+            if (DatabaseExists == false)
+            {
+                result.Status = "FAIL";
+                result.Message = "Database not exists";
+                return result;
+            }
+
+            // Excluded ItemTypes 
+            query.ItemTypeExcludes = new List<string>() { 
+                "Principal", "User", "Permission", 
+                "App", "ItemType", "Field", "Slot" };
+
+            FormattableString sql = Query.Search(query);
 
             try
             {

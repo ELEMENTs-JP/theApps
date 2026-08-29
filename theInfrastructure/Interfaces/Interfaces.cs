@@ -21,6 +21,7 @@ namespace theInfrastructure
 
         // Validation 
         string Message { get; set; }
+        IEnumerable<string> ItemTypeExcludes { get; set; }
         bool Validate();
     }
 
@@ -41,6 +42,11 @@ namespace theInfrastructure
         List<IDTO> Permissions { get; set; }
         event PropertyChangedEventHandler PropertyChanged;
         SystemConfiguration Configuration { get; set; }
+    }
+    public interface ISearchService
+    {
+        List<IDTO> Store { get; set; }
+        Task<List<IDTO>> Search(string matchcode);
     }
 
     public interface IAppService
@@ -64,6 +70,7 @@ namespace theInfrastructure
         Guid MasterGUID { get; }
         IQueryResult CreateDatabase();
         IQueryResult DeleteDatabase();
+        IQueryResult BackupDatabase();
 
         // Optimization 
         Task<IQueryResult> CompressDatabase();
@@ -78,6 +85,7 @@ namespace theInfrastructure
 
         Task<IQueryResult> Create(IQueryParameter query);
         Task<IQueryResult> GetItems(IQueryParameter query);
+        Task<IQueryResult> Search(IQueryParameter query);
         Task<IQueryResult> GetItem(IQueryParameter query);
         Task<IQueryResult> Delete(IDTO dto);
         Task<IQueryResult> Update(IDTO dto);

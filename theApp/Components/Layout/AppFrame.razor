@@ -3,6 +3,7 @@
 @using theControls.Add
 @using theControls.Input
 @using theControls.Modal
+@using theControls.Search
 
 @inject ILocalizationService loc
 @inject ISecurityService sec
@@ -13,6 +14,9 @@
 
 <AppLayout>
     <Header>
+        <div class="px-5"></div>
+        <SearchComp />
+        <div class="px-5"></div>
         <AddArea ItemType="@ItemType" />
         <div class="ms-auto me-auto"></div>
         <SystemPopup />

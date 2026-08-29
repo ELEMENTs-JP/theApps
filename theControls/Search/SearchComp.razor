@@ -1,0 +1,151 @@
+﻿@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@inject ISearchService search
+@inject NavigationManager nm
+@implements IDisposable
+
+<div>
+    <div class="dropdown">
+        <input id="@inputId"
+               type="text"
+               class="editbox"
+               placeholder="Suchbegriff eingeben..."
+               value="@searchQuery"
+               @oninput="HandleInput"
+               @onkeydown="HandleKeyDown"
+               autocomplete="off"
+               style="width:36rem;" />
+
+        <div class="dropdown-menu @(isDropdownOpen ? "show" : "")" style="width: 100%;">
+            @if (isDropdownOpen)
+            {
+                <div class="border-bottom text-muted p-2">
+                    Suche nach: "@searchQuery"
+                </div>
+
+                <div class="overflow-y-auto p-2" style="max-height:36rem;">
+                    @if (Items != null && Items.Any())
+                    {
+                        @for (int i = 0; i < Items.Count; i++)
+                        {
+                            var item = Items[i];
+                            var index = i;
+                            var isSelected = index == selectedIndex;
+
+                            <div class="dropdown-item rounded-2 overflow-hidden pointer row g-0 @(isSelected ? "active" : "")"
+                            @onclick="() => SelectItem(item)"
+                            @onmouseover="() => selectedIndex = index">
+                                <div class="col pe-2">
+                                    @item.Title
+                                </div>
+                                @*        <div class="vr"></div> *@
+                                <div class="col-auto ps-2 text-muted">
+                                    @item.ItemType 
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="fw-bold rounded-2 overflow-hidden p-2">
+                            Suchergebnis enthält keine Ergebnisse.
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string inputId = $"search-input-{Guid.NewGuid():N}";
+    private string searchQuery = string.Empty;
+    private bool isDropdownOpen = false;
+    private int selectedIndex = -1;
+
+    List<IDTO> Items { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<string> OnSearchInput { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnItemSelected { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // JSInterop: Fokus beim Laden direkt in die Textbox setzen
+            await JSRuntime.InvokeVoidAsync("setFocusById", inputId);
+            // JSInterop (.NET -> JS): Registriert das globale Strg+F Tastenkürzel für diese Input-ID
+            await JSRuntime.InvokeVoidAsync("searchComponent.registerGlobalShortcut", inputId);
+        }
+
+    }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        searchQuery = e.Value?.ToString() ?? string.Empty;
+        selectedIndex = -1;
+
+        if (string.IsNullOrWhiteSpace(searchQuery))
+        {
+            isDropdownOpen = false;
+            Items.Clear();
+        }
+        else
+        {
+            isDropdownOpen = true;
+            Items = await search.Search(searchQuery);
+        }
+
+        if (OnSearchInput.HasDelegate)
+        {
+            await OnSearchInput.InvokeAsync(searchQuery);
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (!isDropdownOpen || Items == null || !Items.Any())
+            return;
+
+        if (e.Key == "ArrowDown")
+        {
+            selectedIndex = (selectedIndex + 1) % Items.Count;
+        }
+        else if (e.Key == "ArrowUp")
+        {
+            selectedIndex = selectedIndex <= 0 ? Items.Count - 1 : selectedIndex - 1;
+        }
+        else if (e.Key == "Enter" && selectedIndex >= 0 && selectedIndex < Items.Count)
+        {
+            await SelectItem(Items[selectedIndex]);
+        }
+        else if (e.Key == "Escape")
+        {
+            isDropdownOpen = false;
+            selectedIndex = -1;
+        }
+    }
+
+    private async Task SelectItem(IDTO item)
+    {
+        searchQuery = string.Empty;
+        isDropdownOpen = false;
+        selectedIndex = -1;
+
+        nm.NavToItem(item.ItemType, item.GUID);
+
+        if (OnItemSelected.HasDelegate)
+        {
+            await OnItemSelected.InvokeAsync(item);
+        }
+    }
+
+    public void Dispose()
+    {
+        // Entfernt den Event-Listener bei Component Disposing (z.B. bei Seitenwechsel)
+        _ = JSRuntime.InvokeVoidAsync("searchComponent.unregisterGlobalShortcut");
+    }
+}

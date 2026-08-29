@@ -202,6 +202,8 @@ namespace theInfrastructure
             return qp;
         }
 
+        public IEnumerable<string> ItemTypeExcludes { get; set; }
+
         // Validation 
         public string Message { get; set; } = string.Empty;
         public bool Validate()

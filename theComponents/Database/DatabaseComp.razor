@@ -69,6 +69,14 @@
             </div>
         </div>
 
+        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+            <div class="col p-2">
+                Backup erstellen
+            </div>
+            <div class="col-auto p-2">
+                <button class="btn btn-sm btn-success m-3" @onclick="BackupDatabase">Backup erstellen</button>
+            </div>
+        </div>
 
         <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
             <div class="col p-2">
@@ -106,17 +114,16 @@
     }
 
 
-
-
-
-
-
-
-
     private async Task CreateDatabase()
     {
         SQLiteService.Database = "Default.db";
         IQueryResult info = sql.CreateDatabase();
+        Info = info.Message;
+    }
+    private async Task BackupDatabase()
+    {
+        SQLiteService.Database = "Default.db";
+        IQueryResult info = sql.BackupDatabase();
         Info = info.Message;
     }
 

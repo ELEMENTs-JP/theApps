@@ -45,15 +45,17 @@ namespace theApp
                 // Messaging Bus Service 
                 builder.Services.AddScoped<IMessagingBusService, MessagingBusService>();
 
+                
+
+        
+
                 // Database Service 
                 builder.Services.AddScoped<ISqlDatabaseService>(provider =>
                 {
                     // Abruf des WebHostEnvironment aus dem DI-Container
                     var environment = provider.GetRequiredService<IWebHostEnvironment>();
-
                     // Auslesen des ContentRootPath
                     string rootPath = environment.ContentRootPath;
-
                     // Manuelle Instanziierung und Übergabe des Pfads
                     return new SQLiteService(rootPath);
                 });
@@ -89,6 +91,17 @@ namespace theApp
 
                     // Manuelle Instanziierung und Übergabe 
                     return new AppService(environment, new SQLiteService(rootPath));
+                });
+
+                // Search Service 
+                builder.Services.AddScoped<ISearchService>(provider =>
+                {
+                    // Abruf des WebHostEnvironment aus dem DI-Container
+                    var environment = provider.GetRequiredService<IWebHostEnvironment>();
+                    string rootPath = environment.ContentRootPath;
+
+                    // Manuelle Instanziierung und Übergabe 
+                    return new SearchService(environment, new SQLiteService(rootPath));
                 });
 
                 // A valid antiforgery token was not provided with the request. Add an antiforgery token, or disable antiforgery validation for this endpoint.

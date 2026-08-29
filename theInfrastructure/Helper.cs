@@ -20,8 +20,62 @@ namespace theInfrastructure
 
     public static partial class Helper
     {
-      
 
+        public static bool MatchesPropertySearch(this string jsonString, string query)
+        {
+            if (string.IsNullOrWhiteSpace(jsonString) || string.IsNullOrWhiteSpace(query))
+                return false;
+
+            var parts = query.Split(':', 2);
+
+            // Falls kein Doppelpunkt enthalten ist: Normale Volltextsuche
+            if (parts.Length < 2)
+            {
+                return jsonString.Contains(query, StringComparison.OrdinalIgnoreCase);
+            }
+
+            string targetProperty = parts[0].Trim();
+            string searchValue = parts[1].Trim();
+
+            try
+            {
+                using (JsonDocument doc = JsonDocument.Parse(jsonString))
+                {
+                    JsonElement root = doc.RootElement;
+
+                    // Stellt sicher, dass das Wurzel-Element wirklich ein JSON-Objekt { ... } ist
+                    if (root.ValueKind != JsonValueKind.Object)
+                    {
+                        // Falls es kein Objekt ist, Fallback auf einfachen String-Vergleich
+                        return jsonString.Contains(query, StringComparison.OrdinalIgnoreCase);
+                    }
+
+                    foreach (JsonProperty property in root.EnumerateObject())
+                    {
+                        if (property.Name.Equals(targetProperty, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Wert als String holen – egal ob String, Zahl oder Boolean
+                            string? val = property.Value.ValueKind switch
+                            {
+                                JsonValueKind.String => property.Value.GetString(),
+                                JsonValueKind.Null => null,
+                                JsonValueKind.Undefined => null,
+                                _ => property.Value.GetRawText() // Für Numbers, Booleans etc.
+                            };
+
+                            return val != null && val.Contains(searchValue, StringComparison.OrdinalIgnoreCase);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // Fängt JsonException sowie unerwartete Formatfehler sicher ab
+                return jsonString.Contains(query, StringComparison.OrdinalIgnoreCase);
+            }
+
+            return false;
+        }
 
         public static string ToSecureEnumString(this AssociationTyp typ)
         {

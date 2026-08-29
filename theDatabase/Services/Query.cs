@@ -59,7 +59,61 @@ namespace theDatabase
             // Query 
             return FormattableStringFactory.Create(sql, parameters);
         }
-  
+
+        public static FormattableString Search(IQueryParameter query)
+        {
+            List<object> parameters = new List<object>();
+            List<string> whereClauses = new List<string>();
+
+            // Matchcode Filter
+            if (!string.IsNullOrEmpty(query.Matchcode))
+            {
+                whereClauses.Add($"Matchcode LIKE {{{parameters.Count}}} COLLATE NOCASE");
+                parameters.Add($"%{query.Matchcode}%");
+            }
+
+            // ItemType Exclude Filter
+            if (query.ItemTypeExcludes != null && query.ItemTypeExcludes.Any())
+            {
+                List<string> excludePlaceholders = new List<string>();
+                foreach (var itemType in query.ItemTypeExcludes)
+                {
+                    excludePlaceholders.Add($"{{{parameters.Count}}}");
+                    parameters.Add(itemType);
+                }
+
+                string inClause = string.Join(", ", excludePlaceholders);
+                whereClauses.Add($"ItemType NOT IN ({inClause})");
+            }
+
+            // Query Aufbau
+            string sql = "SELECT * FROM tbl_CON_Content";
+            if (whereClauses.Count > 0)
+            {
+                sql += " WHERE " + string.Join(" AND ", whereClauses);
+            }
+
+            return FormattableStringFactory.Create(sql, parameters.ToArray());
+        }
+        public static FormattableString SearchObsolete(IQueryParameter query)
+        {
+            // Parameter 
+            object[] parameters = Array.Empty<object>();
+
+            // Query 
+            string sql = "SELECT * FROM tbl_CON_Content  ";
+
+            // Matchcode 
+            if (!string.IsNullOrEmpty(query.Matchcode))
+            {
+                sql += " WHERE Matchcode LIKE {0} COLLATE NOCASE ";
+                parameters = new object[] { $"%{query.Matchcode}%" };
+            }
+
+            // Query 
+            return FormattableStringFactory.Create(sql, parameters);
+        }
+
         public static FormattableString GetItem(IQueryParameter query)
         {
             object[] parameters = Array.Empty<object>();

@@ -1,5 +1,35 @@
 ﻿
+window.searchComponent = {
+    // Registriert den globalen Keydown-Listener für Strg + F
+    registerGlobalShortcut: function (inputId) {
+        // Altes Event entfernen, falls vorhanden (verhindert Mehrfach-Registrierung)
+        if (window.searchComponent._shortcutHandler) {
+            document.removeEventListener('keydown', window.searchComponent._shortcutHandler);
+        }
 
+        window.searchComponent._shortcutHandler = function (e) {
+            // Prüfung auf Strg + F (oder Cmd + F auf Mac)
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'f' || e.key === 'F')) {
+                const inputEl = document.getElementById(inputId);
+                if (inputEl) {
+                    e.preventDefault(); // Verhindert das Standard-Suchfenster des Browsers
+                    inputEl.focus();
+                    inputEl.select();   // Optional: Markiert bereits vorhandenen Text
+                }
+            }
+        };
+
+        document.addEventListener('keydown', window.searchComponent._shortcutHandler);
+    },
+
+    // Entfernt den Listener beim Zerstören der Komponente
+    unregisterGlobalShortcut: function () {
+        if (window.searchComponent._shortcutHandler) {
+            document.removeEventListener('keydown', window.searchComponent._shortcutHandler);
+            window.searchComponent._shortcutHandler = null;
+        }
+    }
+};
 
 
 window.setFocusById = function (id)
