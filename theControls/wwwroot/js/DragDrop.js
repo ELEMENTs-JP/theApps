@@ -35,7 +35,7 @@ function assignSortableJS(containerElement, dragabbleClass, helper)
         // Link: https://github.com/SortableJS/Sortable
         if (!containerElement)
         {
-            alert("Container Element null");
+            // alert("Container Element null");
             return;
         }
        
@@ -43,7 +43,7 @@ function assignSortableJS(containerElement, dragabbleClass, helper)
         // Bereits initialisiert?
         if (Sortable.get(containerElement))
         {
-            alert("Sortable konnte Container nicht instanziieren");
+            // alert("Sortable konnte Container nicht instanziieren");
             return;
         }
 
