@@ -13,8 +13,7 @@
                 <DragDropContainer Entries="Widgets" Zone="@column.Zone" 
                                    DragEnd="@( async e => { await DragEnd.InvokeAsync(e);  } )">
                     <ItemTemplate Context="ctl">
-                        <Widget @key="ctl.ID" Item="ctl" 
-                            DTO="@( Controls.Where(se => se.GUID.ToSecureString() == ctl.ID).FirstOrDefault() )" />
+                        <Widget @key="@ctl.GUID" Item="@ctl" />
                     </ItemTemplate>
                 </DragDropContainer>
 
@@ -42,7 +41,7 @@
 
     // Internal 
     List<Column> Columns { get; set; } = new List<Column>();
-    List<DragDropElement> Widgets { get; set; } = new();
+    List<IDTO> Widgets { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -124,27 +123,27 @@
 
         foreach (IDTO ctl in Controls)
         {
-            string NS = ctl["Namespace"].ToSecureString();
-            string CL = ctl["Klasse"].ToSecureString();
-            string Zone = ctl["Zone"].ToSecureString();
-            string Sort = ctl["Sort"].ToSecureString();
+            // string NS = ctl["Namespace"].ToSecureString();
+            // string CL = ctl["Klasse"].ToSecureString();
+            // string Zone = ctl["Zone"].ToSecureString();
+            // string Sort = ctl["Sort"].ToSecureString();
 
-            DragDropElement dde = new();
-            dde.ID = ctl.GUID.ToSecureString();
-            dde.Zone = Zone;
-            dde.Sort = Sort.ToSecureInt();
+            // DragDropElement dde = new();
+            // dde.ID = ctl.GUID.ToSecureString();
+            // dde.Zone = Zone;
+            // dde.Sort = Sort.ToSecureInt();
 
-            // Control 
-            dde.Control = new();
-            dde.Control.Name = ctl.Title;
-            dde.Control.Namespace = NS;
-            dde.Control.ClassName = CL;
+            // // Control 
+            // dde.Control = new();
+            // dde.Control.Name = ctl.Title;
+            // dde.Control.Namespace = NS;
+            // dde.Control.ClassName = CL;
 
             // Add 
-            this.Widgets.Add(dde);
+            this.Widgets.Add(ctl);
         }
     }
 
     [Parameter]
-    public EventCallback<List<DragDropElement>> DragEnd { get; set; }
+    public EventCallback<List<IDTO>> DragEnd { get; set; }
 }

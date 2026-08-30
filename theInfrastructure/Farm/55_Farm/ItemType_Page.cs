@@ -17,8 +17,13 @@ namespace theInfrastructure
         {
             // ItemTypes 
             List<IItemType>  ItemTypes = new List<IItemType>();
-            ItemTypes.Add(new ItemType_Slot());
-            ItemTypes.Add(new ItemType_Control());
+
+            if (ast == AssociationTyp.Children)
+            { 
+                ItemTypes.Add(new ItemType_Slot());
+                ItemTypes.Add(new ItemType_Control());
+            }
+
             return ItemTypes;
         }
         public override async Task<List<IField>> GetFields(string view = "")

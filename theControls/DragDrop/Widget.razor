@@ -5,35 +5,35 @@
 
 @if (Item != null)
 {
-    <div @key="@Item.ID" id="@Item.ID" 
-         class="drag row g-0 mt-2 rounded bg-surface">
-         
-      
+    @* Change *@
+    <div @key="@Item.GUID" id="@Item.GUID" 
+    class="drag row g-0 mt-2 rounded bg-surface">
 
         <div class="col-auto ms-auto me-auto grab hover rounded-2 px-2 text-muted"
-             style="cursor:move;">
+        style="cursor:move;">
             ...
         </div>
 
 
-        @if (DTO != null)
+        @if (Item != null)
         {
             <div class="col-auto hover rounded-2">
                 <SymbolIcon Symbol="Icon.Delete"
-                            OnClick="@( async e => { await DeletItem(); })"
-                            CSS="pointer rounded-2 p-05" />
+                OnClick="@( async e => { await DeletItem(); })"
+                CSS="pointer rounded-2 p-05" />
             </div>
         }
-    
+
         @if (Component != null)
         {
             <div class="col-12">
                 <DynamicComponent Type="@(Component.ComponentType)" Parameters="@(Component.Parameters)" />
             </div>
         }
-        
+
     </div>
 }
+
 
 
 @code {
@@ -41,15 +41,15 @@
     // Fields
     string drop = "dropControls";
 
-    [Parameter]
-    public DragDropElement Item { get; set; }
+    // [Parameter]
+    // public DragDropElement Item { get; set; }
 
     private Builder builder { get; set; }
 
     IDynamicComponent Component { get; set; }
 
     [Parameter]
-    public IDTO DTO { get; set; }
+    public IDTO Item { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,18 +62,18 @@
     {
         await base.OnParametersSetAsync();
 
-        if (DTO != null)
+        if (Item != null)
         {
-            Component = builder.BuildComponent(builder.GetDefinition(DTO.Title));
+            Component = builder.BuildComponent(builder.GetDefinition(Item.Title));
         }
     }
 
     public async Task DeletItem()
     {
-        if (DTO == null)
+        if (Item == null)
             return;
 
-        await sql.Delete(DTO);
+        await sql.Delete(Item);
 
         // Refresh 
         msg.Publish("Item", BusAction.Refresh);

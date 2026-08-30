@@ -2,23 +2,23 @@
 <div class="row g-0 flex-shrink-0 border rounded pointer hover p-2" 
      @onclick="@( async e => { await OnClick.InvokeAsync(Item); })">
 
-    @if (Item.Icon != Icon.NULL)
+@*     @if (Item["Icon"] != Icon.NULL.ToString())
     {
         <div class="col-auto pe-3">
              <SymbolIcon Symbol="@Item.Icon" />
          </div>
-    }
+    } *@
 
     <div class="col pe-2">
-        @Item.Name
+        @Item.Title
      </div>
 </div>
 
 @code {
 
     [Parameter]
-    public DragDropElement Item { get; set; }
+    public IDTO Item { get; set; }
 
     [Parameter]
-    public EventCallback<DragDropElement> OnClick { get; set; }
+    public EventCallback<IDTO> OnClick { get; set; }
 }

@@ -3,11 +3,12 @@
 @using theInfrastructure
 @using theControls.DragDrop
 @inject IJSRuntime JS
+@inject ISqlDatabaseService sql
 
 
 <div class="@( drop + Zone ) DefaultDragDropZone bg-surface border rounded px-2 py-1 my-2" data-zone="@Zone" style="min-height:3rem;">
 
-    @foreach (DragDropElement entry in Entries.Where(se => se.Zone == this.Zone).OrderBy(se => se.Sort))
+    @foreach (IDTO entry in Entries.Where(se => se["Zone"] == this.Zone).OrderBy(se => se["Sort"]))
     {
         if (ItemTemplate != null)
         {
@@ -23,13 +24,13 @@
     string drop = "drop";
 
     [Parameter]
-    public RenderFragment<DragDropElement>? ItemTemplate { get; set; }
+    public RenderFragment<IDTO>? ItemTemplate { get; set; }
 
     [Parameter]
     public string Zone { get; set; } = string.Empty;
 
     [Parameter]
-    public List<DragDropElement> Entries { get; set; } = new();
+    public List<IDTO> Entries { get; set; } = new();
 
     // Objects
     private Lazy<Task<IJSObjectReference>> module;
@@ -103,20 +104,23 @@
     {
         foreach (JsonElement item in json.EnumerateArray())
         {
-            string id = item.GetProperty("GUID").GetString();
+            string guid = item.GetProperty("GUID").GetString();
             string sort = item.GetProperty("Sort").GetString();
             string zone = item.GetProperty("Zone").GetString();
 
-            DragDropElement entry = Entries.FirstOrDefault(e => e.ID == id);
+            IDTO entry = Entries.FirstOrDefault(e => e.GUID.ToString() == guid);
 
             if (entry != null)
             {
-                entry.Sort = sort.ToSecureInt();
-                entry.Zone = zone;
+                entry["Sort"] = sort;
+                entry["Zone"] = zone;
+
+                // Update 
+                await sql.Update(entry);
             }
         }
 
-        Entries = Entries.OrderBy(e => e.Sort).ToList();
+        Entries = Entries.OrderBy(e => e["Sort"].ToSecureInt()).ToList();
 
         await InvokeAsync(StateHasChanged);
 
@@ -125,6 +129,6 @@
     }
 
     [Parameter]
-    public EventCallback<List<DragDropElement>> DragEnd { get; set; }
+    public EventCallback<List<IDTO>> DragEnd { get; set; }
 
 }
