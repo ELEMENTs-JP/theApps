@@ -1,21 +1,27 @@
-﻿@using theDatabase
+﻿@using Microsoft.AspNetCore.Hosting
+@using theDatabase
 @using theInfrastructure
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
+@inject IWebHostEnvironment env
 
 <div class="">
 
 
     <div class="row g-0">
-        <div class="col-4 py-2">
-            <KpiFrame KPI="Datenbank" Description="Anzahl an Datensätze" 
-                Value="@( sql.GetRecordCount().Result.ToSecureString() )" />
+        <div class="col-3 py-2">
+            <KpiFrame KPI="Datenbank" Description="Anzahl an Datensätze"
+                      Value="@( sql.GetRecordCount().Result.ToSecureString() )" />
         </div>
-        <div class="col-4 p-2 px-3">
+        <div class="col-3 py-2 px-2">
+            <KpiFrame KPI="Datenbankgröße" Description="Größe der Datenbank in MB" 
+                      Value="@( DBFileSize )" />
+        </div>
+        <div class="col-3 p-2 px-2">
             <KpiFrame KPI="Page Count" Description="Anzahl verwendete Pages" 
                 Value="@( sql.GetUsedPageCount().Result.ToSecureString() )" />
         </div>
-        <div class="col-4 py-2">
+        <div class="col-3 py-2">
             <KpiFrame KPI="Unused Pages" Description="Anzahl ungenutzter Pages" 
                 Value="@(  sql.GetNotUsedPageCount().Result.ToSecureString() )" />
         </div>
@@ -105,15 +111,26 @@
 @code {
 
     string Info = string.Empty;
+    string DBFileSize = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
-
+        await DatabaseSize();
     }
 
-
+    private async Task DatabaseSize()
+    {
+        string filePath = Path.Combine(env.ContentRootPath, "Database", "Default.db");
+        const double bytesToMB = 1024.0 * 1024.0;
+        long length = 0;
+        if (File.Exists(filePath))
+        {
+            length = new FileInfo(filePath).Length;
+        }
+        DBFileSize = $"{length / bytesToMB:F2} MB";
+    
+    }
     private async Task CreateDatabase()
     {
         SQLiteService.Database = "Default.db";

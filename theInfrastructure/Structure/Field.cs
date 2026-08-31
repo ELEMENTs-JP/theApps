@@ -156,14 +156,18 @@ namespace theInfrastructure
         {
             
         }
-        public FieldCondition(string Field, string Value)
+        public FieldCondition(string Field, string Value, string Condition = "==", string Typ = "Show")
         {
             this.Field = Field;
             this.Value = Value;
+            this.Condition = Condition;
+            this.Typ = Typ;
         }
         // Bedingung um ein anderes Feld einzublenden 
         public string Field { get; set; } = string.Empty; // Definiert das Feld 
         public string Value { get; set; } = string.Empty; // Definiert den Value 
+        public string Condition { get; set; } = "==";
+        public string Typ { get; set; } = "Show"; // Show // Hide 
 
     }
 }

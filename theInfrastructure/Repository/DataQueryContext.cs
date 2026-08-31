@@ -14,6 +14,7 @@ namespace theInfrastructure
         IDTO Item { get; set; }
         List<IDTO> Items { get; set; }
         Task Search();
+        Task Filter(string matchcode);
         Task Load(string ID);
         Task<List<IDTO>> RelatedItems(string itemType, AssociationTyp association = AssociationTyp.Association);
         void Init(ISqlDatabaseService sql);

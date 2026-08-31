@@ -116,6 +116,7 @@ namespace theInfrastructure
         Password,
         User,
         Admin,
+        Principal,
         Home,
         Delete,
         Setting,

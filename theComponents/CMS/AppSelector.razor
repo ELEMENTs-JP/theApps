@@ -1,7 +1,9 @@
-﻿@using theInfrastructure
+﻿@using theControls.Icons
+@using theInfrastructure
 @inject IAppService app
 @inject NavigationManager nm
 @inject IMessagingBusService msg
+@inject ISecurityService sec
 @implements IAsyncDisposable
 
 <div class="p-3">
@@ -9,10 +11,11 @@
     @* --- App selektiert --- *@
     @if (app.App != null)
     {
-        <div class="rounded-2 hover pointer p-2 m-2"
+        <div class="row g-0 rounded-2 hover pointer p-2 m-2"
              @onclick="@( async e => { app.App = null; app.ItemType = null; app.Page = null; nm.NavigateTo("/", false); })">
-            <div class="fw-bold">Home</div>
-            <div class="text-muted">zurück zum Start</div>
+            <div class="col-auto pe-2"><SymbolIcon Symbol="Icon.Home" /></div>
+            <div class="col fw-bold"> Home</div>
+            <div class="col-12 text-muted">zurück zum Start</div>
         </div>
 
         <div class="my-3"></div>
@@ -41,12 +44,15 @@
             <div class="row g-0">
                 @foreach (IApp _app in app.AllApps.Where(se => se.Group == group && se.IsNavigation == true && se.IsActive == true))
                 {
-                    <div class="col-12 p-1">
-                        <div class="rounded-2 hover pointer p-1 px-2 fw-bold @( GetSelection(_app) )"
-                             @onclick="@( async e => { await OnAppSelect(_app); })">
-                            @_app.ToString()
+                    @if (sec.HasAppPermission(_app).Result)
+                    {
+                        <div class="col-12 p-1">
+                            <div class="rounded-2 hover pointer p-1 px-2 fw-bold @( GetSelection(_app) )"
+                                    @onclick="@( async e => { await OnAppSelect(_app); })">
+                                @_app.ToString()
+                            </div>
                         </div>
-                    </div>
+                    }
                 }
             </div>
         }

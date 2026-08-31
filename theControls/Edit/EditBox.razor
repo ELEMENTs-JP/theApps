@@ -9,7 +9,7 @@
 
 @if (Field != null && Context != null && Context.Item != null)
 {
-    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-1 px-2 @CheckCondition() @CssClass">
+    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-1 px-2 @CheckCondition(Context.Item) @CssClass">
 
         @if (Field.Typ == FieldTyp.TextArea)
         {
@@ -244,8 +244,11 @@
 
         msg.OnMessage += OnMessageRun;
     }
-    private string CheckCondition()
+    private string CheckCondition(IDTO? dto)
     {
+        if(dto == null)
+            return string.Empty;
+
         // Kein Condition angelegt
         if (Field.Condition == null)
             return string.Empty;
@@ -255,11 +258,27 @@
             || Field.Condition.Value == string.Empty)
             return string.Empty;
 
-        // Bedingungen enthalten
-        if (Context.Item[Field.Condition.Field].ToSecureString() != Field.Condition.Value.ToSecureString())
+        string field = Field.Condition.Field;
+        string fieldValue = dto[field].ToSecureString();
+        string conditionValue = Field.Condition.Value.ToSecureString();
+        string conditionTyp = this.Field.Condition.Typ;
+
+        // Bedingungen enthalten 
+        if (Field.Condition.Condition == "==")
         {
-            // Bedingung erfüllt
-            return " d-none ";
+            if (fieldValue == conditionValue)
+            {
+                // Bedingung erfüllt
+                return (conditionTyp == "Show" ? " " : " d-none ");
+            }
+        }
+        if (Field.Condition.Condition == "!=")
+        {
+            if (fieldValue != conditionValue)
+            {
+                // Bedingung erfüllt
+                return (conditionTyp == "Show" ? " " : " d-none ");
+            }
         }
 
         return string.Empty;
@@ -268,7 +287,7 @@
     // Helper
     private async Task<IDTO> Save()
     {
-        // Update
+        // Update 
         await Context.Update(Context.Item);
 
         // ItemType Event
@@ -277,9 +296,6 @@
 
         // Update
         msg.Publish("", BusAction.Info, "Eintrag aktualisiert");
-
-        // andere EditBox aufgrund Update oder Condition aktualisieren
-        msg.Publish("EditBox", BusAction.Refresh);
 
         if (Context.Item.ItemType == "User")
         {
@@ -290,8 +306,12 @@
             }
         }
 
-        // Events
+        // Events 
         await ItemSaved.InvokeAsync(Context.Item);
+
+        // andere EditBox aufgrund Update oder Condition aktualisieren
+        msg.Publish("EditBox", BusAction.Refresh, Context.Item);
+
         return Context.Item;
     }
     private async Task<IDTO> Change()
@@ -307,6 +327,7 @@
         if (message.Id == "EditBox" && message.Action == BusAction.Refresh)
         {
             Value = onValueBinding();
+
             await InvokeAsync(StateHasChanged);
         }
     }

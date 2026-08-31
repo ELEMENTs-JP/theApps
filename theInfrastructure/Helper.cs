@@ -21,6 +21,53 @@ namespace theInfrastructure
     public static partial class Helper
     {
         // Static Fields 
+        public static string? SplitGetIndex(this string input, string separator, int index)
+        {
+            ArgumentNullException.ThrowIfNull(input, nameof(input));
+            ArgumentNullException.ThrowIfNull(separator, nameof(separator));
+
+            if (index < 0)
+            {
+                return null;
+            }
+
+            // Spezialfall: Leeres Trennzeichen
+            if (separator.Length == 0)
+            {
+                return index == 0 ? input : null;
+            }
+
+            ReadOnlySpan<char> span = input.AsSpan();
+            ReadOnlySpan<char> sepSpan = separator.AsSpan();
+
+            int currentIndex = 0;
+            int startIndex = 0;
+
+            while (true)
+            {
+                int matchIndex = span.Slice(startIndex).IndexOf(sepSpan, StringComparison.Ordinal);
+
+                if (matchIndex == -1)
+                {
+                    // Letztes Segment erreicht
+                    if (currentIndex == index)
+                    {
+                        return span.Slice(startIndex).ToString();
+                    }
+                    return null;
+                }
+
+                if (currentIndex == index)
+                {
+                    return span.Slice(startIndex, matchIndex).ToString();
+                }
+
+                currentIndex++;
+                startIndex += matchIndex + sepSpan.Length;
+            }
+        }
+    
+
         public static IReadOnlyDictionary<string, string> GetPropertyDefaultValues()
         {
             return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)

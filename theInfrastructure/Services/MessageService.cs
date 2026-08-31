@@ -53,7 +53,7 @@ namespace theInfrastructure
     public enum BusAction
     {
         // Requests / Benachrichtigungen
-        Refresh,  Select, Info
+        Refresh,  Select, Info, Search
     }
 
     public record AppMessage(

@@ -2,6 +2,8 @@
 @inject NavigationManager nm
 @inject ILocalizationService loc
 @inject ISecurityService sec
+@inject ISqlDatabaseService sql
+@inject IAppService app
 @inject IMessagingBusService msg
 @inject IWebHostEnvironment env
 @implements IAsyncDisposable
@@ -125,7 +127,7 @@
             string info = "";
             string ext = Context.Item["FileExtension"].ToSecureString();
             string file = Context.Item.GUID.ToSecureString() + "." + ext;
-            
+
             string fullFilePath = Path.Combine(env.ContentRootPath, loc.DefaultFilePath, file);
             if (File.Exists(fullFilePath))
             {
@@ -135,6 +137,12 @@
 
             await Context.Delete(Context.Item);
             info += "Datensatz wurde gelöscht";
+
+            if (sec.Configuration.EventHandler)
+            {
+                IItemEventArgs args = new ItemEventArgs(Context.Item, null, sql, sec, app);
+                await this.Context.ItemType.OnDeleteItem(args);
+            }
 
             nm.NavToLibrary(ItemType.Name, ItemType.Typ);
 

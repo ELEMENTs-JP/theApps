@@ -59,6 +59,16 @@ namespace theDatabase
 
             IsLoading = false;
         }
+        public async Task Filter(string matchcode)
+        {
+            await Search();
+
+            if (!string.IsNullOrEmpty(matchcode))
+            { 
+                Items = Items.Where(se => se.Matchcode.ToLowerInvariant().Contains(matchcode.ToLowerInvariant())).ToList();
+            }
+        }
+
         public async Task Load(string GUID)
         {
             try

@@ -3,6 +3,7 @@
 @using theControls.Files
 @using theControls.Input
 @using theControls.Layout
+@using theControls.Search
 @using theControls.Tables
 @using theControls.Text
 @inject ISqlDatabaseService sql
@@ -13,6 +14,9 @@
         <Header>
             <ControlHeader PreTitle="List" Title="@ItemType.Name" PostTitle="@ItemType.Description" />
         </Header>
+        <Search>
+            <LocalSearchComp OnSearch="@( e => { Matchcode = e.ToSecureString(); })" />
+        </Search>
         <Related>
             @if (this.ItemType.Name != "Trash")
             {
@@ -23,7 +27,6 @@
                 @if (this.ItemType.Typ == ItemTypeTyp.File)
                 {
                     <FileUploadComp />
-
                 }
             }
         </Related>
@@ -31,7 +34,7 @@
 
             @if (this.ItemType.Typ == ItemTypeTyp.Item)
             {
-                <DataTable ItemType="@this.ItemType">
+                <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode">
 
                 </DataTable>
             }
@@ -53,6 +56,8 @@
 
     [Parameter]
     public IItemType ItemType { get; set; }
+
+    private string Matchcode { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {

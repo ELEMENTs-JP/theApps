@@ -108,31 +108,8 @@
 
                 <TabsPanel ID="@( ID + "3")">
 
-                    <div class="border-bottom pb-2 mb-2">
-                        <h1 class="h1 w-100">Speicher und Dateien</h1>
-                    </div>
-                    <div class="row">
-
-                        <div class="col-12">
-
-                            <CheckBox Label="Datei Uploads" Value="@sec.Configuration.AllowFileUploads.ToSecureString()"
-                                      ValueChanged="@(e =>
-                                                                                                          {
-                                                                                                              sec.Configuration.AllowFileUploads = e.ToSecureBool();
-                                                                                                              sec.Configuration.Save();
-                                                                                                          })" />
-                            <div class="my-2"></div>
-                            <TextBox Label="Max. Dateigröße" Type="FieldTyp.Integer"
-                                     Value="@sec.Configuration.MaxFileSizeInMB.ToSecureString()"
-                                     ValueChanged="@(e =>
-                                                                                                         {
-                                                                                                             sec.Configuration.MaxFileSizeInMB = e.ToSecureInt();
-                                                                                                             sec.Configuration.Save();
-                                                                                                         })" />
-                        </div>
-
-
-                    </div>
+                    <FilesComp />
+                 
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "4")">
@@ -153,7 +130,7 @@
 
                     <div class="row">
                         <div class="col-4">
-                            <div class="border-bottom pb-2 mb-2">
+                            <div class="border-bottom  p-1 mb-2">
                                 <h3 class="h3 w-100">Anmeldung</h3>
                             </div>
 
@@ -192,7 +169,7 @@
                         </div>
 
                         <div class="col-4 border-start border-end">
-                            <div class="border-bottom pb-2 mb-2">
+                            <div class="border-bottom  p-1 mb-2">
                                 <h3 class="h3 w-100">Registrierung</h3>
                             </div>
 
@@ -206,7 +183,7 @@
                         </div>
 
                         <div class="col-4">
-                            <div class="border-bottom pb-2 mb-2">
+                            <div class="border-bottom  p-1 mb-2">
                                 <h3 class="h3 w-100">Passwort</h3>
                             </div>
 

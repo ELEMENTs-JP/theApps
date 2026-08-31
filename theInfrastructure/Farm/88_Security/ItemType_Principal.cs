@@ -15,7 +15,10 @@ namespace theInfrastructure
             List<IItemType> ItemTypes = new List<IItemType>();
 
             // ItemTypes 
-            ItemTypes.Add(new ItemType_User());
+            if (ast == AssociationTyp.Children)
+            { 
+                ItemTypes.Add(new ItemType_User());
+            }
 
             return ItemTypes;
         }

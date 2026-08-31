@@ -59,7 +59,7 @@ namespace theDatabase
                 // 1. Suche nach existierendem Property-Eintrag
                 ItemProperty prop = Properties.Find(p =>
                     p?.Property != null &&
-                    p.Property.Contains(propertyName, StringComparison.OrdinalIgnoreCase));
+                    p.Property.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
 
                 // 2. Wenn Wert vorhanden und nicht leer/null ist, diesen zurückgeben
                 if (prop != null && !string.IsNullOrEmpty(prop.Value))

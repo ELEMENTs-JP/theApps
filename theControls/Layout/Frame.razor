@@ -8,21 +8,28 @@
 
         @if (Icon.HasContent())
         {
-            <div class="p-1">
+            <div class="px-1">
                 @Icon
             </div>
         }
 
         @if (Header.HasContent())
         {
-            <div class="flex-fill p-1">
+            <div class="flex-fill px-1">
                 @Header
+            </div>
+        }
+
+        @if (Search.HasContent())
+        {
+            <div class="flex-fill px-1">
+                @Search
             </div>
         }
 
         @if (Related.HasContent())
         {
-            <div class="d-flex flex-row-reverse g-1 p-1">
+            <div class="d-flex flex-row-reverse g-1 px-1 pe-3">
                 @Related
             </div>
         }
@@ -30,8 +37,8 @@
 
     @if (Content.HasContent())
     {
-        <div class="row g-0 p-1">
-            <div class="col-12 p-1">
+        <div class="row g-0 px-1">
+            <div class="col-12 px-1">
                 @Content
             </div>
         </div>
@@ -39,8 +46,8 @@
 
     @if (Bottom.HasContent())
     {
-        <div class="row g-0 p-1 border-top">
-            <div class="col-12 p-1">
+        <div class="row g-0 px-1 border-top">
+            <div class="col-12 px-1">
                 @Bottom
             </div>
         </div>
@@ -66,6 +73,9 @@
     public RenderFragment Header { get; set; }
 
     [Parameter]
+    public RenderFragment Search { get; set; }
+
+    [Parameter]
     public RenderFragment Related { get; set; }
 
     [Parameter]
@@ -78,7 +88,7 @@
     {
         string css = string.Empty;
 
-        css = " p-2 ";
+        css = " p-1 pb-3 ";
 
         if (Border)
         {

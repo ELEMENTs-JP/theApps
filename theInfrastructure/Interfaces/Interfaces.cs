@@ -40,8 +40,10 @@ namespace theInfrastructure
         Task SetUser(Guid GUID);
         Task RefreshUser();
         List<IDTO> Permissions { get; set; }
+        Task<bool> HasAppPermission(IApp theApp);
         event PropertyChangedEventHandler PropertyChanged;
         SystemConfiguration Configuration { get; set; }
+        Task Logoff();
     }
     public interface ISearchService
     {

@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using theDatabase;
 using theInfrastructure;
@@ -27,11 +30,11 @@ namespace theControls.Elements
 
         public IQueryContext Context { get; set; }
 
+        // Events 
         protected override async Task OnInitializedAsync()
         {
             bus.OnMessage += OnMessageIncome;
         }
-
         protected override async Task OnParametersSetAsync()
         {
             await base.OnParametersSetAsync();
@@ -55,6 +58,9 @@ namespace theControls.Elements
             }
 
         }
+
+        [Parameter]
+        public EventCallback<string> OnSearch { get; set; }
 
         private async void OnMessageIncome(AppMessage msg)
         {
@@ -84,8 +90,23 @@ namespace theControls.Elements
                     msg.Reply?.Invoke(new AppMessage(msg.Id, BusAction.Refresh));
                 }
             }
-        }
 
+
+            if (msg.Id == "LocalSearch" && msg.Action == BusAction.Search)
+            {
+                //List<IDTO> items = new();
+                //string matchcode = msg.Payload.ToSecureString();
+                //if (string.IsNullOrEmpty(matchcode))
+                //{
+                //    await Context.Search();
+                //}
+                //else
+                //{ 
+                //    await Context.Filter(matchcode);
+                //}
+            }
+
+        }
         public async ValueTask DisposeAsync()
         {
             try

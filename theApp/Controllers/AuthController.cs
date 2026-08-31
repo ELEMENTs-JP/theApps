@@ -21,6 +21,9 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromForm] string username, [FromForm] string password, [FromForm] bool remember)
     {
+        // Clean Security Service 
+        await security.Logoff();
+
         // Password 
         if (string.IsNullOrEmpty(password))
         {
@@ -76,6 +79,10 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        
+        // Clean Security Service 
+        await security.Logoff();
+
         return LocalRedirect("/login");
     }
 

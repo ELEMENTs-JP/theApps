@@ -1,0 +1,111 @@
+﻿@using Microsoft.AspNetCore.Hosting
+@using theControls.Input
+@inject ISecurityService sec
+@inject IWebHostEnvironment env
+@inject ILocalizationService loc
+
+<div class="border-bottom pb-2 mb-2">
+    <h1 class="h1 w-100">Speicher und Dateien</h1>
+</div>
+
+
+<div class="row g-0">
+    <div class="col-4 py-2">
+        <KpiFrame KPI="Dateien" Description="Anzahl an Dateien" Value="@( FileCount )" />
+    </div>
+    <div class="col-4 p-2 px-3">
+        <KpiFrame KPI="Speicher" Description="Verwendeter Speicher" Value="@( FileSizeSum )" />
+    </div>
+    <div class="col-4 py-2">
+        <KpiFrame KPI="Größte Datei" Description="Größe der größten Datei" Value="@( MaxFileSize  )" />
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-4">
+
+        <div class="border-bottom p-1 mb-2">
+            <h3 class="h3 w-100">Upload</h3>
+        </div>
+
+        <CheckBox Label="Datei Uploads" Value="@sec.Configuration.AllowFileUploads.ToSecureString()"
+                  ValueChanged="@(e =>
+                  {
+                      sec.Configuration.AllowFileUploads = e.ToSecureBool();
+                      sec.Configuration.Save();
+                  })" />
+
+        <div class="my-3"></div>
+
+        <TextBox Label="Max. Dateigröße in MB" Type="FieldTyp.Integer"
+                 Value="@sec.Configuration.MaxFileSizeInMB.ToSecureString()"
+                 ValueChanged="@(e =>
+                 {
+                     sec.Configuration.MaxFileSizeInMB = e.ToSecureInt();
+                     sec.Configuration.Save();
+                 })" />
+    </div>
+
+    <div class="col-4 border-start border-end">
+
+    </div>
+
+    <div class="col-4">
+    </div>
+</div>
+
+@code {
+
+    string FileCount { get; set; } = string.Empty;
+    string FileSizeSum { get; set; } = string.Empty;
+    string MaxFileSize { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Calculate();
+    }
+
+    private void Calculate()
+    {
+        string saveFilePath = Path.Combine(env.ContentRootPath, loc.DefaultFilePath);
+
+        if (!Directory.Exists(saveFilePath))
+            return;
+
+        FileInfo[] files = new DirectoryInfo(saveFilePath).GetFiles();
+
+        if (files.Length == 0)
+        {
+            FileCount = "0 Dateien";
+            FileSizeSum = "0 MB";
+            MaxFileSize = "0 MB";
+            return;
+        }
+
+        long totalBytes = 0;
+        long maxBytes = 0;
+
+        foreach (FileInfo file in files)
+        {
+            long length = file.Length;
+            totalBytes += length;
+            if (length > maxBytes)
+            {
+                maxBytes = length;
+            }
+        }
+
+        const double bytesToMB = 1024.0 * 1024.0;
+
+        FileCount = $"{files.Length} Dateien";
+        FileSizeSum = $"{totalBytes / bytesToMB:F2} MB";
+        MaxFileSize = $"{maxBytes / bytesToMB:F2} MB";
+    }
+}

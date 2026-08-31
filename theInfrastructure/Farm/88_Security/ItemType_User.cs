@@ -14,7 +14,11 @@ namespace theInfrastructure
         public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
         {
             List<IItemType> ItemTypes = new List<IItemType>();
-            ItemTypes.Add(new ItemType_Permission());
+
+            if(ast == AssociationTyp.Children)
+            { 
+                ItemTypes.Add(new ItemType_Permission());
+            }
             return ItemTypes;
         }
         public override async Task<List<IField>> GetFields(string view = "")

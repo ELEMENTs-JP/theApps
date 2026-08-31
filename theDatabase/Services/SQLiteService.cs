@@ -849,9 +849,13 @@ namespace theDatabase
                 {
                     info.Items = await GetParents(dto, ItemType, Typ);
                 }
+                else if (Typ == AssociationTyp.Association)
+                {
+                    info.Items = await GetAll(dto, ItemType, Typ);
+                }
                 else
                 {
-                    info.Items = await GetAll(dto, ItemType);
+                    info.Items = await GetAll(dto, ItemType, Typ);
                 }
             }
             catch (Exception ex)
@@ -941,7 +945,7 @@ namespace theDatabase
 
             return resultList;
         }
-        public async Task<List<IDTO>> GetAll(IDTO dto, string ItemType)
+        public async Task<List<IDTO>> GetAll(IDTO dto, string ItemType, AssociationTyp typ)
         {
             List<IDTO> resultList = new List<IDTO>();
             
@@ -983,7 +987,7 @@ namespace theDatabase
 
             }
 
-            return resultList;
+            return resultList.DistinctBy(se => se.GUID).ToList();
         }
 
         //public async Task<IQueryResult> GetRelatedItemsObsolete(IDTO dto, string ItemType,

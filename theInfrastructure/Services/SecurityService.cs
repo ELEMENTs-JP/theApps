@@ -14,7 +14,7 @@ namespace theInfrastructure
     public class SecurityService : ISecurityService, INotifyPropertyChanged, IDisposable
     {
         // Fields 
-        IWebHostEnvironment Environment;
+        readonly IWebHostEnvironment Environment;
         ISqlDatabaseService SqlService;
         public SystemConfiguration Configuration { get; set; } = null;
 
@@ -72,7 +72,7 @@ namespace theInfrastructure
                 return;
 
             // Principal 
-            IQueryResult result = await SqlService.GetRelatedItems(User, "Principal");
+            IQueryResult result = await SqlService.GetRelatedItems(User, "Principal", AssociationTyp.NULL);
             if (result.Items.Count() == 1)
             {
                 // Set Principal 
@@ -80,7 +80,7 @@ namespace theInfrastructure
             }
 
             // Permissions 
-            IQueryResult resultPerm = await SqlService.GetRelatedItems(User, "Permission");
+            IQueryResult resultPerm = await SqlService.GetRelatedItems(User, "Permission", AssociationTyp.Children);
             Permissions = resultPerm.Items;
 
             await Task.CompletedTask;
@@ -92,6 +92,36 @@ namespace theInfrastructure
             Init();
 
             await SetUser(userGUID);
+        }
+        public async Task Logoff()
+        {
+            try
+            {
+                Principal = null;
+                User = null;
+                AllUser = new();
+                Permissions = new();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public async Task<bool> HasAppPermission(IApp theApp)
+        {
+            // Permission laden (ggf. zu ungenau)
+            IDTO? perm = this.Permissions.Where(se => se["Typ"] == "App" && se["App"] == theApp.Name).FirstOrDefault();
+
+            if (perm == null)
+                return true;
+
+            string AllowDeny = perm["AllowDeny"];
+            if (AllowDeny == "true")
+                return true;
+
+
+
+            return false;
         }
 
         // Events 

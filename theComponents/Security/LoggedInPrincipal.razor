@@ -1,10 +1,12 @@
-﻿@inject ISecurityService sec
+﻿@using theControls.Icons
+@inject ISecurityService sec
 
 
 @if(sec.Principal != null)
 {
-    <div class="bg-surface p-2 align-items-center  border-bottom border-start border-end">
-        @sec.Principal.Title
+    <div class="d-flex flex-row bg-surface p-2 align-items-center  border-bottom border-start border-end">
+        <SymbolIcon Symbol="Icon.Principal" />
+        <span class="ps-2">@sec.Principal.Title</span>
     </div>
 }
 
