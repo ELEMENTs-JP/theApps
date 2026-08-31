@@ -51,7 +51,9 @@ namespace theInfrastructure
         public bool Archive { get; set; } = false; // zeigt das Archiv an 
         public bool TaskBar { get; set; } = true; // zeigt die Taskbar unten rechts an
         public bool Clock { get; set; } = true; // zeigt die Uhr an 
-        
+        public bool EventHandler { get; set; } = true; // legt fest ob die Item (ItemType) Event Handler aktiviert sind oder nicht 
+        public bool GlobalSearch { get; set; } = true; // legt fest ob die übergeordnete Suche angezeigt wird 
+
         // Dateien 
         public bool AllowFileUploads { get; set; } = true;
         public int MaxFileSizeInMB { get; set; } = 20;

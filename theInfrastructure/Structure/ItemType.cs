@@ -165,9 +165,9 @@ namespace theInfrastructure
         public ISecurityService SecurityService { get; set; }
         public IAppService AppService { get; set; }
         public IDTO Item { get; set; }
-        public IDTO Related { get; set; }
+        public IDTO? Related { get; set; }
 
-        public ItemEventArgs(IDTO main, IDTO related,
+        public ItemEventArgs(IDTO main, IDTO? related,
                 ISqlDatabaseService sql, ISecurityService auth, IAppService app)
         {
             SqlService = sql;

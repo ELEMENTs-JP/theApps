@@ -35,7 +35,18 @@
     color:inherit !important;
 }
 
+.form-switch .form-check-input:focus {
+    border-color: #ccc !important;
+    box-shadow: #ccc; /* Das hellblaue Leuchten */
+}
 
+.dropdown-item {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+    cursor:pointer;
+}
 .input-group-text {
     border: var(--tblr-border-width) solid var(--tblr-border-color) !important;
 }

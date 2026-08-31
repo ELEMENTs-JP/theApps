@@ -14,13 +14,16 @@ namespace theInfrastructure
             // Service 
             sqlService = sql;
             this.Item = Item;
+
             // Metadata 
             this.Name = Item.Title;
+            this.Title = Item.Title;
+            this.Description = Item["Description"].ToSecureString();
             this.Group = Item["Group"].ToSecureString();
             this.IsActive = Item["IsActive"].ToSecureBool();
         }
 
-        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
+        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Children)
         {
             List<IItemType> ItemTypes = new();
             // ItemTypes 
@@ -44,7 +47,7 @@ namespace theInfrastructure
             return ItemTypes;
         }
 
-        public override async Task<List<IDTO>> GetPages()
+        public override async Task<List<IDTO>> GetPages(AssociationTyp ast = AssociationTyp.Children)
         {
             // Query 
             IQueryParameter query = new QueryParameter();
@@ -53,7 +56,7 @@ namespace theInfrastructure
             query.ItemType = "Page";
 
             // Fields 
-            IQueryResult result = await sqlService.GetRelatedItems(Item, "Page");
+            IQueryResult result = await sqlService.GetRelatedItems(Item, "Page", ast);
             return result.Items;
         }
     }

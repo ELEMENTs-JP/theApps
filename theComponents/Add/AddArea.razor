@@ -1,8 +1,12 @@
 ﻿@using theControls.Add
+@using theControls.Config
 @using theControls.Icons
 @using theControls.Input
 @using theControls.Modal
-@inject ISqlDatabaseService sql
+@inject ISqlDatabaseService sqlService
+@inject ISecurityService secService
+@inject ILocalizationService loc
+@inject IAppService appService
 @inject IMessagingBusService msg
 
 
@@ -68,7 +72,13 @@
 
             </div>
         </ChildContent>
-    </ModalForm>
+
+        <FooterContent>
+               <div class="d-flex flex-row align-items-center">
+              <EventHandlerInfo />
+            </div>
+        </FooterContent>    
+</ModalForm>
 }
 
 @code {
@@ -102,7 +112,7 @@
         if (ItemType != null)
         {
             Fields = await ItemType.GetFields();
-            Context = new QueryContext(sql);
+            Context = new QueryContext(sqlService);
             Context.ItemType = this.ItemType;
         }
     }
@@ -196,19 +206,28 @@
         // Laden
         await Context.Load(ID.ToSecureString());
 
-        // Fields
+        if (secService.Configuration.EventHandler == true)
+        {
+            // Event 
+            IItemEventArgs args = new ItemEventArgs(Context.Item, RelatedItem, sqlService, secService, appService);
+
+            // Create Event 
+            Context.Item = await Context.ItemType.OnCreateItem(args);
+        }
+
+        // Fields - Values 
         foreach (IDataValue dv in Values)
         {
             Context.Item[dv.Field.Column] = dv.Value.ToSecureString();
         }
 
-        // Update
+        // Update 
         await Context.Update(Context.Item);
 
         // Related Item
         if (RelatedItem != null)
         {
-            await sql.Assign(RelatedItem, Context.Item, Association);
+            await sqlService.Assign(RelatedItem, Context.Item, Association);
         }
 
         // Clean

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace theInfrastructure
@@ -22,13 +23,23 @@ namespace theInfrastructure
                 Typ = FieldTyp.Select,
                 ItemType = "User",
                 Column = "Owner",
-                CSS = " col-12 col-md-6 col-lg-6 ",
+                CSS = " col-12 col-md-4 col-lg-4 ",
                 OnDevice = DeviceDisplay.Desktop
             });
 
-            Fields.Add(new Field() { Title = "Projekt", Typ = FieldTyp.Text, Column = "Projekt",
-                CSS = " col-12 col-md-6 col-lg-6 ",
-                IsNecessary =true, OnDevice = DeviceDisplay.Desktop });
+            Fields.Add(new Field()
+            {
+                Title = "Projekt",
+                Typ = FieldTyp.Text,
+                Column = "Projekt",
+                CSS = " col-12 col-md-4 col-lg-4 ",
+                IsNecessary = true,
+                OnDevice = DeviceDisplay.Desktop
+            });
+
+            Fields.Add(new Field() { Title = "Aktiv", Typ = FieldTyp.CheckBox, Column = "IsActive",
+                TrueText="Aktiv", FalseText="Inaktiv",
+                CSS = " col-12 col-md-4 col-lg-4 " });
             
             // Performance 
             Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
@@ -37,6 +48,31 @@ namespace theInfrastructure
             Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Description));
 
             return Fields;
+        }
+
+        public override async Task<IDTO> OnCreateItem(IItemEventArgs args)
+        {
+            await base.OnCreateItem(args);
+
+            // Default Values 
+            List<IField> fields = await GetFields();
+            foreach (IField field in fields.Where(se => !string.IsNullOrEmpty(se.DefaultValue)))
+            {
+                args.Item[field.Column] = field.DefaultValue;
+            }
+            
+            // Update 
+            await args.SqlService.Update(args.Item);
+            
+            // RETURN 
+            return args.Item;
+        }
+        public override async Task<IDTO> AfterCreateItem(IItemEventArgs args)
+        {
+            await base.AfterCreateItem(args);
+
+            // return 
+            return args.Item;
         }
 
     }

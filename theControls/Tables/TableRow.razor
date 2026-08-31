@@ -8,13 +8,13 @@
     <tr class="row-hover" style="border-left:1px solid transparent;">
         <td class="text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</td>
         
-        <td class="text-muted" title="@Item.ItemType">
+        <td class="text-truncate" title="@Item.ItemType" style="max-width:15rem;">
             <a class="fw-bold pointer" 
                 href="@( "/Item/" + Context.ItemType.Name + "/" + Item.GUID )">
                 @(Item.Title.ToSecureString())</a>
         </td>
 
-        @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR))
+        @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnTable == true))
         {
             <td class="@Helper.GetClassByDevice(col) align-items-center">
                 <TableCell Value="@(Item[col.Column].ToSecureString())" Field="@col" />

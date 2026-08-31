@@ -16,8 +16,10 @@ namespace theInfrastructure
         string CSS { get; set; }
         string Extension { get; set; }
         bool IsNecessary { get; set; }
+        string DefaultValue { get; set; }
 
         DeviceDisplay OnDevice { get; set; }
+        bool OnTable { get; set; } 
         bool IsEditable { get; set; }
 
         // Formatierung 
@@ -45,10 +47,12 @@ namespace theInfrastructure
         public string Placeholder { get; set; } = string.Empty;
         public string Column { get; set; } = string.Empty;
         public bool IsNecessary { get; set; } = false;
+        public string DefaultValue { get; set; } = string.Empty;
 
         public string CSS { get; set; } = "col";
         public string Extension { get; set; } = string.Empty;
         public DeviceDisplay OnDevice { get; set; } = DeviceDisplay.NULL;
+        public bool OnTable { get; set; } = true;
 
         public bool IsEditable { get; set; } = true;
         public TextFormat Formatierung { get; set; } = TextFormat.NULL;
@@ -70,6 +74,7 @@ namespace theInfrastructure
                 {
                     Title = "Status", Description = "definiert den Status",
                     Typ = FieldTyp.Status,
+                    DefaultValue = "neu",
                     Column = "Status", CSS = " col-12 col-md-6 col-lg-4 ",
                     OnDevice = DeviceDisplay.Tablet
                 });
@@ -77,6 +82,7 @@ namespace theInfrastructure
                 { 
                     Title = "Fortschritt", Description = "legt den Fortschritt fest", 
                     Typ = FieldTyp.Progress, 
+                    DefaultValue = "0",
                     Column = "Progress", CSS = " col-12 col-md-6 col-lg-4 ", 
                     OnDevice = DeviceDisplay.Tablet 
                 });
@@ -84,6 +90,7 @@ namespace theInfrastructure
                 { 
                     Title = "Priorität", Description = "legt die Priorität fest", 
                     Typ = FieldTyp.Priority, 
+                    DefaultValue = "ausgeglichen",
                     Column = "Prio", CSS = " col-12 col-md-6 col-lg-4 ", 
                     OnDevice = DeviceDisplay.Tablet });
             }
@@ -96,7 +103,9 @@ namespace theInfrastructure
                     Title = "Beschreibung", 
                     Typ = FieldTyp.TextArea, 
                     Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", 
-                    OnDevice = DeviceDisplay.Desktop });
+                    OnDevice = DeviceDisplay.Desktop,
+                    OnTable = false,
+                });
             }
 
             if (typ == DefaultFieldTypes.File)

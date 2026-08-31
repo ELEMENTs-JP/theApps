@@ -3,17 +3,26 @@
 
 @if (Field != null)
 {
-    @if (Field.Typ == FieldTyp.CheckBox)
+    @if (Field.Typ == FieldTyp.Progress)
     {
-        <span class="badge">@Text</span>
+        <ProgressBar Value="@Value" />
     }
-    else if (Field.Typ == FieldTyp.Progress)
+    else if (Field.Typ == FieldTyp.Status)
     {
-       <ProgressBar Value="@Value" />
+        <StatusBox Value="@Value" />
+    }
+    else if (Field.Typ == FieldTyp.Priority)
+    {
+        <PriorityBox Value="@Value" />
+    }
+    else if (Field.Typ == FieldTyp.CheckBox)
+    {
+        <BooleanBox Value="@Value" Field="@Field" />    
     }
     else if (Field.Typ == FieldTyp.Password)
     {
-        @( "..." )
+        @( "..."
+                    )
     }
     else
     {
@@ -82,18 +91,7 @@
                 }
             case FieldTyp.CheckBox:
                 {
-                    bool val = Value.ToSecureBool();
-
-                    if (val == true)
-                    {
-                        Text = loc.GetLabel("ja", "true");
-                    }
-                    else
-                    {
-                        Text = loc.GetLabel("nein", "false");
-                    }
-
-                    break;    
+                    break;
                 }
             default:
                 {

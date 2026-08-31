@@ -97,10 +97,10 @@ a, a:visited {
 }
 
 .hover:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(195, 195, 195, 0.10);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    transition: background-color 0.25s ease;
+    transition: background-color 0.35s ease;
 }
 
 .opacity:hover {

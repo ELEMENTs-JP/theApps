@@ -2,60 +2,66 @@
 @inject IJSRuntime JSRuntime
 @inject ISearchService search
 @inject NavigationManager nm
+@inject ISecurityService secService
+@inject IMessagingBusService msg
 @implements IDisposable
 
-<div>
-    <div class="dropdown">
-        <input id="@inputId"
-               type="text"
-               class="editbox"
-               placeholder="Suchbegriff eingeben..."
-               value="@searchQuery"
-               @oninput="HandleInput"
-               @onkeydown="HandleKeyDown"
-               autocomplete="off"
-               style="width:36rem;" />
 
-        <div class="dropdown-menu @(isDropdownOpen ? "show" : "")" style="width: 100%;">
-            @if (isDropdownOpen)
-            {
-                <div class="border-bottom text-muted p-2">
-                    Suche nach: "@searchQuery"
-                </div>
+@if (secService.Configuration.GlobalSearch == true)
+{
+    <div class="pe-3">
+        <div class="dropdown">
+            <input id="@inputId"
+                   type="text"
+                   class="editbox"
+                   placeholder="Suchbegriff eingeben..."
+                   value="@searchQuery"
+                   @oninput="HandleInput"
+                   @onkeydown="HandleKeyDown"
+                   autocomplete="off"
+                   style="width:36rem;" />
 
-                <div class="overflow-y-auto p-2" style="max-height:36rem;">
-                    @if (Items != null && Items.Any())
-                    {
-                        @for (int i = 0; i < Items.Count; i++)
+            <div class="dropdown-menu @(isDropdownOpen ? "show" : "")" style="width: 100%;">
+                @if (isDropdownOpen)
+                {
+                    <div class="border-bottom text-muted p-2">
+                        Suche nach: "@searchQuery"
+                    </div>
+
+                    <div class="overflow-y-auto p-2" style="max-height:36rem;">
+                        @if (Items != null && Items.Any())
                         {
-                            var item = Items[i];
-                            var index = i;
-                            var isSelected = index == selectedIndex;
+                            @for (int i = 0; i < Items.Count; i++)
+                            {
+                                var item = Items[i];
+                                var index = i;
+                                var isSelected = index == selectedIndex;
 
-                            <div class="dropdown-item rounded-2 overflow-hidden pointer row g-0 @(isSelected ? "active" : "")"
-                            @onclick="() => SelectItem(item)"
-                            @onmouseover="() => selectedIndex = index">
-                                <div class="col pe-2">
-                                    @item.Title
+                                <div class="dropdown-item rounded-2 overflow-hidden pointer row g-0 @(isSelected ? "active" : "")"
+                                     @onclick="() => SelectItem(item)"
+                                     @onmouseover="() => selectedIndex = index">
+                                    <div class="col pe-2">
+                                        @item.Title
+                                    </div>
+                                    @*        <div class="vr"></div> *@
+                                    <div class="col-auto ps-2 text-muted">
+                                        @item.ItemType
+                                    </div>
                                 </div>
-                                @*        <div class="vr"></div> *@
-                                <div class="col-auto ps-2 text-muted">
-                                    @item.ItemType 
-                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="fw-bold rounded-2 overflow-hidden p-2">
+                                Suchergebnis enthält keine Ergebnisse.
                             </div>
                         }
-                    }
-                    else
-                    {
-                        <div class="fw-bold rounded-2 overflow-hidden p-2">
-                            Suchergebnis enthält keine Ergebnisse.
-                        </div>
-                    }
-                </div>
-            }
+                    </div>
+                }
+            </div>
         </div>
     </div>
-</div>
+}
 
 @code {
     private string inputId = $"search-input-{Guid.NewGuid():N}";
@@ -70,6 +76,22 @@
 
     [Parameter]
     public EventCallback<IDTO> OnItemSelected { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageIncome;
+    }
+
+    private async void OnMessageIncome(AppMessage message)
+    {
+        if (message.Id == "Feature" && message.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -145,7 +167,23 @@
 
     public void Dispose()
     {
-        // Entfernt den Event-Listener bei Component Disposing (z.B. bei Seitenwechsel)
-        _ = JSRuntime.InvokeVoidAsync("searchComponent.unregisterGlobalShortcut");
+        try
+        {
+            msg.OnMessage -= OnMessageIncome;
+        }
+        catch (Exception ex)
+        {
+            
+        }
+        try
+        {
+            // Entfernt den Event-Listener bei Component Disposing (z.B. bei Seitenwechsel)
+            _ = JSRuntime.InvokeVoidAsync("searchComponent.unregisterGlobalShortcut");
+        }
+        catch (Exception ex)
+        {
+
+        }
+      
     }
 }

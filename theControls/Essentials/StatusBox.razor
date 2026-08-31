@@ -1,0 +1,20 @@
+﻿
+<div class="d-flex align-items-center flex-nowrap">
+    <SymbolIcon Symbol="@( Status.IconByStatus(Value))"
+                Color="@( Status.ColorByStatusValue(Value) )" />
+
+    <div class="px-1">
+        @Value
+    </div>
+
+</div>
+
+@code {
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ID { get; set; } = string.Empty;
+
+}

@@ -50,7 +50,7 @@
         </Related>
         <Content>
 
-            <div data-zone="Page" class="bg-surface rounded-2 p-2">
+            <div data-zone="Page" class="bg-surface rounded-2 p-2 py-3">
                 @foreach (IDTO row in Rows)
                 {
                     <LayoutRow @key="@( "olr-" + row.GUID.ToSecureString())" 
@@ -89,6 +89,41 @@
         {
             Title = "12",
             ["Typ"] = "12",
+            ["Zone"] = "Layout",
+            ["Sort"] = "1",
+        });
+        LayoutDefinitions.Add(new DTO()
+        {
+            Title = "66",
+            ["Typ"] = "66",
+            ["Zone"] = "Layout",
+            ["Sort"] = "1",
+        });
+        LayoutDefinitions.Add(new DTO()
+        {
+            Title = "444",
+            ["Typ"] = "444",
+            ["Zone"] = "Layout",
+            ["Sort"] = "1",
+        });
+        LayoutDefinitions.Add(new DTO()
+        {
+            Title = "363",
+            ["Typ"] = "363",
+            ["Zone"] = "Layout",
+            ["Sort"] = "1",
+        });
+        LayoutDefinitions.Add(new DTO()
+        {
+            Title = "57",
+            ["Typ"] = "57",
+            ["Zone"] = "Layout",
+            ["Sort"] = "1",
+        });
+        LayoutDefinitions.Add(new DTO()
+        {
+            Title = "75",
+            ["Typ"] = "75",
             ["Zone"] = "Layout",
             ["Sort"] = "1",
         });

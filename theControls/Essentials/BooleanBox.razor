@@ -1,0 +1,71 @@
+﻿@inject ILocalizationService loc
+
+@if (Field != null)
+{
+    <div class="d-flex align-items-center flex-nowrap" title="@( (technical ? Field.TrueText : Field.FalseText) )">
+        <SymbolIcon Symbol="@( TrueFalse.IconByValue(Value))"
+                    Color="@( TrueFalse.ColorByValue(Value) )" />
+
+        @*     <div class="px-1">
+        @Text
+    </div> *@
+
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public IField Field { get; set; }
+
+    private bool technical { get; set; } = false;
+    private string Text { get; set; } = string.Empty;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await Convert();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+
+
+        }
+    }
+    public async Task Convert()
+    {
+        if (string.IsNullOrEmpty(Value))
+        {
+            Text = string.Empty;
+            return;
+        }
+
+        technical = Value.ToSecureBool();
+
+        if (technical == true)
+        {
+            Text = loc.GetLabel("ja", "true");
+        }
+        else
+        {
+            Text = loc.GetLabel("nein", "false");
+        }
+
+        await Task.CompletedTask;
+    }
+}

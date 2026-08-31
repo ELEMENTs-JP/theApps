@@ -115,6 +115,7 @@ namespace theInfrastructure
         Corner,
         Password,
         User,
+        Admin,
         Home,
         Delete,
         Setting,
@@ -127,6 +128,10 @@ namespace theInfrastructure
         COL57,
         COL75,
         Controls,
+        // True False
+        YES,
+        NO,
+        Invariant,
 
         // Prioritäten 
         Prio_Highest,
@@ -136,6 +141,14 @@ namespace theInfrastructure
         Prio_Low,
         Prio_Lower,
         Prio_Lowest,
+
+        // Status 
+        Status_New,
+        Status_inPlan,
+        Status_inPreparation,
+        Status_inWork,
+        Status_onHold,
+        Status_Finished,
     }
     public enum ValueBindingTyp
     {

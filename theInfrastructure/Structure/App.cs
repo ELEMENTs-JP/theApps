@@ -7,14 +7,16 @@ namespace theInfrastructure
     // App 
     public interface IApp
     {
+
         string Title { get; set; }
+        string Description { get; set; }
         string Name { get; set; }
         string Group { get; set; } // Gruppierung in der Navigation // Allgemeine Typisierung
         bool IsNavigation { get; set; } // wird im App Selector // Navigation angezeigt oder nicht 
         bool IsActive { get; set; } // legt fest ob die App aktiv ist und verwendet werden kann (Feature on off) 
         Task<List<IItemType>> GetItemTypes(
             AssociationTyp ast = AssociationTyp.Association);
-        Task<List<IDTO>> GetPages();
+        Task<List<IDTO>> GetPages(AssociationTyp ast = AssociationTyp.Association);
 
     }
     public class BaseApp : IApp
@@ -24,6 +26,7 @@ namespace theInfrastructure
 
         }
         public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Group { get; set; } = string.Empty;
         public bool IsNavigation { get; set; } = true;
@@ -36,7 +39,7 @@ namespace theInfrastructure
 
             return ItemTypes;
         }
-        public virtual async Task<List<IDTO>> GetPages()
+        public virtual async Task<List<IDTO>> GetPages(AssociationTyp ast = AssociationTyp.Association)
         {
             List<IDTO> Pages = new();
 

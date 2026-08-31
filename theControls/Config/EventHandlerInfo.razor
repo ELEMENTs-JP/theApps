@@ -1,0 +1,46 @@
+﻿@inject ISecurityService secService
+@inject ILocalizationService loc
+@inject IMessagingBusService msg
+@implements IAsyncDisposable
+
+@if (secService.Configuration.EventHandler == false)
+{
+    <div style="height:10px; width:10px; background-color:var(--tblr-red); border:1px solid var(--tblr-red);">
+
+    </div>
+    <div class="text-muted px-2">
+        @loc.GetLabel("Eventhandler sind deaktiviert", 
+                        "Eventhandler are deactivated")
+                        </div>
+}
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageIncome;
+    }
+
+    private async void OnMessageIncome(AppMessage message)
+    {
+        if (message.Id == "Feature" && message.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageIncome;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+}

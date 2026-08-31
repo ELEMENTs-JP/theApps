@@ -11,7 +11,7 @@
             <KpiFrame KPI="Datenbank" Description="Anzahl an Datensätze" 
                 Value="@( sql.GetRecordCount().Result.ToSecureString() )" />
         </div>
-        <div class="col-4 p-2">
+        <div class="col-4 p-2 px-3">
             <KpiFrame KPI="Page Count" Description="Anzahl verwendete Pages" 
                 Value="@( sql.GetUsedPageCount().Result.ToSecureString() )" />
         </div>

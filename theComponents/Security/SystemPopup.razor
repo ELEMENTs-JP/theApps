@@ -61,37 +61,40 @@
 
                     @if (sec.User["IsAdmin"].ToSecureBool())
                     {
-                        <div class="dropdown-item" 
+                        <div class="dropdown-item d-flex" 
                                 @onclick="@( async e => { nm.NavigateTo("/Setting"); })">
-                            Einstellungen
+                            <div class="flex-fill">Einstellungen</div>
+                            <SymbolIcon Symbol="Icon.Admin" Color="var(--tblr-red)" Title="Admin Funktion" />
                         </div>
 
                         <div class="dropdown-divider"></div>
                         <div class="dropdown-item" @onclick="@( async e => { await OnAppSelect("Farm"); })">
-                            Farm
+                            <div class="flex-fill">Farm</div>
+                            <SymbolIcon Symbol="Icon.Admin" Color="var(--tblr-red)" Title="Admin Funktion" />
                         </div>
                         <div class="dropdown-item" @onclick="@( async e => { await OnAppSelect("Security"); })">
-                            Security
+                            <div class="flex-fill">Security</div>
+                            <SymbolIcon Symbol="Icon.Admin" Color="var(--tblr-red)" Title="Admin Funktion" />
                         </div>
+                        <div class="dropdown-divider"></div>
                     }
 
                     @if (sec.Configuration.Archive)
                     {
-                        <div class="dropdown-divider"></div>
                         <div class="dropdown-item" @onclick="@( async e => { await OnItemTypeSelect("Archive"); })">
                             Archiv
                         </div>
+                        <div class="dropdown-divider"></div>
                     }
 
                     @if (sec.Configuration.Trash)
                     {
-                        <div class="dropdown-divider"></div>
                         <div class="dropdown-item" @onclick="@( async e => { await OnItemTypeSelect("Trash"); })">
                             Papierkorb
                         </div>
+                        <div class="dropdown-divider"></div>
                     }
 
-                    <div class="dropdown-divider"></div>
                     <form action="/api/auth/logout" method="post">
                         <AntiforgeryToken />
                         <button type="submit"

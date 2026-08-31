@@ -2,7 +2,9 @@
 @using theControls.Icons
 @using theControls.Input
 @using theControls.Modal
-@inject ISqlDatabaseService sql
+@inject ISqlDatabaseService sqlService
+@inject IAppService appService
+@inject ISecurityService secService
 @inject IMessagingBusService msg
 @inject ILocalizationService loc
 @inject IJSRuntime js
@@ -70,7 +72,7 @@
         if (ItemType != null)
         {
 
-            Context = new QueryContext(sql);
+            Context = new QueryContext(sqlService);
             Context.ItemType = this.ItemType;
         }
     }
@@ -86,7 +88,7 @@
         Context.Matchcode = this.Title;
         await Context.Search();
 
-        IDTO item = Context.Items.Where(se => se.Title == this.Title).FirstOrDefault();
+        IDTO? item = Context.Items.FirstOrDefault(se => se.Title == this.Title);
         if (item != null)
         {
             // Message
@@ -98,7 +100,7 @@
 
     private async Task OnOK()
     {
-          if (string.IsNullOrEmpty(Title))
+        if (string.IsNullOrEmpty(Title))
         {
             msg.Publish("Notwendige Felder", BusAction.Info, "Titel muss gesetzt sein.");
             return;
@@ -130,10 +132,19 @@
         // Update
         await Context.Update(Context.Item);
 
+        if (secService.Configuration.EventHandler == true)
+        {
+            // Event
+            IItemEventArgs args = new ItemEventArgs(Context.Item, RelatedItem, sqlService, secService, appService);
+
+            // Create Event
+            Context.Item = await Context.ItemType.OnCreateItem(args);
+        }
+
         // Related Item
         if (RelatedItem != null)
         {
-            await sql.Assign(RelatedItem, Context.Item, Association);
+            await sqlService.Assign(RelatedItem, Context.Item, Association);
         }
 
         // Clean

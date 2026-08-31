@@ -5,14 +5,49 @@
 
 @if (loc.Configuration != null)
 {
-    <div class="">
+    <div class="overflow-y-auto" style="max-height:40rem;">
 
-        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+        <div class="row g-0 align-items-center bg-surface border-bottom p-2 my-2">
             <div class="col p-2">
-                Archiv
+                <div class="fw-bold">Suche</div>
+                <div class="text-muted">aktiviert / deaktiviert die globale Suchfunktion</div>
+            </div>
+            <div class="col-auto p-2">
+                <CheckBox Value="@sec.Configuration.GlobalSearch.ToSecureString()"
+                            TrueText="aktiviert" FalseText="deaktiviert"
+                          ValueChanged="@(async e => {
+                          sec.Configuration.GlobalSearch = e.ToSecureBool();
+                          sec.Configuration.Save();
+                          await PushFeatureUpdate();
+                      })" />
+            </div>
+        </div>
+
+
+        <div class="row  g-0 align-items-center bg-surface border-bottom p-2 my-2">
+            <div class="col p-2">
+                <div class="fw-bold">Event Handler</div>
+                <div class="text-muted">betrifft die Verarbeitung von Einträgen (z.B. Default Values)</div>
+            </div>
+            <div class="col-auto p-2">
+                <CheckBox Value="@sec.Configuration.EventHandler.ToSecureString()"
+                          TrueText="aktiviert" FalseText="deaktiviert"
+                          ValueChanged="@(async e => {
+                          sec.Configuration.EventHandler = e.ToSecureBool();
+                          sec.Configuration.Save();
+                          await PushFeatureUpdate();
+                      })" />
+            </div>
+        </div>
+
+        <div class="row  g-0 align-items-center bg-surface border-bottom p-2 my-2">
+            <div class="col p-2">
+                <div class="fw-bold">Archiv</div>
+                <div class="text-muted">legt fest ob ein Archiv verwendet wird oder nicht</div>
             </div>
             <div class="col-auto p-2">
                 <CheckBox Value="@sec.Configuration.Archive.ToSecureString()"
+                          TrueText="aktiviert" FalseText="deaktiviert"
                           ValueChanged="@(async e => {
                           sec.Configuration.Archive = e.ToSecureBool();
                           sec.Configuration.Save();
@@ -21,14 +56,14 @@
             </div>
         </div>
 
-
-
-        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+        <div class="row  g-0 align-items-center bg-surface border-bottom p-2 my-2">
             <div class="col p-2">
-                Papierkorb
+                <div class="fw-bold">Papierkorb</div>
+                <div class="text-muted">legt fest ob ein Papierkorb verwendet wird oder nicht</div>
             </div>
             <div class="col-auto p-2">
                 <CheckBox Value="@sec.Configuration.Trash.ToSecureString()"
+                          TrueText="aktiviert" FalseText="deaktiviert"
                           ValueChanged="@( async e => {
                           sec.Configuration.Trash = e.ToSecureBool();
                           sec.Configuration.Save();
@@ -37,12 +72,14 @@
             </div>
         </div>
 
-        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+        <div class="row  g-0 align-items-center bg-surface border-bottom p-2 my-2">
             <div class="col p-2">
-                Taskbar
+                <div class="fw-bold">Task Bar</div>
+                <div class="text-muted">legt fest ob die Task Bar angezeigt wird oder nicht</div>
             </div>
             <div class="col-auto p-2">
                 <CheckBox Value="@sec.Configuration.TaskBar.ToSecureString()"
+                          TrueText="aktiviert" FalseText="deaktiviert"
                           ValueChanged="@(async e => {
                           sec.Configuration.TaskBar = e.ToSecureBool();
                           sec.Configuration.Save();
@@ -51,12 +88,14 @@
             </div>
         </div>
 
-        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
+        <div class="row  g-0 align-items-center bg-surface border-bottom p-2 my-2">
             <div class="col p-2">
-                Datum und Uhrzeit
+                <div class="fw-bold">Datum und Uhrzeit</div>
+                <div class="text-muted">legt fest ob das aktuelle Datum und die Uhrzeit angezeigt wird oder nicht</div>
             </div>
             <div class="col-auto p-2">
                 <CheckBox Value="@sec.Configuration.Clock.ToSecureString()"
+                          TrueText="aktiviert" FalseText="deaktiviert"
                           ValueChanged="@(async e => {
                           sec.Configuration.Clock = e.ToSecureBool();
                           sec.Configuration.Save();
@@ -64,10 +103,6 @@
                       })" />
             </div>
         </div>
-
-
-
-
 
     </div>
 }
