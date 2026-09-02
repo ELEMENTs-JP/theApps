@@ -123,6 +123,23 @@ namespace theInfrastructure
 
             return false;
         }
+        public async Task<bool> HasItemTypePermission(IItemType itemType, SecurityFunction seFunc)
+        {
+            // Permission laden (ggf. zu ungenau)
+            List<IDTO> perms = this.Permissions.Where(se => se["Typ"] == "ItemType" && se["ItemType"] == itemType.Name).ToList();
+
+            if (perms.Count() == 0)
+                return true;
+
+            foreach (IDTO perm in perms.Where(se => se["Function"].ToSecureString() == seFunc.ToString()))
+            {
+                string AllowDeny = perm["AllowDeny"];
+                if (AllowDeny == "false")
+                    return false;
+            }
+
+            return true;
+        }
 
         // Events 
 

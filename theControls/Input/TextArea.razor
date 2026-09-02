@@ -7,6 +7,7 @@
     <textarea id="@Id"
               name="@InputName"
               class="editbox @CssClass @(Overlay != null ? "pe-6" : "")"
+              style="@Style"
               placeholder="@Placeholder"
               maxlength="@MaxLength"
               minlength="@MinLength"
@@ -77,6 +78,9 @@
 
     [Parameter]
     public bool IsEditable { get; set; } = true;
+
+    [Parameter]
+    public string Style { get; set; } = " ";
 
     private async Task HandleInput(ChangeEventArgs e)
     {

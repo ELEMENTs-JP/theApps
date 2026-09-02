@@ -41,8 +41,16 @@
     {
         await base.OnParametersSetAsync();
 
-        Factory f = new Factory(sql);
-        ItemType = await f.BuildItemType(IT);
+        
+        if (!string.IsNullOrEmpty(this.IT))
+        {
+            if (this.IT.SplitGetFirst(".").IsValidGuid())
+                return;
+
+            Factory f = new Factory(sql);
+            ItemType = await f.BuildItemType(this.IT);
+        }
+
     }
 
 }

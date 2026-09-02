@@ -10,6 +10,28 @@ namespace theInfrastructure
     public static partial class Helper
     {
         // Colors 
+        private static readonly string[] Formats = ["D", "N", "B", "P", "X"];
+
+        public static bool IsValidGuid(this string? input)
+        {
+            Guid parsedGuid = Guid.Empty;
+
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
+            ReadOnlySpan<char> span = input.AsSpan().Trim();
+
+            // Prüft strikt gegen die vorgegebenen GUID-Formate (verhindert False Positives)
+            foreach (var format in Formats)
+            {
+                if (Guid.TryParseExact(span, format, out parsedGuid))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
         public static List<tspColor> GetAllColors()
         {
             List<tspColor> colors = new List<tspColor>();

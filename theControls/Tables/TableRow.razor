@@ -1,4 +1,5 @@
-﻿@using theControls.Icons
+﻿@using theControls.Audio
+@using theControls.Icons
 
 
 @inherits BaseRow
@@ -7,11 +8,17 @@
 {
     <tr class="row-hover" style="border-left:1px solid transparent;">
         <td class="text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</td>
-        
+
         <td class="text-truncate" title="@Item.ItemType" style="max-width:15rem;">
-            <a class="fw-bold pointer" 
-                href="@( "/Item/" + Context.ItemType.Name + "/" + Item.GUID )">
-                @(Item.Title.ToSecureString())</a>
+            <div class="d-flex align-items-center gap-2">
+
+                <a class="fw-bold pointer text-truncate flex-grow-1"
+                   href="@( "/Item/" + Context.ItemType.Name + "/" + Item.GUID )">
+                    @(Item.Title.ToSecureString())
+                </a>
+         
+            
+            </div>
         </td>
 
         @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnTable == true))

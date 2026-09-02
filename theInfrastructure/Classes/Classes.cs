@@ -6,6 +6,16 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public class AudioEvent
+    {
+        public double CurrentTime { get; set; }
+        public double Duration { get; set; }
+        public double Volume { get; set; }
+        public bool Muted { get; set; }
+        public bool Ended { get; set; }
+    }
+
+
     public enum GeneralColor
     {
         NULL = 0,

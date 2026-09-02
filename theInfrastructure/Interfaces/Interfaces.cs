@@ -41,6 +41,7 @@ namespace theInfrastructure
         Task RefreshUser();
         List<IDTO> Permissions { get; set; }
         Task<bool> HasAppPermission(IApp theApp);
+        Task<bool> HasItemTypePermission(IItemType itemType, SecurityFunction seFunc);
         event PropertyChangedEventHandler PropertyChanged;
         SystemConfiguration Configuration { get; set; }
         Task Logoff();

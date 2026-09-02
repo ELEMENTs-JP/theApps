@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.FileProviders;
+using NLog;
+using NLog.Web;
 using theApp.Components;
 using theDatabase;
 using theInfrastructure;
-using NLog;
-using NLog.Web;
 
 namespace theApp
 {
@@ -18,7 +20,15 @@ namespace theApp
 
             try
             {
+                // Builder 
                 var builder = WebApplication.CreateBuilder(args);
+
+                // Preparation 
+                var filesPath = Path.Combine(builder.Environment.ContentRootPath, "FILES");
+                if (!Directory.Exists(filesPath))
+                {
+                    Directory.CreateDirectory(filesPath);
+                }
 
                 // NLog als Logging-Provider hinzufügen
                 builder.Logging.ClearProviders();
@@ -44,10 +54,6 @@ namespace theApp
 
                 // Messaging Bus Service 
                 builder.Services.AddScoped<IMessagingBusService, MessagingBusService>();
-
-                
-
-        
 
                 // Database Service 
                 builder.Services.AddScoped<ISqlDatabaseService>(provider =>
@@ -134,7 +140,7 @@ namespace theApp
 
 
 
-
+                // App 
                 var app = builder.Build();
 
                 // Configure the HTTP request pipeline.
@@ -147,9 +153,39 @@ namespace theApp
                 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
                 app.UseHttpsRedirection();
 
-                app.UseAntiforgery();
+              
 
-                app.MapStaticAssets();
+    
+                // Ergänzung für Audio-Formate (falls spezifische Extensions genutzt werden)
+                var contentTypeProvider = new FileExtensionContentTypeProvider();
+                contentTypeProvider.Mappings[".m4a"] = "audio/mp4";
+                contentTypeProvider.Mappings[".mp3"] = "audio/mpeg";
+                contentTypeProvider.Mappings[".wav"] = "audio/wav";
+                contentTypeProvider.Mappings[".ogg"] = "audio/ogg";
+                contentTypeProvider.Mappings[".opus"] = "audio/opus";
+                contentTypeProvider.Mappings[".aac"] = "audio/aac";
+                contentTypeProvider.Mappings[".flac"] = "audio/flac";
+
+                // Wird für Audio Player benötigt !!! 
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    // FILES Verzeichnis muss in Visual Studio existieren 
+                    // Wird für Audio Player benötigt !!! 
+                    FileProvider = new PhysicalFileProvider(filesPath),
+                    RequestPath = "/MEDIA",
+                    ContentTypeProvider = contentTypeProvider,
+                    ServeUnknownFileTypes = false
+                });
+
+                app.UseStaticFiles(); // notwendig für CSS und JS Dateideployment in den Razor Class Libraries 
+                app.MapStaticAssets(); // Optimiert alle statischen Dateien, die beim Build existierten
+
+                app.UseRouting();
+
+                app.UseAuthentication();
+                app.UseAuthorization();
+
+                app.UseAntiforgery();
 
                 app.MapRazorComponents<App>()
                    .AddInteractiveServerRenderMode()
@@ -157,8 +193,7 @@ namespace theApp
                                                 typeof(theComponents.Pages.Item_Page).Assembly,
                                                 typeof(theControls.Edit.EditBox).Assembly);
 
-                app.UseAuthentication();
-                app.UseAuthorization();
+          
 
                 // 2. Controller-Routen nach app.Build() mappen:
                 app.MapControllers();

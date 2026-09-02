@@ -1,15 +1,17 @@
-﻿@using theControls.Icons
+﻿@using theControls.Audio
+@using theControls.Icons
 
 @inherits BaseRow
 
 @if (Context != null)
 {
 
-    <div class="hover pointer rounded-2 p-2 m-1" @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
+    <div class="hover rounded-2 p-2 overflow-hidden m-1" 
+   >
 
         @if (string.IsNullOrEmpty(this.Base64String))
         {
-            <SymbolIcon Symbol="Icon.Empty" />
+            <SymbolIcon Symbol="Icon.Empty" MaxWidth="120" MaxHeight="120" CSS="p-3 align-items-center" />
         }
         else
         {
@@ -21,13 +23,17 @@
         }
 
         <div class="row g-0 p-1">
-            <div class="border-top">
-                <div class="p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
+            <div class="border-top align-items-center">
+                <span class="p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</span>
+                <span class="px-1">
+                    <MiniAudioPlayer Item="@Item" />
+                </span>
             </div>
-            <div class="col p-1 fw-bold" title="@Item.ItemType">
+            <div class="col-12 p-1 fw-bold pointer" title="@Item.ItemType" 
+                 @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
                 @(Item.Title.ToSecureString())
             </div>
-
+         
             @if (IsRelated)
             {
                 <div class="col-auto p-1">

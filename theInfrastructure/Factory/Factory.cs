@@ -66,6 +66,10 @@ namespace theInfrastructure
                 }
             }
 
+            if (type == null)
+            {
+                throw new NullReferenceException("Typ konnte nicht gefunden werden.");
+            }
             return (IItemType)Activator.CreateInstance(type)!;
         }
         public List<IItemType> InjectItemTypes(IApp app)

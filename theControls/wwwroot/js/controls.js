@@ -1,4 +1,221 @@
 ﻿
+
+
+window.imageUtils = {
+    compressToTargetSize: function (byteArray, maxPixelSize = 200) {
+        return new Promise((resolve, reject) => {
+            const blob = new Blob([byteArray]);
+            const url = URL.createObjectURL(blob);
+            const img = new Image();
+
+            img.onload = () => {
+                URL.revokeObjectURL(url);
+
+                let srcWidth = img.naturalWidth || img.width;
+                let srcHeight = img.naturalHeight || img.height;
+
+                // 1. Maximale Kantenlänge auf 200px begrenzen bei gleichem Seitenverhältnis
+                let targetWidth = srcWidth;
+                let targetHeight = srcHeight;
+
+                if (srcWidth > maxPixelSize || srcHeight > maxPixelSize) {
+                    if (srcWidth > srcHeight) {
+                        targetWidth = maxPixelSize;
+                        targetHeight = Math.round((srcHeight * maxPixelSize) / srcWidth);
+                    } else {
+                        targetHeight = maxPixelSize;
+                        targetWidth = Math.round((srcWidth * maxPixelSize) / srcHeight);
+                    }
+                }
+
+                // 2. Einmalig skalieren
+                const canvas = document.createElement("canvas");
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+                // 3. Performante asynchrone Konvertierung zu Uint8Array (ohne Base64/atob-Overhead)
+                canvas.toBlob((resultBlob) => {
+                    if (!resultBlob) {
+                        reject(new Error("Canvas toBlob failed"));
+                        return;
+                    }
+                    resultBlob.arrayBuffer().then(buffer => {
+                        resolve(new Uint8Array(buffer));
+                    }).catch(reject);
+                }, "image/jpeg", 0.80); // 80% Qualität reicht bei 200px für wenige KB
+            };
+
+            img.onerror = (err) => {
+                URL.revokeObjectURL(url);
+                reject(err);
+            };
+
+            img.src = url;
+        });
+    }
+};
+
+
+
+
+window.audioInterop = {
+    initPlaylist: function (audio, dotNetRef, playlist) {
+        if (!audio || !playlist || playlist.length === 0) return;
+
+        let currentIndex = 0;
+        audio.src = playlist[currentIndex];
+        audio.load();
+
+        const buildPayload = () => ({
+            currentTime: audio.currentTime,
+            duration: audio.duration,
+            volume: audio.volume,
+            muted: audio.muted,
+            ended: audio.ended
+        });
+
+        audio.addEventListener("play", () => {
+            dotNetRef.invokeMethodAsync("OnAudioPlay", buildPayload());
+        });
+
+        audio.addEventListener("pause", () => {
+            dotNetRef.invokeMethodAsync("OnAudioPause", buildPayload());
+        });
+
+        audio.addEventListener("volumechange", () => {
+            dotNetRef.invokeMethodAsync("OnAudioVolumeChange", buildPayload());
+        });
+
+        audio.addEventListener("ended", () => {
+            dotNetRef.invokeMethodAsync("OnAudioEnded", buildPayload());
+        });
+    },
+
+    playTrack: function (audio, src) {
+        if (!audio || !src) return;
+        if (audio.src !== src) {
+            audio.src = src;
+            audio.load();
+        }
+        audio.play();
+    },
+
+    pauseTrack: function (audio) {
+        if (!audio) return;
+        audio.pause();
+    },
+
+    stopTrack: function (audio) {
+        if (!audio) return;
+        audio.pause();
+        audio.currentTime = 0;
+    }
+};
+
+// window.audioInterop = {
+//     initPlaylist: function (audio, dotNetRef, playlist) {
+//         if (!audio || !playlist || playlist.length === 0) return;
+
+//         let currentIndex = 0;
+//         audio.src = playlist[currentIndex];
+//         audio.load();
+
+//         const buildPayload = () => ({
+//             currentTime: audio.currentTime,
+//             duration: audio.duration,
+//             volume: audio.volume,
+//             muted: audio.muted,
+//             ended: audio.ended
+//         });
+
+//         audio.addEventListener("play", () => {
+//             dotNetRef.invokeMethodAsync("OnAudioPlay", buildPayload());
+//         });
+
+//         audio.addEventListener("pause", () => {
+//             dotNetRef.invokeMethodAsync("OnAudioPause", buildPayload());
+//         });
+
+//         audio.addEventListener("volumechange", () => {
+//             dotNetRef.invokeMethodAsync("OnAudioVolumeChange", buildPayload());
+//         });
+
+//         audio.addEventListener("ended", () => {
+//             dotNetRef.invokeMethodAsync("OnAudioEnded", buildPayload());
+//         });
+//     },
+
+//     // Nächsten Track setzen / abspielen
+//     playTrack: function (audio, src) {
+//         if (!audio || !src) return;
+//         if (audio.src !== src) {
+//             audio.src = src;
+//             audio.load();
+//         }
+//         audio.play();
+//     },
+
+//     // Ergänzung für die kompakte Komponente: Pause & Stop
+//     pauseTrack: function (audio) {
+//         if (!audio) return;
+//         audio.pause();
+//     },
+
+//     stopTrack: function (audio) {
+//         if (!audio) return;
+//         audio.pause();
+//         audio.currentTime = 0;
+//     }
+// };
+
+// window.audioInterop = {
+//     initPlaylist: function (audio, dotNetRef, playlist) {
+//         if (!audio || !playlist || playlist.length === 0) return;
+
+//         let currentIndex = 0;
+//         audio.src = playlist[currentIndex];
+//         audio.load();
+
+//         const buildPayload = () => ({
+//             currentTime: audio.currentTime,
+//             duration: audio.duration,
+//             volume: audio.volume,
+//             muted: audio.muted,
+//             ended: audio.ended
+//         });
+
+//         audio.addEventListener("play", () => {
+//             dotNetRef.invokeMethodAsync("OnAudioPlay", buildPayload());
+//         });
+
+//         audio.addEventListener("pause", () => {
+//             dotNetRef.invokeMethodAsync("OnAudioPause", buildPayload());
+//         });
+
+//         audio.addEventListener("volumechange", () => {
+//             dotNetRef.invokeMethodAsync("OnAudioVolumeChange", buildPayload());
+//         });
+
+//         audio.addEventListener("ended", () => {
+//             dotNetRef.invokeMethodAsync("OnAudioEnded", buildPayload());
+//         });
+//     },
+
+//     // Nächsten Track setzen
+//     playTrack: function (audio, src) {
+//         if (!audio || !src) return;
+//         audio.src = src;
+//         audio.load();
+//         audio.play();
+//     }
+// };
+
+
+
+
 window.searchComponent = {
     // Registriert den globalen Keydown-Listener für Strg + F
     registerGlobalShortcut: function (inputId) {

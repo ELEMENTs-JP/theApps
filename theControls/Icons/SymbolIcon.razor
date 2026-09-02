@@ -1,6 +1,77 @@
 ﻿
 <div class="@( CSS + "  " )" style="@Style" @onclick="@onBtnClck">
 
+
+    @if (Symbol == Icon.Play)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" fill="@Color" viewBox="0 0 16 16"
+             class="icon icon-tabler icons-tabler-outline icon-tabler-maximize">
+            <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
+        </svg>
+    }
+
+    @if (Symbol == Icon.Stop)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" fill="@Color" viewBox="0 0 16 16"
+             class="icon icon-tabler icons-tabler-outline icon-tabler-maximize">
+            <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z" />
+        </svg>
+    }
+
+    @if (Symbol == Icon.FullScreen)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+        fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+        class="icon icon-tabler icons-tabler-outline icon-tabler-maximize">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M4 8v-2a2 2 0 0 1 2 -2h2" />
+            <path d="M4 16v2a2 2 0 0 0 2 2h2" />
+            <path d="M16 4h2a2 2 0 0 1 2 2v2" />
+            <path d="M16 20h2a2 2 0 0 0 2 -2v-2" />
+        </svg>
+    }
+    @if (Symbol == Icon.Min)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+        fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-minimize">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M5 9l4 0l0 -4" />
+            <path d="M3 3l6 6" />
+            <path d="M5 15l4 0l0 4" />
+            <path d="M3 21l6 -6" />
+            <path d="M19 9l-4 0l0 -4" />
+            <path d="M15 9l6 -6" />
+            <path d="M19 15l-4 0l0 4" />
+            <path d="M15 15l6 6" />
+        </svg>
+    }
+    @if (Symbol == Icon.Max)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+        fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+        class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-maximize">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M16 4l4 0l0 4" />
+            <path d="M14 10l6 -6" />
+            <path d="M8 20l-4 0l0 -4" />
+            <path d="M4 20l6 -6" />
+            <path d="M16 20l4 0l0 -4" />
+            <path d="M14 14l6 6" />
+            <path d="M8 4l-4 0l0 4" />
+            <path d="M4 4l6 6" />
+        </svg>
+    }
+    @if (Symbol == Icon.Filter)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+            fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            class="icon icon-tabler icons-tabler-outline icon-tabler-filter">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227" />
+        </svg>
+    }
+
     @if (Symbol == Icon.Principal)
     {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
@@ -151,7 +222,8 @@
 
     @if (Symbol == Icon.Empty)
     {
-        <svg xmlns="http://www.w3.org/2000/svg" style="@( "max-height:"+ MaxHeight +"px !important; max-width:"+MaxWidth+"px !important;" )"
+        <svg xmlns="http://www.w3.org/2000/svg" 
+            style="@( "max-height:"+ MaxHeight +"px !important; max-width:"+MaxWidth+"px !important;" )"
              width="862.70323" height="644.78592" viewBox="0 0 862.70323 644.78592"
              xmlns:xlink="http://www.w3.org/1999/xlink" role="img" artist="Katerina Limpitsouni"
              source="https://undraw.co/">

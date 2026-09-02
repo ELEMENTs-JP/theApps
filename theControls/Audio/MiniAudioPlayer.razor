@@ -1,0 +1,126 @@
+﻿@inject IJSRuntime JS
+@implements IAsyncDisposable
+@inject NavigationManager nm
+
+@if (IsAudioFile)
+{
+    <audio @ref="_audioElement" class="d-none"></audio>
+
+    @if (_isPlaying)
+    {
+        <div class="hover pointer rounded px-1 text-danger d-inline-flex align-items-center"
+             title="Stoppen"
+             @onclick="StopAudioAsync">
+            <SymbolIcon Symbol="Icon.Stop" />
+        </div>
+    }
+    else
+    {
+        <div class="hover pointer rounded px-1 text-primary d-inline-flex align-items-center"
+             title="Abspielen"
+             @onclick="PlayAudioAsync">
+            <SymbolIcon Symbol="Icon.Play" />
+        </div>
+    }
+}
+
+@code {
+    private ElementReference _audioElement;
+    private DotNetObjectReference<MiniAudioPlayer>? _dotNetRef;
+    private bool _isPlaying;
+    private bool _isInitialized = false;
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+    string AudioUrl { get; set; } = string.Empty;
+
+    private bool IsAudioFile { get; set; } = false;
+    private string FileTyp { get; set; } = string.Empty;
+    private string AudioMimeTyp { get; set; } = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        try
+        {
+            if (Item == null)
+                return;
+
+            if (this.Item.ItemType == "Audio" || this.Item.ItemType == "File")
+            {
+                this.AudioUrl = "MEDIA/" + this.Item.GUID + "." + this.Item["FileExtension"].ToSecureString();
+
+                AudioMimeTyp = Item["FileExtension"].GetAudioMimeType();
+
+                string host = nm.BaseUri;
+                AudioUrl = host + AudioUrl.Replace("\\", "/");
+
+                byte[] header = await Helper.GetFileHeaderByUrlAsync(AudioUrl);
+                if (header != null)
+                {
+                    string ext = Helper.IdentifyFileTypeWithByteArray(header);
+                    IsAudioFile = ext.IsValidAudioExtension();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Error handling
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Initialisiere erst, wenn IsAudioFile true ist und es noch nicht initialisiert wurde
+        if (IsAudioFile && !_isInitialized)
+        {
+            _isInitialized = true;
+            _dotNetRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("window.audioInterop.initPlaylist", _audioElement, _dotNetRef, new[] { AudioUrl });
+        }
+    }
+
+    private async Task PlayAudioAsync()
+    {
+        await JS.InvokeVoidAsync("window.audioInterop.playTrack", _audioElement, AudioUrl);
+    }
+
+    private async Task StopAudioAsync()
+    {
+        await JS.InvokeVoidAsync("window.audioInterop.stopTrack", _audioElement);
+    }
+
+    [JSInvokable]
+    public async Task OnAudioPlay(object payload)
+    {
+        _isPlaying = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    [JSInvokable]
+    public async Task OnAudioPause(object payload)
+    {
+        _isPlaying = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    [JSInvokable]
+    public async Task OnAudioEnded(object payload)
+    {
+        _isPlaying = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    [JSInvokable]
+    public void OnAudioVolumeChange(object payload) { }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_dotNetRef != null)
+        {
+            _dotNetRef.Dispose();
+        }
+    }
+}

@@ -17,7 +17,7 @@
                 @foreach (IDTO item in Context.Items)
                 {
                     <div class="col-2">
-                        <FileItem @key="@( "file-image-" + item.GUID)"
+                        <FileItem @key="@( "file-audio-image-" + item.GUID)"
                                   Context="@Context" Item="@item"
                                   IsRelated="@( (RelatedItem != null))" />
                     </div>

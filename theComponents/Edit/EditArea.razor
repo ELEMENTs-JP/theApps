@@ -14,8 +14,9 @@
 {
     <Frame Border="true" Rounded="true">
         <Header>
-            <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)" Field="@TitleField" Binding="ValueBindingTyp.Title"
-                     Context="@Context" Border="false" />
+            <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)" 
+                        Field="@TitleField" Binding="ValueBindingTyp.Title" 
+                     Context="@Context" Border="false" ControlStyle=" min-width:21rem; " />
             <div class="d-flex align-items-center">
 
                 @if (app != null && app.App != null)

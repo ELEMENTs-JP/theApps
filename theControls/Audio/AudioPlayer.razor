@@ -1,0 +1,190 @@
+﻿@inject NavigationManager nm
+@inject IJSRuntime JS
+@implements IDisposable
+
+@if (this.Item != null)
+{
+    @if (IsAudioFile)
+    {
+        @if (this.Item.ItemType == "Playlist")
+        {
+            <div class="@( FrameCSS + " w-100 rounded-2 bg-primary " )">
+                <audio @ref="audioRef" class="@( ControlCSS + " audio-bg " )" style="@( "width: 100%; ")" controls>
+                </audio>
+
+            </div>
+        }
+
+        @if (this.Item.ItemType == "Audio" || this.Item.ItemType == "File")
+        {
+            @if (IsAudioFile == true)
+            {
+                <div class="@( FrameCSS + " w-100 rounded-2 bg-surface " )">
+                    <audio @ref="audioRef" class="@( ControlCSS + " audio-bg " )" style="@( "width: 100%; ")" controls>
+                        <source src="@( AudioUrl )" type="@AudioMimeTyp" />
+                    </audio>
+                </div>
+            }
+            @*         else
+        {
+            @if (this.FileTyp == "Audio")
+            {
+                <InfoPanelCTL FrameCSS="my-2" Typ="InfoPanelTyp.Information" Message="Es wurde keine Audiodatei erkannt." />
+            }
+        } *@
+        }
+    }
+}
+
+@code {
+
+    // Playlist
+    [Parameter]
+    public List<string> Playlist { get; set; } = new();
+
+    private int currentIndex = 0;
+
+    private ElementReference audioRef;
+    private DotNetObjectReference<AudioPlayer>? dotNetRef;
+
+    [Parameter]
+    public string FrameCSS { get; set; } = "";
+
+    [Parameter]
+    public string ControlCSS { get; set; } = "";
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+    public string AudioUrl { get; set; } = string.Empty;
+    private string CurrentTrackName { get; set; } = string.Empty;
+
+    private bool IsAudioFile { get; set; } = false;
+    private string FileTyp { get; set; } = string.Empty;
+    private string AudioMimeTyp { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> ImageUrlChanged { get; set; }
+    private async void onValueChanged()
+    {
+        // Raise Event
+        try
+        {
+            await ImageUrlChanged.InvokeAsync(AudioUrl);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("FAIL: " + ex.Message);
+        }
+
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        try
+        {
+            if (Item == null)
+                return;
+
+
+            if (this.Item.ItemType == "Audio" || this.Item.ItemType == "File")
+            {
+                this.AudioUrl = "MEDIA/" + this.Item.GUID + "." + this.Item["FileExtension"].ToSecureString();
+
+                // reset
+
+                AudioMimeTyp = Item["FileExtension"].GetAudioMimeType();
+
+                // Link
+                string host = nm.BaseUri;
+                AudioUrl = host + AudioUrl.Replace("\\", "/");
+
+                //
+                byte[] header = await Helper.GetFileHeaderByUrlAsync(AudioUrl);
+                if (header != null)
+                {
+                    string ext = Helper.IdentifyFileTypeWithByteArray(header);
+                    IsAudioFile = ext.IsValidAudioExtension();
+
+                    // IsAudioFile = Item["FileExtension"].IsValidAudioExtension(); 
+                }
+            }
+
+            // if (this.Item.ItemType == "Playlist")
+            // {
+            //     List<IDTO> audios = await Item.GetRelatedItemsAsync("File", QueryType.ChildrenByParent);
+            //     Playlist.Clear();
+
+            //     foreach (IDTO song in audios)
+            //     {
+            //         string path = "MEDIA/" + Helper.GetMediaFilePath(song);
+            //         path = nm.BaseUri + path.Replace("\\", "/");
+
+            //         this.Playlist.Add(path);
+            //     }
+
+            // }
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            dotNetRef = DotNetObjectReference.Create(this);
+
+            await JS.InvokeVoidAsync("audioInterop.initPlaylist", audioRef, dotNetRef, Playlist ?? (AudioUrl != null ? new List<string> { AudioUrl } : new List<string>()));
+        }
+    }
+
+    // ===== EVENTS =====
+
+    [JSInvokable]
+    public Task OnAudioPlay(AudioEvent data)
+    {
+        Console.WriteLine($"PLAY @ {data.CurrentTime}");
+        return Task.CompletedTask;
+    }
+
+    [JSInvokable]
+    public Task OnAudioPause(AudioEvent data)
+    {
+        Console.WriteLine($"PAUSE @ {data.CurrentTime}");
+        return Task.CompletedTask;
+    }
+
+    [JSInvokable]
+    public Task OnAudioVolumeChange(AudioEvent data)
+    {
+        Console.WriteLine($"VOLUME {data.Volume}");
+        return Task.CompletedTask;
+    }
+
+    [JSInvokable]
+    public async Task OnAudioEnded(AudioEvent data)
+    {
+        // Nächster Track abspielen, wenn Playlist vorhanden
+        if (Playlist != null && Playlist.Count > 1)
+        {
+            currentIndex++;
+            if (currentIndex >= Playlist.Count)
+                currentIndex = 0; // Loop
+
+            await JS.InvokeVoidAsync("audioInterop.playTrack", audioRef, Playlist[currentIndex]);
+        }
+    }
+
+    public void Dispose()
+    {
+        dotNetRef?.Dispose();
+    }
+
+}

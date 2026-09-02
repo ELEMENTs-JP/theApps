@@ -7,6 +7,22 @@
 {
     <div class="overflow-y-auto" style="max-height:40rem;">
 
+            <div class="row g-0 align-items-center bg-surface border-bottom p-2 my-2">
+            <div class="col p-2">
+                <div class="fw-bold">PDF Viewer</div>
+                <div class="text-muted">aktiviert / deaktiviert den Detail PDF Viewer</div>
+            </div>
+            <div class="col-auto p-2">
+                <CheckBox Value="@sec.Configuration.PDFView.ToSecureString()"
+                            TrueText="aktiviert" FalseText="deaktiviert"
+                          ValueChanged="@(async e => {
+                          sec.Configuration.PDFView = e.ToSecureBool();
+                          sec.Configuration.Save();
+                          await PushFeatureUpdate();
+                      })" />
+            </div>
+        </div>
+
         <div class="row g-0 align-items-center bg-surface border-bottom p-2 my-2">
             <div class="col p-2">
                 <div class="fw-bold">Suche</div>

@@ -18,6 +18,7 @@
                       ValueChanged="@(async e => { onValueChanged(e); await Change(); })"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
+                      Style="@ControlStyle"
                       Rows="@Rows"
                       IsEditable="@IsEditable">
                 <Overlay>
@@ -112,6 +113,7 @@
                      Label="@Title" ShowLabel="false" Description="@Description" Value="@Value"
                      ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
                      CssClass="@CssClass"
+                     Style="@ControlStyle"
                      IsEditable="@IsEditable">
                 <Overlay>
                     <div class="hover pointer rounded-2 p-1 me-2" @onclick="Save">
@@ -192,6 +194,9 @@
 
     [Parameter]
     public string CssClass { get; set; } = "  ";
+
+    [Parameter]
+    public string ControlStyle { get; set; } = " ";
 
     [Parameter]
     public bool Border { get; set; } = true;

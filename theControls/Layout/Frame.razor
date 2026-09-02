@@ -15,18 +15,31 @@
 
         @if (Header.HasContent())
         {
-            <div class="flex-fill px-1">
+            <div class="px-1 flex-grow-1">
                 @Header
             </div>
         }
 
+        @if (Controls.HasContent())
+        {
+            <div class="px-2">
+                @Controls
+            </div>
+
+        }
         @if (Search.HasContent())
         {
-            <div class="flex-fill px-1">
+            <div class="flex-fill px-2">
                 @Search
             </div>
         }
+        @if (Features.HasContent())
+        {
+            <div class="px-2">
+                @Features
+            </div>
 
+        }
         @if (Related.HasContent())
         {
             <div class="d-flex flex-row-reverse g-1 px-1 pe-3">
@@ -74,6 +87,12 @@
 
     [Parameter]
     public RenderFragment Search { get; set; }
+
+    [Parameter]
+    public RenderFragment Controls { get; set; }
+
+    [Parameter]
+    public RenderFragment Features { get; set; }
 
     [Parameter]
     public RenderFragment Related { get; set; }

@@ -55,10 +55,16 @@
             }
         }
 
-        <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
-             @onclick="DeleteItem">
-            löschen...
-        </div>
+        @if (hasDeletePermission)
+        {
+            @if (Context.Item.ItemType != "Archive")
+            {
+                <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2"
+                     @onclick="DeleteItem">
+                    löschen...
+                </div>
+            }
+        }
 
     </div>
 </div>
@@ -73,13 +79,24 @@
     [Parameter]
     public IQueryContext Context { get; set; } // Injection
 
+    bool hasDeletePermission { get; set; } = true;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
         msg.OnMessage += OnMessageIncome;
     }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
 
+        // Berechtigung
+        if (ItemType != null)
+        {
+            hasDeletePermission = await sec.HasItemTypePermission(this.ItemType, SecurityFunction.Delete);
+        }
+    }
     private async void OnMessageIncome(AppMessage message)
     {
         if (message.Id == "Features" && message.Action == BusAction.Refresh)
@@ -122,17 +139,35 @@
     }
     private async Task DeleteItem()
     {
+        // Berechtigung
+        if (hasDeletePermission == false)
+        {
+            msg.Publish("Info", BusAction.Info, "Keine Berechtigung zum löschen.");
+            return;
+        }
+
+
         if (Context != null)
         {
             string info = "";
             string ext = Context.Item["FileExtension"].ToSecureString();
+            
+            // File 
             string file = Context.Item.GUID.ToSecureString() + "." + ext;
-
             string fullFilePath = Path.Combine(env.ContentRootPath, loc.DefaultFilePath, file);
             if (File.Exists(fullFilePath))
             {
                 File.Delete(fullFilePath);
                 info = "Datei und ";
+            }
+
+            // Min Image File 
+            string minFile = Context.Item.GUID.ToSecureString() + "_min." + ext;
+            string minFullFilePath = Path.Combine(env.ContentRootPath, loc.DefaultFilePath, minFile);
+            if (File.Exists(minFullFilePath))
+            {
+                File.Delete(minFullFilePath);
+                info = " und Mindatei und ";
             }
 
             await Context.Delete(Context.Item);

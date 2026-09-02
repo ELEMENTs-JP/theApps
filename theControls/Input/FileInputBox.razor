@@ -9,6 +9,7 @@
 @inject ISqlDatabaseService sql
 @inject ILocalizationService loc
 @inject ISecurityService sec
+@inject IMessagingBusService msg
 
 <div class="pointer rounded hover overflow-hidden bg-surface text-white position-relative mx-2"
      style="@( "border: 1px dashed #333 !important; " + InternalStyle )">
@@ -87,6 +88,9 @@
     [Parameter]
     public IItemType ItemType { get; set; }
 
+
+
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -131,9 +135,12 @@
         {
             try
             {
-                long maxAllowedBytes = (long)sec.Configuration.MaxFileSizeInMB * 1024 * 1024;
-                if (file.Size > maxAllowedBytes)
+                double fileSizeInMB = (double)file.Size / (1024 * 1024);
+
+                if (fileSizeInMB > sec.Configuration.MaxFileSizeInMB)
                 {
+                    string info = $"Die Datei ist größer als {sec.Configuration.MaxFileSizeInMB} MB.";
+                    msg.Publish("Info", BusAction.Info, info);
                     continue;
                 }
 
@@ -179,6 +186,47 @@
                 {
                     System.Diagnostics.Debug.WriteLine("Fail Upload Image: " + exInner.ToString());
                     continue;
+                }
+
+                try
+                {
+
+                    if (extension.IsValidImageExtension())
+                    {
+                        // 1. Die eben geschriebene Datei komprimieren (Bytes direkt aus dem Speicher lesen)
+                        // file.OpenReadStream ermöglicht direkten Zugriff ohne File-Locking-Probleme
+                        using var imageStream = file.OpenReadStream(maxAllowedSize: Helper.MaxFileSize());
+                        using var memoryStream = new MemoryStream();
+                        await imageStream.CopyToAsync(memoryStream);
+
+                        byte[] originalBytes = memoryStream.ToArray();
+
+                        // 2. Komprimierung über JSInterop aufrufen
+                        byte[]? compressedBytes = await ProcessByteArray(originalBytes);
+
+                        if (compressedBytes != null && compressedBytes.Length > 0)
+                        {
+                            // 3. Pfad mit _min erstellen
+                            string minFilePath = Path.Combine(relativeSaveFilePath, $"{itemGUID}_min.{extension}");
+
+                            // 4. Datei mittels eigenem FileStream schreiben und explizit schließen (Flush & Close)
+                            await using (FileStream minStream = new FileStream(
+                                minFilePath,
+                                FileMode.Create,
+                                FileAccess.Write,
+                                FileShare.None,
+                                bufferSize: 8192,
+                                useAsync: true))
+                            {
+                                await minStream.WriteAsync(compressedBytes.AsMemory(0, compressedBytes.Length));
+                                await minStream.FlushAsync();
+                            }
+                        }
+                    }
+                }
+                catch (Exception exMin)
+                {
+
                 }
 
                 FileNotification token = new FileNotification
@@ -227,6 +275,25 @@
 
         await Task.CompletedTask;
     }
+
+    public async Task<byte[]?> ProcessByteArray(byte[] sourceBytes)
+    {
+        try
+        {
+            // Parameter 200 = Längste Seite maximal 200px (Seitenverhältnis bleibt erhalten)
+            return await JS.InvokeAsync<byte[]>(
+                "imageUtils.compressToTargetSize",
+                sourceBytes,
+                300
+            );
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("JSInterop Error: " + ex.ToString());
+            return null;
+        }
+    }
+
 
     public void Dispose()
     {

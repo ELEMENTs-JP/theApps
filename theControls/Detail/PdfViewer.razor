@@ -1,0 +1,82 @@
+@using Microsoft.AspNetCore.Hosting
+@inject IWebHostEnvironment env
+@inject ISqlDatabaseService sql
+@inject ISecurityService sec
+
+@if (sec.Configuration.PDFView)
+{
+    @if (!string.IsNullOrEmpty(Base64String) && IsVisible)
+    {
+        <div class="@( this.FrameCSS + " bg-surface border rounded-2 overflow-hidden " )"
+             style="@( this.Style + " min-height:480px; max-height:600px;")">
+
+        
+            <div class="row g-0 p-1">
+                <div class="col-auto ms-auto">
+                    <ModalForm Size="ModalFormSize.Full"
+                               ContentCSS="p-0 m-0" ModalCSS="modal-dialog modal-dialog-centered">
+                        <Icon>
+                            <SymbolIcon Symbol="Icon.Max" />
+                        </Icon>
+                        <ChildContent>
+                            <embed src="@( this.Base64String + "" )" type="application/pdf" style="width:100%; height:100%;" />
+                        </ChildContent>
+                    </ModalForm>
+                </div>
+            </div>
+
+            <embed src="@( this.Base64String + "" )" type="application/pdf" style="width:100%; height:520px;" />
+
+        </div>
+    }
+}
+
+@code {
+
+    string Base64String { get; set; } = string.Empty;
+
+    [Parameter]
+    public string FrameCSS { get; set; } = " ";
+
+
+    [Parameter]
+    public string Style { get; set; } = string.Empty;
+
+    [Parameter]
+    public IDTO File { get; set; } = null;
+
+    private bool IsVisible { get; set; } = false;
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await LoadFile();
+    }
+
+    private async Task LoadFile()
+    {
+        try
+        {
+            // check
+            if (File == null)
+            {
+                IsVisible = false;
+                return;
+            }
+
+            string ext = File["FileExtension"].ToSecureString();
+            IsVisible = (ext.ToLower().Contains("pdf")) ? true : false;
+            if (IsVisible)
+            {
+                // <embed src="data:application/pdf;base64,@Base64String" type="application/pdf" style="width:100%; height:520px;" />
+                this.Base64String = await Helper.ToBase64String(File);
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+}

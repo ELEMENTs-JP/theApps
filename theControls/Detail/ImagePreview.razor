@@ -1,0 +1,87 @@
+﻿@if (Image != null)
+{
+    @if (FileExt.IsValidImageExtension())
+    {
+        <div id="@( "user_image_relative_" + ID )"
+             class="border rounded-2 bg-surface align-items-center p-1"
+             style="@MinStyle">
+
+            <div class="row g-0 p-1">
+                <div class="col-auto ms-auto">
+                    <ModalForm Size="ModalFormSize.Full"
+                               ContentCSS="p-0 m-0" ModalCSS="modal-dialog modal-dialog-centered">
+                        <Icon>
+                            <SymbolIcon Symbol="Icon.Max" />
+                        </Icon>
+                        <ChildContent>
+                            <div class="@( ImageCSS  + " row col-auto mx-auto " )"
+                                 style="@(FullSizeImageStyle + " " + BackgroundColor +
+                                                            " background-image: url(" + this.Base64String + "); " )">
+                            </div>
+                        </ChildContent>
+                    </ModalForm>
+                </div>
+            </div>
+
+            <div class="@( ImageCSS  + " row col-auto mx-auto " )" 
+                    style="@(ImageStyle + " " + BackgroundColor +
+                    " background-image: url(" + this.Base64String + "); " )">
+            </div>
+
+        </div>
+    }
+}
+
+@code {
+
+
+    [Parameter]
+    public IDTO Image { get; set; }
+
+    private string ID = "" + Guid.NewGuid();
+
+    // Image
+    private string Base64String { get; set; } = "";
+
+    string FileExt { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ImageCSS { get; set; } = "  ";
+
+    [Parameter]
+    public string ImageStyle { get; set; } = "height:32rem; width:100%; border: 3px solid #ffffff; background-size: cover; background-position: center center; background-repeat: no-repeat;";
+
+    [Parameter]
+    public string FullSizeImageStyle { get; set; } = "width: 100%; height: stretch; display: block; border: 3px solid #ffffff; background-size: cover; background-position: center center; background-repeat: no-repeat;";
+
+    [Parameter]
+    public string MinStyle { get; set; } = "min-height: 32px; min-width:32px;";
+
+    string BackgroundColor { get; set; } = "  ";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (Image == null)
+            return;
+
+        this.FileExt = Image["FileExtension"].ToSecureString();
+
+        this.Base64String = await Helper.ToBase64String(Image);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+
+        }
+    }
+
+
+ 
+  
+}

@@ -1,6 +1,7 @@
 ﻿@using theComponents.Add
 @using theControls.Add
 @using theControls.Files
+@using theControls.Funktionen
 @using theControls.Input
 @using theControls.Layout
 @using theControls.Search
@@ -14,6 +15,10 @@
         <Header>
             <ControlHeader PreTitle="List" Title="@ItemType.Name" PostTitle="@ItemType.Description" />
         </Header>
+  @*       <Controls>
+                <Filter ItemType="@ItemType" />
+                <Sortierung ItemType="@ItemType" />
+        </Controls> *@
         <Search>
             <LocalSearchComp OnSearch="@( e => { Matchcode = e.ToSecureString(); })" />
         </Search>
@@ -47,7 +52,7 @@
             {
                 <CalendarComp ItemType="@ItemType" />
             }
-           
+
         </Content>
     </Frame>
 }

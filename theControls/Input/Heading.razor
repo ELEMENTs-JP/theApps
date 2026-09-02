@@ -9,7 +9,8 @@
 }
 <div class="position-relative overlay-container">
     <div id="@Id" name="@InputName"
-        class=" display-6 @CssClass @( ((IsEditable) ? " editbox " : " viewbox no-select ") )" style="margin-left:-10px;"
+        class=" display-6 @CssClass @( ((IsEditable) ? " editbox " : " viewbox no-select ") )"
+         style="@( Style + " margin-left:-10px; "  )"
          contenteditable="@(IsEditable)"
          role="textbox"
          aria-multiline="false"
@@ -80,6 +81,9 @@
 
     [Parameter]
     public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Style { get; set; } = " ";
 
     [Parameter]
     public string Placeholder { get; set; } = string.Empty;

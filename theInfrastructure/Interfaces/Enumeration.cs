@@ -4,6 +4,14 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum SecurityFunction
+    {
+        NULL = 0,
+        Create = 1,
+        Read = 2,
+        Update = 3,
+        Delete = 4,
+    }
     public enum AssociationTyp
     {
         NULL = 0,
@@ -107,6 +115,7 @@ namespace theInfrastructure
         Search,
         Check,
         Menu,
+        Filter,
         Config,
         Connect,
         Disconnect,
@@ -121,6 +130,13 @@ namespace theInfrastructure
         Delete,
         Setting,
         Grib,
+        Play,
+        Stop,
+
+        // Layout 
+        Max,
+        Min,
+        FullScreen,
         Layout,
         COL12,
         COL66,

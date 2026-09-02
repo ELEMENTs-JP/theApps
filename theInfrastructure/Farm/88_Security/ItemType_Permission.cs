@@ -51,6 +51,9 @@ namespace theInfrastructure
 
             args.Item["Permission"] = perm;
 
+            // Update 
+            await args.SqlService.Update(args.Item);
+
             // Refresh current User 
             await args.SecurityService.RefreshUser();
 

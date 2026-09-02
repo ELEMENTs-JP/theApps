@@ -66,7 +66,7 @@ namespace theInfrastructure
                 startIndex += matchIndex + sepSpan.Length;
             }
         }
-    
+
 
         public static IReadOnlyDictionary<string, string> GetPropertyDefaultValues()
         {
@@ -341,10 +341,7 @@ namespace theInfrastructure
             }
             else if (field.Typ == FieldTyp.FunctionList)
             {
-                Items.Add(new DTO() { ID = "Create", Title = "Create" });
-                Items.Add(new DTO() { ID = "Read", Title = "Read" });
-                Items.Add(new DTO() { ID = "Update", Title = "Update" });
-                Items.Add(new DTO() { ID = "Delete", Title = "Delete" });
+                Items = DefaultFunctions();
             }
             else if (field.Typ == FieldTyp.AssociationTyp)
             {
@@ -358,7 +355,16 @@ namespace theInfrastructure
             return Items;
         }
 
-
+        public static List<IDTO> DefaultFunctions()
+        {
+            List<IDTO> Items = new();
+            Items.Add(new DTO() { ID = SecurityFunction.Create.ToString(), Title = SecurityFunction.Create.ToString() });
+            Items.Add(new DTO() { ID = SecurityFunction.Read.ToString(), Title = SecurityFunction.Read.ToString() });
+            Items.Add(new DTO() { ID = SecurityFunction.Update.ToString(), Title = SecurityFunction.Update.ToString() });
+            Items.Add(new DTO() { ID = SecurityFunction.Delete.ToString(), Title = SecurityFunction.Delete.ToString() });
+            return Items;
+        }
+      
 
         public static string GetClassByDevice(IField field)
         {
