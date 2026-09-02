@@ -10,6 +10,7 @@ namespace theInfrastructure
         {
             Name = "User";
             InSubNavigation = false;
+            Typ = ItemTypeTyp.User;
         }
         public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
         {

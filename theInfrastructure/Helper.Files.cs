@@ -66,41 +66,6 @@ namespace theInfrastructure
 
             return "";
         }
-        public static string IdentifyFileTypeWithByteArrayObsolete(byte[] sourceFileBytes)
-        {
-            if (sourceFileBytes == null || sourceFileBytes.Length == 0)
-                return "";
-
-            // Spezielle Offset-Prüfungen für ISO Media Container (M4A, MP4) & AAC
-            if (sourceFileBytes.Length >= 8)
-            {
-                // ISO Media File Format (ftyp-Box ab Offset 4)
-                if (sourceFileBytes[4] == 0x66 && sourceFileBytes[5] == 0x74 &&
-                    sourceFileBytes[6] == 0x79 && sourceFileBytes[7] == 0x70)
-                {
-                    if (sourceFileBytes.Length >= 11 &&
-                        sourceFileBytes[8] == 0x4D && sourceFileBytes[9] == 0x34 && sourceFileBytes[10] == 0x41)
-                    {
-                        return "m4a";
-                    }
-                    return "mp4";
-                }
-            }
-
-            // Iteration für Standard-Signaturen an Offset 0
-            List<KeyValuePair<byte[], string>> fileSignatures = GetFileSignatures();
-
-            foreach (var signature in fileSignatures)
-            {
-                if (sourceFileBytes.Length >= signature.Key.Length &&
-                    sourceFileBytes.Take(signature.Key.Length).SequenceEqual(signature.Key))
-                {
-                    return signature.Value;
-                }
-            }
-
-            return "";
-        }
 
         static List<KeyValuePair<byte[], string>> GetFileSignatures()
         {
@@ -170,43 +135,6 @@ namespace theInfrastructure
                 await stream.CopyToAsync(memoryStream);
 
                 return memoryStream.ToArray();
-            }
-            catch
-            {
-                return Array.Empty<byte>();
-            }
-        }
-        public static async Task<byte[]> GetFileHeaderByUrlAsyncObsolete(string url)
-        {
-            using var client = new HttpClient();
-
-            // 1. Schnellprüfung per HEAD
-            try
-            {
-                var headResponse = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
-                if (!headResponse.IsSuccessStatusCode)
-                    return Array.Empty<byte>();
-            }
-            catch
-            {
-                return Array.Empty<byte>();
-            }
-
-            // 2. Partieller GET mit Range-Header
-            try
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, url);
-                request.Headers.Range = new RangeHeaderValue(0, 7); // Byte 0-7
-
-                using var response = await client.SendAsync(request);
-                if (!response.IsSuccessStatusCode)
-                    return Array.Empty<byte>();
-
-                await using var stream = await response.Content.ReadAsStreamAsync();
-                var buffer = new byte[8];
-                return await stream.ReadAtLeastAsync(buffer, 8, throwOnEndOfStream: false) < 8
-                    ? Array.Empty<byte>()
-                    : buffer;
             }
             catch
             {
@@ -299,7 +227,7 @@ namespace theInfrastructure
                    span.Equals("ico", StringComparison.OrdinalIgnoreCase) ||
                    span.Equals("avif", StringComparison.OrdinalIgnoreCase);
         }
-        public static async Task<string> ToBase64String(IDTO image)
+        public static async Task<string> ToBase64String(IDTO image, bool loadSmallifAvailable = false)
         {
             string Base64String = string.Empty;
             if (image == null)
@@ -310,7 +238,23 @@ namespace theInfrastructure
 
             if (System.IO.File.Exists(FilePath))
             {
-                // Read
+                if (loadSmallifAvailable)
+                {
+                    // Pfad für die _min-Datei ermitteln
+                    string directory = System.IO.Path.GetDirectoryName(FilePath) ?? string.Empty;
+                    string fileNameWithoutExt = System.IO.Path.GetFileNameWithoutExtension(FilePath);
+                    string fileExt = System.IO.Path.GetExtension(FilePath);
+
+                    string minFilePath = System.IO.Path.Combine(directory, $"{fileNameWithoutExt}_min{fileExt}");
+
+                    // Falls die _min-Datei existiert, wird deren Pfad verwendet
+                    if (System.IO.File.Exists(minFilePath))
+                    {
+                        FilePath = minFilePath;
+                    }
+                }
+
+                // Read 
                 byte[] arr = System.IO.File.ReadAllBytes(FilePath);
 
                 string base64String = Convert.ToBase64String(arr, 0, arr.Length);

@@ -1,4 +1,5 @@
 ﻿@using theComponents.Security
+@using theControls.Image
 @using theControls.Layout
 @using theControls.Modal
 @using theControls.Pages
@@ -13,6 +14,12 @@
 @if (ItemType != null && !string.IsNullOrEmpty(ID))
 {
     <Frame Border="true" Rounded="true">
+        <Icon>
+            @if (ItemType.Typ == ItemTypeTyp.User)
+            {
+                <MinUserProfileImg Style="margin-top:6px;" User="@Context.Item" SizeStyle="height: 60px; width: 60px;" />
+            }
+        </Icon>
         <Header>
             <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)" 
                         Field="@TitleField" Binding="ValueBindingTyp.Title" 

@@ -11,7 +11,8 @@
             <div class="row g-0">
 
                 <div class="col-2 p-3">
-                    <FileUploadComp SizeMode="FileInputBox.FileInputSizeMode.Maximized" Width="96" Height="96" />
+                    <FileUploadComp ItemType="@ItemType" 
+                        SizeMode="FileInputBox.FileInputSizeMode.Maximized" Width="96" Height="96" />
                 </div>
 
                 @foreach (IDTO item in Context.Items)
@@ -30,9 +31,23 @@
 
 @code {
 
+    [Parameter]
+    public string Matchcode { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
+
+        await Filter();
+    }
+
+    public async Task Filter()
+    {
+        await Context.Filter(this.Matchcode);
     }
 
 }

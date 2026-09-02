@@ -1,13 +1,29 @@
 ﻿@using theControls.Audio
 @using theControls.Icons
+@using theControls.Image
 
 
 @inherits BaseRow
 
-@if (Context != null)
+@if (Context != null && Item != null)
 {
     <tr class="row-hover" style="border-left:1px solid transparent;">
+        
+        
         <td class="text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</td>
+
+        @if (Context.ItemType.Typ == ItemTypeTyp.User)
+        {
+            <td>
+                <MinUserProfileImg @key="@Item.GUID" User="@Item" />
+            </td>
+        }
+        @if (Context.ItemType.Typ == ItemTypeTyp.Audio)
+        {
+            <td>
+                <MiniAudioPlayer @key="@Item.GUID" Item="@Item" />
+            </td>
+        }
 
         <td class="text-truncate" title="@Item.ItemType" style="max-width:15rem;">
             <div class="d-flex align-items-center gap-2">
@@ -40,6 +56,11 @@
 
 @code {
 
-  
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
 
 }

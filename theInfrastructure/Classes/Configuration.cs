@@ -54,10 +54,11 @@ namespace theInfrastructure
         public bool EventHandler { get; set; } = true; // legt fest ob die Item (ItemType) Event Handler aktiviert sind oder nicht 
         public bool GlobalSearch { get; set; } = true; // legt fest ob die übergeordnete Suche angezeigt wird 
         public bool PDFView { get; set; } = true; // aktiviert / deaktiviert die Anzeige des PDF Viewer auf der Detail Page 
-
+        
         // Dateien 
         public bool AllowFileUploads { get; set; } = true;
         public int MaxFileSizeInMB { get; set; } = 20;
+        public int SmallImagePixel { get; set; } = 300; // legt die Größe von verkleinerten Bildern für eine performante Preview fest 
 
         // Sicherheit 
         public bool FocusOnLogin { get; set; } = false;

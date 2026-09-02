@@ -1,12 +1,15 @@
 ﻿@inject IMessagingBusService message
 @inject IAppService app
 @implements IAsyncDisposable
+@inject NavigationManager nm
+@inject IMessagingBusService msg
 
 <div class="row g-0">
 
     @if (app != null && app.App != null)
     {
-        <div class="col-auto bg-surface p-2 px-3 align-items-center border-bottom border-end">
+        <div class="col-auto pointer hover bg-surface p-2 px-3 align-items-center border-bottom border-end"
+             @onclick="@( async e => { await OnAppSelect(app.App); })">
             @app.App.Name
         </div>
     }
@@ -42,7 +45,17 @@
         await base.OnParametersSetAsync();
 
     }
+    private async Task OnAppSelect(IApp _app)
+    {
+        await app.SetApp(_app);
 
+        nm.NavToApp(_app.Name);
+
+        // Refresh 
+        msg.Publish(new AppMessage("App", BusAction.Refresh));
+
+        await Task.CompletedTask;
+    }
     private async void OnMessageRun(AppMessage msg)
     {
         if (msg.Id == "App" && msg.Action == BusAction.Refresh)

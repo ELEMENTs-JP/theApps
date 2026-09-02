@@ -25,27 +25,33 @@
         <Related>
             @if (this.ItemType.Name != "Trash")
             {
-                @if (this.ItemType.Typ == ItemTypeTyp.Item)
+                @if (this.ItemType.Typ == ItemTypeTyp.Item ||
+                this.ItemType.Typ == ItemTypeTyp.User)
                 {
                     <AddArea ItemType="@ItemType" />
                 }
-                @if (this.ItemType.Typ == ItemTypeTyp.File)
+                @if (this.ItemType.Typ == ItemTypeTyp.File || 
+                    this.ItemType.Typ == ItemTypeTyp.Image || 
+                    this.ItemType.Typ == ItemTypeTyp.Audio)
                 {
-                    <FileUploadComp />
+                    <FileUploadComp ItemType="@this.ItemType" />
                 }
             }
         </Related>
         <Content>
 
-            @if (this.ItemType.Typ == ItemTypeTyp.Item)
+            @if (this.ItemType.Typ == ItemTypeTyp.Item ||
+                this.ItemType.Typ == ItemTypeTyp.User ||
+                    this.ItemType.Typ == ItemTypeTyp.Audio)
             {
                 <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode">
 
                 </DataTable>
             }
-            @if (this.ItemType.Typ == ItemTypeTyp.File)
+            @if (this.ItemType.Typ == ItemTypeTyp.File || 
+                 this.ItemType.Typ == ItemTypeTyp.Image)
             {
-                <FileList ItemType="@ItemType" />
+                <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" />
             }
 
             @if (this.ItemType.Typ == ItemTypeTyp.Appointment)
@@ -68,7 +74,10 @@
     {
         await base.OnInitializedAsync();
     }
-
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);

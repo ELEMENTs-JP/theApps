@@ -1,0 +1,77 @@
+@inject ISqlDatabaseService sql
+@inject IAppService app
+
+<div id="@( "user_image_relative_" + ID )" class="@( CSS + " align-items-center " )" style="@Style">
+
+    <div class="@( " row col-auto mx-auto " )" style="@(ImageStyle + " " + SizeStyle
+                                               + BackgroundColor +
+                                               " background-image: url(" + this.Base64String + "); " )">
+
+        @if (string.IsNullOrEmpty(this.Base64String))
+        {
+            <SymbolIcon Symbol="Icon.User" />
+        }
+    </div>
+
+</div>
+
+@code {
+
+    [Parameter]
+    public IDTO User { get; set; }
+
+    private string ID = "" + Guid.NewGuid();
+
+    // Image
+    private string Base64String { get; set; } = "";
+
+    [Parameter]
+    public string CSS { get; set; } = "  ";
+
+    [Parameter]
+    public string ImageStyle { get; set; } = " border-radius: 50%; border: 2px solid #ffffff; background-size: cover; background-position: center center; background-repeat: no-repeat;";
+
+    [Parameter]
+    public string SizeStyle { get; set; } = " height: 36px; width: 36px; ";
+
+    [Parameter]
+    public string Style { get; set; } = "";
+
+    string BackgroundColor { get; set; } = "  ";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            await LoadUserImage();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+
+    private async Task LoadUserImage()
+    {
+        // Check
+        if (User == null)
+            return;
+
+        // Create
+        IQueryResult result = await sql.GetRelatedItems(User, "File", AssociationTyp.UserImage);
+        if (result == null)
+            return;
+
+        IDTO? image = result.Items.FirstOrDefault();
+        if (image == null)
+            return;
+
+        this.Base64String = await Helper.ToBase64String(image, true);
+    }
+}

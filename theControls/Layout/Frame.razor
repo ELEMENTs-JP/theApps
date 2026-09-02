@@ -8,7 +8,7 @@
 
         @if (Icon.HasContent())
         {
-            <div class="px-1">
+            <div class="p-2 align-self-start">
                 @Icon
             </div>
         }
@@ -42,7 +42,7 @@
         }
         @if (Related.HasContent())
         {
-            <div class="d-flex flex-row-reverse g-1 px-1 pe-3">
+            <div class="d-flex flex-row-reverse g-1 px-1">
                 @Related
             </div>
         }
@@ -60,7 +60,7 @@
     @if (Bottom.HasContent())
     {
         <div class="row g-0 px-1 border-top">
-            <div class="col-12 px-1">
+            <div class="col-12 p-2">
                 @Bottom
             </div>
         </div>
@@ -107,7 +107,7 @@
     {
         string css = string.Empty;
 
-        css = " p-1 pb-3 ";
+        css = " p-1 ";
 
         if (Border)
         {

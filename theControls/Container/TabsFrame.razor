@@ -2,12 +2,12 @@
 @inject ISecurityService sec
 @inject IAppService app
 
-<div id="@( "tabs_frame_div " + ID )" class=" rounded-2 bg-surface p-2 @FrameCSS" style="@( app.Configuration.GetAkzentStyle() )">
+<div id="@( "tabs_frame_div " + ID )" class=" rounded-2 @BackgroundCSS p-2 @FrameCSS" style="@( app.Configuration.GetAkzentStyle() )">
 
     @if (Orientation == Orientation.Center)
     {
         <div class="row g-0">
-            <div class="col-auto mx-auto d-flex mb-2 mx-auto border rounded-2 align-items-center overflow-hidden">
+            <div class="col-auto mx-auto d-flex mb-2 mx-auto align-items-center overflow-hidden">
 
                 @if (!string.IsNullOrEmpty(this.Icon))
                 {
@@ -24,7 +24,7 @@
                 }
 
                 <div class="px-1">
-                    <div class="@( " nav " + ((ShowAsTabs) ? " nav-tabs " : " ") )" id="nav-tab" role="tablist">
+                    <div class="@( " border-bottom-0 nav " + ((ShowAsTabs) ? " nav-tabs " : " ") )" id="nav-tab" role="tablist">
                         @HeaderContent
                     </div>
                 </div>
@@ -128,6 +128,9 @@
 
     [Parameter]
     public string FrameCSS { get; set; } = string.Empty;
+
+    [Parameter]
+    public string BackgroundCSS { get; set; } = " bg-surface ";
 
     [Parameter]
     public Orientation Orientation { get; set; } = Orientation.Horizontal;

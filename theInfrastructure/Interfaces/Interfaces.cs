@@ -58,7 +58,7 @@ namespace theInfrastructure
         List<IApp> AllApps { get; set; }
         IItemType ItemType { get; set; }
         IDTO Page { get; set; }
-        Task SetApp(IApp app);
+        Task SetApp(IApp? app);
         Task SetItemType(IItemType it);
         Task SetPage(IDTO page);
         Task AppByItemType(IItemType it);

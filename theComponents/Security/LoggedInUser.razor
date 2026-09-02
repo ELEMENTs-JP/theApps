@@ -6,9 +6,15 @@
 {
     <div class="d-flex flex-row bg-surface p-2 align-items-center  border-bottom border-start border-end">
         <SymbolIcon Symbol="Icon.User" />
-        <span class="ps-2">
+        
+        <span class="px-2">
             @sec.User.Title
         </span>
+        
+        @if (IsAdmin)
+        {
+            <SymbolIcon Symbol="Icon.Admin" Color="var(--tblr-red)" Title="Nutzer ist Administrator" />
+        }
     </div>
 }
 
@@ -16,7 +22,17 @@
 
 @code {
 
-    
+    bool IsAdmin { get; set; } = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (sec.User != null)
+        {
+            IsAdmin = sec.User["IsAdmin"].ToSecureBool();
+        }
+    }
 
 
 }

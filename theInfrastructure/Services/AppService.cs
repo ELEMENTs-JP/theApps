@@ -90,9 +90,16 @@ namespace theInfrastructure
             }
 
         }
-        public async Task SetApp(IApp app)
+        public async Task SetApp(IApp? _app)
         {
-            App = AllApps.Where(se => se.Name == app.Name).FirstOrDefault();
+            if (_app == null)
+            {
+                App = null;
+            }
+            else
+            { 
+                App = AllApps.FirstOrDefault(se => se.Name == _app.Name);
+            }
 
             this.ItemType = null;
             this.Page = null;
@@ -100,7 +107,9 @@ namespace theInfrastructure
         }
         public async Task SetItemType(IItemType it)
         {
+            // ItemType 
             this.ItemType = it;
+
             this.Page = null;
 
             await AppByItemType(it);
@@ -130,6 +139,7 @@ namespace theInfrastructure
                 }
             }
 
+            await Task.CompletedTask;
         }
 
         // Property Changed 

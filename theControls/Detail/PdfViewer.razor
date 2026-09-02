@@ -2,15 +2,15 @@
 @inject IWebHostEnvironment env
 @inject ISqlDatabaseService sql
 @inject ISecurityService sec
+@inject IAppService app
 
 @if (sec.Configuration.PDFView)
 {
     @if (!string.IsNullOrEmpty(Base64String) && IsVisible)
     {
         <div class="@( this.FrameCSS + " bg-surface border rounded-2 overflow-hidden " )"
-             style="@( this.Style + " min-height:480px; max-height:600px;")">
-
-        
+            style="@( this.Style + " " + app.Configuration.GetAkzentStyle() 
+                + "  min-height:480px; max-height:600px;" )">
             <div class="row g-0 p-1">
                 <div class="col-auto ms-auto">
                     <ModalForm Size="ModalFormSize.Full"

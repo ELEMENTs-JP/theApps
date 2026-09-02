@@ -6,11 +6,17 @@
 
 @if (sec.Configuration.AllowFileUploads)
 {
-    <FileInputBox OnFileUploaded="OnFileUpload" 
+    @if (ItemType != null)
+    {
+        <FileInputBox ItemType="@ItemType" OnFileUploaded="OnFileUpload" 
                   SizeMode="@SizeMode" Width="@Width" Height="@Height" />
+    }
 }
 
 @code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
 
     [Parameter]
     public FileInputBox.FileInputSizeMode SizeMode { get; set; } = FileInputBox.FileInputSizeMode.Fixed;
@@ -36,7 +42,7 @@
         qp.GUID = fn.FileGUID;
         qp.MasterGUID = sql.MasterGUID;
         qp.Title = fn.OriginalFileName;
-        qp.ItemType = "File";
+        qp.ItemType = ItemType.Name;
         
         // Create 
         IQueryResult result = await sql.Create(qp);

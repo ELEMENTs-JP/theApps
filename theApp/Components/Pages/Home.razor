@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using theComponents.Dashboard
+@using theControls.Container
 @using theControls.Edit
 @using theControls.Input
 @using theControls.Text
@@ -12,9 +14,31 @@
                    PreRelated="Willkommen"  Related="@user"  PostRelated="@post"  />
     
 
+    <TabsFrame Orientation="Orientation.Center" FrameCSS="w-100" BackgroundCSS="glass">
+        <HeaderContent>
+            <TabsItem ID="@( ID + "1")" Title="Business" IsActive="true" Layout="TabsLayout.Buttons" />
+            <TabsItem ID="@( ID + "2")" Title="Personal" Layout="TabsLayout.Buttons" />
+        </HeaderContent>
+    
+             <ChildContent>
+                 <TabsPanel ID="@( ID + "1")">
+
+                     <CompanyDashboard/>
+                 
+                </TabsPanel>
+                <TabsPanel ID="@( ID + "2")">
+
+                    <PersonalDashboard />
+                 
+                </TabsPanel>
+             </ChildContent>
+    </TabsFrame>
+
 </div>
 
 @code {
+
+    private string ID = "" + Guid.NewGuid();
 
     string user = string.Empty;
     string post = string.Empty;

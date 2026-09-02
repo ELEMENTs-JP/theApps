@@ -30,10 +30,13 @@
     private async Task NavigateToItemType(IItemType it)
     {
         await apps.SetItemType(it);
+
         nm.NavToLibrary(it.Name, it.Typ);
 
+        // // Refresh
+        // msg.Publish(new AppMessage("ItemType", BusAction.Refresh));
         // Refresh
-        msg.Publish(new AppMessage("ItemType", BusAction.Refresh));
+        msg.Publish(new AppMessage("App", BusAction.Refresh));
 
     }
 }

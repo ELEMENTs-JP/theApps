@@ -18,6 +18,39 @@
         transition: border-color 0.35s ease;
     }
 
+
+
+
+
+
+.searchbox {
+    border: 1px solid transparent !important;
+    border-radius: 0.35rem;
+    width: 100%;
+    background-color: var(--tsp-hover-light) !important;
+    outline: none;
+    padding: 0.35rem 0.5rem;
+    flex: 1;
+}
+
+    .searchbox:hover {
+        background-color: var(--tsp-hover) !important;
+        transition: background-color 0.35s ease;
+    }
+
+    .searchbox:focus {
+        background-color: var(--tsp-hover) !important;
+        transition: background-color 0.35s ease;
+        border: 1px solid var(--tblr-border-color-translucent) !important;
+        transition: border-color 0.35s ease;
+    }
+
+
+
+
+
+
+
 .viewbox {
     border: 1px solid transparent !important;
     border-radius: 0.35rem;

@@ -49,6 +49,28 @@
 
     <div class="col-4 border-start border-end">
 
+        <div class="border-bottom p-1 mb-2">
+            <h3 class="h3 w-100">Bilder</h3>
+        </div>
+
+        <ButtonSelectionBox Label="Passwortlänge"
+                            Value="@sec.Configuration.SmallImagePixel.ToSecureString()"
+                            ItemChanged="@(e =>
+                        {
+                                sec.Configuration.SmallImagePixel = e.ID.ToSecureInt();
+                            sec.Configuration.Save();
+                        })"
+                            Items="@(new List<IDTO>() {
+                                new DTO() { ID = "50", Title = loc.GetLabel("50 Pixel", "50 Pixel") },
+                                new DTO() { ID = "80", Title = loc.GetLabel("80 Pixel", "80 Pixel") },
+                                new DTO() { ID = "100", Title = loc.GetLabel("100 Pixel", "100 Pixel") },
+                                new DTO() { ID = "120", Title = loc.GetLabel("120 Pixel", "120 Pixel") },
+                                new DTO() { ID = "150", Title = loc.GetLabel("150 Pixel", "150 Pixel") },
+                                new DTO() { ID = "200", Title = loc.GetLabel("200 Pixel", "200 Pixel") },
+                                new DTO() { ID = "300", Title = loc.GetLabel("300 Pixel", "300 Pixel") },
+                                                } )" />
+        <div class="border-bottom my-3"></div>
+
     </div>
 
     <div class="col-4">

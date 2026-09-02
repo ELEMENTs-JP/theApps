@@ -8,8 +8,7 @@
     <div class="row d-flex align-items-center px-2 pb-2">
 
         <div class="col-auto">
-            <div class="hover pointer rounded-2 p-1"
-                 @onclick="PreMonth">
+            <div class="hover pointer rounded-2 p-1" @onclick="PreMonth">
                 <i class="ti ti-chevron-left text-muted"></i>
             </div>
         </div>
@@ -18,8 +17,7 @@
             <strong class="fw-bold">@(CurrentDate.Date.ToString("MMMM") + " " + CurrentDate.Date.Year.ToSecureString())</strong>
         </div>
         <div class="col-auto">
-            <div class="hover pointer rounded-2 p-1"
-                 @onclick="NextMonth">
+            <div class="hover pointer rounded-2 p-1" @onclick="NextMonth">
                 <i class="ti ti-chevron-right text-muted"></i>
             </div>
         </div>
@@ -40,7 +38,7 @@
         }
 
         <div class="col-auto ms-auto px-2">
-            <AddArea ItemType="@ItemType" />
+       @*      <AddArea ItemType="@ItemType" /> *@
         </div>
     </div>
 

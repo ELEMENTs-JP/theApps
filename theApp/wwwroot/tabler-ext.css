@@ -238,3 +238,7 @@
 .pb-025 {
     padding-bottom: 0.065rem !important;
 }
+
+.markdown > table > :not(caption) > * > *, .table > :not(caption) > * > * {
+    padding: .25rem .5rem !important; /* Zelle*/
+}

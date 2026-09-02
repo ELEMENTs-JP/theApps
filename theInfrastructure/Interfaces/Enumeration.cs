@@ -70,6 +70,9 @@ namespace theInfrastructure
         File = 2,
         Appointment = 3,
         Hierarchy = 4,
+        Image = 5,
+        User = 6,
+        Audio = 7,
     }
     public enum Orientation
     {

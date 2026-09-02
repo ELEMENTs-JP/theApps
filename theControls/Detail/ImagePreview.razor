@@ -1,10 +1,13 @@
-﻿@if (Image != null)
+﻿@inject IAppService app
+
+
+@if (Image != null)
 {
     @if (FileExt.IsValidImageExtension())
     {
         <div id="@( "user_image_relative_" + ID )"
-             class="border rounded-2 bg-surface align-items-center p-1"
-             style="@MinStyle">
+             class="border rounded-2 overflow-hidden bg-surface align-items-center"
+             style="@(MinStyle + " " + app.Configuration.GetAkzentStyle())">
 
             <div class="row g-0 p-1">
                 <div class="col-auto ms-auto">
@@ -49,10 +52,10 @@
     public string ImageCSS { get; set; } = "  ";
 
     [Parameter]
-    public string ImageStyle { get; set; } = "height:32rem; width:100%; border: 3px solid #ffffff; background-size: cover; background-position: center center; background-repeat: no-repeat;";
+    public string ImageStyle { get; set; } = "height:32rem; width:100%; background-size: cover; background-position: center center; background-repeat: no-repeat;";
 
     [Parameter]
-    public string FullSizeImageStyle { get; set; } = "width: 100%; height: stretch; display: block; border: 3px solid #ffffff; background-size: cover; background-position: center center; background-repeat: no-repeat;";
+    public string FullSizeImageStyle { get; set; } = "width: 100%; height: stretch; display: block; background-size: cover; background-position: center center; background-repeat: no-repeat;";
 
     [Parameter]
     public string MinStyle { get; set; } = "min-height: 32px; min-width:32px;";

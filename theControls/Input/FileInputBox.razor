@@ -11,34 +11,42 @@
 @inject ISecurityService sec
 @inject IMessagingBusService msg
 
-<div class="pointer rounded hover overflow-hidden bg-surface text-white position-relative mx-2"
-     style="@( "border: 1px dashed #333 !important; " + InternalStyle )">
+@if (ItemType != null)
+{
+    <div class="pointer rounded hover overflow-hidden bg-surface text-white position-relative mx-2"
+         style="@( "border: 1px dashed #333 !important; " + InternalStyle )">
 
-    @if (isLoading)
-    {
-        <div class="@( ProgressCSS + " position-absolute top-50 start-50 translate-middle " )"
-             style="@( "  " + InternalStyle )"
-             title="@(Progress + "% Complete")">
-            <div class="@ProgressLineCSS" style="width: @(Progress + "%")" role="progressbar"
-                 aria-valuenow="@Progress" aria-valuemin="0" aria-valuemax="100">
+        @if (isLoading)
+        {
+            <div class="@( ProgressCSS + " position-absolute top-50 start-50 translate-middle " )"
+                 style="@( "  " + InternalStyle )"
+                 title="@(Progress + "% Complete")">
+                <div class="@ProgressLineCSS" style="width: @(Progress + "%")" role="progressbar"
+                     aria-valuenow="@Progress" aria-valuemin="0" aria-valuemax="100">
+                </div>
             </div>
-        </div>
-    }
-    else
-    {
-        <div class="px-1 position-absolute top-50 start-50 translate-middle">
-            <SymbolIcon Symbol="Icon.File" Width="@Width" Height="@Height" />
-        </div>
-    }
+        }
+        else
+        {
+            <div class="position-relative" style="@( $"min-width:{Width}px; min-height:{Height}px;" )">
+                <div class="px-1 position-absolute top-50 start-50 translate-middle" >
+                    <SymbolIcon Symbol="Icon.File" Width="@Width" Height="@Height" />
+                </div>
+            </div>
+        }
 
-    <!-- InputFile darf während des Uploads NICHT aus dem DOM entfernt werden -->
-    <InputFile @key="inputFileKey" id="@ID" multiple OnChange="@Upload"
-               disabled="@isLoading"
-               class="@( ControlCSS + " position-absolute top-50 start-50 translate-middle " )"
-               style="@( ControlStyle + " opacity:0.0005; " + (isLoading ? "display:none;" : "") + InternalStyle )" />
-</div>
+        <!-- InputFile darf während des Uploads NICHT aus dem DOM entfernt werden -->
+        <InputFile @key="inputFileKey" id="@ID" multiple OnChange="@Upload"
+                   disabled="@isLoading"
+                   class="@( ControlCSS + " position-absolute top-50 start-50 translate-middle " )"
+                   style="@( ControlStyle + " opacity:0.0005; " + (isLoading ? "display:none;" : "") + InternalStyle )" />
+    </div>
+}
 
 @code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
 
     public enum FileInputSizeMode
     {
@@ -84,11 +92,6 @@
 
     [Parameter]
     public int Height { get; set; } = 24;
-
-    [Parameter]
-    public IItemType ItemType { get; set; }
-
-
 
 
     protected override async Task OnInitializedAsync()
@@ -147,6 +150,32 @@
                 Guid itemGUID = Guid.NewGuid();
                 string extension = Helper.SplitGetLast(file.Name);
                 string fullFilePath = Path.Combine(relativeSaveFilePath, $"{itemGUID}.{extension}");
+
+                if (this.ItemType.Typ == ItemTypeTyp.Image)
+                {
+                    if (extension.IsValidImageExtension() == false)
+                    {
+                        // Info 
+                        msg.Publish("Info", BusAction.Info, 
+                            $"Datei: {file.Name} - nicht unterstütztes Bildformat.");
+                        
+                        // WEITER 
+                        continue;    
+                    }
+                }
+
+                if (this.ItemType.Typ == ItemTypeTyp.Audio)
+                {
+                    if (extension.IsValidAudioExtension() == false)
+                    {
+                        // Info
+                        msg.Publish("Info", BusAction.Info,
+                            $"Datei: {file.Name} - nicht unterstütztes Audioformat.");
+
+                        // WEITER
+                        continue;
+                    }
+                }
 
                 try
                 {
@@ -278,13 +307,13 @@
 
     public async Task<byte[]?> ProcessByteArray(byte[] sourceBytes)
     {
+        int size = sec.Configuration.SmallImagePixel;
         try
         {
             // Parameter 200 = Längste Seite maximal 200px (Seitenverhältnis bleibt erhalten)
             return await JS.InvokeAsync<byte[]>(
                 "imageUtils.compressToTargetSize",
-                sourceBytes,
-                300
+                sourceBytes, size
             );
         }
         catch (Exception ex)

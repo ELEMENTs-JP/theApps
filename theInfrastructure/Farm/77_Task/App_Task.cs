@@ -18,9 +18,11 @@ namespace theInfrastructure
             List<IItemType> ItemTypes = new();
 
             // ItemTypes 
-            ItemTypes.Add(new ItemType_Note());
             ItemTypes.Add(new ItemType_File());
+            ItemTypes.Add(new ItemType_Note());
             ItemTypes.Add(new ItemType_Appointment());
+            ItemTypes.Add(new ItemType_Image());
+            ItemTypes.Add(new ItemType_Audio());
             ItemTypes.Add(new ItemType_Task());
 
             return ItemTypes;

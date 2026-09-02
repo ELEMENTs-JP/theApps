@@ -78,7 +78,7 @@
         this.Base64String = string.Empty;
         if (Helper.IsValidImageExtension(ext) == true)
         {
-            this.Base64String = await Helper.ToBase64String(this.Item);
+            this.Base64String = await Helper.ToBase64String(this.Item, true);
         }
 
     }

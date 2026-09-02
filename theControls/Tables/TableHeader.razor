@@ -3,6 +3,16 @@
 @if (Context != null)
 {
     <th scope="col-050">ID</th>
+
+    @if (Context.ItemType.Typ == ItemTypeTyp.User)
+    {
+        <th scope="col"></th>
+    }
+    @if (Context.ItemType.Typ == ItemTypeTyp.Audio)
+    {
+        <th scope="col-050"></th>
+    }
+
     <th scope="col">Title</th>
 
     @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnTable == true))
@@ -23,6 +33,8 @@
 
     [Parameter]
     public bool IsRelated { get; set; } = false;
+
+
 
 
 }
