@@ -1,5 +1,6 @@
 ﻿@using theControls.Essentials
 @inject ILocalizationService loc
+@inject ISqlDatabaseService sql
 
 @if (Field != null)
 {
@@ -17,12 +18,33 @@
     }
     else if (Field.Typ == FieldTyp.CheckBox)
     {
-        <BooleanBox Value="@Value" Field="@Field" />    
+        <BooleanBox Value="@Value" Field="@Field" />
+    }
+    else if (Field.Typ == FieldTyp.Select)
+    {
+        if (isLoading)
+        {
+            <div class="placeholder-glow">
+                <span class="placeholder col-7"></span>
+            </div>
+        }
+        else
+        {
+
+            @foreach (IDTO dto in this.Items)
+            {
+                <a class="px-1 text-nowrap text-truncate"
+                   style="max-width:5rem;"
+                   title="@dto.Title"
+                   href="@( "/Item/" + dto.ItemType + "/" + dto.GUID )">
+                    @(dto.Title.ToSecureString())
+                </a>
+            }
+        }
     }
     else if (Field.Typ == FieldTyp.Password)
     {
-        @( "..."
-                    )
+        @("...")
     }
     else
     {
@@ -38,7 +60,14 @@
     private string Text { get; set; } = string.Empty;
 
     [Parameter]
-    public IField Field { get; set; } 
+    public IField Field { get; set; }
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+    List<IDTO> Items { get; set; } = new();
+
+    bool isLoading { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,9 +87,20 @@
 
         if (firstRender)
         {
-
-
+            await LoadBySelect();
+            await InvokeAsync(StateHasChanged);
         }
+    }
+
+    private async Task LoadBySelect()
+    {
+        if (Field.Typ == FieldTyp.Select)
+        {
+            IQueryResult result = await sql.GetRelatedItems(Item, Field.ItemType, Field.Association);
+            Items = result.Items;
+        }
+
+        isLoading = false;
     }
 
     public async Task Convert()
@@ -96,7 +136,7 @@
             default:
                 {
                     Text = Value.ToSecureString();
-                    break;    
+                    break;
                 }
         }
 

@@ -1,4 +1,5 @@
-﻿@using theControls.Icons
+﻿@using theControls.Essentials
+@using theControls.Icons
 @using theControls.Input
 @inject ISqlDatabaseService sql
 
@@ -18,6 +19,21 @@
                       Rows="@Rows">
             </TextArea>
         }
+        else if (Field.Typ == FieldTyp.Select)
+        {
+            <Selection @key="@( "Select-" + ID + "-" + Field.Title)"
+                       Label="@Field.Title" Description="@Field.Description" Value="@Value"
+                       Item="@( new DTO() )" ItemType="@Field.ItemType"
+                       Association="@Field.Association"
+                       ItemAssigned="@(async e =>{   })"
+                       ItemRemoved="@(async e =>{  })"
+                       ItemChanged="@(async e =>{  })"
+                       ItemsChanged="@(async e =>{ await ItemsChanged.InvokeAsync(e); })"
+                       Placeholder="@Field.Placeholder"
+                       CssClass="@CssClass"
+                       IsEditable="@true">
+            </Selection>
+        }
         else if (Field.Typ == FieldTyp.DropDown ||
                  Field.Typ == FieldTyp.User ||
                  Field.Typ == FieldTyp.FieldTyp ||
@@ -33,6 +49,44 @@
                     ValueChanged="@(async e => { Value = e; await ValueChanged.InvokeAsync(e); })"
                     Placeholder="@Field.Placeholder"
                     CssClass="@CssClass">
+                       <HeaderTemplate Context="headitem">
+                    @if (Field.Typ == FieldTyp.Progress)
+                    {
+                        <ProgressBar Value="@headitem.Title.ToSecureString()" />
+                    }
+                    else if (Field.Typ == FieldTyp.Priority)
+                    {
+                        <PriorityBox ID="@headitem.ID" Value="@headitem.Title" />
+                    }
+                    else if (Field.Typ == FieldTyp.Status)
+                    {
+                        <StatusBox ID="@headitem.ID" Value="@headitem.Title" />
+                    }
+                    else
+                    {
+                        @headitem.Title.ToSecureString()
+                    }
+                </HeaderTemplate>
+                <ItemTemplate Context="entry">
+                    <div class="row g-0">
+
+                        @if (Field.Typ == FieldTyp.Priority)
+                        {
+                            <PriorityBox ID="@entry.ID" Value="@entry.Title" />
+                        }
+                        else if (Field.Typ == FieldTyp.Status)
+                        {
+                            <StatusBox ID="@entry.ID" Value="@entry.Title" />
+                        }
+                        else
+                        {
+                            <div class="col px-1">
+                                @entry.Title
+                            </div>
+                        }
+                    </div>
+
+                </ItemTemplate>
             </DropDown>
         }
         else if (Field.Typ == FieldTyp.CheckBox)
@@ -70,6 +124,8 @@
 }
 
 @code {
+
+    private string ID { get; set; } = Guid.NewGuid().ToSecureString();
 
     // Fields 
     List<IDTO> Items { get; set; } = new();
@@ -113,8 +169,6 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
-        
     }
     protected override async Task OnParametersSetAsync()
     {
@@ -151,5 +205,7 @@
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
 
+    [Parameter]
+    public EventCallback<List<IDTO>> ItemsChanged { get; set; }
 
 }

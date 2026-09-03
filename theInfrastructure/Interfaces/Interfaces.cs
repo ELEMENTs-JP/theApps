@@ -6,8 +6,13 @@ using System.Text;
 
 namespace theInfrastructure
 {
- 
 
+    public interface IAssignableItems
+    {
+        // Legt die zugeordneten Einträge bei der Selection Box fest 
+        // um auf die Assigned Items in der AddBox zugreifen zu können 
+        List<IDTO> AssignedItems { get; set; }
+    }
     public interface IQueryParameter
     {
         // Identify 

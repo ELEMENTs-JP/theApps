@@ -2,6 +2,7 @@
 @inject ILocalizationService loc
 @inject IMessagingBusService msg
 @implements IAsyncDisposable
+@implements IAssignableItems
 
 @if (!string.IsNullOrEmpty(this.Label))
 {
@@ -19,7 +20,9 @@
                 @foreach (IDTO dto in this.AssignedItems)
                 {
                     <div class="d-inline-flex p-025 px-1 rounded-2 hover pointer mx-1">
-                        <div class="px-1">
+                        <div class="px-1 text-nowrap text-truncate" 
+                            style="max-width:5rem;" 
+                                title="@dto.Title">
                             @dto.Title
                         </div>
                     </div>
@@ -162,7 +165,7 @@
     [Parameter]
     public string MaxHeightCSS { get; set; } = "max-height:44rem;";
 
-    List<IDTO> AssignedItems { get; set; } = new();
+    public List<IDTO> AssignedItems { get; set; } = new();
     List<IDTO> Items { get; set; } = new();
 
     [Parameter]
@@ -249,7 +252,6 @@
         if (dto == null)
             return;
 
-        IQueryResult assignResult = await sql.Assign(Item, dto, Association);
 
         // assign
         this.AssignedItems.Add(dto);
@@ -258,9 +260,7 @@
         await ItemAssigned.InvokeAsync(dto);
         await ItemsChanged.InvokeAsync(this.AssignedItems);
 
-        msg.Publish("Info", BusAction.Info, "Zuordnung erfolgt");
-
-        // await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
     private async Task RemoveItem(IDTO dto)
     {
@@ -273,17 +273,13 @@
         if (dto == null)
             return;
 
-        IQueryResult assignResult = await sql.Remove(this.Item, dto);
-
-        this.AssignedItems.Remove(dto);
+        this.AssignedItems.Remove(this.AssignedItems.FirstOrDefault(se => se.GUID == dto.GUID));
 
         await ItemChanged.InvokeAsync(dto);
         await ItemRemoved.InvokeAsync(dto);
         await ItemsChanged.InvokeAsync(this.AssignedItems);
 
-        msg.Publish("Info", BusAction.Info, "Eintrag entfernt");
-        
-        // await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     private string searchTerm = string.Empty;

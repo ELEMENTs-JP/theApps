@@ -33,7 +33,11 @@
         {
             <Selection @key="@( "Select-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
                        Label="@Title" Description="@Description" Value="@Value"
-                       Item="@Context.Item" ItemType="@Field.ItemType" ItemChanged="@(async e =>{  })"
+                       Item="@Context.Item" ItemType="@Field.ItemType" 
+                       Association="@Field.Association"
+                       ItemAssigned="@(async e =>{ await SelectAssign(e);  })"
+                       ItemRemoved="@(async e =>{ await SelectRemove(e); })"
+                       ItemChanged="@(async e =>{  })"
                        Placeholder="@Field.Placeholder"
                        CssClass="@CssClass"
                        IsEditable="@IsEditable">
@@ -180,6 +184,8 @@
     private string Description { get; set; } = string.Empty;
     private string Value { get; set; } = string.Empty;
 
+
+
     [Parameter]
     public List<IDTO> Items { get; set; } = new();
 
@@ -324,6 +330,22 @@
         // Events
         await ItemChanged.InvokeAsync(Context.Item);
         return Context.Item;
+    }
+
+    // SELECTION 
+    private async Task SelectAssign(IDTO dto)
+    {
+        // Assign 
+        IQueryResult assignResult = await sql.Assign(Context.Item, dto, Field.Association);
+        msg.Publish("Info", BusAction.Info, "Zuordnung erfolgt");
+
+    }
+    private async Task SelectRemove(IDTO dto)
+    {
+        // Remove 
+        IQueryResult assignResult = await sql.Remove(Context.Item, dto);
+        msg.Publish("Info", BusAction.Info, "Eintrag entfernt");
+
     }
 
     // Events

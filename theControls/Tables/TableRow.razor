@@ -10,7 +10,7 @@
     <tr class="row-hover" style="border-left:1px solid transparent;">
         
         
-        <td class="text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</td>
+        <td class="text-muted text-nowrap" title="@Item.GUID">@(Item.ID.ToSecureString())</td>
 
         @if (Context.ItemType.Typ == ItemTypeTyp.User)
         {
@@ -40,7 +40,8 @@
         @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnTable == true))
         {
             <td class="@Helper.GetClassByDevice(col) align-items-center">
-                <TableCell Value="@(Item[col.Column].ToSecureString())" Field="@col" />
+                <TableCell @key="@( Item.GUID + col.Column + col.ItemType  )" 
+                    Value="@(Item[col.Column].ToSecureString())" Field="@col" Item="@Item" />
             </td>
         }
 

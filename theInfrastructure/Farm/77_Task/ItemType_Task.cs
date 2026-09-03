@@ -21,6 +21,7 @@ namespace theInfrastructure
             {
                 Title = "Owner",
                 Typ = FieldTyp.Select,
+                Association = AssociationTyp.Children,
                 ItemType = "User",
                 Column = "Owner",
                 CSS = " col-12 col-md-4 col-lg-4 ",
@@ -37,7 +38,9 @@ namespace theInfrastructure
                 OnDevice = DeviceDisplay.Desktop
             });
 
-            Fields.Add(new Field() { Title = "Aktiv", Typ = FieldTyp.CheckBox, Column = "IsActive",
+            Fields.Add(new Field() { 
+                Title = "Aktiv", Typ = FieldTyp.CheckBox, Column = "IsActive",
+                DefaultValue = "true",
                 TrueText="Aktiv", FalseText="Inaktiv",
                 CSS = " col-12 col-md-4 col-lg-4 " });
             
@@ -58,7 +61,10 @@ namespace theInfrastructure
             List<IField> fields = await GetFields();
             foreach (IField field in fields.Where(se => !string.IsNullOrEmpty(se.DefaultValue)))
             {
-                args.Item[field.Column] = field.DefaultValue;
+                if (string.IsNullOrEmpty(args.Item[field.Column].ToSecureString()))
+                { 
+                    args.Item[field.Column] = field.DefaultValue;
+                }
             }
             
             // Update 

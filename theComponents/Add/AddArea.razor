@@ -66,6 +66,7 @@
                 {
                     <div class="col-12">
                         <AddBox Field="@field" CssClass="" Border="false"
+                                ItemsChanged="@( async e => { AssignedValues[field.Column] = e; })"
                                 ValueChanged="@( async e => { await OnChange(field, e); })" />
                     </div>
                 }
@@ -99,7 +100,9 @@
     private string Title { get; set; } = string.Empty;
     private string Message { get; set; } = string.Empty;
 
+    // Property Values 
     private List<IDataValue> Values { get; set; } = new();
+    private Dictionary<string, List<IDTO>> AssignedValues = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -206,15 +209,6 @@
         // Laden
         await Context.Load(ID.ToSecureString());
 
-        if (secService.Configuration.EventHandler == true)
-        {
-            // Event 
-            IItemEventArgs args = new ItemEventArgs(Context.Item, RelatedItem, sqlService, secService, appService);
-
-            // Create Event 
-            Context.Item = await Context.ItemType.OnCreateItem(args);
-        }
-
         // Fields - Values 
         foreach (IDataValue dv in Values)
         {
@@ -224,15 +218,39 @@
         // Update 
         await Context.Update(Context.Item);
 
-        // Related Item
+        // Assigns 
+        foreach (var av in AssignedValues)
+        {
+            IField? field = Fields.FirstOrDefault(se => se.Column == av.Key);
+            if (field != null)
+            {
+                foreach (IDTO toAssignItem in av.Value)
+                {
+                    await sqlService.Assign(Context.Item, toAssignItem, field.Association);
+                }
+            }
+        }
+
+        // Related Item 
         if (RelatedItem != null)
         {
             await sqlService.Assign(RelatedItem, Context.Item, Association);
         }
 
+        // Event Hendler
+        if (secService.Configuration.EventHandler == true)
+        {
+            // Event
+            IItemEventArgs args = new ItemEventArgs(Context.Item, RelatedItem, sqlService, secService, appService);
+
+            // Create Event
+            Context.Item = await Context.ItemType.OnCreateItem(args);
+        }
+
         // Clean
         Title = string.Empty;
         Values.Clear();
+        AssignedValues.Clear();
 
         // Message
         AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
