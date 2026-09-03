@@ -1,4 +1,44 @@
-﻿.editbox {
+﻿
+
+
+/* Standardwert für die maximale Breite (kann global oder lokal überschrieben werden) */
+:root {
+    --text-truncate-max-width: 9rem;
+}
+
+/* Identisches Verhalten wie .text-truncate, jedoch begrenzt auf 2 Zeilen */
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: var(--text-truncate-max-width);
+}
+
+/* Identisches Verhalten wie .text-truncate, jedoch begrenzt auf 3 Zeilen */
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: var(--text-truncate-max-width);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.editbox {
     border: 1px solid transparent !important;
     border-radius: 0.35rem;
     width:100%;

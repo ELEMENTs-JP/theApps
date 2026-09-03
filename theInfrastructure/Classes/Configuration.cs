@@ -54,6 +54,7 @@ namespace theInfrastructure
         public bool EventHandler { get; set; } = true; // legt fest ob die Item (ItemType) Event Handler aktiviert sind oder nicht 
         public bool GlobalSearch { get; set; } = true; // legt fest ob die übergeordnete Suche angezeigt wird 
         public bool PDFView { get; set; } = true; // aktiviert / deaktiviert die Anzeige des PDF Viewer auf der Detail Page 
+        public bool Hilfe { get; set; } = true; // aktiviert / deaktiviert die Anzeige der Hilfe auf der Detail Page 
         
         // Dateien 
         public bool AllowFileUploads { get; set; } = true;

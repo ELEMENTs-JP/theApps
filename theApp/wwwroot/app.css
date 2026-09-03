@@ -42,6 +42,13 @@ html, body {
     transition: backdrop-filter 200ms ease-in-out;
 }
 
+.glass-dark {
+    background: rgba(33, 33, 33, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: backdrop-filter 200ms ease-in-out;
+}
+
     .glass .hover {
         color: var(--tsp-glass-color) !important;
     }

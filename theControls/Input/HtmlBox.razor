@@ -58,13 +58,14 @@
 
 @if (!string.IsNullOrEmpty(Description))
 {
-    <div class="text-muted small border-top no-select mx-1 mt-1" style="padding-left:3px; padding-top:3px;">
+    <div class="text-muted text-truncate small border-top no-select mx-1 mt-1" 
+         style="padding-left:3px; padding-top:3px; max-width:9rem; ">
         @this.Description.ToSecureString()
     </div>
 }
 @if (!string.IsNullOrEmpty(Hint))
 {
-    <div class="form-hint" style="padding-left:3px; padding-top:3px;">
+    <div class="form-hint text-truncate" style="padding-left:3px; padding-top:3px; max-width:9rem; ">
         @Hint.ToSecureString()
     </div>
 }

@@ -288,6 +288,10 @@ namespace theInfrastructure
             {
                 Items = Status.DefaultStatus();
             }
+            else if (field.Typ == FieldTyp.Color)
+            {
+                Items = Helper.DefaultColors();
+            }
             else if (field.Typ == FieldTyp.FieldTyp)
             {
                 Items.Add(new DTO() { ID = "Text", Title = "Text" });

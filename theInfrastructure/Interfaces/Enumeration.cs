@@ -120,6 +120,7 @@ namespace theInfrastructure
         Menu,
         Filter,
         Config,
+        Help,
         Connect,
         Disconnect,
         Neu,
@@ -135,6 +136,8 @@ namespace theInfrastructure
         Grib,
         Play,
         Stop,
+        Previous,
+        Next,
 
         // Layout 
         Max,

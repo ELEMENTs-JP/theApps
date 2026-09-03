@@ -1,6 +1,7 @@
 ﻿@using theComponents.Edit
 @using theControls.Audio
 @using theControls.Detail
+@using theControls.Hilfe
 @inject ISqlDatabaseService sql
 
 @if (ItemType != null)
@@ -13,6 +14,7 @@
             </div>
             <div class="col-12 col-lg-5 p-2">
 
+                <HelpByItemType ItemType="@this.ItemType" />
                 <PdfViewer File="@RelatedItem" />
                 <ImagePreview Image="@RelatedItem" />
                 <AudioPlayer Item="@RelatedItem" />

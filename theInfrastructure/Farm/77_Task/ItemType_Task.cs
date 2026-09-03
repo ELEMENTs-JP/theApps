@@ -10,6 +10,7 @@ namespace theInfrastructure
         public ItemType_Task()
         {
             Name = "Task";
+            Description = "Mit einer Aufgabe erfassen und verwalten Sie alle relevanten operativen Daten Ihres Projekts, wodurch Sie Informationsverluste vermeiden, den manuellen Abstimmungsaufwand im Team spürbar reduzieren und jederzeit eine verlässliche Datenbasis für fundierte unternehmerische Entscheidungen sowie effiziente Prozessabläufe schaffen.";
         }
 
         public override async Task<List<IField>> GetFields(string view = "")
@@ -19,7 +20,7 @@ namespace theInfrastructure
 
             Fields.Add(new Field()
             {
-                Title = "Owner",
+                Title = "Owner", Description= "Mit dem Owner legen Sie die eindeutige fachliche und operative Verantwortung für eine Aufgabe fest, wodurch Sie Unklarheiten bei Zuständigkeiten vermeiden, gezielte Rückfragen im Team ermöglichen und die verbindliche Umsetzung unternehmerischer Ziele sicherstellen.",
                 Typ = FieldTyp.Select,
                 Association = AssociationTyp.Children,
                 ItemType = "User",
@@ -43,7 +44,15 @@ namespace theInfrastructure
                 DefaultValue = "true",
                 TrueText="Aktiv", FalseText="Inaktiv",
                 CSS = " col-12 col-md-4 col-lg-4 " });
-            
+
+            Fields.Add(new Field()
+            {
+                Title = "Farbe",
+                Typ = FieldTyp.Color,
+                Column = "Color",
+                CSS = " col-12 "
+            });
+
             // Performance 
             Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
 

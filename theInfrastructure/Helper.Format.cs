@@ -9,6 +9,25 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        public static List<IDTO> DefaultColors()
+        {
+            List<IDTO> Items = new();
+
+            Items.Add(new DTO() { ID = "#ae3ec9", Title = "violett" });
+            Items.Add(new DTO() { ID = "#d63939", Title = "rot" });
+            Items.Add(new DTO() { ID = "#f76707", Title = "orange" });
+            Items.Add(new DTO() { ID = "#f59f00", Title = "gelb" });
+            Items.Add(new DTO() { ID = "#2fb344", Title = "grün" });
+            Items.Add(new DTO() { ID = "#066fd1", Title = "blau" });
+            Items.Add(new DTO() { ID = "#ffffff", Title = "weiß" });
+            Items.Add(new DTO() { ID = "#626976", Title = "grau" });
+            Items.Add(new DTO() { ID = "#182433", Title = "schwarz" });
+            Items.Add(new DTO() { ID = "#00000000", Title = "transparent" });
+
+            return Items;
+        }
+
+
         // Colors 
         private static readonly string[] Formats = ["D", "N", "B", "P", "X"];
 

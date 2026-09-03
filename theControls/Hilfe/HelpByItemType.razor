@@ -1,0 +1,58 @@
+﻿@inject IAppService app
+@inject ISecurityService sec
+
+@if (sec.Configuration.Hilfe)
+{
+    @if (ItemType != null)
+    {
+        @if (!string.IsNullOrEmpty(ItemType.Description))
+        {
+            <div class="bg-surface w-100 p-2 rounded-2 overflow-hidden mb-3"
+                 style="@( " " + app.Configuration.GetAkzentStyle() + " " )">
+
+                <div class="d-flex flex-row-reverse pointer p-1"
+                     data-bs-toggle="collapse"
+                     data-bs-target="#helpContent"
+                     aria-expanded="false"
+                     aria-controls="helpContent">
+                    <SymbolIcon Symbol="Icon.Help" />
+                    <div class="flex-fill">Hilfe</div>
+                </div>
+                <div class="collapse" id="helpContent">
+                    <div class="p-1">
+                        <strong>@ItemType.Name</strong>
+                        <span class="px-1 text-muted">@ItemType.Description</span>
+                    </div>
+
+                    @foreach (IField field in Fields)
+                    {
+                        <div class="p-1">
+                            <strong>@field.Title</strong>
+                            <span class="px-1 text-muted">@field.Description</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+}
+
+@code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    List<IField> Fields { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (ItemType != null)
+        {
+            Fields = await ItemType.GetFields();
+            Fields = Fields.Where(se => se.Description.Length >= 36).ToList();
+        }
+    }
+
+}

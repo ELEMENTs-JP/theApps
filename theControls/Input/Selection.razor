@@ -111,13 +111,15 @@
 
 @if (!string.IsNullOrEmpty(Description))
 {
-    <div class="text-muted small border-top mt-1" style="padding-left:3px; padding-top:3px;">
-        @this.Description.ToSecureString()
+    <div class="text-muted small border-top mt-1" style="padding-left:3px; padding-top:3px; ">
+        <div class="text-truncate-2">
+            @this.Description.ToSecureString()
+      </div>
     </div>
 }
 @if (!string.IsNullOrEmpty(Hint))
 {
-    <div class="form-hint" style="padding-left:3px; padding-top:3px;">
+    <div class="form-hint text-truncate-3" style="padding-left:3px; padding-top:3px; ">
         @Hint.ToSecureString()
     </div>
 }

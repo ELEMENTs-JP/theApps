@@ -19,7 +19,8 @@
 
         @if (!string.IsNullOrEmpty(PostTitle))
         {
-            <span class="text-muted">
+            <span class="text-muted d-inline-block text-truncate" 
+                style="max-width:15rem;" title="@PostTitle">
                 @PostTitle
             </span>
         }

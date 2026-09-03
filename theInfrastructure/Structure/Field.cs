@@ -73,7 +73,7 @@ namespace theInfrastructure
             {
                 Fields.Add(new Field()
                 {
-                    Title = "Status", Description = "definiert den Status",
+                    Title = "Status", Description = "Mit dem Status kennzeichnen Sie den aktuellen Bearbeitungszustand einer Aufgabe, wodurch Sie den Arbeitsfluss im gesamten Team transparent strukturieren, Übergaben nahtlos gestalten und operative Blockaden im Unternehmensablauf sofort sichtbar machen.",
                     Typ = FieldTyp.Status,
                     DefaultValue = "neu",
                     Column = "Status", CSS = " col-12 col-md-6 col-lg-4 ",
@@ -81,7 +81,7 @@ namespace theInfrastructure
                 });
                 Fields.Add(new Field() 
                 { 
-                    Title = "Fortschritt", Description = "legt den Fortschritt fest", 
+                    Title = "Fortschritt", Description = "Mit dem Fortschritt dokumentieren und verfolgen Sie den aktuellen Erfüllungsgrad einer Aufgabe, wodurch Sie Abweichungen vom Zeitplan frühzeitig erkennen, die Transparenz im Team erhöhen und eine verlässliche Grundlage für die Kapazitäts- und Terminplanung im Unternehmen schaffen.", 
                     Typ = FieldTyp.Progress, 
                     DefaultValue = "0",
                     Column = "Progress", CSS = " col-12 col-md-6 col-lg-4 ", 
@@ -89,7 +89,7 @@ namespace theInfrastructure
                 });
                 Fields.Add(new Field() 
                 { 
-                    Title = "Priorität", Description = "legt die Priorität fest", 
+                    Title = "Priorität", Description = "Mit der Priorität legen Sie die Dringlichkeit und Wichtigkeit einer Aufgabe fest, wodurch Ihr Team Ressourcen gezielt auf kritische Arbeitsschritte konzentriert, Engpässe frühzeitig vermeidet und die produktive Gesamtleistung des Unternehmens maximiert.", 
                     Typ = FieldTyp.Priority, 
                     DefaultValue = "ausgeglichen",
                     Column = "Prio", CSS = " col-12 col-md-6 col-lg-4 ", 

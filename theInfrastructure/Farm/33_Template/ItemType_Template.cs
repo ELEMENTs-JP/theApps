@@ -17,6 +17,7 @@ namespace theInfrastructure
             this.Group = dto["Group"].ToSecureString();
             this.InSubNavigation = dto["InSubNavigation"].ToSecureBool();
             this.Typ = dto["ItemTypeTyp"].ToSecureString().ToEnumOrDefault<ItemTypeTyp>(ItemTypeTyp.Item);
+            this.Description = dto["Description"].ToSecureString();
         }
 
         public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
