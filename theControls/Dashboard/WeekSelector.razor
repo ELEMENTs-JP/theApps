@@ -2,30 +2,24 @@
 
 
 <div class="text-center">
-    <div class="row g-0">
-        <div class="col-3 p-2">
-        </div>
-        <div class="col-6 glass p-2">
-            <h1 class="h1">@Now.Year.ToString()</h1>
-        </div>
-        <div class="col-3 p-2">
-        </div>
+    <div class="row g-0 align-items-center">
 
-        <div class="col-3  p-2 align-middle">
-            <div class="btn" @onclick="PreviousWeek">
+        <div class="col-3 p-2">
+            <div class="glass pointer rounded-2 py-5" @onclick="PreviousWeek">
                 <SymbolIcon Symbol="Icon.Previous" />
             </div>
         </div>
-        <div class="col-6 glass p-2">
+        <div class="col-6 glass p-2 rounded-2">
+            <h1 class="display-6 fw-bold">@Now.Year.ToString()</h1>
             <h1 class="display-3">
                 W @Now.WeekOfYear().ToSecureString()
             </h1>
             <h3 class="h3">
-                @Now.ToLongDateString()
+                @Now.ToString("dddd, d. MMMM", new System.Globalization.CultureInfo("de-DE"))
             </h3>
         </div>
-        <div class="col-3 p-2  align-middle">
-            <div class="btn" @onclick="NextWeek">
+        <div class="col-3 p-2" >
+            <div class="glass pointer rounded-2 py-5" @onclick="NextWeek">
                 <SymbolIcon Symbol="Icon.Next" />
             </div>
         </div>
@@ -34,7 +28,7 @@
             {
                 <div class="col py-1">
                     <div class="fw-bold py-1">@day.ToString("ddd", CultureInfo.CurrentCulture)</div>
-                    <small class="p-1 @(day.Date == DateTime.Today ? "bg-primary text-white rounded" : "")">
+                    <small class="p-1 @(day.Date == DateTime.Today ? "glass text-white rounded" : "")">
                         @day.ToString("dd.MM.")</small>
                 </div>
             }

@@ -45,14 +45,6 @@ namespace theInfrastructure
                 TrueText="Aktiv", FalseText="Inaktiv",
                 CSS = " col-12 col-md-4 col-lg-4 " });
 
-            Fields.Add(new Field()
-            {
-                Title = "Farbe",
-                Typ = FieldTyp.Color,
-                Column = "Color",
-                CSS = " col-12 "
-            });
-
             // Performance 
             Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
 
