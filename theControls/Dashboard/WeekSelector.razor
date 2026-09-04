@@ -1,5 +1,6 @@
 ﻿
 
+
 <div class="text-center">
     <div class="row g-0">
         <div class="col-3 p-2">
@@ -9,8 +10,11 @@
         </div>
         <div class="col-3 p-2">
         </div>
-        <div class="col-3 glass p-2 align-middle">
-            <SymbolIcon Symbol="Icon.Previous" />
+
+        <div class="col-3  p-2 align-middle">
+            <div class="btn" @onclick="PreviousWeek">
+                <SymbolIcon Symbol="Icon.Previous" />
+            </div>
         </div>
         <div class="col-6 glass p-2">
             <h1 class="display-3">
@@ -20,17 +24,52 @@
                 @Now.ToLongDateString()
             </h3>
         </div>
-        <div class="col-3 glass p-2  align-middle">
-            <SymbolIcon Symbol="Icon.Next" />
+        <div class="col-3 p-2  align-middle">
+            <div class="btn" @onclick="NextWeek">
+                <SymbolIcon Symbol="Icon.Next" />
+            </div>
+        </div>
+        <div class="row text-center my-2">
+            @foreach (var day in GetWeekDates())
+            {
+                <div class="col py-1">
+                    <div class="fw-bold py-1">@day.ToString("ddd", CultureInfo.CurrentCulture)</div>
+                    <small class="p-1 @(day.Date == DateTime.Today ? "bg-primary text-white rounded" : "")">
+                        @day.ToString("dd.MM.")</small>
+                </div>
+            }
         </div>
     </div>
 </div>
+
+
 
 @code {
 
     [Parameter]
     public DateTime Now { get; set; } = DateTime.Now;
 
+    [Parameter]
+    public EventCallback<DateTime> DateChanged { get; set; }
 
+    private async Task NextWeek()
+    {
+        Now = Now.AddDays(7);
+        await DateChanged.InvokeAsync(Now);
+    }
+
+    private async Task PreviousWeek()
+    {
+        Now = Now.AddDays(-7);
+        await DateChanged.InvokeAsync(Now);
+    }
+    private IEnumerable<DateTime> GetWeekDates()
+    {
+        // Ermittelt den Montag der aktuellen Woche (nach ISO 8601 / deutschem Kalender)
+        int diff = (7 + (Now.DayOfWeek - DayOfWeek.Monday)) % 7;
+        DateTime startOfWeek = Now.Date.AddDays(-1 * diff);
+
+        return Enumerable.Range(0, 7).Select(offset => startOfWeek.AddDays(offset));
+    }
 
 }
