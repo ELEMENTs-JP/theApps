@@ -4,7 +4,7 @@
 
         @foreach (IItemType it in Items.FromTo<IItemType>(0, 2))
         {
-            <div class="@( "btn btn-sm " + ((it.Name == Item.Name) ? " btn-primary " : "") )"
+            <div class="@( "btn btn-sm btn-compact " + ((it.Name == Item.Name) ? " btn-primary " : "") )"
                  @onclick="@( async e => { Item = it; await ButtonClick(it); })">
                 @it.ToString()
             </div>

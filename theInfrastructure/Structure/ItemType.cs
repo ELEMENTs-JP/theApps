@@ -16,6 +16,7 @@ namespace theInfrastructure
         string Group { get; set; }
         ItemTypeTyp Typ { get; set; }
         bool InSubNavigation { get; set; }
+        bool ShowInTaskBarNavigation { get; set; }
 
         // ItemType 
         public Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association);
@@ -43,6 +44,7 @@ namespace theInfrastructure
         public string Group { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public bool InSubNavigation { get; set; } = true;
+        public bool ShowInTaskBarNavigation { get; set; } = true;
         public ItemTypeTyp Typ { get; set; } = ItemTypeTyp.Item;
         public BaseItemType()
         { 

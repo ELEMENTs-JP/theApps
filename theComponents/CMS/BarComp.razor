@@ -2,7 +2,7 @@
 @inject NavigationManager nm
 @inject IMessagingBusService msg
 
-@foreach (IItemType it in ItemTypes)
+@foreach (IItemType it in ItemTypes.Where(se => se.ShowInTaskBarNavigation == true))
 {
     <div class="pointer hover rounded-2 p-2 fw-bold" 
             @onclick="@( async e => {  await NavigateToItemType(it); })">

@@ -14,23 +14,44 @@
 {
     @if (RelatedItem != null)
     {
-        <div class="input-group input-group-sm" style="max-width:21rem;">
-     @*        <span class="input-group-text fw-bold px-2">
+        @if (ItemType.Typ == ItemTypeTyp.Note || ItemType.Typ == ItemTypeTyp.Comment)
+        {
+            <div class="vstack">
+                <TextArea @key="@( "addTextArea-" + Guid.NewGuid())"
+                          Placeholder="@loc.GetLabel("hinzufügen...", "add...")"
+                          ValueChanged="@(async e => { Title = e; })" />
+
+             
+                    <button type="button" class="btn btn-sm btn-primary"
+                            @onclick="OnOK">
+                        <SymbolIcon Symbol="Icon.Neu" />
+                    </button>
+              
+            </div>
+
+        }
+        else
+        {
+            <div class="input-group input-group-sm" style="max-width:21rem;">
+                @*        <span class="input-group-text fw-bold px-2">
                 @ItemType.Name
             </span> *@
-            <input id="@ID" class="form-control form-control-sm" type="text" value="@Title"
-                   placeholder="@loc.GetLabel("hinzufügen...", "add...")"
-                   @oninput="@(  e => { Title = e.Value?.ToString() ?? string.Empty; })"
-                   @onkeydown="HandleKeyDown" />
+                <input id="@ID" class="form-control form-control-sm" type="text" value="@Title"
+                       placeholder="@loc.GetLabel("hinzufügen...", "add...")"
+                       @oninput="@(  e => { Title = e.Value?.ToString() ?? string.Empty; })"
+                       @onkeydown="HandleKeyDown" />
 
-            @if (!string.IsNullOrEmpty(this.Title))
-            {
-                <button type="button" class="btn btn-sm"
-                        @onclick="OnOK">
-                    <SymbolIcon Symbol="Icon.Neu"/>
-                </button>
-            }
-        </div>
+                @if (!string.IsNullOrEmpty(this.Title))
+                {
+                    <button type="button" class="btn btn-sm"
+                            @onclick="OnOK">
+                        <SymbolIcon Symbol="Icon.Neu" />
+                    </button>
+                }
+            </div>
+        }
+
+   
 
         @if (!string.IsNullOrEmpty(Message))
         {
@@ -71,7 +92,6 @@
 
         if (ItemType != null)
         {
-
             Context = new QueryContext(sqlService);
             Context.ItemType = this.ItemType;
         }

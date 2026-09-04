@@ -10,7 +10,22 @@ namespace theInfrastructure
         public ItemType_Task()
         {
             Name = "Task";
+            this.InSubNavigation = false;
             Description = "Mit einer Aufgabe erfassen und verwalten Sie alle relevanten operativen Daten Ihres Projekts, wodurch Sie Informationsverluste vermeiden, den manuellen Abstimmungsaufwand im Team spürbar reduzieren und jederzeit eine verlässliche Datenbasis für fundierte unternehmerische Entscheidungen sowie effiziente Prozessabläufe schaffen.";
+        }
+
+        // ItemTypes 
+        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
+        {
+            List<IItemType> ItemTypes = new();
+
+            if (ast == AssociationTyp.Children)
+            {
+                ItemTypes.Add(new ItemType_Comment());
+                ItemTypes.Add(new ItemType_Note());
+            }
+
+            return ItemTypes;
         }
 
         public override async Task<List<IField>> GetFields(string view = "")

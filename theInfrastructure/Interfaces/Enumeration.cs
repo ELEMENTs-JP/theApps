@@ -73,6 +73,8 @@ namespace theInfrastructure
         Image = 5,
         User = 6,
         Audio = 7,
+        Note = 8,
+        Comment = 9,
     }
     public enum Orientation
     {

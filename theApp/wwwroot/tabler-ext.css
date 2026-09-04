@@ -55,6 +55,23 @@
     background-color: #fff !important;
     color: #555 !important;
 }
+
+.btn-compact {
+    padding: 0.15rem 0.35rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+}
+
+/* Stile für Aktivierung (Mouse Down) und Fokus */
+.btn:active,
+.btn:focus,
+.btn:focus-visible {
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+    box-shadow: none !important; /* Weißer Fokus-Schatten */
+    outline: none !important;
+}
+
 .btn .icon {
     margin-right:0 !important;
 }

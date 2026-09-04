@@ -1,10 +1,9 @@
 ﻿@if (!string.IsNullOrEmpty(this.Label))
 {
-    <label class="form-label text-secondary" for="@Id">@Label</label>
+    <label class="form-label text-secondary" for="@EffectiveId">@Label</label>
 }
-
 <div class="position-relative overlay-container">
-    <textarea id="@Id"
+    <textarea id="@EffectiveId"
               name="@InputName"
               class="editbox @CssClass @(Overlay != null ? "pe-6" : "")"
               style="@Style"
@@ -12,7 +11,9 @@
               maxlength="@MaxLength"
               minlength="@MinLength"
               rows="@Rows"
-              @oninput="HandleInput">@Value</textarea>
+              value="@Value"
+              disabled="@(!IsEditable)"
+              @oninput="HandleInput"></textarea>
 
     @if (Overlay != null)
     {
@@ -24,24 +25,26 @@
 
 @if (!string.IsNullOrEmpty(Description))
 {
-    <div class="text-muted text-truncate-3 small border-top mt-1" style="padding-left:3px; padding-top:3px; ">
+    <div class="text-muted text-truncate-3 small border-top mt-1" style="padding-left:3px; padding-top:3px;">
         @this.Description.ToSecureString()
     </div>
 }
 @if (!string.IsNullOrEmpty(Hint))
 {
-    <div class="form-hint text-truncate-3" style="padding-left:3px; padding-top:3px; ">
+    <div class="form-hint text-truncate-3" style="padding-left:3px; padding-top:3px;">
         @Hint.ToSecureString()
     </div>
 }
 
 @code {
 
+    private string _generatedId = Guid.NewGuid().ToString();
+
     [Parameter]
     public RenderFragment? Overlay { get; set; }
 
     [Parameter]
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string? Id { get; set; }
 
     [Parameter]
     public string Name { get; set; } = string.Empty;
@@ -80,7 +83,9 @@
     public bool IsEditable { get; set; } = true;
 
     [Parameter]
-    public string Style { get; set; } = " ";
+    public string Style { get; set; } = string.Empty;
+
+    private string EffectiveId => !string.IsNullOrWhiteSpace(Id) ? Id : _generatedId;
 
     private async Task HandleInput(ChangeEventArgs e)
     {
@@ -89,8 +94,7 @@
     }
 
     private string InputName =>
-    !string.IsNullOrWhiteSpace(Name)
-        ? Name
-        : Helper.GenerateName(Label);
-
+        !string.IsNullOrWhiteSpace(Name)
+            ? Name
+            : Helper.GenerateName(Label);
 }

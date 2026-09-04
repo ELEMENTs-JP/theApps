@@ -20,8 +20,8 @@ namespace theInfrastructure
 
             if (ast == AssociationTyp.Children)
             {
-                ItemTypes.Add(new ItemType_ItemType());
                 ItemTypes.Add(new ItemType_Field());
+                ItemTypes.Add(new ItemType_ItemType());
             }
             if (ast == AssociationTyp.Default)
             {

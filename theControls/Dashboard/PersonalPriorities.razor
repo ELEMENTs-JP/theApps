@@ -1,0 +1,41 @@
+﻿@using theControls.List
+
+@if (ItemType != null)
+{
+
+    <div class="row g-3 align-items-stretch">
+        <div class="col-6 d-flex flex-column gap-3">
+            <div class="p-2 flex-fill">
+                <h1>Priority 1</h1>
+
+                <ItemsList ItemType="@ItemType" Association="AssociationTyp.Association" />
+            </div>
+            <div class="p-2 flex-fill">
+                <h1>Priority 2</h1>
+
+                <ItemsList ItemType="@ItemType" Association="AssociationTyp.Association" />
+            </div>
+        </div>
+
+        <div class="col-6 d-flex">
+            <div class="p-2 flex-fill">
+                <h1>Priority 3</h1>
+
+                <ItemsList ItemType="@ItemType" Association="AssociationTyp.Association" />
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+}

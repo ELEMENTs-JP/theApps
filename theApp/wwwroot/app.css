@@ -28,6 +28,14 @@ html, body {
     background-attachment: fixed;
 }
 
+iframe {
+    background-color: transparent !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color-scheme: normal !important;
+}
 
 .blur {
     backdrop-filter: blur(20px);

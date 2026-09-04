@@ -37,7 +37,14 @@
     {
         await base.OnParametersSetAsync();
 
-        Context.Items = await Context.RelatedItems(Context.ItemType.Name, Association);
+        if (RelatedItem != null)
+        {
+            Context.Items = await Context.RelatedItems(Context.ItemType.Name, Association);
+        }
+        else
+        {
+            await Context.Search();
+        }
     }
 
   

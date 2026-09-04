@@ -135,6 +135,8 @@ namespace theInfrastructure
                     if (it.Name == _it.Name)
                     {
                         App = _app;
+                        await Task.CompletedTask;
+                        return;
                     }
                 }
             }
