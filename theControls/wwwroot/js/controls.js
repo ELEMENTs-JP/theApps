@@ -1,6 +1,47 @@
 ﻿
 
 
+
+
+window.globalKeyListener = {
+    register: function (dotNetHelper) {
+        window.addEventListener('keydown', function (e) {
+            const activeEl = document.activeElement;
+            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
+                return;
+            }
+
+            if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+                dotNetHelper.invokeMethodAsync('OnGlobalKeyPress', e.key);
+            }
+        });
+    },
+    focusInput: function (elementId) {
+        setTimeout(function () {
+            const el = document.getElementById(elementId);
+            if (el) {
+                el.focus();
+                // Cursor ans Ende des bereits eingetragenen Zeichens setzen
+                const val = el.value;
+                el.value = '';
+                el.value = val;
+            }
+        }, 50);
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 window.downloadFileFromStream = async (fileName, contentStreamReference) => {
     try {
 

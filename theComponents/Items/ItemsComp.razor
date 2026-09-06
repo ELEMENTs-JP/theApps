@@ -23,7 +23,8 @@
                 <Sortierung ItemType="@ItemType" />
         </Controls> *@
             <Search>
-                <LocalSearchComp OnSearch="@( e => { Matchcode = e.ToSecureString(); })" />
+                <LocalSearchComp OnSearch="@( e => { Matchcode = e.ToSecureString(); })" 
+                        ItemType="@this.ItemType" />
             </Search>
             <Related>
                 @if (this.ItemType.Name != "Trash")
@@ -31,7 +32,7 @@
                     @if (this.ItemType.Typ == ItemTypeTyp.Item ||
                                                                 this.ItemType.Typ == ItemTypeTyp.User)
                     {
-                        <AddArea ItemType="@ItemType" />
+                        <AddArea ItemType="@ItemType" CSS="me-3" />
                     }
                     @if (this.ItemType.Typ == ItemTypeTyp.File ||
                                                                     this.ItemType.Typ == ItemTypeTyp.Image ||
@@ -50,7 +51,9 @@
                                                             this.ItemType.Typ == ItemTypeTyp.Audio)
                 {
                     <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode">
-
+                        <Empty>
+                            <QuickAdd ItemType="@this.ItemType" />
+                        </Empty>
                     </DataTable>
                 }
                 @if (this.ItemType.Typ == ItemTypeTyp.File ||
@@ -64,6 +67,7 @@
                     <CalendarComp ItemType="@ItemType" />
                 }
 
+                
             </Content>
         </Frame>
     }

@@ -15,7 +15,7 @@
 @if (ItemType != null)
 {
     <ModalForm @key="@(new Guid().ToSecureString())" Title="neuen Eintrag erstellen"
-               ShowTitleInButton="false"
+               ShowTitleInButton="false" FrameCSS="@CSS"
                ButtonText="@ButtonTitle" Value=""
                OnBeforeOK="BeforeOK"
                OnOKClicked="@( async e => { await OnOK(); } )">
@@ -74,7 +74,6 @@
 
             </div>
         </ChildContent>
-
         <FooterContent>
                <div class="d-flex flex-row align-items-center">
               <EventHandlerInfo />
@@ -93,6 +92,9 @@
 
     [Parameter]
     public string ButtonTitle { get; set; } = "Neu";
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
 
     [Parameter]
     public AssociationTyp Association { get; set; } = AssociationTyp.Association;

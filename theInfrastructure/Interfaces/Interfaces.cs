@@ -57,6 +57,8 @@ namespace theInfrastructure
     {
         List<IDTO> Store { get; set; }
         Task<List<IDTO>> Search(string matchcode);
+        int CountByItemType(string itemtype);
+        Task Init();
     }
 
     public interface IAppService

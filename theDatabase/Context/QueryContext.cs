@@ -31,6 +31,11 @@ namespace theDatabase
         {
             Init(sql, sec);
         }
+        public QueryContext(ISqlDatabaseService sql, ISecurityService sec, IItemType ItemType)
+        {
+            Init(sql, sec);
+            this.ItemType = ItemType;
+        }
         public void Init(ISqlDatabaseService sql, ISecurityService sec)
         {
             sqlService = sql;

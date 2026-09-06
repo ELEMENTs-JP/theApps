@@ -3,6 +3,7 @@
 @inject ILocalizationService loc
 @inject ISecurityService sec
 @inject ISqlDatabaseService sql
+@inject ISearchService search
 @inject IAppService app
 @inject IMessagingBusService msg
 @inject IWebHostEnvironment env
@@ -25,8 +26,8 @@
         </div> *@
 
 
-        @if (Context.ItemType.Typ == ItemTypeTyp.File || 
-                Context.ItemType.Typ == ItemTypeTyp.Audio || 
+        @if (Context.ItemType.Typ == ItemTypeTyp.File ||
+                Context.ItemType.Typ == ItemTypeTyp.Audio ||
                 Context.ItemType.Typ == ItemTypeTyp.Image)
         {
             <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2 d-flex flex-row "
@@ -34,7 +35,7 @@
                 <SymbolIcon Symbol="Icon.Download" CSS="me-2" />
                 Datei herunterladen...
             </div>
-            
+
         }
 
 
@@ -205,6 +206,10 @@
             if (!string.IsNullOrEmpty(originalItemType))
             {
                 await Context.ChangeItemType(Context.Item, originalItemType);
+                
+                // Search Refresh
+                await search.Init();
+
                 nm.NavToLibrary(originalItemType);
             }
         }
@@ -216,6 +221,9 @@
             Context.Item["OriginalItemType"] = Context.Item.ItemType;
             await Context.ChangeItemType(Context.Item, "Archive");
 
+            // Search Refresh
+            await search.Init();
+
             nm.NavToLibrary(ItemType.Name);
         }
     }
@@ -225,6 +233,9 @@
         {
             Context.Item["OriginalItemType"] = Context.Item.ItemType;
             await Context.ChangeItemType(Context.Item, "Trash");
+
+            // Search Refresh
+            await search.Init();
 
             nm.NavToLibrary(ItemType.Name);
         }
@@ -271,6 +282,9 @@
                 await this.Context.ItemType.OnDeleteItem(args);
             }
 
+            // Search Refresh
+            await search.Init();
+
             nm.NavToLibrary(ItemType.Name, ItemType.Typ);
 
             msg.Publish("", BusAction.Info, info);
@@ -295,7 +309,7 @@
         }
         catch (Exception ex)
         {
-            
+
         }
     }
 

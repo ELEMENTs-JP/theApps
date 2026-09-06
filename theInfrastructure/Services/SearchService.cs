@@ -36,7 +36,7 @@ namespace theInfrastructure
             this.PropertyChanged += AppService_PropertyChanged;
         }
 
-        private async void Init()
+        public async Task Init()
         {
             Store.Clear();
             
@@ -83,6 +83,11 @@ namespace theInfrastructure
                 se.Matchcode
             )
             .ToList();
+        }
+        public int CountByItemType(string itemtype)
+        {
+            int count = Store.Where(se => se.ItemType.ToLowerInvariant() == itemtype.ToLowerInvariant()).Count();
+            return count;
         }
 
         // Property Changed 

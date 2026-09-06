@@ -3,22 +3,29 @@
 @inject NavigationManager nm
 @inject ISecurityService secService
 @inject IMessagingBusService msg
+@inject ISearchService search
 @implements IDisposable
 
-<input id="@inputId"
-       type="text"
-       class="editbox"
-       placeholder="Suchbegriff eingeben..."
-       value="@searchQuery"
-       @oninput="HandleInput"
-       autocomplete="off"
-       style="width:18rem;" />
+@if (ItemType != null)
+{
+    <input id="@inputId"
+           type="text"
+           class="editbox"
+           placeholder="Suchbegriff eingeben..."
+           value="@searchQuery"
+           @oninput="HandleInput"
+           autocomplete="off"
+           style="width:18rem;" />
+}
 
 
 @code {
 
     private string inputId = $"local-search-input-{Guid.NewGuid():N}";
     private string searchQuery = string.Empty;
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
 
     [Parameter]
     public EventCallback<string> OnSearch { get; set; }
@@ -43,7 +50,18 @@
         if (firstRender)
         {
             // JSInterop: Fokus beim Laden direkt in die Textbox setzen
-            await JSRuntime.InvokeVoidAsync("setFocusById", inputId);
+
+            if (ItemType != null)
+            {
+                
+                int count = search.CountByItemType(ItemType.Name);
+                if (count != 0)
+                {
+                    await JSRuntime.InvokeVoidAsync("setFocusById", inputId);
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+
         }
     }
 

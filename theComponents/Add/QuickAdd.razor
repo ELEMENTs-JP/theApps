@@ -1,0 +1,155 @@
+﻿@inject IJSRuntime JSRuntime
+@inject ISqlDatabaseService sql
+@inject ISecurityService sec
+@inject IAppService app
+@inject IMessagingBusService msg
+@implements IDisposable
+
+
+@if (ItemType != null)
+{
+    @if (ValidateVisibility() == true)
+    {
+
+        <div class="border rounded p-2 text-center my-3">
+            <p class="text-secondary mb-0">
+                Tippe einfach ein paar Buchstaben oder Zahlen und wir erstellen einen neuen Eintrag.
+            </p>
+        </div>
+
+
+        @if (isModalOpen)
+        {
+            <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border rounded p-2">
+                        <div class="d-flex p-2 border-0 pb-0">
+                            <h1 class="modal-title flex-fill">Neuer Eintrag</h1>
+                            <div class="hover pointer rounded p-1 px-1 ms-auto" @onclick="CloseModal">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                            </div>
+                        </div>
+                        <div class="modal-body border-top my-2">
+                            <label class="form-label">Titel</label>
+                            <input id="modalTitleInput" type="text" class="form-control" @bind="Text" @bind:event="oninput" />
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <div class="hover pointer rounded p-1 px-1 me-2" @onclick="CloseModal">
+                                Abbrechen
+                            </div>
+                            <div class="btn btn-primary btn-sm" @onclick="SaveEntry">
+                                OK
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    }
+}
+
+
+
+@code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    private bool isModalOpen = false;
+    private bool shouldFocusInput = false;
+    private string Text = string.Empty;
+    private DotNetObjectReference<QuickAdd>? objRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            objRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("globalKeyListener.register", objRef);
+        }
+
+        if (shouldFocusInput)
+        {
+            shouldFocusInput = false;
+            await JSRuntime.InvokeVoidAsync("globalKeyListener.focusInput", "modalTitleInput");
+        }
+    }
+
+    [JSInvokable]
+    public void OnGlobalKeyPress(string key)
+    {
+        if (!isModalOpen)
+        {
+            Text = key;
+            isModalOpen = true;
+            shouldFocusInput = true;
+            StateHasChanged();
+        }
+    }
+
+    private async void SaveEntry()
+    {
+        if (ItemType == null)
+        {
+            msg.Publish("ItemType", BusAction.Info, "ItemType muss gesetzt sein.");
+            return;
+        }
+        if (string.IsNullOrEmpty(Text))
+        {
+            msg.Publish("Notwendige Felder", BusAction.Info, "Titel muss gesetzt sein.");
+            return;
+        }
+
+        QueryContext Context = new QueryContext(sql, sec, this.ItemType);
+
+        // Erstellen
+        Guid ID = await Context.Create(Text);
+
+        // Laden
+        await Context.Load(ID.ToSecureString());
+
+        if (sec.Configuration.EventHandler == true)
+        {
+            // Event
+            IItemEventArgs args = new ItemEventArgs(Context.Item, null, sql, sec, app);
+
+            // Create Event
+            Context.Item = await Context.ItemType.OnCreateItem(args);
+        }
+
+        // Clean
+        Text = string.Empty;
+
+        // Message
+        AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
+        msg.Publish(am);
+
+        // Close UI
+        CloseModal();
+    }
+
+    private void CloseModal()
+    {
+        isModalOpen = false;
+        Text = string.Empty;
+    }
+
+    private bool ValidateVisibility()
+    {
+        if (ItemType.Name == "Trash")
+            return false;
+
+        if (ItemType.Name == "Archiv" || ItemType.Name == "Archive")
+            return false;
+
+        return true;
+
+    }
+
+    public void Dispose()
+    {
+        objRef?.Dispose();
+    }
+}
