@@ -1,5 +1,6 @@
 ﻿@using theInfrastructure
 @inject ISqlDatabaseService sql
+@inject ISecurityService sec
 
 <div class="border rounded-2 p-3 my-3">
     <h4 class="border-bottom fw-bold">Erstellen</h4>
@@ -161,7 +162,7 @@
     {
         await base.OnInitializedAsync();
 
-        Context = new QueryContext(sql);
+        Context = new QueryContext(sql, sec);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

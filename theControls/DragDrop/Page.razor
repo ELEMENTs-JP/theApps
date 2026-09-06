@@ -1,6 +1,7 @@
 ﻿
 @inject IJSRuntime JS
 @inject ISqlDatabaseService sql
+@inject ISecurityService sec
 @inject IMessagingBusService msg
 @implements IAsyncDisposable
 
@@ -175,6 +176,8 @@
         qp.GUID = Guid.NewGuid();
         qp.Title = dde.Title;
         qp.ItemType = "Slot";
+        qp.UserGUID = sec.User.GUID;
+        qp.UserName = sec.User.Title;
 
         // Create
         IQueryResult resultNew = await sql.Create(qp);
@@ -224,6 +227,8 @@
         qp.GUID = Guid.NewGuid();
         qp.Title = dde.Title;
         qp.ItemType = "Control";
+        qp.UserGUID = sec.User.GUID;
+        qp.UserName = sec.User.Title;
 
         // Update DragDrop 
         dde.ID = qp.GUID.ToSecureString();

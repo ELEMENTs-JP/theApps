@@ -2,6 +2,7 @@
 :root {
     --tblr-dropdown-item-padding-x: 0.65rem !important;
     --tblr-dropdown-item-padding-y: 0.35rem !important;
+    --tblr-dark-mode-border-color-translucent: #99999933 !important;
 }
 
 
@@ -21,6 +22,10 @@
     background-color: var(--tblr-bg-surface) !important;
     border: 0px solid transparent !important;
     outline: none !important;
+}
+
+.hr-text {
+    margin: 1.5rem 0rem 0.5rem 0rem !important;
 }
 
 .progress-bar {

@@ -43,7 +43,9 @@
         qp.MasterGUID = sql.MasterGUID;
         qp.Title = fn.OriginalFileName;
         qp.ItemType = ItemType.Name;
-        
+        qp.UserGUID = sec.User.GUID;
+        qp.UserName = sec.User.Title;
+
         // Create 
         IQueryResult result = await sql.Create(qp);
         if (result == null)

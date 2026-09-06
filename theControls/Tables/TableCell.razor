@@ -113,6 +113,12 @@
 
         switch (this.Field.Typ)
         {
+            case FieldTyp.Money:
+                {
+
+                    Text = Value + " " + loc.Configuration.Currency;
+                    break;
+                }
             case FieldTyp.Date:
                 {
 

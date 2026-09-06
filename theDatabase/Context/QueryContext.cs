@@ -9,25 +9,35 @@ namespace theDatabase
     {
         public Guid ID { get; set; } = Guid.NewGuid();
         public bool IsLoading { get; set; } = false;
+        ISqlDatabaseService sqlService = null;
+        ISecurityService secService = null;
+
+        // Query 
         public string Matchcode { get; set; } = string.Empty;
 
-        ISqlDatabaseService sqlService = null;
         public IItemType ItemType { get; set; } = null;
         public IDTO RelatedItem { get; set; } = null;
         public IDTO Item { get; set; } = null;
+        
+        // Result 
         public List<IDTO> Items { get; set; } = new List<IDTO>();
+
+        // ctr 
         public QueryContext()
         {
 
         }
-        public QueryContext(ISqlDatabaseService sql)
+        public QueryContext(ISqlDatabaseService sql, ISecurityService sec)
         {
-            Init(sql);
+            Init(sql, sec);
         }
-        public void Init(ISqlDatabaseService sql)
+        public void Init(ISqlDatabaseService sql, ISecurityService sec)
         {
             sqlService = sql;
+            secService = sec;
         }
+
+        // Builder 
         public async Task<Guid> Create(string title)
         {
             if (sqlService == null)
@@ -35,27 +45,53 @@ namespace theDatabase
 
             IQueryParameter qp = QueryParameter.Default(title);
             Guid gid = qp.GUID;
+            qp.MasterGUID = sqlService.MasterGUID;
             qp.ItemType = ItemType.Name;
+            qp.UserGUID = secService.User.GUID;
+            qp.UserName = secService.User.Title;
+
             await sqlService.Create(qp);
             return gid;
         }
+
+        // Search 
         public async Task Search()
         {
-            if (sqlService == null)
-                return;
-
-            if (ItemType == null)
+            if (sqlService == null || ItemType == null)
                 return;
 
             IsLoading = true;
 
-            Items.Clear();
-            IQueryParameter query = new QueryParameter();
-            query.Matchcode = this.Matchcode.ToSecureString();
-            query.MasterGUID = SQLiteService.GeneralMasterGUID;
-            query.ItemType = ItemType.Name;
+            IQueryParameter query = new QueryParameter
+            {
+                Matchcode = string.Empty, // Lade alle Items des Typen oder nutze DB-Filter gezielt
+                MasterGUID = SQLiteService.GeneralMasterGUID,
+                ItemType = ItemType.Name
+            };
+
             IQueryResult result = await sqlService.GetItems(query);
-            Items = result.Items;
+
+            // Rechtesystem/IsPrivate anwenden
+            var rawItems = result.Items ?? new List<IDTO>();
+            var userGuid = secService.User.GUID;
+
+            var baseItems = rawItems.Where(se =>
+                !se["IsPrivate"].ToSecureBool() ||
+                (se["IsPrivate"].ToSecureBool() && se["UserGUID"].ToSecureGUID() == userGuid)
+            ).ToList();
+
+            // Bei gesetztem Matchcode lokal filtern
+            if (!string.IsNullOrEmpty(this.Matchcode))
+            {
+                Items = baseItems.Where(se =>
+                    se.Matchcode != null &&
+                    se.Matchcode.ToLowerInvariant().Contains(this.Matchcode.ToLowerInvariant())
+                ).ToList();
+            }
+            else
+            {
+                Items = baseItems;
+            }
 
             IsLoading = false;
         }
@@ -68,7 +104,6 @@ namespace theDatabase
                 Items = Items.Where(se => se.Matchcode.ToLowerInvariant().Contains(matchcode.ToLowerInvariant())).ToList();
             }
         }
-
         public async Task Load(string GUID)
         {
             try
@@ -130,6 +165,8 @@ namespace theDatabase
 
             return _items;
         }
+        
+        // Action 
         public async Task Delete(IDTO dto)
         {
             if (sqlService == null)
@@ -202,7 +239,7 @@ namespace theDatabase
 
         }
 
-        // Dispose
+        // Dispose 
         public void Dispose()
         {
             try

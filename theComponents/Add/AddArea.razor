@@ -115,7 +115,7 @@
         if (ItemType != null)
         {
             Fields = await ItemType.GetFields();
-            Context = new QueryContext(sqlService);
+            Context = new QueryContext(sqlService, secService);
             Context.ItemType = this.ItemType;
         }
     }

@@ -37,7 +37,7 @@
             </div>
         </td>
 
-        @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnTable == true))
+        @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnDisplay.Table == true))
         {
             <td class="@Helper.GetClassByDevice(col) align-items-center">
                 <TableCell @key="@( Item.GUID + col.Column + col.ItemType  )" 

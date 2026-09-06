@@ -7,20 +7,19 @@
 {
     <label class="form-label text-secondary no-select" for="@Id">@Label</label>
 }
-
 <div class="input-group position-relative overlay-container">
 
     @if (this.Type == FieldTyp.Money)
     {
         <span class="input-group-text">
             @loc.Configuration.Currency
-        </span>    
+        </span>
     }
 
-    <input id="@Id" name="@InputName" data-value="@Value"
-            style="@( this.Style )"
+    <input id="@Id" @ref="inputElement" name="@InputName" data-value="@Value"
+           style="@( this.Style )"
            class=" pe-5 @CssClass @( ((IsEditable) ? " editbox " : " viewbox no-select ") )"
-           type="@Type.ToHtmlValue()"
+           type="@(Type == FieldTyp.Money ? "text" : Type.ToHtmlValue())"
            placeholder="@Placeholder"
            spellcheck="false"
            step="@(Step ?? Type.GetStep())"
@@ -29,14 +28,14 @@
            minlength="@MinLength"
            value="@Value"
            autocomplete="@GetAutocomplete()"
-           @oninput="HandleInput" />
+           @oninput="HandleInput"
+           @onchange="HandleChange" />
 
     @if (!string.IsNullOrEmpty(this.Extension))
     {
         <span class="input-group-text me-3">
             @this.Extension.ToSecureString()
-        </span>    
-
+        </span>
     }
     @if (Inlay != null && IsEditable == true)
     {
@@ -58,13 +57,12 @@
             <SymbolIcon Symbol="Icon.Search" />
         </div>
     }
-
 </div>
 
 @if (!string.IsNullOrEmpty(Description))
 {
-    <div class="text-muted text-truncate small border-top no-select mx-1 mt-1" 
-            style="padding-left:3px; padding-top:3px; max-width:9rem; ">
+    <div class="text-muted text-truncate small border-top no-select mx-1 mt-1"
+         style="padding-left:3px; padding-top:3px; max-width:9rem; ">
         @this.Description.ToSecureString()
     </div>
 }
@@ -76,6 +74,9 @@
 }
 
 @code {
+    private ElementReference inputElement;
+
+    string Culture { get; set; } = "de-DE"; // "de-DE" oder "en-US"
 
     [Parameter]
     public RenderFragment? Overlay { get; set; }
@@ -94,6 +95,7 @@
 
     [Parameter]
     public string Description { get; set; } = string.Empty;
+
     [Parameter]
     public string Hint { get; set; } = string.Empty;
 
@@ -139,29 +141,17 @@
     [Parameter]
     public bool IsEditable { get; set; } = true;
 
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-
-
-    }
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
-
-        if (this.Type == FieldTyp.Money)
-        {
-
-        }
-    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
 
         if (firstRender)
         {
+            if (Type == FieldTyp.Money)
+            {
+                await js.InvokeVoidAsync("numberFormatter.formatInput", inputElement, Culture);
+            }
+
             if (FocusOnInit)
             {
                 await js.InvokeVoidAsync("setFocusById", this.Id);
@@ -171,8 +161,31 @@
 
     private async Task HandleInput(ChangeEventArgs e)
     {
-        Value = e.Value?.ToString() ?? string.Empty;
+        if (Type == FieldTyp.Money)
+        {
+            // Live-Formatierung im DOM via JS während des Tippens
+            Value = await js.InvokeAsync<string>("numberFormatter.formatInput", inputElement, Culture);
+        }
+        else
+        {
+            Value = e.Value?.ToString() ?? string.Empty;
+        }
+
         await ValueChanged.InvokeAsync(Value);
+    }
+
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        if (Type == FieldTyp.Money && !string.IsNullOrWhiteSpace(Value))
+        {
+            // C#-basierte Nachformatierung beim Verlassen des Feldes (z. B. Nachkommastellen auffüllen)
+            var cultureInfo = CultureInfo.GetCultureInfo(Culture);
+            if (decimal.TryParse(Value, NumberStyles.Currency | NumberStyles.Number, cultureInfo, out decimal parsedNumber))
+            {
+                Value = parsedNumber.ToString("N2", cultureInfo);
+                await ValueChanged.InvokeAsync(Value);
+            }
+        }
     }
 
     private string? GetAutocomplete()
@@ -189,10 +202,7 @@
     }
 
     private string InputName =>
-    !string.IsNullOrWhiteSpace(Name)
-        ? Name
-        : Helper.GenerateName(Label);
-
-   
-
+        !string.IsNullOrWhiteSpace(Name)
+            ? Name
+            : Helper.GenerateName(Label);
 }

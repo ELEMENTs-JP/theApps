@@ -2,6 +2,7 @@
 @using theControls.Add
 @using theControls.Files
 @using theControls.Funktionen
+@using theControls.Icons
 @using theControls.Input
 @using theControls.Layout
 @using theControls.Search
@@ -11,59 +12,74 @@
 
 @if (ItemType != null)
 {
-    <Frame Border="true" Rounded="true">
-        <Header>
-            <ControlHeader PreTitle="List" Title="@ItemType.Name" PostTitle="@ItemType.Description" />
-        </Header>
-  @*       <Controls>
+    @if (Helper.ValidateVisibility(ItemType) == true)
+    {
+        <Frame Border="true" Rounded="true">
+            <Header>
+                <ControlHeader PreTitle="List" Title="@ItemType.Name" PostTitle="@ItemType.Description" />
+            </Header>
+            @*       <Controls>
                 <Filter ItemType="@ItemType" />
                 <Sortierung ItemType="@ItemType" />
         </Controls> *@
-        <Search>
-            <LocalSearchComp OnSearch="@( e => { Matchcode = e.ToSecureString(); })" />
-        </Search>
-        <Related>
-            @if (this.ItemType.Name != "Trash")
-            {
+            <Search>
+                <LocalSearchComp OnSearch="@( e => { Matchcode = e.ToSecureString(); })" />
+            </Search>
+            <Related>
+                @if (this.ItemType.Name != "Trash")
+                {
+                    @if (this.ItemType.Typ == ItemTypeTyp.Item ||
+                                                                this.ItemType.Typ == ItemTypeTyp.User)
+                    {
+                        <AddArea ItemType="@ItemType" />
+                    }
+                    @if (this.ItemType.Typ == ItemTypeTyp.File ||
+                                                                    this.ItemType.Typ == ItemTypeTyp.Image ||
+                                                                    this.ItemType.Typ == ItemTypeTyp.Audio)
+                    {
+                        <FileUploadComp ItemType="@this.ItemType" />
+                    }
+                }
+            </Related>
+            <Content>
+
                 @if (this.ItemType.Typ == ItemTypeTyp.Item ||
-                this.ItemType.Typ == ItemTypeTyp.User)
+                                                        this.ItemType.Typ == ItemTypeTyp.User ||
+                                                        this.ItemType.Typ == ItemTypeTyp.Note ||
+                                                        this.ItemType.Typ == ItemTypeTyp.Comment ||
+                                                            this.ItemType.Typ == ItemTypeTyp.Audio)
                 {
-                    <AddArea ItemType="@ItemType" />
+                    <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode">
+
+                    </DataTable>
                 }
-                @if (this.ItemType.Typ == ItemTypeTyp.File || 
-                    this.ItemType.Typ == ItemTypeTyp.Image || 
-                    this.ItemType.Typ == ItemTypeTyp.Audio)
+                @if (this.ItemType.Typ == ItemTypeTyp.File ||
+                                                         this.ItemType.Typ == ItemTypeTyp.Image)
                 {
-                    <FileUploadComp ItemType="@this.ItemType" />
+                    <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" />
                 }
-            }
-        </Related>
-        <Content>
 
-            @if (this.ItemType.Typ == ItemTypeTyp.Item ||
-                this.ItemType.Typ == ItemTypeTyp.User ||
-                this.ItemType.Typ == ItemTypeTyp.Note ||
-                this.ItemType.Typ == ItemTypeTyp.Comment ||
-                    this.ItemType.Typ == ItemTypeTyp.Audio)
-            {
-                <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode">
+                @if (this.ItemType.Typ == ItemTypeTyp.Appointment)
+                {
+                    <CalendarComp ItemType="@ItemType" />
+                }
 
-                </DataTable>
-            }
-            @if (this.ItemType.Typ == ItemTypeTyp.File || 
-                 this.ItemType.Typ == ItemTypeTyp.Image)
-            {
-                <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" />
-            }
-
-            @if (this.ItemType.Typ == ItemTypeTyp.Appointment)
-            {
-                <CalendarComp ItemType="@ItemType" />
-            }
-
-        </Content>
-    </Frame>
+            </Content>
+        </Frame>
+    }
+    else
+    {
+        <div class="row g-0 p-2 align-items-center">
+            <div class="col-auto p-2">
+                <SymbolIcon Symbol="Icon.Invariant"/>
+            </div>
+            <div class="col p-2">
+                <h1 class="h1">Dieser ItemType ist nicht einsehbar.</h1>
+            </div>
+        </div>    
+    }
 }
+
 
 @code {
 
@@ -90,5 +106,6 @@
         }
     }
 
-  
+ 
+
 }

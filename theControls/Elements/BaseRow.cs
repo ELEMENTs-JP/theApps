@@ -25,6 +25,20 @@ namespace theControls.Elements
         [Parameter]
         public bool IsRelated { get; set; } = false;
 
+        public async Task Delete()
+        {
+            if (Context == null)
+            {
+                return;
+            }
+
+            await Context.Delete(Item);
+
+            // Message
+            AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz verbunden");
+            msg.Publish(am);
+        }
+
         public async Task Disconnect()
         {
             if (Context == null)

@@ -2,51 +2,65 @@
 @using theControls.Audio
 @using theControls.Detail
 @using theControls.Hilfe
+@using theControls.Icons
 @inject ISqlDatabaseService sql
+@inject ISecurityService sec
 
 @if (ItemType != null)
 {
     @if (Context != null)
     {
-        <div class="row g-0">
-            <div class="col-12 col-lg-7 p-2">
-                <EditArea ItemType="@this.ItemType" ID="@ID" />
+        @if (Helper.ValidateVisibility(ItemType) == true)
+        {
+            <div class="row g-0">
+                <div class="col-12 col-lg-7 p-2">
+                    <EditArea ItemType="@this.ItemType" ID="@ID" />
+                </div>
+                <div class="col-12 col-lg-5 p-2">
+
+                    <HelpByItemType ItemType="@this.ItemType" />
+                    <PdfViewer File="@RelatedItem" />
+                    <ImagePreview Image="@RelatedItem" />
+                    <AudioPlayer Item="@RelatedItem" />
+
+                    <RelatedItemsComp CSS="mb-3" ItemTypes="@(ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Parents).Value ?? new List<IItemType>())"
+                                      RelatedItem="@RelatedItem" Association="AssociationTyp.Parents" />
+
+                    <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Parallels).Value ?? new List<IItemType>())"
+                                      RelatedItem="@RelatedItem" Association="AssociationTyp.Parallels" />
+
+                    <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Related).Value ?? new List<IItemType>())"
+                                      RelatedItem="@RelatedItem" Association="AssociationTyp.Related" />
+
+
+                </div>
             </div>
-            <div class="col-12 col-lg-5 p-2">
 
-                <HelpByItemType ItemType="@this.ItemType" />
-                <PdfViewer File="@RelatedItem" />
-                <ImagePreview Image="@RelatedItem" />
-                <AudioPlayer Item="@RelatedItem" />
+            <div class="row g-0">
+                <div class="col-7 p-2">
 
-                <RelatedItemsComp CSS="mb-3" ItemTypes="@(ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Parents).Value ?? new List<IItemType>())"
-                                  RelatedItem="@RelatedItem" Association="AssociationTyp.Parents" />
+                    <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Children).Value ?? new List<IItemType>())"
+                                      RelatedItem="@RelatedItem" Association="AssociationTyp.Children" />
 
-                <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Parallels).Value ?? new List<IItemType>())"
-                                  RelatedItem="@RelatedItem" Association="AssociationTyp.Parallels" />
+                    <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Default).Value ?? new List<IItemType>())"
+                                      RelatedItem="@RelatedItem" Association="AssociationTyp.Default" />
 
-                <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Related).Value ?? new List<IItemType>())"
-                                  RelatedItem="@RelatedItem" Association="AssociationTyp.Related" />
-
-              
+                </div>
+                <div class="col-5 p-2">
+                </div>
             </div>
-        </div>
-
-        <div class="row g-0">
-            <div class="col-7 p-2">
-
-                <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Children).Value ?? new List<IItemType>())"
-                                  RelatedItem="@RelatedItem" Association="AssociationTyp.Children" />
-
-                <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Default).Value ?? new List<IItemType>())"
-                                  RelatedItem="@RelatedItem" Association="AssociationTyp.Default" />
-
+        }
+        else
+        {
+            <div class="row g-0 p-2 align-items-center">
+                <div class="col-auto p-2">
+                    <SymbolIcon Symbol="Icon.Invariant" />
+                </div>
+                <div class="col p-2">
+                    <h1 class="h1">Dieser ItemType / Datensatz ist nicht einsehbar.</h1>
+                </div>
             </div>
-            <div class="col-5 p-2">
-            </div>
-        </div>
-
-     
+        }
     }
 }
 
@@ -99,7 +113,7 @@
 
         if (!string.IsNullOrEmpty(this.ID))
         {
-            Context = new QueryContext(sql);
+            Context = new QueryContext(sql, sec);
             Context.ItemType = ItemType;
             await Context.Load(this.ID);
 

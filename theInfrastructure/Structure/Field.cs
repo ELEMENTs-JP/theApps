@@ -18,8 +18,8 @@ namespace theInfrastructure
         bool IsNecessary { get; set; }
         string DefaultValue { get; set; }
 
+        FieldDisplay OnDisplay { get; set; } 
         DeviceDisplay OnDevice { get; set; }
-        bool OnTable { get; set; } 
         bool IsEditable { get; set; }
 
         // Formatierung 
@@ -52,7 +52,7 @@ namespace theInfrastructure
         public string CSS { get; set; } = "col";
         public string Extension { get; set; } = string.Empty;
         public DeviceDisplay OnDevice { get; set; } = DeviceDisplay.NULL;
-        public bool OnTable { get; set; } = true;
+        public FieldDisplay OnDisplay { get; set; } = new();
 
         public bool IsEditable { get; set; } = true;
         public TextFormat Formatierung { get; set; } = TextFormat.NULL;
@@ -105,7 +105,7 @@ namespace theInfrastructure
                     Typ = FieldTyp.TextArea, 
                     Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", 
                     OnDevice = DeviceDisplay.Desktop,
-                    OnTable = false,
+                    OnDisplay = new FieldDisplay(false, false, false, false),
                 });
             }
 
@@ -171,4 +171,21 @@ namespace theInfrastructure
         public string Typ { get; set; } = "Show"; // Show // Hide 
 
     }
+
+    public class FieldDisplay
+    {
+        public FieldDisplay(bool edit = true,  bool add = true, 
+                                bool table = true,  bool related = false)
+        {
+            Edit = edit;
+            Add = add;
+            Table = table;
+            Related = related;
+        }
+        public bool Edit { get; set; } = true;
+        public bool Add { get; set; } = true;
+        public bool Table { get; set; } = true;
+        public bool Related { get; set; } = false;
+    }
+
 }

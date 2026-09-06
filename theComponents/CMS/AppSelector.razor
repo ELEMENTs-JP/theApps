@@ -66,7 +66,7 @@
             <div class="border-top my-3"></div>
             <div class="text-muted small fw-bold ps-2">Listen</div>
             <div class="row g-0">
-                @foreach (IItemType it in CurrentItemTypes)
+                @foreach (IItemType it in CurrentItemTypes.Where(se => se.IsNavigation == true))
                 {
                     <div class="col-12 p-1">
                         <div class="rounded-2 hover pointer p-1 px-2 fw-bold @( GetSelection(it) )"

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace theInfrastructure
 {
-    public class  ItemType_TimeFrame : BaseItemType, IItemType
+    public class ItemType_TimeFrame : BaseItemType, IItemType
     {
         public ItemType_TimeFrame()
         {
@@ -33,6 +33,14 @@ namespace theInfrastructure
             // Fields 
             List<IField> Fields = new List<IField>();
 
+            // Termin 
+            Fields.Add(new Field() { Title = "Jahr", Typ = FieldTyp.Integer, Column = "Year", CSS = " col-12 col-md-12 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
+            Fields.Add(new Field() { Title = "Start", Typ = FieldTyp.Date, Column = "Start", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
+            Fields.Add(new Field() { Title = "Ende", Typ = FieldTyp.Date, Column = "Ende", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
+
+            Fields.Add(new Field() { Title = "Budgetierung", Typ = FieldTyp.HR });
+            Fields.Add(new Field() { Title = "Budget", Typ = FieldTyp.Money, Column = "Budget", CSS = " col-12 col-md-12 col-lg-12", OnDevice = DeviceDisplay.Desktop });
+
             // Description 
             Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Description));
 
@@ -48,14 +56,14 @@ namespace theInfrastructure
             foreach (IField field in fields.Where(se => !string.IsNullOrEmpty(se.DefaultValue)))
             {
                 if (string.IsNullOrEmpty(args.Item[field.Column].ToSecureString()))
-                { 
+                {
                     args.Item[field.Column] = field.DefaultValue;
                 }
             }
-            
+
             // Update 
             await args.SqlService.Update(args.Item);
-            
+
             // RETURN 
             return args.Item;
         }

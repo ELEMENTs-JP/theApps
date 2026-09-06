@@ -13,6 +13,7 @@ namespace theInfrastructure
             Typ = ItemTypeTyp.Comment;
             this.InSubNavigation = false;
             this.ShowInTaskBarNavigation = false;
+            this.IsNavigation = false;
         }
 
         public override async Task<List<IField>> GetFields(string view = "")

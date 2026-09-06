@@ -17,16 +17,22 @@
         @if (ItemType.Typ == ItemTypeTyp.Note || ItemType.Typ == ItemTypeTyp.Comment)
         {
             <div class="vstack">
-                <TextArea @key="@( "addTextArea-" + Guid.NewGuid())"
+                <TextArea Value="@Title"
                           Placeholder="@loc.GetLabel("hinzufügen...", "add...")"
-                          ValueChanged="@(async e => { Title = e; })" />
-
-             
+                          ValueChanged="@(async e => { Title = e; })">
+                      <Overlay>
+                             @if (!string.IsNullOrEmpty(this.Title))
+                {
                     <button type="button" class="btn btn-sm btn-primary"
                             @onclick="OnOK">
                         <SymbolIcon Symbol="Icon.Neu" />
                     </button>
-              
+                }
+                      </Overlay>
+                      </TextArea>
+
+             
+
             </div>
 
         }
@@ -92,7 +98,7 @@
 
         if (ItemType != null)
         {
-            Context = new QueryContext(sqlService);
+            Context = new QueryContext(sqlService, secService);
             Context.ItemType = this.ItemType;
         }
     }

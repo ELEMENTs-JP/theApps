@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
+using theControls.Tables;
 using theDatabase;
 using theInfrastructure;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -18,6 +19,9 @@ namespace theControls.Elements
 
         [Inject]
         public ISqlDatabaseService sql { get; set; } = default!;
+
+        [Inject]
+        public ISecurityService sec { get; set; } = default!;
 
         [Parameter]
         public AssociationTyp Association { get; set; } = AssociationTyp.NULL;
@@ -41,18 +45,29 @@ namespace theControls.Elements
 
             if (ItemType != null)
             {
-                // Context
-                Context = new QueryContext(sql);
-                Context.ItemType = ItemType;
+                // Context nur neu erstellen, wenn er noch nicht existiert
+                if (Context == null || Context.ItemType?.Name != ItemType.Name)
+                {
+                    Context = new QueryContext(sql, sec)
+                    {
+                        ItemType = ItemType
+                    };
+                }
+
+                // Matchcode aus der abgeleiteten Klasse übernehmen (falls vorhanden)
+                if (this is DataTable dataTable)
+                {
+                    Context.Matchcode = dataTable.Matchcode;
+                }
 
                 if (RelatedItem != null)
                 {
-                    // Related Items
                     Context.RelatedItem = RelatedItem;
                     Context.Items = await Context.RelatedItems(ItemType.Name, Association);
                 }
                 else
                 {
+                    // Führt Search() exakt einmal aus
                     await Context.Search();
                 }
             }

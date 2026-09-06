@@ -1,15 +1,15 @@
 ﻿
 
 
-<div class="text-center">
+<div class="text-center bg-surface rounded-2 p-2">
     <div class="row g-0 align-items-center">
 
         <div class="col-3 p-2">
-            <div class="glass pointer rounded-2 py-5" @onclick="PreviousWeek">
+            <div class="pointer hover rounded-2 p-5" @onclick="PreviousWeek">
                 <SymbolIcon Symbol="Icon.Previous" />
             </div>
         </div>
-        <div class="col-6 glass p-2 rounded-2">
+        <div class="col-6 p-2 rounded-2">
             <h1 class="display-6 fw-bold">@Now.Year.ToString()</h1>
             <h1 class="display-3">
                 W @Now.WeekOfYear().ToSecureString()
@@ -19,7 +19,7 @@
             </h3>
         </div>
         <div class="col-3 p-2" >
-            <div class="glass pointer rounded-2 py-5" @onclick="NextWeek">
+            <div class="pointer hover rounded-2 p-5" @onclick="NextWeek">
                 <SymbolIcon Symbol="Icon.Next" />
             </div>
         </div>

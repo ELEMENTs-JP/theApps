@@ -497,11 +497,16 @@ namespace theDatabase
         {
             IQueryResult info = new QueryResult { Status = "OK", Message = "" };
 
+            // GUID 
             if (query.GUID == Guid.Empty)
             {
                 query.GUID = Guid.NewGuid();
             }
+
+            // Master 
             Guid master = GeneralMasterGUID;
+
+            // ID 
             string id = SqlHelper.GenerateID(query.ItemType, master);
 
             // Datensatz 
@@ -519,11 +524,11 @@ namespace theDatabase
             Metadata mtd = new Metadata
             {
                 CreatedAt = DateTime.Now,
-                CreatedBy = Guid.NewGuid(),
-                Creator = "Batman",
+                CreatedBy = query.UserGUID,
+                Creator = query.UserName,
                 EditedAt = DateTime.Now,
-                EditedBy = Guid.NewGuid(),
-                Editor = "Batman"
+                EditedBy = query.UserGUID,
+                Editor = query.UserName
             };
 
             // Query generieren
@@ -1141,5 +1146,7 @@ namespace theDatabase
 
             return info;
         }
+
+    
     }
 }

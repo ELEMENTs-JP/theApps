@@ -14,13 +14,13 @@
         }
 
         <div class="col-auto p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
-        
+
         <div class="col p-1 px-2 fw-bold pointer text-truncate text-nowrap" title="@Item.ItemType"
-            @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
+             @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
             @(Item.Title.ToSecureString())
         </div>
 
-  @*       @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR))
+        @*       @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR))
         {
             <div class="@Helper.GetClassByDevice(col) align-items-center">
                 @Item[col.Column].ToSecureString())
@@ -30,14 +30,23 @@
         @if (IsRelated)
         {
             <div class="col-auto p-1" title="@( Item["Sort"].ToSecureString() )">
-                <small class="text-muted " >@(Item.RelationType)</small>
+                <small class="text-muted ">@(Item.RelationType)</small>
             </div>
 
-            <div class="col-auto p-1">
-                <SymbolIcon Symbol="Icon.Disconnect" CSS="pointer hover"
-                            OnClick="@( async  e => { await Disconnect(); })" />
-            </div>
-            
+            if (Context.ItemType.Typ == ItemTypeTyp.Comment)
+            {
+                <div class="col-auto p-1">
+                    <SymbolIcon Symbol="Icon.Delete" OnClick="@( async e => { await Delete(); })"
+                        CSS="pointer hover rounded" Style="color:var(--tblr-red);" />
+                </div>
+            }
+            else
+            {
+                <div class="col-auto p-1">
+                    <SymbolIcon Symbol="Icon.Disconnect" CSS="pointer hover"
+                                OnClick="@( async  e => { await Disconnect(); })" />
+                </div>
+            }
         }
     </div>
 }

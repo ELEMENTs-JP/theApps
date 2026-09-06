@@ -3,6 +3,7 @@
 @using theDatabase
 @using theInfrastructure
 @inject ISqlDatabaseService sql
+@inject ISecurityService sec
 
 
 <div class="container">
@@ -23,7 +24,7 @@
     {
         await base.OnInitializedAsync();
 
-        Context = new QueryContext(sql);
+        Context = new QueryContext(sql,sec);
         Context.ItemType = new ItemType_Task();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -23,6 +23,8 @@ namespace theInfrastructure
         string Content { get; set; }
         string Matchcode { get; set; }
         string ItemType { get; set; }
+        Guid UserGUID { get; set; } 
+        string UserName { get; set; } 
 
         // Validation 
         string Message { get; set; }
@@ -124,6 +126,17 @@ namespace theInfrastructure
         string? ID { get; set; }
         string Title { get; set; }
         string? Content { get; set; }
+    }
+    public interface IMetadata
+    {
+        Guid GUID { get; set; }
+
+        Guid MasterGUID { get; set; }
+
+        string? ID { get; set; }
+
+        string ItemType { get; set; }
+        Metadata Metadata { get; set; }
     }
     public interface IDTO
     {

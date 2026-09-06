@@ -41,11 +41,11 @@
 .editbox {
     border: 1px solid transparent !important;
     border-radius: 0.35rem;
-    width:100%;
+    width: 100%;
     background-color: transparent !important;
-    outline:none;
-    padding: 0.35rem 0.5rem;
-    flex:1;
+    outline: none;
+    padding: 0.25rem 0.5rem;
+    flex: 1;
 }
     .editbox:hover {
         background-color: var(--tsp-hover) !important;

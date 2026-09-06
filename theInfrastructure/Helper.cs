@@ -449,7 +449,7 @@ namespace theInfrastructure
                 FieldTyp.Number => "number",
                 FieldTyp.Integer => "number",
                 FieldTyp.Decimal => "number",
-                FieldTyp.Money => "number",
+                FieldTyp.Money => "text",
                 FieldTyp.Tel => "tel",
                 FieldTyp.Url => "url",
                 FieldTyp.Search => "search",

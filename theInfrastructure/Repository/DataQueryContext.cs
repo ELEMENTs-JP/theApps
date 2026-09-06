@@ -17,7 +17,7 @@ namespace theInfrastructure
         Task Filter(string matchcode);
         Task Load(string ID);
         Task<List<IDTO>> RelatedItems(string itemType, AssociationTyp association = AssociationTyp.Association);
-        void Init(ISqlDatabaseService sql);
+        void Init(ISqlDatabaseService sql, ISecurityService sec);
         Task<Guid> Create(string title);
         Task Delete(IDTO dto);
         Task Update(IDTO dto);

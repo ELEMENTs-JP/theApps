@@ -1,8 +1,11 @@
 ﻿@using theControls.Icons
 @using theControls.Input
 @using theControls.Modal
+
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
+@inject ISecurityService sec
+
 @implements IAsyncDisposable
 
 @if (ItemType != null)
@@ -99,7 +102,7 @@
 
         if (ItemType != null)
         {
-            Context = new QueryContext(sql);
+            Context = new QueryContext(sql, sec);
             Context.ItemType = this.ItemType;
         }
     }

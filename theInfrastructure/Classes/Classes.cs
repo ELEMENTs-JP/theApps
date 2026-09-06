@@ -201,6 +201,8 @@ namespace theInfrastructure
         public string Content { get; set; } = string.Empty;
         public string Matchcode { get; set; } = string.Empty;
         public string ItemType { get; set; } = string.Empty;
+        public Guid UserGUID { get; set; } = Guid.Empty;
+        public string UserName { get; set; } = string.Empty;
         public static IQueryParameter Default(string title)
         {
             IQueryParameter qp = new QueryParameter()
@@ -223,8 +225,6 @@ namespace theInfrastructure
                 this.Message = "Master GUID is Empty";
                 return false;
             }
-
-
             return true;
         }
     }

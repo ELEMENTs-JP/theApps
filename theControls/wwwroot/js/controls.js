@@ -1,5 +1,33 @@
 ﻿
 
+window.numberFormatter = {
+    formatInput: function (element, locale) {
+        let value = element.value;
+
+        // Erlaube nur Ziffern, Komma und Punkt
+        value = value.replace(/[^0-9.,-]/g, '');
+
+        let separator = locale === 'de-DE' ? ',' : '.';
+        let parts = value.split(separator);
+        let integerPart = parts[0].replace(/[^0-9-]/g, '');
+
+        if (integerPart) {
+            let number = parseInt(integerPart, 10);
+            if (!isNaN(number)) {
+                integerPart = new Intl.NumberFormat(locale).format(number);
+            }
+        }
+
+        let formatted = parts.length > 1 ? integerPart + separator + parts[1] : integerPart;
+
+        // Wert direkt im HTML-Element setzen
+        element.value = formatted;
+
+        // Wert an C# zurückliefern
+        return formatted;
+    }
+};
+
 
 window.imageUtils = {
     compressToTargetSize: function (byteArray, maxPixelSize = 200) {

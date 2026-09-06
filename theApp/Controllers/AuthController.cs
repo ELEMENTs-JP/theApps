@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using theDatabase;
 using theInfrastructure;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -119,6 +120,8 @@ public class AuthController : ControllerBase
         query.MasterGUID = SQLiteService.GeneralMasterGUID;
         query.ItemType = "User";
         query.Title = username;
+        query.UserGUID = security.User.GUID;
+        query.UserName = security.User.Title;
         result = await sqlService.Create(query);
 
         // Get User 
@@ -194,6 +197,8 @@ public class AuthController : ControllerBase
         // Principal erzeugen 
         qp.GUID = SQLiteService.GeneralMasterGUID;
         qp.Title = "Default";
+        qp.UserGUID = security.User.GUID;
+        qp.UserName = security.User.Title;
         result = await sqlService.Create(qp);
 
 
@@ -253,6 +258,8 @@ public class AuthController : ControllerBase
             c.GUID = SQLiteService.GeneralMasterGUID;
             c.ItemType = "Principal";
             c.Title = "Default";
+            c.UserGUID = SQLiteService.GeneralMasterGUID;
+            c.UserName = "Default";
             IQueryResult newResult = await sqlService.Create(c);
 
             principal = newResult.Items.Where(se =>

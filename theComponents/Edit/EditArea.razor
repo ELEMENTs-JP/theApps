@@ -13,7 +13,7 @@
 
 @if (ItemType != null && !string.IsNullOrEmpty(ID))
 {
-    <Frame Border="true" Rounded="true">
+    <Frame Border="true" Rounded="true" CSS="pt-2">
         <Icon>
             @if (ItemType.Typ == ItemTypeTyp.User)
             {
@@ -24,7 +24,7 @@
             <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)" 
                         Field="@TitleField" Binding="ValueBindingTyp.Title" 
                      Context="@Context" Border="false" ControlStyle=" min-width:21rem; " />
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-top: -8px;">
 
                 @if (app != null && app.App != null)
                 {
@@ -100,7 +100,7 @@
         Fields = await ItemType.GetFields();
 
         // Context
-        Context = new QueryContext(sql);
+        Context = new QueryContext(sql, sec);
         Context.ItemType = ItemType;
         await Context.Load(ID);
     }

@@ -12,7 +12,7 @@
         {
             <TextArea Label="@Field.Title"
                       Description="@Field.Description"
-                      Value="@( string.Empty )"
+                      Value="@( DefaultText )"
                       ValueChanged="@(async e => {  Value = e;  await ValueChanged.InvokeAsync(e);})"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
@@ -45,7 +45,7 @@
             <DropDown Label="@Field.Title"
                     Description="@Field.Description"
                     Items="@Items"
-                      Value="@Value"
+                      Value="@DefaultText"
                     ValueChanged="@(async e => { Value = e; await ValueChanged.InvokeAsync(e); })"
                     Placeholder="@Field.Placeholder"
                     CssClass="@CssClass">
@@ -93,7 +93,7 @@
         {
             <CheckBox Label="@Field.Title"
                       Description="@Field.Description"
-                      Value="@Value"
+                      Value="@DefaultText"
                       ValueChanged="@(async e => { Value = e; await ValueChanged.InvokeAsync(e); })"
                       CssClass="@CssClass" />
         }
@@ -101,7 +101,7 @@
         {
             <Heading Label="@Field.Title" ShowLabel="false"
                      Description="@Field.Description"
-                     Value="@Value"
+                     Value="@DefaultText"
                      ValueChanged="@(async e =>{ Value = e; await ValueChanged.InvokeAsync(e); })"
                      CssClass="@CssClass">
  
@@ -111,7 +111,7 @@
         {
             <TextBox Label="@Field.Title"
                      Description="@Field.Description"
-                     Value="@Value"
+                     Value="@DefaultText"
                      ValueChanged="@(async e =>{ Value = e; await ValueChanged.InvokeAsync(e); })"
                      Type="@Field.Typ"
                      Placeholder="@Field.Placeholder"
@@ -126,6 +126,7 @@
 @code {
 
     private string ID { get; set; } = Guid.NewGuid().ToSecureString();
+    private string DefaultText { get; set; } = string.Empty;
 
     // Fields 
     List<IDTO> Items { get; set; } = new();
@@ -181,23 +182,26 @@
     {
         this.Items = await Helper.InitDropDown(Field, sql);
 
-        DateTime now = DateTime.Now;
-
-        if (Field.Typ == FieldTyp.Date)
-        {
-            Value = now.ToString("yyyy-MM-dd");
-            await ValueChanged.InvokeAsync(Value);
-        }
-        if (Field.Typ == FieldTyp.DateTime)
-        {
-            Value = now.ToString("yyyy-MM-ddTHH:mm");
-            await ValueChanged.InvokeAsync(Value);
-        }
-        if (Field.Typ == FieldTyp.Time)
-        {
-            Value = now.ToString("HH:mm");
-            await ValueChanged.InvokeAsync(Value);
-        }
+        // if (Field.Typ == FieldTyp.CheckBox)
+        // {
+        //     DefaultText = "false";
+        //     await ValueChanged.InvokeAsync(DefaultText);
+        // }
+        // if (Field.Typ == FieldTyp.Date)
+        // {
+        //     DefaultText = DateTime.Now.ToString("yyyy-MM-dd");
+        //     await ValueChanged.InvokeAsync(DefaultText);
+        // }
+        // if (Field.Typ == FieldTyp.DateTime)
+        // {
+        //     DefaultText = DateTime.Now.ToString("yyyy-MM-ddTHH:mm");
+        //     await ValueChanged.InvokeAsync(DefaultText);
+        // }
+        // if (Field.Typ == FieldTyp.Time)
+        // {
+        //     DefaultText = DateTime.Now.ToString("HH:mm");
+        //     await ValueChanged.InvokeAsync(DefaultText);
+        // }
 
         await InvokeAsync(StateHasChanged);
     }

@@ -1,9 +1,9 @@
 ﻿@if (!string.IsNullOrEmpty(this.Label))
 {
-    <label class="form-label text-secondary" for="@EffectiveId">@Label</label>
+    <label class="form-label text-secondary" for="@ID">@Label</label>
 }
 <div class="position-relative overlay-container">
-    <textarea id="@EffectiveId"
+    <textarea id="@ID"
               name="@InputName"
               class="editbox @CssClass @(Overlay != null ? "pe-6" : "")"
               style="@Style"
@@ -38,13 +38,10 @@
 
 @code {
 
-    private string _generatedId = Guid.NewGuid().ToString();
+    private string ID = $"textarea-{Guid.NewGuid():N}";
 
     [Parameter]
     public RenderFragment? Overlay { get; set; }
-
-    [Parameter]
-    public string? Id { get; set; }
 
     [Parameter]
     public string Name { get; set; } = string.Empty;
@@ -85,12 +82,10 @@
     [Parameter]
     public string Style { get; set; } = string.Empty;
 
-    private string EffectiveId => !string.IsNullOrWhiteSpace(Id) ? Id : _generatedId;
-
     private async Task HandleInput(ChangeEventArgs e)
     {
-        Value = e.Value?.ToString() ?? string.Empty;
-        await ValueChanged.InvokeAsync(Value);
+        var newValue = e.Value?.ToString() ?? string.Empty;
+        await ValueChanged.InvokeAsync(newValue);
     }
 
     private string InputName =>

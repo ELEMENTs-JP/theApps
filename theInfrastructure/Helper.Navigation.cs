@@ -7,6 +7,20 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        public static bool ValidateVisibility(IItemType ItemType)
+        {
+            if (ItemType != null)
+            {
+                if (ItemType.Typ == ItemTypeTyp.Comment)
+                {
+                    return false;
+                }
+
+            }
+
+            return true;
+        }
+
         // Navigation 
         public static void NavToApp(this NavigationManager nm, string App)
         {

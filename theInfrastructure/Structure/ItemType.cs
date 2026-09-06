@@ -15,6 +15,7 @@ namespace theInfrastructure
         string Description { get; set; }
         string Group { get; set; }
         ItemTypeTyp Typ { get; set; }
+        bool IsNavigation { get; set; }
         bool InSubNavigation { get; set; }
         bool ShowInTaskBarNavigation { get; set; }
 
@@ -43,8 +44,9 @@ namespace theInfrastructure
         public string Name { get; set; } = string.Empty;
         public string Group { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public bool InSubNavigation { get; set; } = true;
-        public bool ShowInTaskBarNavigation { get; set; } = true;
+        public bool IsNavigation { get; set; } = true; // In Hauptnavigation anzeigen 
+        public bool InSubNavigation { get; set; } = true; // In untergeordneter Navigation anzeigen 
+        public bool ShowInTaskBarNavigation { get; set; } = true; // In der Taskbar unten rechts anzeigen 
         public ItemTypeTyp Typ { get; set; } = ItemTypeTyp.Item;
         public BaseItemType()
         { 
