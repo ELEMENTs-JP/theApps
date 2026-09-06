@@ -99,6 +99,10 @@
                         {
                             <StatusBox ID="@entry.ID" Value="@entry.Title" />
                         }
+                        else if (Field.Typ == FieldTyp.Progress)
+                        {
+                            <ProgressBar Value="@entry.ID.ToSecureString()" />
+                        }
                         else if (Field.Typ == FieldTyp.Color)
                         {
                             <div class="col-auto px-1" style="">

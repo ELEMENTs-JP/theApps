@@ -36,7 +36,7 @@
     }
 
     
-    <div id="@( "Toggle_Button_" + modalGUID )" class="@( ButtonCSS + " position-relative " )">
+    <div id="@( "Toggle_Button_" + modalGUID )" class="@( ButtonCSS + " d-flex gap-1 align-items-center position-relative " )">
 
         @if (Icon.HasContent())
         {
@@ -57,7 +57,7 @@
             {
                 @(((MarkupString)ButtonIcon.ToSecureString()))
             }
-            @(((MarkupString)Title.ToSecureString()))
+       @*      @(((MarkupString)Title.ToSecureString())) *@
         }
 
         @if (Count >= 1)
@@ -158,7 +158,7 @@
     public string FormCSS { get; set; } = "modal fade"; // modal modal-blur fade
 
     [Parameter]
-    public string ButtonCSS { get; set; } = " hover pointer rounded-2 p-1 px-2 ";
+    public string ButtonCSS { get; set; } = " hover pointer rounded-2 p-1 ";
 
     [Parameter]
     public string ButtonText { get; set; } = string.Empty;

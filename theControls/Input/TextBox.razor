@@ -61,9 +61,11 @@
 
 @if (!string.IsNullOrEmpty(Description))
 {
-    <div class="text-muted text-truncate small border-top no-select mx-1 mt-1"
-         style="padding-left:3px; padding-top:3px; max-width:9rem; ">
-        @this.Description.ToSecureString()
+    <div class="text-muted small border-top mt-1"
+         style="padding-left:3px; padding-top:3px; ">
+        <div class="text-truncate-2">
+            @this.Description.ToSecureString()
+        </div>
     </div>
 }
 @if (!string.IsNullOrEmpty(Hint))

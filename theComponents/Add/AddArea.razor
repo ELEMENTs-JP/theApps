@@ -16,11 +16,11 @@
 {
     <ModalForm @key="@(new Guid().ToSecureString())" Title="neuen Eintrag erstellen"
                ShowTitleInButton="false"
-               ButtonText="Neu"
+               ButtonText="@ButtonTitle" Value=""
                OnBeforeOK="BeforeOK"
                OnOKClicked="@( async e => { await OnOK(); } )">
         <Icon>
-            <SymbolIcon Symbol="Icon.Neu" CSS="me-2 float-start" />
+            <SymbolIcon Symbol="Icon.Neu" CSS="" />
         </Icon>
         <ChildContent>
             <div class="d-flex flex-row border-bottom mb-3">
@@ -56,7 +56,8 @@
                 }
 
                 <div class="col-12 p-2">
-                    <TextBox Label="Titel" Value="@Title" Description="Titel des Datensatzes" Placeholder="Titel hier formulieren..."
+                    <TextBox Label="Titel" Value="@Title" Description="Titel des Datensatzes" 
+                            Placeholder="Titel hier formulieren..."
                              ValueChanged="@( async e => { Title = e; await SearchForDuplicates(); })" />
                 </div>
 
@@ -89,6 +90,9 @@
 
     [Parameter]
     public IDTO RelatedItem { get; set; }
+
+    [Parameter]
+    public string ButtonTitle { get; set; } = "Neu";
 
     [Parameter]
     public AssociationTyp Association { get; set; } = AssociationTyp.Association;

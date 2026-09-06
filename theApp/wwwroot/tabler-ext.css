@@ -3,6 +3,7 @@
     --tblr-dropdown-item-padding-x: 0.65rem !important;
     --tblr-dropdown-item-padding-y: 0.35rem !important;
     --tblr-dark-mode-border-color-translucent: #99999933 !important;
+    --tblr-border-color: #99999933 !important;
 }
 
 
@@ -24,6 +25,28 @@
     outline: none !important;
 }
 
+.input-group-text {
+    padding: .35rem 0.65rem !important;
+    border: none !important;
+}
+
+
+
+
+
+
+/* Der obere Rahmen wird nur gesetzt, wenn der Container nicht leer ist */
+.list:hover:not(:empty) {
+    border-top: var(--tblr-border-width) solid var(--tblr-border-color);
+}
+
+/* Jedes Zeilenelement erhält den unteren Rahmen */
+.list-item:hover {
+    border-bottom: var(--tblr-border-width) solid var(--tblr-border-color);
+}
+
+
+
 .hr-text {
     margin: 1.5rem 0rem 0.5rem 0rem !important;
 }
@@ -37,7 +60,7 @@
 }
 
 .nav-link:focus, .nav-link:hover {
-    color:inherit !important;
+    color: inherit !important;
 }
 
 .form-switch .form-check-input:focus {
@@ -50,11 +73,9 @@
     padding-bottom: 0.25rem;
     padding-left: 0.4rem;
     padding-right: 0.4rem;
-    cursor:pointer;
+    cursor: pointer;
 }
-.input-group-text {
-    border: var(--tblr-border-width) solid var(--tblr-border-color) !important;
-}
+
 
 .btn-primary {
     background-color: #fff !important;
@@ -78,8 +99,9 @@
 }
 
 .btn .icon {
-    margin-right:0 !important;
+    margin-right: 0 !important;
 }
+
 .tox .tox-tbtn svg {
     fill: #ccc !important;
 }
@@ -112,8 +134,8 @@
 
 
 .form-control:focus {
-    box-shadow:none !important;
-    border-color:#cccccc;
+    box-shadow: none !important;
+    border-color: #cccccc;
 }
 
 .input-group {

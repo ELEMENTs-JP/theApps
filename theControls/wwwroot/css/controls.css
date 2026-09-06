@@ -3,7 +3,7 @@
 
 /* Standardwert für die maximale Breite (kann global oder lokal überschrieben werden) */
 :root {
-    --text-truncate-max-width: 9rem;
+    --text-truncate-max-width: 15rem;
 }
 
 /* Identisches Verhalten wie .text-truncate, jedoch begrenzt auf 2 Zeilen */

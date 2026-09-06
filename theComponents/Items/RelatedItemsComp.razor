@@ -19,19 +19,16 @@
                     {
                         <div class="fw-bold pe-2 me-2">@Title</div>
                     }
-                    <ItemTypeSelector Items="@ItemTypes" OnClick="@( e => { ItemType = e; })" />
+                    <ItemTypeSelector Items="@ItemTypes" Association="@this.Association" 
+                                        OnClick="@( e => { ItemType = e; })" />
                 </div>
             }
         </Header>
         <Related>
             <div class="hstack align-items-center">
-                <div class="text-muted px-2">
-                    @Association.ToSecureString()
-                </div>
-                <div class="vr mx-2"></div>
-                <ConnectComp ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" />
-                <div class="vr mx-2"></div>
-                <AddArea ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" />
+                <ConnectComp ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" ButtonTitle="" />
+                <div class="vr mx-1"></div>
+                <AddArea ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" ButtonTitle="" />
             </div>
         </Related>
         <Content>

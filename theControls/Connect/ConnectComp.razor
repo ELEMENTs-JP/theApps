@@ -12,10 +12,10 @@
 {
     <ModalForm @key="@(new Guid().ToSecureString())" Title="einen Eintrag verbinden"
                ShowTitleInButton="false"
-               ButtonText="Connect"
+               ButtonText="@ButtonTitle" Value=""
                OnOKClicked="@( async e => { await OnOK(); } )">
                <Icon>
-            <SymbolIcon Symbol="Icon.Connect" CSS="me-2 float-start" />
+            <SymbolIcon Symbol="Icon.Connect" CSS="" />
                </Icon>
         <ChildContent>
             <div class="d-flex flex-row border-bottom mb-3">
@@ -81,6 +81,9 @@
 
     [Parameter]
     public IDTO RelatedItem { get; set; }
+
+    [Parameter]
+    public string ButtonTitle { get; set; } = "Connect";
 
     private IDTO SelectedItem { get; set; }
 

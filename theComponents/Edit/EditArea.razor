@@ -40,12 +40,18 @@
                         @Context.ItemType.Name.ToSecureString()
                     </a>
                     <div class="vr"></div>
+                    <small class="text-muted small px-2 no-select">Typ: @Context.ItemType.Typ.ToSecureString()</small>
                 }
-                <small class="text-muted small px-2 no-select">Typ: @Context.ItemType.Typ.ToSecureString()</small>
+
+                @if (Context != null && Context.Item != null)
+                {
+                    <div class="vr"></div>
+                    <small class="text-muted small px-2 no-select">ID: @Context.Item.ID.ToSecureString()</small>
+                }
             </div>
         </Header>
         <Related>
-            <ContextMenu Context="@Context" ItemType="@ItemType" />
+            <ContextMenu Context="@Context" ItemType="@ItemType" CSS="me-3"/>
             @if (Context.ItemType.Name == "User")
             {
                 <SetPasswordComp Context="@Context" />
@@ -104,8 +110,6 @@
         Context.ItemType = ItemType;
         await Context.Load(ID);
     }
-
-     
 
     public async ValueTask DisposeAsync()
     {

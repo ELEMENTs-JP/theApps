@@ -266,7 +266,32 @@ namespace theInfrastructure
             return Base64String;
 
         }
+        public static byte[] GetFileAsByteArray(this IDTO file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    string FilePath = file["FullFilePath"].ToSecureString();
+                    string ext = file["FileExtension"].ToSecureString();
 
+                    if (System.IO.File.Exists(FilePath))
+                    {
+                        // Read
+                        byte[] arr = System.IO.File.ReadAllBytes(FilePath);
+                        return arr;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("FAIL: " + ex.Message);
+            }
+
+            var randomBinaryData = new byte[1 * 1024];
+            return randomBinaryData;
+        }
         public static string CorrectBase64Extension(string ext)
         {
             if (string.IsNullOrWhiteSpace(ext))

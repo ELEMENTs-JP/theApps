@@ -1,0 +1,27 @@
+﻿
+@if (Association != AssociationTyp.NULL)
+{
+    <div class="text-muted px-1" title="@Association.ToSecureString()">
+
+        @if (Association == AssociationTyp.Children || Association == AssociationTyp.Default)
+        {
+            <SymbolIcon Symbol="Icon.Down" />
+        }
+        else if (Association == AssociationTyp.Related || Association == AssociationTyp.Parallels)
+        {
+            <SymbolIcon Symbol="Icon.Equal" />
+        }
+        else if (Association == AssociationTyp.Parents)
+        {
+            <SymbolIcon Symbol="Icon.Top" />
+        }
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public AssociationTyp Association { get; set; } = AssociationTyp.NULL;
+
+}

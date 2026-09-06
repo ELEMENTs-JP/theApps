@@ -1,5 +1,9 @@
-﻿@if (Item != null)
+﻿@using theControls.Essentials
+@if (Item != null)
 {
+   
+    <AssociationIcon Association="@Association" />
+
     <div class="btn-group" role="group">
 
         @foreach (IItemType it in Items.FromTo<IItemType>(0, 2))
@@ -40,6 +44,9 @@
 
     [Parameter]
     public List<IItemType> Items { get; set; } = new();
+
+    [Parameter]
+    public AssociationTyp Association { get; set; } = AssociationTyp.NULL;
 
     protected override async Task OnInitializedAsync()
     {

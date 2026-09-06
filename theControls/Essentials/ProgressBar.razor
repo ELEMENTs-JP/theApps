@@ -1,9 +1,9 @@
 ﻿
 
-<div class="d-flex align-items-center flex-nowrap">
+<div class="d-flex align-items-center flex-nowrap w-100">
 @*     <i class="ti ti-progress px-1 text-muted"></i> *@
 
-    <div class="progress me-2" style="height:0.7rem !important; width: 100px !important;" title="@("Progress: " + Number.ToSecureString() + " %")">
+    <div class="progress me-2" style="height:0.7rem !important; width: 100% !important;" title="@("Progress: " + Number.ToSecureString() + " %")">
         <div class="@( "progress-bar")" style="@("width: " + Number.ToSecureString() + "%; " + " background-color: " + Progress.GetProgressHexColor(this.Number) + " !important; ")"
              role="progressbar" aria-valuenow="@(Number.ToSecureString())" aria-valuemin="0" aria-valuemax="100"
              aria-label="@(Number.ToSecureString() + "% Complete")">

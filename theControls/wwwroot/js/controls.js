@@ -1,5 +1,29 @@
 ﻿
 
+
+window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+    try {
+
+        const arrayBuffer = await contentStreamReference.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        const url = URL.createObjectURL(blob);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+        URL.revokeObjectURL(url);
+
+    } catch (e) {
+
+        alert('File Download: ' + e);
+
+    }
+}
+
+
+
+
 window.numberFormatter = {
     formatInput: function (element, locale) {
         let value = element.value;

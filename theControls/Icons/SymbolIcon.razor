@@ -1,6 +1,54 @@
 ﻿
 <div class="@( CSS + "  " )" style="@Style" @onclick="@onBtnClck">
 
+    @if (Symbol == Icon.Download)
+    {
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+            fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            class="icon icon-tabler icons-tabler-outline icon-tabler-download">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+            <path d="M7 11l5 5l5 -5" />
+            <path d="M12 4l0 12" />
+        </svg>
+    }
+    @if (Symbol == Icon.Top)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+             fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-up">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 5l0 14" />
+            <path d="M18 11l-6 -6" />
+            <path d="M6 11l6 -6" />
+        </svg>
+    }
+    @if (Symbol == Icon.Down)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+             fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-down">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 5l0 14" />
+            <path d="M18 13l-6 6" />
+            <path d="M6 13l6 6" />
+        </svg>
+    }
+    @if (Symbol == Icon.Equal)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+             fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-right">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M5 12l14 0" />
+            <path d="M13 18l6 -6" />
+            <path d="M13 6l6 6" />
+        </svg>
+    }
+
+
+
+
     @if (Symbol == Icon.Private)
     {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
@@ -473,7 +521,7 @@
     @if (Symbol == Icon.Delete)
     {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
             class="icon icon-tabler icons-tabler-outline icon-tabler-x">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M18 6l-12 12" />

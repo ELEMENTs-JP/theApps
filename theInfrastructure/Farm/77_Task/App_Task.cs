@@ -24,8 +24,8 @@ namespace theInfrastructure
             ItemTypes.Add(new ItemType_Appointment());
             ItemTypes.Add(new ItemType_Image());
             ItemTypes.Add(new ItemType_Audio());
-            ItemTypes.Add(new ItemType_Task());
             ItemTypes.Add(new ItemType_TimeFrame());
+            ItemTypes.Add(new ItemType_Task());
 
             return ItemTypes;
         }

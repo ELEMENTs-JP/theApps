@@ -35,6 +35,18 @@ namespace theInfrastructure
 
             Fields.Add(new Field()
             {
+                Title = "Aufgabe",
+                Typ = FieldTyp.TextArea,
+                Column = "Description",
+                CSS = " col-12 col-md-6 col-lg-12 ",
+                OnDevice = DeviceDisplay.Desktop,
+                OnDisplay = new FieldDisplay(false, false, false, false),
+            });
+
+
+            Fields.Add(new Field() { Title = "Assignment", Typ = FieldTyp.HR });
+            Fields.Add(new Field()
+            {
                 Title = "Owner", Description= "Mit dem Owner legen Sie die eindeutige fachliche und operative Verantwortung für eine Aufgabe fest, wodurch Sie Unklarheiten bei Zuständigkeiten vermeiden, gezielte Rückfragen im Team ermöglichen und die verbindliche Umsetzung unternehmerischer Ziele sicherstellen.",
                 Typ = FieldTyp.Select,
                 Association = AssociationTyp.Children,
@@ -63,8 +75,7 @@ namespace theInfrastructure
             // Performance 
             Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
 
-            // Description 
-            Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Description));
+      
 
             return Fields;
         }

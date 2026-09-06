@@ -6,7 +6,7 @@
 @inject ISqlDatabaseService sql
 
 
-<div class="@( drop + Zone ) DefaultDragDropZone" data-zone="@Zone" style="min-height:3rem;">
+<div class="@( drop + Zone ) DefaultDragDropZone list" data-zone="@Zone" style="min-height:3rem; border-top-width:1px;">
 
     @foreach (IDTO entry in Items.Where(se =>
                     se["Zone"].ToSecureString() == this.Zone)

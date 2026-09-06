@@ -1,10 +1,11 @@
-﻿@using theControls.Icons
+﻿@using theControls.Essentials
+@using theControls.Icons
 
 @inherits BaseRow
 
 @if (Context != null)
 {
-    <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-1 hover align-items-center drag">
+    <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-1 hover align-items-center drag list-item">
 
         @if (IsSortable)
         {
@@ -15,10 +16,20 @@
 
         <div class="col-auto p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
 
-        <div class="col p-1 px-2 fw-bold pointer text-truncate text-nowrap" title="@Item.ItemType"
-             @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
-            @(Item.Title.ToSecureString())
-        </div>
+        @if (Context.ItemType.Typ == ItemTypeTyp.Comment)
+        {
+            <div class="col p-1 px-2 fw-bold text-truncate text-nowrap" title="@Item.ItemType">
+                @(Item.Title.ToSecureString())
+            </div>
+        }
+        else
+        {
+            <div class="col p-1 px-2 fw-bold pointer text-truncate text-nowrap" title="@Item.ItemType"
+                 @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
+                @(Item.Title.ToSecureString())
+            </div>
+        }
+        
 
         @*       @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR))
         {
@@ -30,14 +41,15 @@
         @if (IsRelated)
         {
             <div class="col-auto p-1" title="@( Item["Sort"].ToSecureString() )">
-                <small class="text-muted ">@(Item.RelationType)</small>
+             
+                <AssociationIcon Association="@( Item.RelationType.ToEnumOrDefault<AssociationTyp>())" />
             </div>
 
             if (Context.ItemType.Typ == ItemTypeTyp.Comment)
             {
                 <div class="col-auto p-1">
                     <SymbolIcon Symbol="Icon.Delete" OnClick="@( async e => { await Delete(); })"
-                        CSS="pointer hover rounded" Style="color:var(--tblr-red);" />
+                        CSS="pointer hover rounded" Style="color:var(--tblr-red); margin-top:-3px" />
                 </div>
             }
             else
