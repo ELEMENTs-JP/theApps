@@ -135,7 +135,8 @@
 
 .form-control:focus {
     box-shadow: none !important;
-    border-color: #cccccc;
+    outline: none !important;
+    border-color: #555555;
 }
 
 .input-group {

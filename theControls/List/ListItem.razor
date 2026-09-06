@@ -14,7 +14,10 @@
             </div>
         }
 
-        <div class="col-auto p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
+        @if (ShowID)
+        {
+            <div class="col-auto p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
+        }
 
         @if (Context.ItemType.Typ == ItemTypeTyp.Comment)
         {
@@ -67,6 +70,9 @@
 
     [Parameter]
     public bool IsSortable { get; set; } = false;
+
+    [Parameter]
+    public bool ShowID { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {

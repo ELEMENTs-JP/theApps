@@ -1,6 +1,82 @@
 ﻿
 
 
+window.clipboardPaste = {
+    dotNetHelper: null,
+    pasteHandler: null,
+
+    init: function (dotNetHelper) {
+        this.dotNetHelper = dotNetHelper;
+
+        this.pasteHandler = async (event) => {
+            const items = (event.clipboardData || event.originalEvent.clipboardData)?.items;
+            const files = (event.clipboardData || event.originalEvent.clipboardData)?.files;
+
+            let fileToProcess = null;
+
+            if (items) {
+                for (const item of items) {
+                    if (item.kind === 'file') {
+                        fileToProcess = item.getAsFile();
+                        break;
+                    }
+                }
+            }
+
+            if (!fileToProcess && files && files.length > 0) {
+                fileToProcess = files[0];
+            }
+
+            if (fileToProcess) {
+                event.preventDefault();
+                const arrayBuffer = await fileToProcess.arrayBuffer();
+                const uint8Array = new Uint8Array(arrayBuffer);
+
+                // Übergabe von Byte-Array, MIME-Type und ursprünglichem Dateinamen
+                await this.dotNetHelper.invokeMethodAsync(
+                    'HandleImagePasted',
+                    uint8Array,
+                    fileToProcess.type || '',
+                    fileToProcess.name || ''
+                );
+            }
+        };
+
+        document.addEventListener('paste', this.pasteHandler);
+    },
+
+    dispose: function () {
+        if (this.pasteHandler) {
+            document.removeEventListener('paste', this.pasteHandler);
+            this.pasteHandler = null;
+        }
+        this.dotNetHelper = null;
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 window.globalKeyListener = {

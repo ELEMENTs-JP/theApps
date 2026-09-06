@@ -1,0 +1,167 @@
+﻿@using System.IO
+@using Microsoft.AspNetCore.Hosting
+@inject IJSRuntime JSRuntime
+@inject IWebHostEnvironment env
+@inject ISqlDatabaseService sql
+@inject ISecurityService sec
+@inject ILocalizationService loc
+@inject IMessagingBusService msg
+@implements IAsyncDisposable
+
+@code {
+    private DotNetObjectReference<ClipboardCopyPaste>? _objRef;
+
+    [Parameter]
+    public int Progress { get; set; } = 0;
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    [Parameter]
+    public EventCallback<byte[]> OnPaste { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _objRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("clipboardPaste.init", _objRef);
+        }
+    }
+
+    [JSInvokable]
+    public async Task HandleImagePasted(byte[] imageData, string mimeType, string fileName)
+    {
+        if (sec.Configuration.CopyPasteUpload == false)
+        {
+            msg.Publish(new AppMessage("Info", BusAction.Info, "Copy Paste Bildupload ist in den Features deaktiviert."));
+            return;    
+        }
+
+        if (imageData == null || imageData.Length == 0)
+            return;
+
+        Progress = 0;
+        await InvokeAsync(StateHasChanged);
+
+        string contentRootPath = env.ContentRootPath;
+        string relativeSaveFilePath = Path.Combine(contentRootPath, loc.DefaultFilePath);
+
+        if (!Directory.Exists(relativeSaveFilePath))
+        {
+            Directory.CreateDirectory(relativeSaveFilePath);
+        }
+
+        // Dateiendung bestimmen (aus Dateiname, MIME-Type oder Magic Bytes)
+        string extension = Path.GetExtension(fileName)?.TrimStart('.')
+            ?? Helper.GetExtensionFromMimeType(mimeType)
+            ?? GetExtensionFromMagicBytes(imageData);
+
+        Guid itemGUID = Guid.NewGuid();
+        string fullFilePath = Path.Combine(relativeSaveFilePath, $"{itemGUID}.{extension}");
+
+        try
+        {
+            using MemoryStream readStream = new(imageData);
+            await using FileStream writeStream = new(
+                fullFilePath,
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.None,
+                bufferSize: 8192,
+                useAsync: true);
+
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            long totalRead = 0;
+            long totalSize = imageData.Length;
+            int lastProgress = -1;
+
+            while ((bytesRead = await readStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                await writeStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+                totalRead += bytesRead;
+
+                int currentProgress = (int)((double)totalRead / totalSize * 100);
+                if (currentProgress != lastProgress)
+                {
+                    Progress = currentProgress;
+                    lastProgress = currentProgress;
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+
+            await writeStream.FlushAsync();
+        }
+        catch (Exception exInner)
+        {
+            System.Diagnostics.Debug.WriteLine("Fail Upload File: " + exInner.ToString());
+        }
+
+        try
+        {
+            IQueryParameter qp = new QueryParameter();
+            qp.GUID = itemGUID;
+            qp.MasterGUID = sql.MasterGUID;
+            qp.Title = string.IsNullOrWhiteSpace(fileName) ? "Datei" : Path.GetFileNameWithoutExtension(fileName);
+            qp.ItemType = ItemType.Name;
+            qp.UserGUID = sec.User.GUID;
+            qp.UserName = sec.User.Title;
+
+            IQueryResult result = await sql.Create(qp);
+            if (result == null)
+                return;
+
+            IQueryResult itemResult = await sql.GetItem(qp);
+            if (itemResult == null)
+                return;
+
+            IDTO? item = itemResult.Items.FirstOrDefault();
+            if (item == null)
+                return;
+
+            item["FullFilePath"] = fullFilePath;
+            item["FileExtension"] = extension;
+            await sql.Update(item);
+
+            msg.Publish(new AppMessage("List", BusAction.Refresh));
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("Fail SQL Operation: " + ex.ToString());
+        }
+
+        if (OnPaste.HasDelegate)
+        {
+            await OnPaste.InvokeAsync(imageData);
+        }
+    }
+
+
+    private static string GetExtensionFromMagicBytes(byte[] bytes)
+    {
+        ReadOnlySpan<byte> span = bytes;
+
+        foreach (var signature in Helper.FileSignatures)
+        {
+            if (span.StartsWith(signature.Key))
+            {
+                return signature.Value;
+            }
+        }
+
+        return "png"; // Fallback
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("clipboardPaste.dispose");
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+        _objRef?.Dispose();
+    }
+}

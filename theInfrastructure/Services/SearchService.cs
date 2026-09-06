@@ -47,7 +47,49 @@ namespace theInfrastructure
             IQueryResult result = await SqlService.Search(qp);
             Store = result.Items;
         }
+
         public async Task<List<IDTO>> Search(string matchcode)
+        {
+            string searchInput = matchcode?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrEmpty(searchInput))
+            {
+                return new List<IDTO>();
+            }
+
+            // Suchbegriffe am Leerzeichen aufsplitten und leere Einträge entfernen
+            string[] searchTerms = searchInput.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            return Store.Where(se =>
+                !string.IsNullOrEmpty(se.Matchcode) &&
+                (
+                    searchTerms.Any(term => se.Matchcode.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    se.Matchcode.MatchesPropertySearch(searchInput)
+                )
+            )
+            .OrderBy(se =>
+                // 1. & 2. Vorschlag: Prüft, ob der Matchcode mit mindestens einem Begriff startet
+                searchTerms.Any(term => se.Matchcode.StartsWith(term, StringComparison.OrdinalIgnoreCase)) ? 0 : 1
+            )
+            .ThenBy(se =>
+                // 3. Vorschlag: Kleinsten Treffer-Index aller Begriffe ermitteln
+                searchTerms
+                    .Select(term => se.Matchcode.IndexOf(term, StringComparison.OrdinalIgnoreCase))
+                    .Where(idx => idx >= 0)
+                    .DefaultIfEmpty(int.MaxValue)
+                    .Min()
+            )
+            .ThenBy(se =>
+                // 4. Vorschlag: String-Länge (kürzere Matchcodes sind relevanter/exakter)
+                se.Matchcode.Length
+            )
+            .ThenBy(se =>
+                // Reiner Alphabetischer Fallback
+                se.Matchcode
+            )
+            .ToList();
+        }
+        public async Task<List<IDTO>> SearchObsolete(string matchcode)
         {
             string searchInput = matchcode?.Trim() ?? string.Empty;
 

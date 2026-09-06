@@ -5,6 +5,8 @@
 @inject ISecurityService sec
 @inject ISqlDatabaseService sql
 @inject IAppService app
+@inject NavigationManager nm
+@inject IJSRuntime js
 @implements IAsyncDisposable
 
 @if (Field != null && Context != null && Context.Item != null)
@@ -186,6 +188,15 @@
                     {
                         <SymbolIcon Symbol="@Icon.Search" />
                     }
+                    @if (Field.Typ == FieldTyp.Url)
+                    {
+                        @if (ValidateHttpsUrl())
+                        {
+                            <SymbolIcon Symbol="@Icon.Link" CSS="hover pointer rounded-2 p-1" 
+                                OnClick="@( async e => {  await NavigateExt(); } )" />
+                        }
+                    }
+
                 </Inlay>
                 <Overlay>
                     @if (Field.Typ != FieldTyp.Search)
@@ -194,6 +205,7 @@
                             <SymbolIcon Symbol="@Icon.Check" />
                         </div>
                     }
+                  
                 </Overlay>
             </TextBox>
         }
@@ -366,6 +378,26 @@
         IQueryResult assignResult = await sql.Remove(Context.Item, dto);
         msg.Publish("Info", BusAction.Info, "Eintrag entfernt");
 
+    }
+    private async Task NavigateExt()
+    {
+        if (this.Field.Typ == FieldTyp.Url)
+        {
+            string url = Context.Item[this.Field.Column].ToSecureString();
+            if (url.IsValidHttpsUrl())
+            {
+                await js.InvokeVoidAsync("open", url, "_blank");
+            }
+        }
+    }
+    private bool ValidateHttpsUrl()
+    {
+        string url = Context.Item[this.Field.Column].ToSecureString();
+        if (url.IsValidHttpsUrl())
+        {
+            return true;
+        }
+        return false;
     }
 
     // Events

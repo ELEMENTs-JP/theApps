@@ -53,12 +53,22 @@
                             <ThemeSwitch />
                             <div class="border-bottom my-3"></div>
                             <CheckBox Label="Akzente" Value="@apps.Configuration.Akzente.ToSecureString()"
-                                      ValueChanged="@(e =>
-                                                                                  {
-                                                                                      apps.Configuration.Akzente = e.ToSecureBool();
-                                                                                      apps.Configuration.Save();
-                                                                                  })" />
+                                      ValueChanged="@(e => { apps.Configuration.Akzente = e.ToSecureBool();
+                                                 apps.Configuration.Save(); })" />
                             <div class="my-3"></div>
+
+                            <ButtonSelectionBox Label="Stil"
+                                                Value="@apps.Configuration.EckStil.ToSecureString()"
+                                                ItemChanged="@(e => {  
+                                                apps.Configuration.EckStil = e.ID.ToSecureString();
+                                                apps.Configuration.Save(); })"
+                                                Items="@(new List<IDTO>() {
+                                                    new DTO() { ID = "eckig", Title = loc.GetLabel("eckig", "eckig") },
+                                                    new DTO() { ID = "rund", Title = loc.GetLabel("rund", "rund") },
+                                                } )" />
+                            <div class="border-bottom my-3"></div>
+
+
                             <TextBox Label="Hintergrundbild" Value="@apps.Configuration.Background" Type="FieldTyp.Url"
                                      ValueChanged="@(e =>
                                                                                  {

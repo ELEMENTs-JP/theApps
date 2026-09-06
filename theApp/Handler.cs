@@ -38,10 +38,17 @@ namespace theApp
                 builder.Services.AddRazorComponents()
                     .AddInteractiveServerComponents();
 
-                // Detail Informatiopnen bei rekursiven Fehlern 
+
+
                 builder.Services.AddServerSideBlazor()
+                    .AddHubOptions(options =>
+                    {
+                        // für Copy Paste Dateiupload 
+                        options.MaximumReceiveMessageSize = 30 * 1024 * 1024; // 10 MB Limit
+                    })
                     .AddCircuitOptions(options =>
                     {
+                            // Detail Informatiopnen bei rekursiven Fehlern 
                         if (builder.Environment.IsDevelopment()) //Only add details when debugging.
                         {
                             options.DetailedErrors = true;

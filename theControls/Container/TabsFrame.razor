@@ -2,7 +2,7 @@
 @inject ISecurityService sec
 @inject IAppService app
 
-<div id="@( "tabs_frame_div " + ID )" class=" rounded-2 @BackgroundCSS p-2 @FrameCSS" style="@( app.Configuration.GetAkzentStyle() )">
+<div id="@( "tabs_frame_div " + ID )" class=" @app.Configuration.GetRoundedCSS() @BackgroundCSS p-2 @FrameCSS" style="@( app.Configuration.GetAkzentStyle() )">
 
     @if (Orientation == Orientation.Center)
     {

@@ -1,15 +1,9 @@
-﻿@using theComponents.Add
-@using theControls.Add
-@using theControls.Connect
-@using theControls.Layout
-@using theControls.List
-@using theControls.Selection
-@using theControls.Tables
+﻿
 @inject ISqlDatabaseService sql
 
 @if (RelatedItem != null && ItemType != null)
 {
-    <Frame Border="true" Rounded="true" CSS="@CSS">
+    <Frame Border="true" CSS="@CSS">
         <Header>
             @if (ItemType != null)
             {

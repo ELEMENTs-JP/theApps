@@ -15,6 +15,7 @@ namespace theInfrastructure
         public bool Akzente { get; set; } = false; // weiße Akzente anzeigen oder nicht 
         public bool Blur { get; set; } = false; // Legt fest ob der Hintergrund blur ist 
         public bool Glass { get; set; } = false; // Legt fest ob der Vordergrund blur ist 
+        public string EckStil { get; set; } = "rund";
 
         public void Save()
         {
@@ -58,6 +59,7 @@ namespace theInfrastructure
         
         // Dateien 
         public bool AllowFileUploads { get; set; } = true;
+        public bool CopyPasteUpload { get; set; } = true;
         public int MaxFileSizeInMB { get; set; } = 20;
         public int SmallImagePixel { get; set; } = 300; // legt die Größe von verkleinerten Bildern für eine performante Preview fest 
 

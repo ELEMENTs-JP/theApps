@@ -1,0 +1,166 @@
+﻿
+@inject ISqlDatabaseService sqlService
+@inject ISecurityService secService
+@inject ILocalizationService loc
+@inject IAppService appService
+@inject IMessagingBusService msg
+
+
+@implements IAsyncDisposable
+
+@if (ItemType != null)
+{
+    <ModalForm @key="@(new Guid().ToSecureString())" Title="Einstellungen"
+               ShowTitleInButton="false" FrameCSS="@CSS"
+               ButtonText="@ButtonTitle" Value=""
+               OnBeforeOK="BeforeOK"
+               OnOKClicked="@( async e => { await OnOK(); } )">
+        <Icon>
+            <SymbolIcon Symbol="Icon.Config" CSS="" />
+        </Icon>
+        <ChildContent>
+            <div class="d-flex flex-row border-bottom mb-3">
+                <div class="vstack p-2 px-3">
+                    <div class="text-secondary fw-bold">@ItemType.Name</div>
+                    <small class="text-muted small">Einstellungen für die Liste: @ItemType.Name</small>
+                </div>
+              
+                <div class="flex-fill vstack p-2 px-3">
+                </div>
+            </div>
+
+            <div class="row g-0">
+
+                @if (!string.IsNullOrEmpty(Message))
+                {
+                    <div class="col-12 p-2">
+                        <div class="alert alert-danger p-2 m-2">@Message</div>
+                    </div>
+                }
+
+                <div class="col-12 p-2">
+                    <TextBox Label="Titel" Value="@Title" Description="Titel des Datensatzes" 
+                            Placeholder="Titel hier formulieren..."
+                             ValueChanged="@( async e => { Title = e; })" />
+                </div>
+
+            </div>
+        </ChildContent>
+        <FooterContent>
+               <div class="d-flex flex-row align-items-center">
+              <EventHandlerInfo />
+            </div>
+        </FooterContent>    
+</ModalForm>
+}
+
+@code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    [Parameter]
+    public string ButtonTitle { get; set; } = string.Empty;
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
+
+    private IQueryContext Context { get; set; }
+
+    // Fields
+    private string Title { get; set; } = string.Empty;
+    private string Message { get; set; } = string.Empty;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (ItemType != null)
+        {
+            Context = new QueryContext(sqlService, secService);
+            Context.ItemType = this.ItemType;
+        }
+    }
+
+
+
+    private async Task<bool> BeforeOK()
+    {
+        if (string.IsNullOrEmpty(Title))
+        {
+            msg.Publish("Notwendige Felder", BusAction.Info, "Titel muss gesetzt sein.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private async Task OnOK()
+    {
+        if (Context == null)
+            return;
+
+
+        // // Erstellen
+        // Guid ID = await Context.Create(Title);
+
+        // // Laden
+        // await Context.Load(ID.ToSecureString());
+
+
+
+        // // Update 
+        // await Context.Update(Context.Item);
+
+
+        // Event Hendler
+        // if (secService.Configuration.EventHandler == true)
+        // {
+        //     // Event
+        //     IItemEventArgs args = new ItemEventArgs(Context.Item, null, sqlService, secService, appService);
+
+        //     // Create Event
+        //     Context.Item = await Context.ItemType.OnCreateItem(args);
+        // }
+
+        // Clean
+        Title = string.Empty;
+
+
+        // Message
+        AppMessage am = new AppMessage("ID", BusAction.Refresh, "...");
+        msg.Publish(am);
+
+        // Visual Update
+        await InvokeAsync(this.StateHasChanged);
+    }
+    private async Task OnChange(IField field, string Value)
+    {
+        // IDataValue val = new DataValue(field, Value);
+        // Values.AddOrUpdate(val);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            ItemType = null;
+
+            if (Context != null)
+            {
+                ((IDisposable)Context).Dispose();
+                Context = null;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+}

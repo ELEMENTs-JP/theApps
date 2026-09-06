@@ -86,11 +86,14 @@ namespace theDatabase
 
             // 2. Schritt: Matchcode-Filterung (falls ein Suchbegriff vorhanden ist)
             string search = this.Matchcode.ToSecureString();
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrWhiteSpace(search))
             {
+                // Suchbegriffe am Leerzeichen aufsplitten und leere Einträge entfernen
+                string[] searchTerms = search.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
                 filteredItems = filteredItems.Where(se =>
                     se.Matchcode != null &&
-                    se.Matchcode.Contains(search, StringComparison.OrdinalIgnoreCase)
+                    searchTerms.Any(term => se.Matchcode.Contains(term, StringComparison.OrdinalIgnoreCase))
                 );
             }
 

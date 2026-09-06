@@ -1,5 +1,6 @@
 ﻿@using theControls.Audio
 @using theControls.Icons
+@inject IAppService app
 
 @inherits BaseRow
 
@@ -16,20 +17,20 @@
         else
         {
         @* w-100 sorgt dafür, dass sich das Bild voll an den äußeren Container anpasst *@
-        <div class="@( UserImageCSS + " w-100 mx-auto " )"
+        <div class="@( UserImageCSS + " w-100 mx-auto " + app.Configuration.GetRoundedCSS(4) )"
              style="@(UserImageStyle + " "
                         + BackgroundColor +
                         " background-image: url(" + this.Base64String + "); " )"></div>
         }
 
         <div class="row g-0 p-1">
-            <div class="border-top align-items-center">
+            <div class="align-items-center">
                 <span class="p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</span>
                 <span class="px-1">
                     <MiniAudioPlayer Item="@Item" />
                 </span>
             </div>
-            <div class="col-12 p-1 fw-bold pointer" title="@Item.ItemType" 
+            <div class="col-12 p-1 fw-bold pointer text-truncate" title="@Item.Title.ToSecureString()"
                  @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
                 @(Item.Title.ToSecureString())
             </div>

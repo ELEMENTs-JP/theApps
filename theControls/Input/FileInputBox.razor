@@ -10,11 +10,14 @@
 @inject ILocalizationService loc
 @inject ISecurityService sec
 @inject IMessagingBusService msg
+@inject IAppService app
 
 @if (ItemType != null)
 {
-    <div class="pointer rounded hover overflow-hidden bg-surface text-white position-relative mx-2"
-         style="@( "border: 1px dashed #333 !important; " + InternalStyle )">
+    <div class="pointer @app.Configuration.GetRoundedCSS() overflow-hidden bg-surface text-secondary position-relative mx-2"
+         style="@( (SizeMode == FileInputSizeMode.Maximized 
+                        ? " border: 2px dashed #999 !important; " 
+                        : " border: 1px dashed #555 !important; " ) + " " + InternalStyle )">
 
         @if (isLoading)
         {
@@ -29,8 +32,10 @@
         else
         {
             <div class="position-relative" style="@( $"min-width:{Width}px; min-height:{Height}px;" )">
-                <div class="px-1 position-absolute top-50 start-50 translate-middle" >
-                    <SymbolIcon Symbol="Icon.File" Width="@Width" Height="@Height" />
+                <div class="p-2 position-absolute top-50 start-50 translate-middle" >
+                    <SymbolIcon Symbol="Icon.File" Width="@Width" Height="@Height" 
+                                Style="@( (SizeMode == FileInputSizeMode.Maximized ? " margin-top:5rem; " : " margin-top:0px; " ) )"
+                        CSS="@( (SizeMode == FileInputSizeMode.Maximized ? "  " : " " ) )" />
                 </div>
             </div>
         }

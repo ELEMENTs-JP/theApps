@@ -10,7 +10,7 @@
                             Items="@Context.Items">
             <ItemTemplate Context="item">
                 <ListItem @key="@item.GUID" Context="@Context" Item="@item" 
-                        IsRelated="@( (RelatedItem != null))" IsSortable="true" />
+                          IsRelated="@( (RelatedItem != null))" IsSortable="@IsSortable" ShowID="@ShowID" />
             </ItemTemplate>
         </SortableContainer>
 
@@ -31,7 +31,10 @@
 
 
     [Parameter]
-    public bool IsSortable { get; set; } = false;
+    public bool IsSortable { get; set; } = true;
+
+    [Parameter]
+    public bool ShowID { get; set; } = true;
 
     protected override async Task OnParametersSetAsync()
     {

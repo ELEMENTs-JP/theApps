@@ -75,6 +75,8 @@ namespace theInfrastructure
         Audio = 7,
         Note = 8,
         Comment = 9,
+        Information = 10,
+        Link = 11,
     }
     public enum Orientation
     {
@@ -125,6 +127,7 @@ namespace theInfrastructure
         Help,
         Connect,
         Disconnect,
+        Link,
         Top, Down, Equal,
         Neu,
         File,

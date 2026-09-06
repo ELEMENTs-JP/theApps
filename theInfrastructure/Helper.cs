@@ -224,6 +224,15 @@ namespace theInfrastructure
 
             return string.Empty;
         }
+        public static string GetRoundedCSS(this LayoutConfiguration config, int size = 2)
+        {
+            if (config.EckStil == "rund")
+            {
+                return $"  rounded-{size}  ";
+            }
+
+            return string.Empty;
+        }
         public static TToEnum ToEnum<TToEnum>(this string value, bool ignoreCase = true) where TToEnum : struct, Enum
         {
             if (string.IsNullOrWhiteSpace(value))

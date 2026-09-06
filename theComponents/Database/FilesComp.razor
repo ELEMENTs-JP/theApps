@@ -53,6 +53,17 @@
             <h3 class="h3 w-100">Bilder</h3>
         </div>
 
+        <CheckBox Label="Copy Paste Uploads" Value="@sec.Configuration.CopyPasteUpload.ToSecureString()"
+                    Description="Ermöglicht Bilder mittels Copy Paste in einer Bildbibliothek hochzuladen"
+                  ValueChanged="@(e =>
+                      {
+                              sec.Configuration.CopyPasteUpload = e.ToSecureBool();
+                          sec.Configuration.Save();
+                      })" />
+
+        <div class="my-3"></div>
+
+
         <ButtonSelectionBox Label="Große Bilder" Description="Größe der Bildvorschau für große Bilder"
                             Value="@sec.Configuration.SmallImagePixel.ToSecureString()"
                             ItemChanged="@(e =>

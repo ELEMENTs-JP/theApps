@@ -1,8 +1,4 @@
-﻿@using theControls.Add
-@using theControls.Config
-@using theControls.Icons
-@using theControls.Input
-@using theControls.Modal
+﻿
 @inject ISqlDatabaseService sqlService
 @inject ISecurityService secService
 @inject ILocalizationService loc
@@ -91,7 +87,7 @@
     public IDTO RelatedItem { get; set; }
 
     [Parameter]
-    public string ButtonTitle { get; set; } = "Neu";
+    public string ButtonTitle { get; set; } = string.Empty;
 
     [Parameter]
     public string CSS { get; set; } = string.Empty;

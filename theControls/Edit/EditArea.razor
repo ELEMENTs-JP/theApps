@@ -1,9 +1,6 @@
-﻿@using theComponents.Security
-@using theControls.Image
-@using theControls.Layout
-@using theControls.Modal
-@using theControls.Pages
-@using theInfrastructure
+﻿
+
+
 @inject ISqlDatabaseService sql
 @inject ISecurityService sec
 @inject IAppService app
@@ -13,7 +10,7 @@
 
 @if (ItemType != null && !string.IsNullOrEmpty(ID))
 {
-    <Frame Border="true" Rounded="true" CSS="pt-2">
+    <Frame Border="true"  CSS="pt-2">
         <Icon>
             @if (ItemType.Typ == ItemTypeTyp.User)
             {

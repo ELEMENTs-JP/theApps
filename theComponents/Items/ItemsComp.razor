@@ -1,20 +1,12 @@
-﻿@using theComponents.Add
-@using theControls.Add
-@using theControls.Files
-@using theControls.Funktionen
-@using theControls.Icons
-@using theControls.Input
-@using theControls.Layout
-@using theControls.Search
-@using theControls.Tables
-@using theControls.Text
+﻿@using theControls.Config
+
 @inject ISqlDatabaseService sql
 
 @if (ItemType != null)
 {
     @if (Helper.ValidateVisibility(ItemType) == true)
     {
-        <Frame Border="true" Rounded="true">
+        <Frame Border="true" >
             <Header>
                 <ControlHeader PreTitle="List" Title="@ItemType.ToString()" PostTitle="@ItemType.Description" />
             </Header>
@@ -29,16 +21,19 @@
             <Related>
                 @if (this.ItemType.Name != "Trash")
                 {
-                    @if (this.ItemType.Typ == ItemTypeTyp.Item ||
-                                                                this.ItemType.Typ == ItemTypeTyp.User)
-                    {
-                        <AddArea ItemType="@ItemType" CSS="me-3" />
-                    }
+                    <ListSetting ItemType="@this.ItemType" CSS="mx-2" />
+                    <div class="vr"></div>
+                    
                     @if (this.ItemType.Typ == ItemTypeTyp.File ||
-                                                                    this.ItemType.Typ == ItemTypeTyp.Image ||
-                                                                    this.ItemType.Typ == ItemTypeTyp.Audio)
+                         this.ItemType.Typ == ItemTypeTyp.Image ||
+                        this.ItemType.Typ == ItemTypeTyp.Audio)
                     {
+                        <ClipboardCopyPaste ItemType="@this.ItemType" />
                         <FileUploadComp ItemType="@this.ItemType" />
+                    }
+                    else
+                    {
+                        <AddArea ItemType="@ItemType" CSS="me-2" />
                     }
                 }
             </Related>
@@ -47,6 +42,8 @@
                 @if (this.ItemType.Typ == ItemTypeTyp.Item ||
                                                         this.ItemType.Typ == ItemTypeTyp.User ||
                                                         this.ItemType.Typ == ItemTypeTyp.Note ||
+                                                        this.ItemType.Typ == ItemTypeTyp.Link ||
+                                                        this.ItemType.Typ == ItemTypeTyp.Information ||
                                                         this.ItemType.Typ == ItemTypeTyp.Comment ||
                                                             this.ItemType.Typ == ItemTypeTyp.Audio)
                 {
@@ -56,19 +53,31 @@
                         </Empty>
                     </DataTable>
                 }
-                @if (this.ItemType.Typ == ItemTypeTyp.File ||
+                else if (this.ItemType.Typ == ItemTypeTyp.File ||
                                                          this.ItemType.Typ == ItemTypeTyp.Image)
                 {
                     <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" />
                 }
-
-                @if (this.ItemType.Typ == ItemTypeTyp.Appointment)
+                else if (this.ItemType.Typ == ItemTypeTyp.Appointment)
                 {
                     <CalendarComp ItemType="@ItemType" />
                 }
 
                 
             </Content>
+            <Bottom>
+                @if (this.ItemType.Typ == ItemTypeTyp.File ||
+                       this.ItemType.Typ == ItemTypeTyp.Image ||
+                      this.ItemType.Typ == ItemTypeTyp.Audio)
+                {
+                   
+                }
+                else
+                {
+                    <AddFast ItemType="@ItemType" />
+                }
+
+            </Bottom>
         </Frame>
     }
     else

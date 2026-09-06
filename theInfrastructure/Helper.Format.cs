@@ -9,6 +9,77 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        public static bool IsValidHttpsUrl(this string? url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                return false;
+            }
+
+            ReadOnlySpan<char> span = url.AsSpan().Trim();
+
+            // 1. Schema-Prüfung ("https://")
+            if (!span.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            // Schema abschneiden, um den Host-Teil zu analysieren
+            span = span.Slice(8);
+
+            // 2. Pfad/Query/Fragment abspalten, falls vorhanden
+            int pathIndex = span.IndexOfAny('/', '?', '#');
+            if (pathIndex >= 0)
+            {
+                span = span.Slice(0, pathIndex);
+            }
+
+            // 3. Port abspalten, falls vorhanden
+            int portIndex = span.LastIndexOf(':');
+            if (portIndex >= 0)
+            {
+                // Prüfen, ob nach dem Doppelpunkt ein gültiger Port folgt
+                ReadOnlySpan<char> portSpan = span.Slice(portIndex + 1);
+                if (portSpan.IsEmpty || !ushort.TryParse(portSpan, out _))
+                {
+                    return false;
+                }
+                span = span.Slice(0, portIndex);
+            }
+
+            // Host-Teil darf nach Entfernen von Port/Pfad nicht leer sein
+            if (span.IsEmpty)
+            {
+                return false;
+            }
+
+            // 4. Prüfen auf gültigen Host (IPv4 oder Domain mit TLD)
+            // Kein Punkt am Anfang oder Ende
+            if (span[0] == '.' || span[^1] == '.')
+            {
+                return false;
+            }
+
+            // Host muss mindestens einen Punkt enthalten (z. B. "domain.com")
+            // Ausgenommen: "localhost" für lokale Tests
+            int dotIndex = span.IndexOf('.');
+            if (dotIndex <= 0)
+            {
+                return span.Equals("localhost", StringComparison.OrdinalIgnoreCase);
+            }
+
+            // Keine zwei Punkte aufeinanderfolgend ("..")
+            for (int i = 0; i < span.Length - 1; i++)
+            {
+                if (span[i] == '.' && span[i + 1] == '.')
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static List<IDTO> DefaultColors()
         {
             List<IDTO> Items = new();

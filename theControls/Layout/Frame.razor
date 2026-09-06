@@ -1,8 +1,11 @@
 ﻿@inject ILocalizationService loc
 @inject ISecurityService sec
 @inject IAppService app
+@inject IMessagingBusService msg
+@implements IAsyncDisposable
 
-<div class="@( " bg-surface " + CSS + "   " + GetCssClass() )" style="@( " " + app.Configuration.GetAkzentStyle() + " " )">
+<div class="@( " bg-surface " + CSS + "   " + GetCssClass() + " " + app.Configuration.GetRoundedCSS() )" 
+            style="@( " " + app.Configuration.GetAkzentStyle() + " " )">
 
     <div class="d-flex flex-row border-bottom align-items-center py-1">
 
@@ -74,9 +77,6 @@
     public bool Border { get; set; } = false;
 
     [Parameter]
-    public bool Rounded { get; set; } = false;
-
-    [Parameter]
     public string CSS { get; set; } = string.Empty;
 
     [Parameter]
@@ -114,12 +114,24 @@
             css += " border ";
         }
 
-        if (Rounded)
-        {
-            css += " rounded-2 ";
-        }
-
         return css;
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+          
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
 }

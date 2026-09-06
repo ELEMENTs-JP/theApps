@@ -20,10 +20,12 @@ namespace theInfrastructure
             // ItemTypes 
             ItemTypes.Add(new ItemType_Comment());
             ItemTypes.Add(new ItemType_Note());
-            ItemTypes.Add(new ItemType_File());
-            ItemTypes.Add(new ItemType_Appointment());
             ItemTypes.Add(new ItemType_Image());
             ItemTypes.Add(new ItemType_Audio());
+            ItemTypes.Add(new ItemType_File());
+            ItemTypes.Add(new ItemType_Link());
+            ItemTypes.Add(new ItemType_News());
+            ItemTypes.Add(new ItemType_Appointment());
             ItemTypes.Add(new ItemType_TimeFrame());
             ItemTypes.Add(new ItemType_Task());
 

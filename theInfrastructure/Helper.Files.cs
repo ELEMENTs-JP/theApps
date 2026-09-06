@@ -54,7 +54,7 @@ namespace theInfrastructure
             }
 
             // 8. Iteration für verbleibende Standard-Signaturen
-            var fileSignatures = GetFileSignatures();
+            var fileSignatures = Helper.FileSignatures;
             foreach (var signature in fileSignatures)
             {
                 if (sourceFileBytes.Length >= signature.Key.Length &&
@@ -66,55 +66,79 @@ namespace theInfrastructure
 
             return "";
         }
-
-        static List<KeyValuePair<byte[], string>> GetFileSignatures()
+        public static string? GetExtensionFromMimeType(string mimeType) => mimeType?.ToLowerInvariant() switch
         {
-            // List<KeyValuePair> verhindert Fehler bei gleichen Keys in Dictionarys
-            return new List<KeyValuePair<byte[], string>>
-    {
-        // --- AUDIO FORMATEN ---
-        new(new byte[] { 0x49, 0x44, 0x33 }, "mp3"),                   // MP3 mit ID3v2 Tag
-        new(new byte[] { 0xFF, 0xFB }, "mp3"),                         // MP3 Rohdaten (MPEG-1 Layer 3)
-        new(new byte[] { 0xFF, 0xF3 }, "mp3"),                         // MP3 Rohdaten (MPEG-2 Layer 3)
-        new(new byte[] { 0xFF, 0xF2 }, "mp3"),                         // MP3 Rohdaten (MPEG-2.5 Layer 3)
-        new(new byte[] { 0x52, 0x49, 0x46, 0x46 }, "wav"),             // WAV / RIFF (WAV wird über Unterheader verifiziert)
-        new(new byte[] { 0x4F, 0x67, 0x67, 0x53 }, "ogg"),             // OGG / Vorbis / Opus / FLAC in OGG Container
-        new(new byte[] { 0x66, 0x4C, 0x61, 0x43 }, "flac"),            // FLAC (Nativ)
-        new(new byte[] { 0xFF, 0xF1 }, "aac"),                         // AAC (ADTS Header, Version 4)
-        new(new byte[] { 0xFF, 0xF9 }, "aac"),                         // AAC (ADTS Header, Version 2)
-        new(new byte[] { 0x1A, 0x45, 0xDF, 0xA3 }, "weba"),            // WEBM / EBML (WebA / WebM Audio)
-        new(new byte[] { 0x30, 0x26, 0xB2, 0x75, 0x8E, 0x66, 0xCF, 0x11 }, "wma"), // WMA / ASF Container
-        new(new byte[] { 0x2E, 0x73, 0x6E, 0x64 }, "au"),              // AU / SND (Sun Microsystems)
-        new(new byte[] { 0x41, 0x49, 0x46, 0x46 }, "aiff"),            // AIFF
+            // Bilder
+            "image/png" => "png",
+            "image/jpeg" or "image/jpg" => "jpg",
+            "image/gif" => "gif",
+            "image/webp" => "webp",
+            "image/bmp" => "bmp",
+            "image/svg+xml" => "svg",
 
-        // --- BILDER & DOKUMENTE ---
-        new(new byte[] { 0xFF, 0xD8, 0xFF }, "jpg"),                   // JPEG
-        new(new byte[] { 0x89, 0x50, 0x4E, 0x47 }, "png"),             // PNG
-        new(new byte[] { 0x47, 0x49, 0x46, 0x38 }, "gif"),             // GIF
-        new(new byte[] { 0x25, 0x50, 0x44, 0x46 }, "pdf"),             // PDF
-        new(new byte[] { 0x42, 0x4D }, "bmp"),                         // BMP
-        new(new byte[] { 0x49, 0x49, 0x2A, 0x00 }, "tiff"),            // TIFF (little-endian)
-        new(new byte[] { 0x4D, 0x4D, 0x00, 0x2A }, "tiff"),            // TIFF (big-endian)
-        new(new byte[] { 0x52, 0x49, 0x46, 0x46, 0x57, 0x45, 0x42, 0x50 }, "webp"), // WebP
-        new(new byte[] { 0x00, 0x00, 0x01, 0x00 }, "ico"),             // ICO
-        new(new byte[] { 0x49, 0x49, 0xBC }, "jxr"),                   // JPEG XR
-        new(new byte[] { 0x0A, 0x05, 0x01, 0x08 }, "pcx"),             // PCX
-        new(new byte[] { 0x38, 0x42, 0x50, 0x53 }, "psd"),             // PSD
-        new(new byte[] { 0x25, 0x21, 0x50, 0x53 }, "ai"),              // AI
-        new(new byte[] { 0x46, 0x57, 0x53 }, "swf"),                   // SWF unkomprimiert
-        new(new byte[] { 0x43, 0x57, 0x53 }, "swf"),                   // SWF komprimiert
-        new(new byte[] { 0x06, 0x06, 0xED, 0xF5, 0xD8, 0x1D, 0x46, 0xE5, 0xBD, 0x31, 0xEF, 0xE7, 0xFE, 0x74, 0xB7, 0x1D }, "indd"), // INDD
+            // Audio & Video
+            "audio/mpeg" or "audio/mp3" => "mp3",
+            "audio/wav" or "audio/x-wav" => "wav",
+            "audio/ogg" => "ogg",
+            "video/mp4" => "mp4",
+            "video/webm" => "webm",
 
-        // --- ARCHIVE & OFFICE ---
-        new(new byte[] { 0x50, 0x4B, 0x03, 0x04 }, "zip"),             // ZIP / OpenXML (docx, xlsx, pptx)
-        new(new byte[] { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1 }, "doc"), // OLE CF (doc, xls, ppt)
-        new(new byte[] { 0x1F, 0x8B }, "gz"),                          // GZIP
-        new(new byte[] { 0x78, 0x9C }, "zlib"),                        // ZLIB
-        new(new byte[] { 0x00, 0x01, 0x42, 0x44 }, "fla"),             // FLA
-        new(new byte[] { 0xEC, 0xA5, 0xC1, 0x00 }, "doc"),             // DOC (alt)
-        new(new byte[] { 0x0D, 0x44, 0x4F, 0x43 }, "doc")              // DOC Template
-    };
-        }
+            // Dokumente & Office
+            "application/pdf" => "pdf",
+            "application/msword" => "doc",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document" => "docx",
+            "application/vnd.ms-excel" => "xls",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" => "xlsx",
+            "application/vnd.ms-powerpoint" => "ppt",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation" => "pptx",
+            "application/zip" => "zip",
+            "text/plain" => "txt",
+            _ => null
+        };
+        public static readonly List<KeyValuePair<byte[], string>> FileSignatures = new()
+        {
+            // --- AUDIO FORMATEN ---
+            new(new byte[] { 0x49, 0x44, 0x33 }, "mp3"),
+            new(new byte[] { 0xFF, 0xFB }, "mp3"),
+            new(new byte[] { 0xFF, 0xF3 }, "mp3"),
+            new(new byte[] { 0xFF, 0xF2 }, "mp3"),
+            new(new byte[] { 0x52, 0x49, 0x46, 0x46 }, "wav"),
+            new(new byte[] { 0x4F, 0x67, 0x67, 0x53 }, "ogg"),
+            new(new byte[] { 0x66, 0x4C, 0x61, 0x43 }, "flac"),
+            new(new byte[] { 0xFF, 0xF1 }, "aac"),
+            new(new byte[] { 0xFF, 0xF9 }, "aac"),
+            new(new byte[] { 0x1A, 0x45, 0xDF, 0xA3 }, "weba"),
+            new(new byte[] { 0x30, 0x26, 0xB2, 0x75, 0x8E, 0x66, 0xCF, 0x11 }, "wma"),
+            new(new byte[] { 0x2E, 0x73, 0x6E, 0x64 }, "au"),
+            new(new byte[] { 0x41, 0x49, 0x46, 0x46 }, "aiff"),
+
+            // --- BILDER & DOKUMENTE ---
+            new(new byte[] { 0xFF, 0xD8, 0xFF }, "jpg"),
+            new(new byte[] { 0x89, 0x50, 0x4E, 0x47 }, "png"),
+            new(new byte[] { 0x47, 0x49, 0x46, 0x38 }, "gif"),
+            new(new byte[] { 0x25, 0x50, 0x44, 0x46 }, "pdf"),
+            new(new byte[] { 0x42, 0x4D }, "bmp"),
+            new(new byte[] { 0x49, 0x49, 0x2A, 0x00 }, "tiff"),
+            new(new byte[] { 0x4D, 0x4D, 0x00, 0x2A }, "tiff"),
+            new(new byte[] { 0x52, 0x49, 0x46, 0x46, 0x57, 0x45, 0x42, 0x50 }, "webp"),
+            new(new byte[] { 0x00, 0x00, 0x01, 0x00 }, "ico"),
+            new(new byte[] { 0x49, 0x49, 0xBC }, "jxr"),
+            new(new byte[] { 0x0A, 0x05, 0x01, 0x08 }, "pcx"),
+            new(new byte[] { 0x38, 0x42, 0x50, 0x53 }, "psd"),
+            new(new byte[] { 0x25, 0x21, 0x50, 0x53 }, "ai"),
+            new(new byte[] { 0x46, 0x57, 0x53 }, "swf"),
+            new(new byte[] { 0x43, 0x57, 0x53 }, "swf"),
+            new(new byte[] { 0x06, 0x06, 0xED, 0xF5, 0xD8, 0x1D, 0x46, 0xE5, 0xBD, 0x31, 0xEF, 0xE7, 0xFE, 0x74, 0xB7, 0x1D }, "indd"),
+
+            // --- ARCHIVE & OFFICE ---
+            new(new byte[] { 0x50, 0x4B, 0x03, 0x04 }, "zip"),
+            new(new byte[] { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1 }, "doc"),
+            new(new byte[] { 0x1F, 0x8B }, "gz"),
+            new(new byte[] { 0x78, 0x9C }, "zlib"),
+            new(new byte[] { 0x00, 0x01, 0x42, 0x44 }, "fla"),
+            new(new byte[] { 0xEC, 0xA5, 0xC1, 0x00 }, "doc"),
+            new(new byte[] { 0x0D, 0x44, 0x4F, 0x43 }, "doc")
+        };
 
         public static async Task<byte[]> GetFileHeaderByUrlAsync(string url)
         {

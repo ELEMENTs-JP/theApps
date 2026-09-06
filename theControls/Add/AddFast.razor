@@ -12,8 +12,8 @@
 
 @if (ItemType != null)
 {
-    @if (RelatedItem != null)
-    {
+
+  
         @if (ItemType.Typ == ItemTypeTyp.Note || ItemType.Typ == ItemTypeTyp.Comment)
         {
             <div class="vstack">
@@ -34,7 +34,6 @@
              
 
             </div>
-
         }
         else
         {
@@ -57,15 +56,13 @@
             </div>
         }
 
-   
-
         @if (!string.IsNullOrEmpty(Message))
         {
             <div class="p-2 px-3">
                 <div class="alert alert-danger p-2 m-2">@Message</div>
             </div>
         }
-    }
+   
 }
 
 @code {
