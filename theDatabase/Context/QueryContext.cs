@@ -64,34 +64,33 @@ namespace theDatabase
 
             IQueryParameter query = new QueryParameter
             {
-                Matchcode = string.Empty, // Lade alle Items des Typen oder nutze DB-Filter gezielt
+                Matchcode = string.Empty,
                 MasterGUID = SQLiteService.GeneralMasterGUID,
                 ItemType = ItemType.Name
             };
 
             IQueryResult result = await sqlService.GetItems(query);
-
-            // Rechtesystem/IsPrivate anwenden
             var rawItems = result.Items ?? new List<IDTO>();
             var userGuid = secService.User.GUID;
 
-            var baseItems = rawItems.Where(se =>
+            // 1. Schritt: Sicherheits- & Rechte-Filterung (IsPrivate)
+            IEnumerable<IDTO> filteredItems = rawItems.Where(se =>
                 !se["IsPrivate"].ToSecureBool() ||
-                (se["IsPrivate"].ToSecureBool() && se["UserGUID"].ToSecureGUID() == userGuid)
-            ).ToList();
+                (se["IsPrivate"].ToSecureBool() && ((IMetadata)se).Metadata.CreatedBy == userGuid)
+            );
 
-            // Bei gesetztem Matchcode lokal filtern
-            if (!string.IsNullOrEmpty(this.Matchcode))
+            // 2. Schritt: Matchcode-Filterung (falls ein Suchbegriff vorhanden ist)
+            string search = this.Matchcode.ToSecureString();
+            if (!string.IsNullOrEmpty(search))
             {
-                Items = baseItems.Where(se =>
+                filteredItems = filteredItems.Where(se =>
                     se.Matchcode != null &&
-                    se.Matchcode.ToLowerInvariant().Contains(this.Matchcode.ToLowerInvariant())
-                ).ToList();
+                    se.Matchcode.Contains(search, StringComparison.OrdinalIgnoreCase)
+                );
             }
-            else
-            {
-                Items = baseItems;
-            }
+
+            // Erst am Ende wird die gefilterte Sequenz in die finale Liste umgewandelt
+            Items = filteredItems.ToList();
 
             IsLoading = false;
         }
