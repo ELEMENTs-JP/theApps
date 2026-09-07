@@ -17,7 +17,16 @@
 
     @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnDisplay.Table == true))
     {
-        <th scope="col" class="@(  Helper.GetClassByDevice(col) )">@( col.Title)</th>
+        <th scope="col" class="@( Helper.GetClassByDevice(col) + " " )">
+
+            <div class="d-flex align-items-center gap-1">
+                @( col.Title)
+                <Sortierung Field="@col" ItemType="@Context.ItemType"
+                            OnSort="@( async e => { await SortByColumn(e.Item1, e.Item2); })" />
+            </div>
+
+        
+        </th>
     }
 
     @if (IsRelated)
@@ -34,7 +43,22 @@
     [Parameter]
     public bool IsRelated { get; set; } = false;
 
+    [Parameter]
+    public EventCallback<(ListSortDirection?, IField)> OnSort { get; set; }
 
+    private async Task SortByColumn(ListSortDirection? dir, IField field)
+    {
+        if (Context != null && Context.Filter != null)
+        {
+            Context.Filter.Direction = dir;
+            Context.Filter.SortColumn = field.Column;
+        }
 
+        if (OnSort.HasDelegate)
+        {
+            await OnSort.InvokeAsync((dir, field));
+        }
+
+    }
 
 }

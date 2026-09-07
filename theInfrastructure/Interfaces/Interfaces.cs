@@ -10,6 +10,9 @@ namespace theInfrastructure
     {
         string Matchcode { get; set; }
         List<KeyValuePair<string, string>> Parameters { get; set; }
+
+        string SortColumn { get; set; }
+        ListSortDirection? Direction { get; set; }
     }
     public interface IAssignableItems
     {

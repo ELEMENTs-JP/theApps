@@ -1,37 +1,27 @@
-﻿
-
-
-
-<div id="@( "frame_popup_" + ID )" class="@(" dropdown-center ") ">
-    <div id="@( "link_popup_" + ID )"  data-bs-toggle="dropdown"
-        class="@(" d-flex p-1 align-items-center text-reset " + ButtonCssClass)">
-        <div id="@( "head_popup_" + ID )" class="rounded-2 hover pointer p-1">
-            <SymbolIcon Symbol="Icon.Filter" />
+﻿@if (Field != null && ItemType != null && Field?.Funktionen.IsSortable == true)
+{
+    @if (SortDirection == null)
+    {
+        <div class="hover rounded-2 p-05 pointer"
+             @onclick="@( async e => { await SetDirection(ListSortDirection.Ascending); })">
+            <SymbolIcon Symbol="Icon.Sort_NoSORT" />
         </div>
-    </div>
-
-    <div id="@( "body_popup_" + ID )" class="@( "dropdown-menu " )" style="@MenuStyle">
-        <div class="vstack">
-                <div class="dropdown-header">Filter</div>
-                <div class="px-2 mb-1 small text-muted text-truncate-2 overflow-hidden">@SubTitle</div>
+    }
+    else if (SortDirection == ListSortDirection.Ascending)
+    {
+        <div class="hover rounded-2 p-05 pointer"
+             @onclick="@( async e => { await SetDirection(ListSortDirection.Descending); })">
+            <SymbolIcon Symbol="Icon.Sort_AZ" />
         </div>
-       
-        <div class="dropdown-divider"></div>
-        <div class="@( " px-2 " + " overflow-y-auto " )" style="@( ContentStyle + " " + MaxHeightCSS )">
-
-            @if (ItemType != null)
-            {
-                
-            }
-
-
+    }
+    else if (SortDirection == ListSortDirection.Descending)
+    {
+        <div class="hover rounded-2 p-05 pointer"
+             @onclick="@( async e => { await SetDirection(null); })">
+            <SymbolIcon Symbol="Icon.Sort_ZA" />
         </div>
-    </div>
-</div>
-
-
-
-
+    }
+}
 
 
 @code {
@@ -40,23 +30,21 @@
     public IItemType ItemType { get; set; }
 
     [Parameter]
-    public string ID { get; set; } = "" + Guid.NewGuid();
+    public IField Field { get; set; }
+
+    public ListSortDirection? SortDirection { get; set; } = null;
+
 
     [Parameter]
-    public string MaxHeightCSS { get; set; } = "max-height:44rem;";
+    public EventCallback<(ListSortDirection?, IField)> OnSort { get; set; }
 
-    [Parameter]
-    public string ContentStyle { get; set; } = "  ";
+    private async Task SetDirection(ListSortDirection? dir)
+    {
+        SortDirection = dir;
 
-    [Parameter]
-    public string SubTitle { get; set; } = "";
-
-    [Parameter]
-    public string MenuStyle { get; set; } = "min-width:13rem;";
-
-    [Parameter]
-    public bool TextColorReset { get; set; } = true;
-
-    [Parameter]
-    public string ButtonCssClass { get; set; } = "  ";
+        if (OnSort.HasDelegate)
+        {
+            await OnSort.InvokeAsync((this.SortDirection, this.Field));
+        }
+    }
 }

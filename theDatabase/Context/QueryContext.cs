@@ -85,7 +85,7 @@ namespace theDatabase
                 (se["IsPrivate"].ToSecureBool() && ((IMetadata)se).Metadata.CreatedBy == userGuid)
             );
 
-            // 2. Schritt: Matchcode-Filterung (falls ein Suchbegriff vorhanden ist)
+            // Matchcode 
             if (Filter != null)
             {
                 string search = this.Filter.Matchcode.ToSecureString();
@@ -100,18 +100,10 @@ namespace theDatabase
                     );
                 }
             }
-            
-        
 
             // Filter 
             if (this.Filter != null)
             {
-                // AND Filterung 
-                //foreach (var p in filter.Parameters)
-                //{
-                //    Items = Items.Where(se => se[p.Key] == p.Value).ToList();
-                //}
-
                 // OR Filterung 
                 if (this.Filter.Parameters != null && this.Filter.Parameters.Any())
                 {
@@ -121,7 +113,24 @@ namespace theDatabase
                 }
             }
 
-            // Erst am Ende wird die gefilterte Sequenz in die finale Liste umgewandelt
+            // Sortierung 
+            if (this.Filter != null 
+                    && this.Filter.Direction != null 
+                        && this.Filter.SortColumn != string.Empty)
+            {
+                string sortColumn = this.Filter.SortColumn;
+
+                if (this.Filter.Direction == System.ComponentModel.ListSortDirection.Ascending)
+                {
+                    filteredItems = filteredItems.OrderBy(se => se[sortColumn]);
+                }
+                else if (this.Filter.Direction == System.ComponentModel.ListSortDirection.Descending)
+                {
+                    filteredItems = filteredItems.OrderByDescending(se => se[sortColumn]);
+                }
+            }
+
+            // Sequenz in finale Liste 
             Items = filteredItems.ToList();
 
             IsLoading = false;

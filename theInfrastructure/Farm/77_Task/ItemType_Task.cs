@@ -63,7 +63,7 @@ namespace theInfrastructure
                 Column = "Projekt",
                 CSS = " col-12 col-md-4 col-lg-4 ",
                 IsNecessary = true,
-                Funktionen = new FieldFunction(true),
+                Funktionen = new FieldFunction(true, true),
                 OnDevice = DeviceDisplay.Desktop
             });
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection.Metadata;
 using System.Text;
 
@@ -196,6 +197,9 @@ namespace theInfrastructure
     {
         public string Matchcode { get; set; } = string.Empty;
         public List<KeyValuePair<string, string>> Parameters { get; set; } = new();
+
+        public string SortColumn { get; set; } = string.Empty;
+        public ListSortDirection? Direction { get; set; } = null;
     }
     public class QueryParameter : IQueryParameter
     {

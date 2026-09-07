@@ -179,11 +179,13 @@ namespace theInfrastructure
 
     public class FieldFunction
     {
-        public FieldFunction(bool isFilterable = false)
+        public FieldFunction(bool isFilterable = false, bool isSortable = false)
         {
             IsFilterable = isFilterable;
+            IsSortable = isSortable;
         }
         public bool IsFilterable { get; set; } = false;
+        public bool IsSortable { get; set; } = false;
     }
     public class FieldDisplay
     {

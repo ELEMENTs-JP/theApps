@@ -13,7 +13,9 @@
             <table class="table table-hover align-middle">
                 <thead>
                     <tr>
-                        <TableHeader Context="@Context" IsRelated="@( (RelatedItem != null))"  />
+                        <TableHeader Context="@Context" 
+                            OnSort="@( async e => { await Context.Search();  } )"
+                            IsRelated="@( (RelatedItem != null))"  />
                     </tr>
                 </thead>
                 <tbody>
@@ -61,15 +63,15 @@
         await base.OnParametersSetAsync();
     }
 
-    public async Task Filter()
-    {
-        IFilterParameter filter = new FilterParameter();
-        filter.Matchcode = this.Matchcode;
+    // public async Task Filter()
+    // {
+    //     IFilterParameter filter = new FilterParameter();
+    //     filter.Matchcode = this.Matchcode;
 
-        if (Context != null)
-        {
-            await Context.Search();
-        }
-    }
-
+    //     if (Context != null)
+    //     {
+    //         await Context.Search();
+    //     }
+    // }
+    
 }

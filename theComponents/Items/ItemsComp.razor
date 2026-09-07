@@ -14,7 +14,6 @@
               <Controls>
                 <Filter ItemType="@ItemType" Context="@Context" 
                         OnFilter="@( async e => { await Context.Search(); })"  />
-                @*    <Sortierung ItemType="@ItemType" />*@
         </Controls> 
             <Search>
                 <LocalSearchComp OnSearch="@( e => { Matchcode = e.ToSecureString(); })" 
