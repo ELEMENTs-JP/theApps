@@ -2,15 +2,15 @@
 
 @if (Context != null)
 {
-    <th scope="col-050">ID</th>
+    <th scope="col" class="col-050">ID</th>
 
     @if (Context.ItemType.Typ == ItemTypeTyp.User)
     {
-        <th scope="col"></th>
+        <th scope="col" class="col-050"></th>
     }
     @if (Context.ItemType.Typ == ItemTypeTyp.Audio)
     {
-        <th scope="col-050"></th>
+        <th scope="col" class="col-050"></th>
     }
 
     <th scope="col">Title</th>
@@ -19,7 +19,7 @@
     {
         <th scope="col" class="@( Helper.GetClassByDevice(col) + " " )">
 
-            <div class="d-flex align-items-center gap-1">
+            <div class="d-flex align-items-center gap-2">
                 @( col.Title)
                 <Sortierung Field="@col" ItemType="@Context.ItemType"
                             OnSort="@( async e => { await SortByColumn(e.Item1, e.Item2); })" />

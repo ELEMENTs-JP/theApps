@@ -205,6 +205,22 @@ namespace theApp
                 // 2. Controller-Routen nach app.Build() mappen:
                 app.MapControllers();
 
+                // Videostreaming 
+                app.MapGet("/stream/{**path}", (string path, IWebHostEnvironment env) =>
+                {
+                    var filePath = Path.Combine(env.ContentRootPath, "FILES", path);
+
+                    if (!System.IO.File.Exists(filePath))
+                    {
+                        return Results.NotFound();
+                    }
+
+                    return Results.File(
+                        filePath,
+                        "video/mp4",
+                        enableRangeProcessing: true);
+                });
+
                 app.Run();
             }
             catch (Exception exception)

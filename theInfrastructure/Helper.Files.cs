@@ -182,7 +182,7 @@ namespace theInfrastructure
             }
         }
 
-        public static long MaxFileSize(int defaultValue = 10)
+        public static long MaxFileSize(int defaultValue = 100)
         {
             long defaultFileSizeInBytes = 1024 * 1024 * defaultValue;
             return defaultFileSizeInBytes;

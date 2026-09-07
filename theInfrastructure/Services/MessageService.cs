@@ -39,7 +39,7 @@ namespace theInfrastructure
 
         public void Publish(AppMessage msg)
         {
-            OnMessage?.Invoke(msg);
+            OnMessage?.DynamicInvoke(msg);
         }
 
         // Bequemer Überladungs-Helfer

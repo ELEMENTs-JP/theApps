@@ -35,6 +35,9 @@ namespace theControls.Elements
         [Parameter]
         public IQueryContext Context { get; set; }
 
+        [Parameter]
+        public bool HasItems { get; set; } = false;
+
         // Events 
         protected override async Task OnInitializedAsync()
         {
@@ -68,6 +71,8 @@ namespace theControls.Elements
                 {
                     // Führt Search() exakt einmal aus
                     await Context.Search();
+
+                    HasItems = (Context.Items.Count >= 1);
                 }
             }
         }
@@ -129,11 +134,11 @@ namespace theControls.Elements
                 ItemType = null;
                 RelatedItem = null;
 
-                if (Context != null)
-                {
-                    ((IDisposable)Context).Dispose();
-                    Context = null;
-                }
+                //if (Context != null)
+                //{
+                //    ((IDisposable)Context).Dispose();
+                //    Context = null;
+                //}
 
             }
             catch (Exception ex)

@@ -116,8 +116,13 @@ namespace theInfrastructure
 
             if (typ == DefaultFieldTypes.File)
             {
-                Fields.Add(new Field() { Title = "Typisierung", Typ = FieldTyp.HR });
-                Fields.Add(new Field() { Title = "Erweiterung", Typ = FieldTyp.TextBlock, Column = "FileExtension", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
+                Fields.Add(new Field() { Title = "Datei", Typ = FieldTyp.HR });
+                Fields.Add(new Field() { Title = "Pfad", Typ = FieldTyp.TextBlock, 
+                    Column = "FullFilePath",  CSS = " col-12 col-md-8 col-lg-9 ", 
+                    OnDisplay = new FieldDisplay(true, true, false,false),
+                    OnDevice = DeviceDisplay.Desktop });
+                Fields.Add(new Field() { Title = "Erweiterung", Typ = FieldTyp.TextBlock, 
+                    Column = "FileExtension",  CSS = " col-12 col-md-4 col-lg-3 ", OnDevice = DeviceDisplay.Desktop });
 
                 Fields.Add(new Field() { Title = "Größen", Typ = FieldTyp.HR });
                 // Fields.Add(new Field() { Title = "Pfad", Typ = FieldTyp.Text, Column = "FullFilePath", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });

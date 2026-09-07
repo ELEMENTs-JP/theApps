@@ -1,6 +1,55 @@
 ﻿
 
 
+
+
+
+
+window.netflixPlayer = {
+    init: function (elementId) {
+        if (typeof videojs === 'undefined') {
+            console.error('videojs ist nicht geladen.');
+            return;
+        }
+
+        videojs(elementId, {
+            controls: false,
+            autoplay: false,
+            preload: 'metadata',
+            muted: true
+        });
+    },
+    play: function (elementId) {
+        if (typeof videojs === 'undefined') return;
+
+        var player = videojs.getPlayers()[elementId];
+        if (player) {
+            player.muted(true);
+            var promise = player.play();
+            if (promise !== undefined) {
+                promise.catch(function (error) { });
+            }
+        }
+    },
+    pause: function (elementId) {
+        if (typeof videojs === 'undefined') return;
+
+        var player = videojs.getPlayers()[elementId];
+        if (player) {
+            player.pause();
+            player.currentTime(0);
+        }
+    }
+};
+
+
+
+
+
+
+
+
+
 window.clipboardPaste = {
     dotNetHelper: null,
     pasteHandler: null,

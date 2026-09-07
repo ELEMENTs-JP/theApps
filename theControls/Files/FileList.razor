@@ -11,8 +11,8 @@
             <div class="row g-0">
 
                 <div class="col-2 p-3">
-                    <FileUploadComp ItemType="@ItemType" 
-                        SizeMode="FileInputBox.FileInputSizeMode.Maximized" Width="96" Height="156" />
+                    <FileUploadComp ItemType="@ItemType"
+                                    SizeMode="FileInputBox.FileInputSizeMode.Maximized" Width="96" Height="156" />
                 </div>
 
                 @foreach (IDTO item in Context.Items)
@@ -42,18 +42,8 @@
     {
         await base.OnParametersSetAsync();
 
-        await Filter();
     }
 
-    public async Task Filter()
-    {
-        // Filter 
-        IFilterParameter filter = new FilterParameter();
-        filter.Matchcode = this.Matchcode;
-        Context.Filter = filter;
 
-        // Search 
-        await Context.Search();
-    }
 
 }

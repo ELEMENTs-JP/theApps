@@ -127,7 +127,10 @@
         // Filter
         if (!string.IsNullOrEmpty(DateColumn))
         {
-            Items = Context.Items.Where(se => se[DateColumn].ToSecureString().ToSecureDateTime().Date == Date.Date).ToList();
+            if (Context.Items != null)
+            {
+                Items = Context.Items.Where(se => se[DateColumn].ToSecureString().ToSecureDateTime().Date == Date.Date).ToList();
+            }
         }
     }
 

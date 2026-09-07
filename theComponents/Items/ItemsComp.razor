@@ -26,7 +26,8 @@
                     <div class="vr"></div>
                     
                     @if (this.ItemType.Typ == ItemTypeTyp.File ||
-                         this.ItemType.Typ == ItemTypeTyp.Image ||
+                        this.ItemType.Typ == ItemTypeTyp.Image ||
+                        this.ItemType.Typ == ItemTypeTyp.Video ||
                         this.ItemType.Typ == ItemTypeTyp.Audio)
                     {
                         <ClipboardCopyPaste ItemType="@this.ItemType" />
@@ -50,13 +51,13 @@
                 {
                     <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode" Context="@Context">
                         <Empty>
-                            <QuickAdd ItemType="@this.ItemType" 
-                                OnAdd="@( e => { } )" />
+                            <QuickAdd ItemType="@this.ItemType"  OnAdd="@( e => { } )" />
                         </Empty>
                     </DataTable>
                 }
                 else if (this.ItemType.Typ == ItemTypeTyp.File ||
-                                                         this.ItemType.Typ == ItemTypeTyp.Image)
+                            this.ItemType.Typ == ItemTypeTyp.Video ||
+                            this.ItemType.Typ == ItemTypeTyp.Image)
                 {
                     <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" Context="@Context" />
                 }
@@ -70,6 +71,7 @@
             <Bottom>
                 @if (this.ItemType.Typ == ItemTypeTyp.File ||
                        this.ItemType.Typ == ItemTypeTyp.Image ||
+                       this.ItemType.Typ == ItemTypeTyp.Video ||
                       this.ItemType.Typ == ItemTypeTyp.Audio)
                 {
                    
@@ -107,19 +109,22 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
-        Context = new QueryContext(sql, sec, ItemType);
     }
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
 
-        if (Context != null)
+        if (ItemType != null)
         {
-            await Context.Clear();
-            Context.ItemType = ItemType;
-        }
+            // Falls bereits vorhanden, erst alt aufräumen
+            if (Context is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
 
+            // Kontext für den neuen ItemType frisch instanziieren
+            Context = new QueryContext(sql, sec, ItemType);
+        }
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

@@ -77,6 +77,7 @@ namespace theInfrastructure
         Comment = 9,
         Information = 10,
         Link = 11,
+        Video = 12,
     }
     public enum Orientation
     {

@@ -21,16 +21,19 @@
                 <tbody>
                     @foreach (IDTO item in Context.Items)
                     {
-                        <TableRow Context="@Context" Item="@item" IsRelated="@( (RelatedItem != null))"  />
+                        <TableRow @key="@( "item_entry_" + item.GUID)" Context="@Context" Item="@item" IsRelated="@( (RelatedItem != null))" />
                     }
                 </tbody>
             </table>
         </div>
     }
 
-    @if (Context.Items.Count() == 0 && Empty.HasContent())
+    @if (Empty.HasContent())
     {
-        @Empty
+        @if (!HasItems)
+        {
+            @Empty
+        }
     }
 }
 

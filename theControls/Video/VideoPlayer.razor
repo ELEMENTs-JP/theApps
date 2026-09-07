@@ -1,0 +1,55 @@
+﻿@if (this.Item != null)
+{
+    @if (this.Item.ItemType == "Video")
+    {
+        <div class="@( FrameCSS + " p-2 rounded-2 hover overflow-hidden ")">
+            <div class="row g-0 p-0">
+                <div class="col video-container">
+                    <video id="my-video"
+                           class="video-js vjs-fluid"
+                           controls
+                           preload="auto"
+                           data-setup="{}"
+                           src="@Url">
+                        <source src="@Url" type="video/mp4" />
+                    </video>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+
+@code {
+
+    [Parameter]
+    public string FrameCSS { get; set; } = string.Empty;
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+    // Fields
+    private string Url { get; set; } = string.Empty;
+    private string Msg { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (Item != null)
+        {
+            string fileGUID = Item.GUID.ToSecureString();
+            string fileEXT = Item["FileExtension"].ToSecureString();
+
+            Url = $"/stream/{fileGUID + "." + fileEXT}";
+        }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

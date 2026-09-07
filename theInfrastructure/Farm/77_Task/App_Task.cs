@@ -20,8 +20,9 @@ namespace theInfrastructure
             // ItemTypes 
             ItemTypes.Add(new ItemType_Comment());
             ItemTypes.Add(new ItemType_Note());
-            ItemTypes.Add(new ItemType_Image());
+            ItemTypes.Add(new ItemType_Video());
             ItemTypes.Add(new ItemType_Audio());
+            ItemTypes.Add(new ItemType_Image());
             ItemTypes.Add(new ItemType_File());
             ItemTypes.Add(new ItemType_Link());
             ItemTypes.Add(new ItemType_News());

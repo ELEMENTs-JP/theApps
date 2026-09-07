@@ -1,0 +1,35 @@
+﻿/* Container definiert die Kartenbreite und das Seitenverhältnis */
+.video-card-container {
+    max-width: 320px !important; /* Beliebige Wunschbreite der Karte */
+    aspect-ratio: 4 / 3; /* Für 16:10 / 16:9 (Netflix-Standard) */
+    background-color: #000;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+/*    .video-card-container:hover {
+        transform: scale(1.05);
+        z-index: 10;
+    }*/
+
+/* Video.js an den Container anpassen */
+.netflix-preview-player.video-js {
+    width: 100% !important;
+    height: 100% !important;
+    padding-top: 0 !important; /* Hebt vjs-fluid Rest-Styling auf */
+}
+
+.netflix-preview-player .vjs-tech {
+    object-fit: cover; /* Schneidet schwarze Ränder ab und füllt die Karte */
+    width: 100%;
+    height: 100%;
+}
+
+/* Alle Video.js-Steuerelemente ausblenden */
+.netflix-preview-player .vjs-control-bar,
+.netflix-preview-player .vjs-big-play-button,
+.netflix-preview-player .vjs-loading-spinner,
+.netflix-preview-player .vjs-error-display,
+.netflix-preview-player .vjs-text-track-display {
+    display: none !important;
+}

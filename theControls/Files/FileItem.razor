@@ -7,8 +7,7 @@
 @if (Context != null)
 {
 
-    <div class="hover rounded-2 p-2 overflow-hidden m-1" 
-   >
+    <div class="hover rounded-2 p-2 overflow-hidden m-1">
 
         @if (string.IsNullOrEmpty(this.Base64String))
         {
@@ -16,10 +15,9 @@
         }
         else
         {
-        @* w-100 sorgt dafür, dass sich das Bild voll an den äußeren Container anpasst *@
-        <div class="@( UserImageCSS + " w-100 mx-auto " + app.Configuration.GetRoundedCSS(4) )"
-             style="@(UserImageStyle + " "
-                        + BackgroundColor +
+            @* w-100 sorgt dafür, dass sich das Bild voll an den äußeren Container anpasst *@
+            <div class="@( UserImageCSS + " w-100 mx-auto " + app.Configuration.GetRoundedCSS(4) )"
+             style="@(UserImageStyle + " " + BackgroundColor +
                         " background-image: url(" + this.Base64String + "); " )"></div>
         }
 
@@ -43,7 +41,6 @@
                 </div>
             }
         </div>
-
     </div>
 
 }

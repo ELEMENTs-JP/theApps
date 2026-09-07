@@ -17,8 +17,8 @@
         </span>    
     }
 
-    <div id="@Id" name="@InputName" data-value="@Value"
-         class=" pe-5 @CssClass @( ((IsEditable) ? " editbox " : " viewbox no-select ") )">
+    <div id="@Id" name="@InputName" data-value="@Value" title="@Value.ToFormat(Format)"
+         class=" text-truncate pe-5 @CssClass @( ((IsEditable) ? " editbox " : " viewbox no-select ") )">
         @Value.ToFormat(Format)
     </div>
     

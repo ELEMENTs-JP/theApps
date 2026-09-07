@@ -274,11 +274,18 @@ namespace theDatabase
         // Helper 
         public async Task Clear()
         {
-            Filter = null;
-            ItemType = null;
-            Item = null;
-            Items = new();
-            RelatedItem = null;
+            //Filter = null;
+            //ItemType = null;
+            
+            //// Item 
+            //Item = null;
+            //RelatedItem = null;
+            
+            //// Items 
+            //if (Items != null)
+            //{
+            //    Items.Clear();
+            //}
         }
         public List<string> ValuesByColumn(string column)
         {
@@ -295,10 +302,10 @@ namespace theDatabase
         {
             try
             {
-                ItemType = null;
-                RelatedItem = null;
-                Item = null;
-                Items = null;
+                //ItemType = null;
+                //RelatedItem = null;
+                //Item = null;
+                //Items = null;
             }
             catch (Exception ex)
             {

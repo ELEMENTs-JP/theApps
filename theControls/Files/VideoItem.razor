@@ -1,0 +1,57 @@
+﻿@inject IJSRuntime JSRuntime
+
+@if (Item != null)
+{
+    <div class="video-card-container rounded overflow-hidden position-relative"
+         @onmouseenter="PlayVideo"
+         @onmouseleave="PauseVideo">
+
+        <video id="@PlayerId"
+               class="video-js vjs-fluid netflix-preview-player"
+               muted
+               preload="metadata"
+               playsinline >
+            <source src="@VideoUrl" type="video/mp4" />
+        </video>
+
+    </div>
+}
+
+
+
+@code {
+    [Parameter]
+    public IDTO Item { get; set; }
+
+    string PlayerId { get; set; } = $"video-{Guid.NewGuid():N}";
+    string VideoUrl { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        if (Item != null)
+        {
+            string fileGUID = Item.GUID.ToSecureString();
+            string fileEXT = Item["FileExtension"].ToSecureString();
+
+            VideoUrl = $"/stream/{fileGUID + "." + fileEXT}";
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && Item != null)
+        {
+            await JSRuntime.InvokeVoidAsync("netflixPlayer.init", PlayerId);
+        }
+    }
+
+    private async Task PlayVideo()
+    {
+        await JSRuntime.InvokeVoidAsync("netflixPlayer.play", PlayerId);
+    }
+
+    private async Task PauseVideo()
+    {
+        await JSRuntime.InvokeVoidAsync("netflixPlayer.pause", PlayerId);
+    }
+}

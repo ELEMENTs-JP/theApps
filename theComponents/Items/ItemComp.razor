@@ -1,4 +1,5 @@
-﻿
+﻿@using theControls.Video
+
 @inject ISqlDatabaseService sql
 @inject ISecurityService sec
 
@@ -18,6 +19,7 @@
                     <PdfViewer File="@RelatedItem" />
                     <ImagePreview Image="@RelatedItem" />
                     <AudioPlayer Item="@RelatedItem" />
+                    <VideoPlayer Item="@RelatedItem" />
 
                     <RelatedItemsComp CSS="mb-3" ItemTypes="@(ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Parents).Value ?? new List<IItemType>())"
                                       RelatedItem="@RelatedItem" Association="AssociationTyp.Parents" />

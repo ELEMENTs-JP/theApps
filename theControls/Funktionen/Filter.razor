@@ -30,21 +30,21 @@
 
                             @foreach (string val in search.ValuesByColumn(this.ItemType.Name, field.Column))
                             {
-                                <div class="d-flex rounded-2 p-1 hover">
-                                    <div class="flex-fill pe-1 me-1 border-end">
+                                <div class="row g-0 rounded-2 p-1 hover">
+                                    <div class="col pe-1 border-end">
                                         @val.ToSecureString()
                                     </div>
                                     @if (IsConnected(field.Column, val))
                                     {
-                                        <!-- Bereits verbunden: Disconnect anzeigen -->
-                                        <div class="ps-1 hover pointer rounded" @onclick="@( async e => { await Disconnect(field.Column, val); })">
+                                        <div class="col-2 p-05 text-center hover pointer rounded"
+                                        @onclick="@( async e => { await Disconnect(field.Column, val); })">
                                             <SymbolIcon Symbol="Icon.Disconnect" Color="var(--tblr-red)" />
                                         </div>
                                     }
                                     else
                                     {
-                                        <!-- Noch nicht verbunden: Connect anzeigen -->
-                                        <div class="px-1 hover pointer rounded" @onclick="@( async e => { await Connect(field.Column, val); })">
+                                        <div class="col-2 p-05 text-center hover pointer rounded"
+                                            @onclick="@( async e => { await Connect(field.Column, val); })">
                                             <SymbolIcon Symbol="Icon.Connect" Color="var(--tblr-green)" />
                                         </div>
                                     }
