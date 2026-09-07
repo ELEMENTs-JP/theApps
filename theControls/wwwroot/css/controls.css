@@ -64,7 +64,8 @@
 
 
 .searchbox {
-    border: 1px solid transparent !important;
+    border: 1px solid transparent;
+    border-bottom: 1px solid var(--tsp-hover) !important;
     border-radius: 0.35rem;
     width: 100%;
     background-color: var(--tsp-hover-light) !important;

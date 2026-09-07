@@ -1,58 +1,69 @@
 ﻿@inject IMessagingBusService msg
 @inject ISearchService search
 
-<div id="@( "frame_popup_" + ID )" class="@(" dropdown-center ") ">
-    <div id="@( "link_popup_" + ID )" data-bs-toggle="dropdown"
-         class="@(" d-flex p-1 align-items-center text-reset " + ButtonCssClass)">
-        <div id="@( "head_popup_" + ID )" class="rounded-2 hover pointer p-1">
-            <SymbolIcon Symbol="Icon.Filter" />
-        </div>
-    </div>
+@if (ItemType != null)
+{
+    @if (Fields.Count() >= 1)
+    {
+        <div id="@( "frame_popup_" + ID )" class="@(" dropdown-center ") ">
+            <div id="@( "link_popup_" + ID )" data-bs-toggle="dropdown"
+                 class="@(" d-flex p-1 align-items-center text-reset " + ButtonCssClass)">
+                <div id="@( "head_popup_" + ID )" class="rounded-2 hover pointer p-1">
+                    <SymbolIcon Symbol="Icon.Filter" />
+                </div>
+            </div>
 
-    <div id="@( "body_popup_" + ID )" class="@( "dropdown-menu " )" style="@MenuStyle">
-        <div class="vstack">
-            <div class="dropdown-header">Filter</div>
-            <div class="px-2 mb-1 small text-muted text-truncate-2 overflow-hidden">@SubTitle</div>
-        </div>
+            <div id="@( "body_popup_" + ID )" class="@( "dropdown-menu " )" style="@MenuStyle">
+                <div class="vstack">
+                    <div class="dropdown-header">Filter</div>
+                    <div class="px-2 mb-1 small text-muted text-truncate-2 overflow-hidden">@SubTitle</div>
+                </div>
 
-        <div class="dropdown-divider"></div>
-        <div class="@( " px-2 " + " overflow-y-auto " )" style="@( ContentStyle + " " + MaxHeightCSS )">
+                <div class="dropdown-divider"></div>
+                <div class="@( " px-2 " + " overflow-y-auto " )" style="@( ContentStyle + " " + MaxHeightCSS )">
 
-            @if (ItemType != null)
-            {
-                @foreach (IField field in Fields)
-                {
-                    <small class="text-muted">@field.Title.ToSecureString()</small>
-
-                    @foreach (string val in search.ValuesByColumn(this.ItemType.Name, field.Column))
+                    @if (ItemType != null)
                     {
-                        <div class="d-flex rounded-2 p-1 hover">
-                            <div class="flex-fill pe-1 me-1 border-end">
-                                @val.ToSecureString()
+                        @foreach (IField field in Fields)
+                        {
+                            <small class="text-muted px-1 mt-2 fw-bold">@field.Title.ToSecureString()</small>
+
+                            @foreach (string val in search.ValuesByColumn(this.ItemType.Name, field.Column))
+                            {
+                                <div class="d-flex rounded-2 p-1 hover">
+                                    <div class="flex-fill pe-1 me-1 border-end">
+                                        @val.ToSecureString()
+                                    </div>
+                                    @if (IsConnected(field.Column, val))
+                                    {
+                                        <!-- Bereits verbunden: Disconnect anzeigen -->
+                                        <div class="ps-1 hover pointer rounded" @onclick="@( async e => { await Disconnect(field.Column, val); })">
+                                            <SymbolIcon Symbol="Icon.Disconnect" Color="var(--tblr-red)" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <!-- Noch nicht verbunden: Connect anzeigen -->
+                                        <div class="px-1 hover pointer rounded" @onclick="@( async e => { await Connect(field.Column, val); })">
+                                            <SymbolIcon Symbol="Icon.Connect" Color="var(--tblr-green)" />
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+
+                        <div class="border-top py-2 mt-2">
+                            <div class="btn btn-sm btn-primary w-100" @onclick="ClearFilter">
+                                Filter entfernen
                             </div>
-                            @if (IsConnected(field.Column, val))
-                            {
-                                <!-- Bereits verbunden: Disconnect anzeigen -->
-                                <div class="ps-1 hover pointer rounded" @onclick="@( async e => { await Disconnect(field.Column, val); })">
-                                    <SymbolIcon Symbol="Icon.Disconnect" Color="var(--tblr-red)" />
-                                </div>
-                            }
-                            else
-                            {
-                                <!-- Noch nicht verbunden: Connect anzeigen -->
-                                <div class="px-1 hover pointer rounded" @onclick="@( async e => { await Connect(field.Column, val); })">
-                                    <SymbolIcon Symbol="Icon.Connect" Color="var(--tblr-green)" />
-                                </div>
-                            }
                         </div>
                     }
-                }
-            }
 
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-
+    }
+}
 
 
 
@@ -73,7 +84,7 @@
     public string ContentStyle { get; set; } = "  ";
 
     [Parameter]
-    public string SubTitle { get; set; } = "";
+    public string SubTitle { get; set; } = "Filtert das Ergebnis nach Auswahl";
 
     [Parameter]
     public string MenuStyle { get; set; } = "min-width:13rem;";
@@ -130,6 +141,27 @@
         if (Parameter != null && Parameter.Parameters != null)
         {
             Parameter.Parameters.Remove(new KeyValuePair<string, string>(column, value));
+
+            if (Context != null)
+            {
+                if (Context.Filter == null)
+                {
+                    Context.Filter = new FilterParameter();
+                }
+
+                // set Filter
+                Context.Filter.Parameters = Parameter.Parameters;
+
+                // run
+                await FilterData();
+            }
+        }
+    }
+    private async Task ClearFilter()
+    {
+        if (Parameter != null && Parameter.Parameters != null)
+        {
+            Parameter.Parameters.Clear();
 
             if (Context != null)
             {

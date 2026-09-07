@@ -1,6 +1,7 @@
 ﻿
 @inject ISqlDatabaseService sqlService
 @inject ISecurityService secService
+@inject ISearchService search
 @inject ILocalizationService loc
 @inject IAppService appService
 @inject IMessagingBusService msg
@@ -261,6 +262,9 @@
         // Message
         AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
         msg.Publish(am);
+
+        // Search
+        await search.Init();
 
         // Visual Update
         await InvokeAsync(this.StateHasChanged);

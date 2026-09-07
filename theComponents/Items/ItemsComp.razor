@@ -51,7 +51,8 @@
                 {
                     <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode" Context="@Context">
                         <Empty>
-                            <QuickAdd ItemType="@this.ItemType" />
+                            <QuickAdd ItemType="@this.ItemType" 
+                                OnAdd="@( e => { } )" />
                         </Empty>
                     </DataTable>
                 }

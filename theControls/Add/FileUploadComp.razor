@@ -1,6 +1,7 @@
 ﻿@using theControls.Input
 @inject IMessagingBusService msg
 @inject ISqlDatabaseService sql
+@inject ISearchService search
 @inject ILocalizationService loc
 @inject ISecurityService sec
 
@@ -73,5 +74,8 @@
 
         // Refresh 
         msg.Publish(new AppMessage("List", BusAction.Refresh));
+
+        // Search
+        await search.Init();
     }
 }

@@ -8,14 +8,17 @@
 
 @if (ItemType != null)
 {
-    <input id="@inputId"
-           type="text"
-           class="editbox"
-           placeholder="Suchbegriff eingeben..."
-           value="@searchQuery"
-           @oninput="HandleInput"
-           autocomplete="off"
-           style="width:18rem;" />
+    @if (search.CountByItemType(ItemType.Name) >= 1)
+    {
+        <input id="@inputId"
+               type="text"
+               class="editbox"
+               placeholder="Suchbegriff eingeben..."
+               value="@searchQuery"
+               @oninput="HandleInput"
+               autocomplete="off"
+               style="width:18rem;" />
+    }
 }
 
 
@@ -53,7 +56,7 @@
 
             if (ItemType != null)
             {
-                
+
                 int count = search.CountByItemType(ItemType.Name);
                 if (count != 0)
                 {

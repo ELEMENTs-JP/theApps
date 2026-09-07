@@ -7,6 +7,7 @@
 @inject ISecurityService secService
 @inject IMessagingBusService msg
 @inject ILocalizationService loc
+@inject ISearchService search
 @inject IJSRuntime js
 @implements IAsyncDisposable
 
@@ -180,6 +181,9 @@
         // Message
         AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
         msg.Publish(am);
+
+        // Search 
+        await search.Init();
 
         // JSInterop: Fokus beim Laden direkt in die Textbox setzen
         await js.InvokeVoidAsync("setFocusById", ID);

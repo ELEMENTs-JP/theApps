@@ -3,6 +3,7 @@
 @inject ISecurityService sec
 @inject IAppService app
 @inject IMessagingBusService msg
+@inject ISearchService search
 @implements IDisposable
 
 
@@ -86,6 +87,7 @@
             Text = key;
             isModalOpen = true;
             shouldFocusInput = true;
+
             StateHasChanged();
         }
     }
@@ -127,6 +129,12 @@
         AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
         msg.Publish(am);
 
+        // Search 
+        await search.Init();
+
+        // Evnet 
+        await AfterAdded(Context.Item);
+
         // Close UI
         CloseModal();
     }
@@ -148,6 +156,17 @@
         return true;
 
     }
+
+    [Parameter]
+    public EventCallback<IDTO> OnAdd { get; set; }
+    private async Task AfterAdded(IDTO dto)
+    {
+        if (OnAdd.HasDelegate)
+        {
+            await OnAdd.InvokeAsync(dto);
+        }
+    }
+
 
     public void Dispose()
     {
