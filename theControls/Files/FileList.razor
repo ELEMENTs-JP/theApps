@@ -47,7 +47,13 @@
 
     public async Task Filter()
     {
-        await Context.Filter(this.Matchcode);
+        // Filter 
+        IFilterParameter filter = new FilterParameter();
+        filter.Matchcode = this.Matchcode;
+        Context.Filter = filter;
+
+        // Search 
+        await Context.Search();
     }
 
 }

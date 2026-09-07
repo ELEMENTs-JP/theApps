@@ -6,7 +6,11 @@ using System.Text;
 
 namespace theInfrastructure
 {
-
+    public interface IFilterParameter
+    {
+        string Matchcode { get; set; }
+        List<KeyValuePair<string, string>> Parameters { get; set; }
+    }
     public interface IAssignableItems
     {
         // Legt die zugeordneten Einträge bei der Selection Box fest 
@@ -58,6 +62,7 @@ namespace theInfrastructure
         List<IDTO> Store { get; set; }
         Task<List<IDTO>> Search(string matchcode);
         int CountByItemType(string itemtype);
+        List<string> ValuesByColumn(string itemType, string column);
         Task Init();
     }
 

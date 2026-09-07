@@ -1,10 +1,9 @@
-﻿
-
-
+﻿@inject IMessagingBusService msg
+@inject ISearchService search
 
 <div id="@( "frame_popup_" + ID )" class="@(" dropdown-center ") ">
-    <div id="@( "link_popup_" + ID )"  data-bs-toggle="dropdown"
-        class="@(" d-flex p-1 align-items-center text-reset " + ButtonCssClass)">
+    <div id="@( "link_popup_" + ID )" data-bs-toggle="dropdown"
+         class="@(" d-flex p-1 align-items-center text-reset " + ButtonCssClass)">
         <div id="@( "head_popup_" + ID )" class="rounded-2 hover pointer p-1">
             <SymbolIcon Symbol="Icon.Filter" />
         </div>
@@ -12,18 +11,43 @@
 
     <div id="@( "body_popup_" + ID )" class="@( "dropdown-menu " )" style="@MenuStyle">
         <div class="vstack">
-                <div class="dropdown-header">Filter</div>
-                <div class="px-2 mb-1 small text-muted text-truncate-2 overflow-hidden">@SubTitle</div>
+            <div class="dropdown-header">Filter</div>
+            <div class="px-2 mb-1 small text-muted text-truncate-2 overflow-hidden">@SubTitle</div>
         </div>
-       
+
         <div class="dropdown-divider"></div>
         <div class="@( " px-2 " + " overflow-y-auto " )" style="@( ContentStyle + " " + MaxHeightCSS )">
 
             @if (ItemType != null)
             {
-                
-            }
+                @foreach (IField field in Fields)
+                {
+                    <small class="text-muted">@field.Title.ToSecureString()</small>
 
+                    @foreach (string val in search.ValuesByColumn(this.ItemType.Name, field.Column))
+                    {
+                        <div class="d-flex rounded-2 p-1 hover">
+                            <div class="flex-fill pe-1 me-1 border-end">
+                                @val.ToSecureString()
+                            </div>
+                            @if (IsConnected(field.Column, val))
+                            {
+                                <!-- Bereits verbunden: Disconnect anzeigen -->
+                                <div class="ps-1 hover pointer rounded" @onclick="@( async e => { await Disconnect(field.Column, val); })">
+                                    <SymbolIcon Symbol="Icon.Disconnect" Color="var(--tblr-red)" />
+                                </div>
+                            }
+                            else
+                            {
+                                <!-- Noch nicht verbunden: Connect anzeigen -->
+                                <div class="px-1 hover pointer rounded" @onclick="@( async e => { await Connect(field.Column, val); })">
+                                    <SymbolIcon Symbol="Icon.Connect" Color="var(--tblr-green)" />
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            }
 
         </div>
     </div>
@@ -59,4 +83,91 @@
 
     [Parameter]
     public string ButtonCssClass { get; set; } = "  ";
+
+    [Parameter]
+    public IQueryContext Context { get; set; }
+
+    List<IField> Fields { get; set; } = new();
+
+    IFilterParameter Parameter { get; set; } = new FilterParameter();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Fields.Clear();
+        if (ItemType != null)
+        {
+            Fields = await ItemType.GetFields();
+
+            Fields = Fields.Where(se => se.Funktionen.IsFilterable == true).ToList();
+        }
+    }
+
+    private async Task Connect(string column, string value)
+    {
+        if (Parameter != null && Parameter.Parameters != null)
+        {
+            Parameter.Parameters.Add(new KeyValuePair<string, string>(column, value));
+
+            if (Context != null)
+            {
+                if (Context.Filter == null)
+                {
+                    Context.Filter = new FilterParameter();
+                }
+
+                // set Filter
+                Context.Filter.Parameters = Parameter.Parameters;
+
+                // run
+                await FilterData();
+            }
+        }
+    }
+    private async Task Disconnect(string column, string value)
+    {
+        if (Parameter != null && Parameter.Parameters != null)
+        {
+            Parameter.Parameters.Remove(new KeyValuePair<string, string>(column, value));
+
+            if (Context != null)
+            {
+                if (Context.Filter == null)
+                {
+                    Context.Filter = new FilterParameter();
+                }
+
+                // set Filter
+                Context.Filter.Parameters = Parameter.Parameters;
+
+                // run
+                await FilterData();
+            }
+        }
+    }
+
+    private bool IsConnected(string column, string value)
+    {
+        if (Parameter?.Parameters == null)
+            return false;
+
+        return Parameter.Parameters.Any(p => p.Key == column && p.Value == value);
+    }
+
+    [Parameter]
+    public EventCallback<IFilterParameter> OnFilter { get; set; }
+    private async Task FilterData()
+    {
+        if (OnFilter.HasDelegate)
+        {
+            if (Parameter != null)
+            {
+                await OnFilter.InvokeAsync(Parameter);
+            }
+
+            // Liste aktualisieren
+            // msg.Publish("List", BusAction.Refresh);
+        }
+    }
 }

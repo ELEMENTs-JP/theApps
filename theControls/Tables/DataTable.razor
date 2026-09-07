@@ -47,11 +47,15 @@
     }
     protected override async Task OnParametersSetAsync()
     {
-        // 1. Setze den Matchcode im Context, BEVOR base aufgerufen wird
-        if (Context != null)
-        {
-            Context.Matchcode = this.Matchcode;
-        }
+        // // 1. Setze den Matchcode im Context, BEVOR base aufgerufen wird
+        // if (Context != null)
+        // {
+        //     // IFilterParameter filter = new FilterParameter();
+        //     // filter.Matchcode = this.Matchcode;
+
+        //     // Context.Filter = filter;
+        //     await Context.Search();
+        // }
 
         // 2. Ruf nur die Basisklasse auf, dort wird genau EINMAL gesucht
         await base.OnParametersSetAsync();
@@ -59,7 +63,13 @@
 
     public async Task Filter()
     {
-        await Context.Filter(this.Matchcode);
+        IFilterParameter filter = new FilterParameter();
+        filter.Matchcode = this.Matchcode;
+
+        if (Context != null)
+        {
+            await Context.Search();
+        }
     }
 
 }

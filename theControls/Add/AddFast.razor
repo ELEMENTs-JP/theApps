@@ -108,14 +108,18 @@
             return;
 
         //
-        Context.Matchcode = this.Title;
+        IFilterParameter filter = new FilterParameter();
+        filter.Matchcode = this.Title;
+        Context.Filter = filter;
+
+        // Search 
         await Context.Search();
 
         IDTO? item = Context.Items.FirstOrDefault(se => se.Title == this.Title);
         if (item != null)
         {
             // Message
-            Message = string.Format("Datensatz: {0} existiert bereits", Context.Matchcode);
+            Message = string.Format("Datensatz: {0} existiert bereits", this.Title);
         }
 
         await Task.CompletedTask;

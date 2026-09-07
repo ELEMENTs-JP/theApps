@@ -18,7 +18,8 @@ namespace theInfrastructure
         bool IsNecessary { get; set; }
         string DefaultValue { get; set; }
 
-        FieldDisplay OnDisplay { get; set; } 
+        FieldDisplay OnDisplay { get; set; }
+        FieldFunction Funktionen { get; set; }
         DeviceDisplay OnDevice { get; set; }
         bool IsEditable { get; set; }
 
@@ -53,6 +54,7 @@ namespace theInfrastructure
         public string Extension { get; set; } = string.Empty;
         public DeviceDisplay OnDevice { get; set; } = DeviceDisplay.NULL;
         public FieldDisplay OnDisplay { get; set; } = new();
+        public FieldFunction Funktionen { get; set; } = new();
 
         public bool IsEditable { get; set; } = true;
         public TextFormat Formatierung { get; set; } = TextFormat.NULL;
@@ -77,6 +79,7 @@ namespace theInfrastructure
                     Typ = FieldTyp.Status,
                     DefaultValue = "neu",
                     Column = "Status", CSS = " col-12 col-md-6 col-lg-4 ",
+                    Funktionen = new FieldFunction(true),
                     OnDevice = DeviceDisplay.Tablet
                 });
                 Fields.Add(new Field() 
@@ -84,7 +87,8 @@ namespace theInfrastructure
                     Title = "Fortschritt", Description = "Mit dem Fortschritt dokumentieren und verfolgen Sie den aktuellen Erfüllungsgrad einer Aufgabe, wodurch Sie Abweichungen vom Zeitplan frühzeitig erkennen, die Transparenz im Team erhöhen und eine verlässliche Grundlage für die Kapazitäts- und Terminplanung im Unternehmen schaffen.", 
                     Typ = FieldTyp.Progress, 
                     DefaultValue = "0",
-                    Column = "Progress", CSS = " col-12 col-md-6 col-lg-4 ", 
+                    Column = "Progress", CSS = " col-12 col-md-6 col-lg-4 ",
+                    Funktionen = new FieldFunction(true),
                     OnDevice = DeviceDisplay.Tablet 
                 });
                 Fields.Add(new Field() 
@@ -92,7 +96,8 @@ namespace theInfrastructure
                     Title = "Priorität", Description = "Mit der Priorität legen Sie die Dringlichkeit und Wichtigkeit einer Aufgabe fest, wodurch Ihr Team Ressourcen gezielt auf kritische Arbeitsschritte konzentriert, Engpässe frühzeitig vermeidet und die produktive Gesamtleistung des Unternehmens maximiert.", 
                     Typ = FieldTyp.Priority, 
                     DefaultValue = "ausgeglichen",
-                    Column = "Prio", CSS = " col-12 col-md-6 col-lg-4 ", 
+                    Column = "Prio", CSS = " col-12 col-md-6 col-lg-4 ",
+                    Funktionen = new FieldFunction(true),
                     OnDevice = DeviceDisplay.Tablet });
             }
 
@@ -172,6 +177,14 @@ namespace theInfrastructure
 
     }
 
+    public class FieldFunction
+    {
+        public FieldFunction(bool isFilterable = false)
+        {
+            IsFilterable = isFilterable;
+        }
+        public bool IsFilterable { get; set; } = false;
+    }
     public class FieldDisplay
     {
         public FieldDisplay(bool edit = true,  bool add = true, 

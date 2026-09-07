@@ -32,6 +32,7 @@ namespace theControls.Elements
         [Parameter]
         public IDTO RelatedItem { get; set; }
 
+        [Parameter]
         public IQueryContext Context { get; set; }
 
         // Events 
@@ -43,21 +44,19 @@ namespace theControls.Elements
         {
             await base.OnParametersSetAsync();
 
-            if (ItemType != null)
+            if (ItemType != null && Context != null)
             {
-                // Context nur neu erstellen, wenn er noch nicht existiert
-                if (Context == null || Context.ItemType?.Name != ItemType.Name)
-                {
-                    Context = new QueryContext(sql, sec)
-                    {
-                        ItemType = ItemType
-                    };
-                }
-
                 // Matchcode aus der abgeleiteten Klasse übernehmen (falls vorhanden)
                 if (this is DataTable dataTable)
                 {
-                    Context.Matchcode = dataTable.Matchcode;
+                    if (Context.Filter == null)
+                    { 
+                        IFilterParameter filter = new FilterParameter();
+                        Context.Filter = filter;
+                    }
+
+                    // Matchcode 
+                    Context.Filter.Matchcode = dataTable.Matchcode;
                 }
 
                 if (RelatedItem != null)
@@ -71,7 +70,6 @@ namespace theControls.Elements
                     await Context.Search();
                 }
             }
-
         }
 
         [Parameter]
@@ -81,7 +79,7 @@ namespace theControls.Elements
         {
             if (msg.Action == BusAction.Refresh)
             {
-                if (ItemType != null)
+                if (ItemType != null && Context != null)
                 {
                     if (RelatedItem != null)
                     {

@@ -1,6 +1,7 @@
 ﻿@using theControls.Config
 
 @inject ISqlDatabaseService sql
+@inject ISecurityService sec
 
 @if (ItemType != null)
 {
@@ -10,10 +11,11 @@
             <Header>
                 <ControlHeader PreTitle="List" Title="@ItemType.ToString()" PostTitle="@ItemType.Description" />
             </Header>
-            @*       <Controls>
-                <Filter ItemType="@ItemType" />
-                <Sortierung ItemType="@ItemType" />
-        </Controls> *@
+              <Controls>
+                <Filter ItemType="@ItemType" Context="@Context" 
+                        OnFilter="@( async e => { await Context.Search(); })"  />
+                @*    <Sortierung ItemType="@ItemType" />*@
+        </Controls> 
             <Search>
                 <LocalSearchComp OnSearch="@( e => { Matchcode = e.ToSecureString(); })" 
                         ItemType="@this.ItemType" />
@@ -47,7 +49,7 @@
                                                         this.ItemType.Typ == ItemTypeTyp.Comment ||
                                                             this.ItemType.Typ == ItemTypeTyp.Audio)
                 {
-                    <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode">
+                    <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode" Context="@Context">
                         <Empty>
                             <QuickAdd ItemType="@this.ItemType" />
                         </Empty>
@@ -56,11 +58,11 @@
                 else if (this.ItemType.Typ == ItemTypeTyp.File ||
                                                          this.ItemType.Typ == ItemTypeTyp.Image)
                 {
-                    <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" />
+                    <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" Context="@Context" />
                 }
                 else if (this.ItemType.Typ == ItemTypeTyp.Appointment)
                 {
-                    <CalendarComp ItemType="@ItemType" />
+                    <CalendarComp ItemType="@ItemType" Context="@Context" />
                 }
 
                 
@@ -99,15 +101,25 @@
     [Parameter]
     public IItemType ItemType { get; set; }
 
+    private IQueryContext Context { get; set; }
     private string Matchcode { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+        Context = new QueryContext(sql, sec, ItemType);
     }
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
+
+        if (Context != null)
+        {
+            await Context.Clear();
+            Context.ItemType = ItemType;
+        }
+
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

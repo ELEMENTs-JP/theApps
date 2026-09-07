@@ -6,10 +6,10 @@
 {
     @if (Context.ItemType != null && Context.ItemType.GetFields().Result != null)
     {
-        <SortableContainer Zone="@( "Default")" 
-                            Items="@Context.Items">
+        <SortableContainer Zone="@( "Default")"
+                           Items="@Context.Items">
             <ItemTemplate Context="item">
-                <ListItem @key="@item.GUID" Context="@Context" Item="@item" 
+                <ListItem @key="@item.GUID" Context="@Context" Item="@item"
                           IsRelated="@( (RelatedItem != null))" IsSortable="@IsSortable" ShowID="@ShowID" />
             </ItemTemplate>
         </SortableContainer>
@@ -40,13 +40,16 @@
     {
         await base.OnParametersSetAsync();
 
-        if (RelatedItem != null)
+        if (Context != null)
         {
-            Context.Items = await Context.RelatedItems(Context.ItemType.Name, Association);
-        }
-        else
-        {
-            await Context.Search();
+            if (RelatedItem != null)
+            {
+                Context.Items = await Context.RelatedItems(Context.ItemType.Name, Association);
+            }
+            else
+            {
+                await Context.Search();
+            }
         }
     }
 

@@ -11,10 +11,13 @@
     @if (ValidateVisibility() == true)
     {
 
-        <div class="border rounded p-2 text-center my-3">
-            <p class="text-secondary mb-0">
-                Tippe einfach ein paar Buchstaben oder Zahlen und wir erstellen einen neuen Eintrag.
-            </p>
+        <div class="d-flex text-center my-5 mx-auto">
+            <div class="text-secondary ms-auto pe-1">
+                Tippe ein paar Buchstaben oder Zahlen.
+            </div>
+            <div class="ps-1 me-auto">
+                <SymbolIcon Symbol="Icon.Keyboard" />
+            </div>
         </div>
 
         @if (isModalOpen)

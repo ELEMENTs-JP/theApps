@@ -191,6 +191,12 @@ namespace theInfrastructure
         public string Editor { get; set; } = string.Empty;
 
     }
+
+    public class FilterParameter : IFilterParameter
+    {
+        public string Matchcode { get; set; } = string.Empty;
+        public List<KeyValuePair<string, string>> Parameters { get; set; } = new();
+    }
     public class QueryParameter : IQueryParameter
     {
         // Identify 

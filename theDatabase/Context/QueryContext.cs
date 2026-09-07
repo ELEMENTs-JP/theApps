@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog.Filters;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using theInfrastructure;
@@ -13,12 +14,12 @@ namespace theDatabase
         ISecurityService secService = null;
 
         // Query 
-        public string Matchcode { get; set; } = string.Empty;
+        public IFilterParameter Filter { get; set; }
 
         public IItemType ItemType { get; set; } = null;
         public IDTO RelatedItem { get; set; } = null;
         public IDTO Item { get; set; } = null;
-        
+
         // Result 
         public List<IDTO> Items { get; set; } = new List<IDTO>();
 
@@ -85,16 +86,39 @@ namespace theDatabase
             );
 
             // 2. Schritt: Matchcode-Filterung (falls ein Suchbegriff vorhanden ist)
-            string search = this.Matchcode.ToSecureString();
-            if (!string.IsNullOrWhiteSpace(search))
+            if (Filter != null)
             {
-                // Suchbegriffe am Leerzeichen aufsplitten und leere Einträge entfernen
-                string[] searchTerms = search.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string search = this.Filter.Matchcode.ToSecureString();
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    // Suchbegriffe am Leerzeichen aufsplitten und leere Einträge entfernen
+                    string[] searchTerms = search.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                filteredItems = filteredItems.Where(se =>
-                    se.Matchcode != null &&
-                    searchTerms.Any(term => se.Matchcode.Contains(term, StringComparison.OrdinalIgnoreCase))
-                );
+                    filteredItems = filteredItems.Where(se =>
+                        se.Matchcode != null &&
+                        searchTerms.Any(term => se.Matchcode.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    );
+                }
+            }
+            
+        
+
+            // Filter 
+            if (this.Filter != null)
+            {
+                // AND Filterung 
+                //foreach (var p in filter.Parameters)
+                //{
+                //    Items = Items.Where(se => se[p.Key] == p.Value).ToList();
+                //}
+
+                // OR Filterung 
+                if (this.Filter.Parameters != null && this.Filter.Parameters.Any())
+                {
+                    filteredItems = filteredItems
+                        .Where(se => this.Filter.Parameters.Any(p => se[p.Key] == p.Value))
+                        .ToList();
+                }
             }
 
             // Erst am Ende wird die gefilterte Sequenz in die finale Liste umgewandelt
@@ -102,15 +126,7 @@ namespace theDatabase
 
             IsLoading = false;
         }
-        public async Task Filter(string matchcode)
-        {
-            await Search();
 
-            if (!string.IsNullOrEmpty(matchcode))
-            { 
-                Items = Items.Where(se => se.Matchcode.ToLowerInvariant().Contains(matchcode.ToLowerInvariant())).ToList();
-            }
-        }
         public async Task Load(string GUID)
         {
             try
@@ -141,7 +157,7 @@ namespace theDatabase
             }
             catch (Exception ex)
             {
-                
+
             }
         }
         public async Task<List<IDTO>> RelatedItems(
@@ -172,7 +188,7 @@ namespace theDatabase
 
             return _items;
         }
-        
+
         // Action 
         public async Task Delete(IDTO dto)
         {
@@ -244,6 +260,25 @@ namespace theDatabase
                 IQueryResult result = await sqlService.Remove(this.RelatedItem, dto);
             }
 
+        }
+
+        // Helper 
+        public async Task Clear()
+        {
+            Filter = null;
+            ItemType = null;
+            Item = null;
+            Items = new();
+            RelatedItem = null;
+        }
+        public List<string> ValuesByColumn(string column)
+        {
+            return Items
+         .Select(se => se[column])
+         .Where(val => !string.IsNullOrWhiteSpace(val))
+         .Distinct()
+         .Order()
+         .ToList();
         }
 
         // Dispose 

@@ -131,7 +131,16 @@ namespace theInfrastructure
             int count = Store.Where(se => se.ItemType.ToLowerInvariant() == itemtype.ToLowerInvariant()).Count();
             return count;
         }
-
+        public List<string> ValuesByColumn(string itemType, string column)
+        {
+            return Store
+                .Where(se => se.ItemType == itemType)
+                .Select(se => se[column])
+                    .Where(val => !string.IsNullOrWhiteSpace(val))
+                    .Distinct()
+                    .Order()
+                        .ToList();
+        }
         // Property Changed 
         private void AppService_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {

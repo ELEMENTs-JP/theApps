@@ -127,6 +127,7 @@ namespace theInfrastructure
         Help,
         Connect,
         Disconnect,
+        Keyboard,
         Link,
         Top, Down, Equal,
         Neu,

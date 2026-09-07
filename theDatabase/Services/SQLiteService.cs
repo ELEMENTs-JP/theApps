@@ -678,7 +678,6 @@ namespace theDatabase
         {
             IQueryResult result = new QueryResult { Status = "OK", Message = "" };
 
-            // Query Validation 
             if (query.Validate() == false)
             {
                 result.Status = "FAIL";
@@ -686,7 +685,6 @@ namespace theDatabase
                 return result;
             }
 
-            // Datenbank 
             if (DatabaseExists == false)
             {
                 result.Status = "FAIL";
@@ -694,21 +692,24 @@ namespace theDatabase
                 return result;
             }
 
-            FormattableString sql = Query.GetItem(query);
-
             try
             {
                 await using var ctx = GetContext();
 
-                IQueryable<tbl_CON_Content> queryable = ctx.tbl_CON_Content;
+                var item = await ctx.tbl_CON_Content
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x =>
+                        EF.Functions.Collate(x.GUID, "NOCASE") == query.GUID &&
+                        EF.Functions.Collate(x.MasterGUID, "NOCASE") == query.MasterGUID);
 
-                queryable = queryable.Where(x =>
-                    EF.Functions.Collate(x.GUID, "NOCASE") == query.GUID &&
-                    EF.Functions.Collate(x.MasterGUID, "NOCASE") == query.MasterGUID);
-
-                var items = await queryable.AsNoTracking().ToListAsync();
-
-                result.Items = items.Cast<IDTO>().ToList();
+                if (item != null)
+                {
+                    result.Items = new List<IDTO> { (IDTO)item };
+                }
+                else
+                {
+                    result.Items = new List<IDTO>();
+                }
             }
             catch (Exception ex)
             {
