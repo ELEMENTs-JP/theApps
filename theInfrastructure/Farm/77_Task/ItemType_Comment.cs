@@ -11,6 +11,7 @@ namespace theInfrastructure
             Name = "Comment";
             Title = "Kommentar";
             Typ = ItemTypeTyp.Comment;
+            this.Order = 11;
             this.InSubNavigation = false;
             this.ShowInTaskBarNavigation = false;
             this.IsNavigation = false;

@@ -11,6 +11,7 @@ namespace theInfrastructure
             Name = "Audio";
             Title = "Audio";
             Typ = ItemTypeTyp.Audio;
+            this.Order = 8;
         }
 
         public override async Task<List<IField>> GetFields(string view = "")

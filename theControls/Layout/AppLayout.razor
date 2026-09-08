@@ -68,29 +68,22 @@
                 Es wurde offenbar ein Link aufgerufen, der so nicht existiert, oder ihr Account hierfür nicht berechtigt ist.
             </div>
 
-            <div class="row g-0 pt-3">
-                <div class="col-auto pb-3 pe-3">
-                    <div class="border hover pointer rounded-2 p-2 me-2 mb-2"
-                         @onclick="@( e => { nm.NavigateTo("/Security/Login", false); })">
-                        go to Login...
-                    </div>
+            <div class="d-inline-flex flex-column my-5">
+                <div class="fw-bold border hover pointer rounded-2 p-3 my-2 pe-5"
+                     @onclick="@( e => { nm.NavigateTo("/Security/Login", false); })">
+                    zum Login...
                 </div>
-                <div class="col-auto pb-3 pe-3">
-                    <div class="border hover pointer rounded-2 p-2  me-2 mb-2"
-                         @onclick="@( e => { nm.NavigateTo("/Security/Register", false); })">
-                        go to Registration...
-                    </div>
+
+                <div class="fw-bold border hover pointer rounded-2 p-3 my-2 pe-5"
+                     @onclick="@( e => { nm.NavigateTo("/Security/Register", false); })">
+                    zur Registration...
                 </div>
-                <div class="col-auto pb-3 pe-3">
-                    <div class="border hover pointer rounded-2 p-2  me-2 mb-2"
-                         @onclick="@( e => { nm.NavigateTo("/", false); })">
-                        go to App...
-                    </div>
+
+                <div class="fw-bold border hover pointer rounded-2 p-3 my-2 pe-5"
+                     @onclick="@( e => { nm.NavigateTo("/", false); })">
+                    zur App...
                 </div>
             </div>
-        
-        
-        
         </div>
 
     </NotAuthorized>
@@ -129,7 +122,7 @@
             await sec.SetUser(token.ToSecureGUID());
         }
 
-        // Message Handler 
+        // Message Handler
         msg.OnMessage += OnMessageIncome;
 
         // Navigation Handler
@@ -151,7 +144,7 @@
         UrlAnalysis analysis = UrlAnalysis.AnalyzeUrl(nm);
         if (analysis.Segments.Count() == 0)
         {
-            // Home 
+            // Home
             app.App = null;
             msg.Publish("App", BusAction.Refresh);
         }

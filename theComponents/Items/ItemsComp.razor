@@ -5,7 +5,7 @@
 
 @if (ItemType != null)
 {
-    @if (Helper.ValidateVisibility(SecuredFeature.List, ItemType, sec.User))
+    @if (IsSecure)
     {
         <Frame Border="true" >
             <Header>
@@ -103,6 +103,8 @@
     [Parameter]
     public IItemType ItemType { get; set; }
 
+    private bool IsSecure { get; set; } = false;
+
     private IQueryContext Context { get; set; }
     private string Matchcode { get; set; } = string.Empty;
 
@@ -124,6 +126,8 @@
 
             // Kontext für den neuen ItemType frisch instanziieren
             Context = new QueryContext(sql, sec, ItemType);
+
+            IsSecure = Helper.ValidateVisibility(SecuredFeature.List, ItemType, sec.User);
         }
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)

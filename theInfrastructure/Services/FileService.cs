@@ -16,6 +16,10 @@ namespace theInfrastructure
         public string FileTextContent { get; set; }
         public string FileExtension { get; set; }
         public string Content { get; set; }
+        // Neu: MimeType und Text/Binary Indikatoren
+        public string MimeType { get; set; }
+        public bool IsText { get; set; }
+        public bool IsBinary { get; set; }
     }
     public class FileNotificationService
     {

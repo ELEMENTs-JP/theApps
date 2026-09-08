@@ -64,6 +64,11 @@
         item["FullFilePath"] = fn.FullFilePath;
         item["FileExtension"] = fn.FileExtension;
 
+        // MimeType / Text-Binary
+        item["MimeType"] = fn.MimeType;
+        item["IsText"] = fn.IsText.ToSecureString();
+        item["IsBinary"] = fn.IsBinary.ToSecureString();
+
         // Size 
         item["FileSizeInByte"] = fn.FileSizeInByte.ToSecureString();
         item["FileSizeInKB"] = fn.FileSizeInKB.ToSecureString();

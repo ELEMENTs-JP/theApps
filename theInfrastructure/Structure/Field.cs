@@ -116,6 +116,7 @@ namespace theInfrastructure
 
             if (typ == DefaultFieldTypes.File)
             {
+                
                 Fields.Add(new Field() { Title = "Datei", Typ = FieldTyp.HR });
                 Fields.Add(new Field() { Title = "Pfad", Typ = FieldTyp.TextBlock, 
                     Column = "FullFilePath",  CSS = " col-12 col-md-8 col-lg-9 ", 
@@ -124,9 +125,10 @@ namespace theInfrastructure
                 Fields.Add(new Field() { Title = "Erweiterung", Typ = FieldTyp.TextBlock, 
                     Column = "FileExtension",  CSS = " col-12 col-md-4 col-lg-3 ", OnDevice = DeviceDisplay.Desktop });
 
+               
+                
                 Fields.Add(new Field() { Title = "Größen", Typ = FieldTyp.HR });
-                // Fields.Add(new Field() { Title = "Pfad", Typ = FieldTyp.Text, Column = "FullFilePath", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
-                Fields.Add(new Field() { 
+               Fields.Add(new Field() { 
                     Title = "Size in Byte", Typ = FieldTyp.TextBlock, Column = "FileSizeInByte", 
                     CSS = " col-12 col-md-4 col-lg-4 ", 
                     Extension = "Byte",
@@ -144,6 +146,32 @@ namespace theInfrastructure
                     Extension = "MB",
                     Formatierung = TextFormat.MB,
                     OnDevice = DeviceDisplay.Desktop });
+
+                Fields.Add(new Field() { Title = "Inhalt", Typ = FieldTyp.HR });
+                Fields.Add(new Field()
+                {
+                    Title = "MimeType",
+                    Typ = FieldTyp.TextBlock,
+                    Column = "MimeType",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDevice = DeviceDisplay.Desktop
+                });
+                Fields.Add(new Field()
+                {
+                    Title = "IsText",
+                    Typ = FieldTyp.TextBlock,
+                    Column = "IsText",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDevice = DeviceDisplay.Desktop
+                });
+                Fields.Add(new Field()
+                {
+                    Title = "IsBinary",
+                    Typ = FieldTyp.TextBlock,
+                    Column = "IsBinary",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDevice = DeviceDisplay.Desktop
+                });
 
             }
 

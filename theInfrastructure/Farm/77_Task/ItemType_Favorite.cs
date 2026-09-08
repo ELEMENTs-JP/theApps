@@ -11,6 +11,7 @@ namespace theInfrastructure
             Name = "Favorite";
             Title = "Favorite";
             Typ = ItemTypeTyp.Item;
+            this.Order = 13;
             this.InSubNavigation = false;
             this.ShowInTaskBarNavigation = false;
             this.IsNavigation = false;

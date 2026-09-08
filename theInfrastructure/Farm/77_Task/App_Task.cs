@@ -18,6 +18,7 @@ namespace theInfrastructure
             List<IItemType> ItemTypes = new();
 
             // ItemTypes 
+            ItemTypes.Add(new ItemType_Notification());
             ItemTypes.Add(new ItemType_Favorite());
             ItemTypes.Add(new ItemType_Checklist());
             ItemTypes.Add(new ItemType_Comment());
@@ -28,6 +29,7 @@ namespace theInfrastructure
             ItemTypes.Add(new ItemType_File());
             ItemTypes.Add(new ItemType_Link());
             ItemTypes.Add(new ItemType_News());
+            ItemTypes.Add(new ItemType_Reminder());
             ItemTypes.Add(new ItemType_Appointment());
             ItemTypes.Add(new ItemType_TimeFrame());
             ItemTypes.Add(new ItemType_Task());

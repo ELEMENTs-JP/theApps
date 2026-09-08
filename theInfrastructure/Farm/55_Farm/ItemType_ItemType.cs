@@ -41,8 +41,19 @@ namespace theInfrastructure
                 Description = "Legt die Gruppe des ItemTyp fest.",
                 Typ = FieldTyp.Text,
                 Column = "Group",
-                CSS = " col-6 "
+                CSS = " col-3 "
             });
+
+            Fields.Add(new Field()
+            {
+                Title = "Order",
+                Description = "Legt die Reihenfolge des ItemTyp fest.",
+                Typ = FieldTyp.Integer,
+                DefaultValue = "1",
+                Column = "Order",
+                CSS = " col-3 "
+            });
+            
 
             Fields.Add(new Field()
             {
@@ -66,6 +77,27 @@ namespace theInfrastructure
             Fields.Add(new Field() { Title = "Description", Typ = FieldTyp.TextArea, Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
 
             return Fields;
+        }
+
+        public override async Task<IDTO> OnCreateItem(IItemEventArgs args)
+        {
+            await base.OnCreateItem(args);
+
+            // Default Values 
+            List<IField> fields = await GetFields();
+            foreach (IField field in fields.Where(se => !string.IsNullOrEmpty(se.DefaultValue)))
+            {
+                if (string.IsNullOrEmpty(args.Item[field.Column].ToSecureString()))
+                {
+                    args.Item[field.Column] = field.DefaultValue;
+                }
+            }
+
+            // Update 
+            await args.SqlService.Update(args.Item);
+
+            // RETURN 
+            return args.Item;
         }
     }
 }

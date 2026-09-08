@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Text;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace theInfrastructure
 {
@@ -250,6 +251,58 @@ namespace theInfrastructure
                    span.Equals("bmp", StringComparison.OrdinalIgnoreCase) ||
                    span.Equals("ico", StringComparison.OrdinalIgnoreCase) ||
                    span.Equals("avif", StringComparison.OrdinalIgnoreCase);
+        }
+        public static bool IsValidVideoExtension(this string ext)
+        {
+            if (string.IsNullOrWhiteSpace(ext))
+                return false;
+
+            ReadOnlySpan<char> span = ext.AsSpan().TrimStart('.');
+
+            // Gängige, im Browser abspielbare Video-Formate
+            return span.Equals("mp4", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("webm", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("ogv", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("m4v", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("mov", StringComparison.OrdinalIgnoreCase) ||
+                   span.Equals("3gp", StringComparison.OrdinalIgnoreCase);
+        }
+
+        // Liefert den vom Browser gelieferten MIME-Type (oder empty)
+        public static string GetMimeTypeFromBrowserFile(this IBrowserFile? file)
+        {
+            if (file == null)
+                return string.Empty;
+
+            return file.ContentType ?? string.Empty;
+        }
+
+        // Prüft, ob ein MIME-Type typischerweise Text darstellt
+        public static bool IsTextMimeType(this string? mime)
+        {
+            if (string.IsNullOrWhiteSpace(mime))
+                return false;
+
+            if (mime.StartsWith("text/", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            string lm = mime.ToLowerInvariant();
+            return lm.Contains("json") || lm.Contains("xml") || lm.Contains("javascript") || lm.Contains("html") || lm.Contains("svg") || lm.Contains("csv");
+        }
+
+        // Heuristische Prüfung, ob die übergebene Datei wahrscheinlich Text ist (MIME-Type + Extension-Fallback)
+        public static bool IsProbablyTextFile(this IBrowserFile? file)
+        {
+            if (file == null)
+                return false;
+
+            string mime = file.GetMimeTypeFromBrowserFile();
+            if (mime.IsTextMimeType())
+                return true;
+
+            // Fallback anhand der Extension
+            string ext = file.Name?.SplitGetLast()?.ToLowerInvariant() ?? string.Empty;
+            return ext == "txt" || ext == "csv" || ext == "json" || ext == "xml" || ext == "md" || ext == "html" || ext == "htm" || ext == "css" || ext == "js";
         }
         public static async Task<string> ToBase64String(IDTO image, bool loadSmallifAvailable = false)
         {

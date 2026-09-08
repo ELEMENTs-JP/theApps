@@ -4,14 +4,13 @@ using System.Text;
 
 namespace theInfrastructure
 {
-    public class  ItemType_Appointment : BaseItemType, IItemType
+    public class  ItemType_Reminder : BaseItemType, IItemType
     {
-        public ItemType_Appointment()
+        public ItemType_Reminder()
         {
-            Name = "Appointment";
-            Title = "Termin";
+            Name = "Reminder";
+            Title = "Erinnerung";
             Typ = ItemTypeTyp.Appointment;
-            this.Order = 2;
         }
 
         public override async Task<List<IField>> GetFields(string view = "")

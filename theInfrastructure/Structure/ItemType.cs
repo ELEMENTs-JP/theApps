@@ -14,10 +14,12 @@ namespace theInfrastructure
         string Name { get; set; }
         string Description { get; set; }
         string Group { get; set; }
+        Icon Icon { get; set; }
         ItemTypeTyp Typ { get; set; }
         bool IsNavigation { get; set; }
         bool InSubNavigation { get; set; }
         bool ShowInTaskBarNavigation { get; set; }
+        int Order { get; set; }
 
         // ItemType 
         public Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association);
@@ -44,9 +46,11 @@ namespace theInfrastructure
         public string Name { get; set; } = string.Empty;
         public string Group { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public Icon Icon { get; set; } = Icon.NULL;
         public bool IsNavigation { get; set; } = true; // In Hauptnavigation anzeigen 
         public bool InSubNavigation { get; set; } = true; // In untergeordneter Navigation anzeigen 
         public bool ShowInTaskBarNavigation { get; set; } = true; // In der Taskbar unten rechts anzeigen 
+        public int Order { get; set; } = 0;
         public ItemTypeTyp Typ { get; set; } = ItemTypeTyp.Item;
         public BaseItemType()
         { 

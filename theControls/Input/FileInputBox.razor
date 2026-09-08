@@ -156,6 +156,7 @@
                 string extension = Helper.SplitGetLast(file.Name);
                 string fullFilePath = Path.Combine(relativeSaveFilePath, $"{itemGUID}.{extension}");
 
+                // Bild 
                 if (this.ItemType.Typ == ItemTypeTyp.Image)
                 {
                     if (extension.IsValidImageExtension() == false)
@@ -169,6 +170,7 @@
                     }
                 }
 
+                // Audio 
                 if (this.ItemType.Typ == ItemTypeTyp.Audio)
                 {
                     if (extension.IsValidAudioExtension() == false)
@@ -177,6 +179,19 @@
                         msg.Publish("Info", BusAction.Info,
                             $"Datei: {file.Name} - nicht unterstütztes Audioformat.");
 
+                        // WEITER
+                        continue;
+                    }
+                }
+
+                // Video 
+                if (this.ItemType.Typ == ItemTypeTyp.Video)
+                {
+                    if (extension.IsValidVideoExtension() == false)
+                    {
+                        // Info
+                        msg.Publish("Info", BusAction.Info,
+                            $"Datei: {file.Name} - nicht unterstütztes Videoformat.");
                         // WEITER
                         continue;
                     }
@@ -271,8 +286,14 @@
                     FileSizeInByte = file.Size,
                     FileSizeInKB = file.Size / 1024m,
                     FileSizeInMB = file.Size / (1024m * 1024m),
-                    FileExtension = file.Name.SplitGetLast()
+                    FileExtension = file.Name.SplitGetLast(),
+
+                    // MimeType und Text/Binary Bestimmung (Helper-Methoden)
+                    MimeType = file.GetMimeTypeFromBrowserFile(),
+                    IsText = file.IsProbablyTextFile(),
+                    IsBinary = !file.IsProbablyTextFile()
                 };
+             
 
                 await OnFileUploaded.InvokeAsync(token);
             }

@@ -12,6 +12,7 @@ namespace theInfrastructure
             Title = "Link";
             Typ = ItemTypeTyp.Link;
             this.InSubNavigation = false;
+            this.Order = 4;
         }
 
         public override async Task<List<IField>> GetFields(string view = "")

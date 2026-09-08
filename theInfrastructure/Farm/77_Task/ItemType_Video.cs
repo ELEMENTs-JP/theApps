@@ -11,6 +11,7 @@ namespace theInfrastructure
             Name = "Video";
             Title = "Video";
             Typ = ItemTypeTyp.Video;
+            this.Order = 9;
         }
 
         public override async Task<List<IField>> GetFields(string view = "")

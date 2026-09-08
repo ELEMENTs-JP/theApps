@@ -7,7 +7,7 @@
 {
     @if (Context != null)
     {
-        @if (Helper.ValidateVisibility(SecuredFeature.Item, ItemType, sec.User))
+        @if (IsSecure)
         {
             <div class="row g-0">
                 <div class="col-12 col-lg-7 p-2">
@@ -62,13 +62,12 @@
     }
 }
 
-
-
 @code {
 
     [Parameter]
     public string ID { get; set; } = string.Empty;
 
+    private bool IsSecure { get; set; } = false;
 
     private IDTO RelatedItem { get; set; }
 
@@ -107,15 +106,20 @@
                     ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(type, its));
                 }
             }
+
+            if (!string.IsNullOrEmpty(this.ID))
+            {
+                Context = new QueryContext(sql, sec);
+                Context.ItemType = ItemType;
+                await Context.Load(this.ID);
+
+                RelatedItem = Context.Item;
+            }
+
+            // Security
+            IsSecure = Helper.ValidateVisibility(SecuredFeature.Item, ItemType, sec.User);
         }
 
-        if (!string.IsNullOrEmpty(this.ID))
-        {
-            Context = new QueryContext(sql, sec);
-            Context.ItemType = ItemType;
-            await Context.Load(this.ID);
-
-            RelatedItem = Context.Item;
-        }
+   
     }
 }

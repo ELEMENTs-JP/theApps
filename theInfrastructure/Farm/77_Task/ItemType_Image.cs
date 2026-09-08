@@ -11,6 +11,7 @@ namespace theInfrastructure
             Name = "Image";
             Title = "Bilder";
             Typ = ItemTypeTyp.Image;
+            this.Order = 7;
         }
 
         public override async Task<List<IField>> GetFields(string view = "")

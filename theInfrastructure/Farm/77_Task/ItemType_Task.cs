@@ -11,6 +11,7 @@ namespace theInfrastructure
         {
             Name = "Task";
             this.InSubNavigation = false;
+            this.Order = 1;
             Description = "Mit einer Aufgabe erfassen und verwalten Sie alle relevanten operativen Daten Ihres Projekts, wodurch Sie Informationsverluste vermeiden, den manuellen Abstimmungsaufwand im Team spürbar reduzieren und jederzeit eine verlässliche Datenbasis für fundierte unternehmerische Entscheidungen sowie effiziente Prozessabläufe schaffen.";
         }
 
@@ -46,7 +47,7 @@ namespace theInfrastructure
                 Column = "Description",
                 CSS = " col-12 col-md-6 col-lg-12 ",
                 OnDevice = DeviceDisplay.Desktop,
-                OnDisplay = new FieldDisplay(false, false, false, false),
+                OnDisplay = new FieldDisplay(true, true, false, false),
             });
 
 

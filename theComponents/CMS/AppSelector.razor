@@ -66,7 +66,8 @@
             <div class="border-top my-3"></div>
             <div class="text-muted small fw-bold ps-2">Listen</div>
             <div class="row g-0">
-                @foreach (IItemType it in CurrentItemTypes.Where(se => se.IsNavigation == true))
+                @foreach (IItemType it in CurrentItemTypes.Where(se => se.IsNavigation == true)
+                            .OrderBy(se => se.Order != 0 ? se.Order : int.MaxValue).ThenBy(se => se.Title))
                 {
                     <div class="col-12 p-1">
                         <div class="rounded-2 hover pointer p-1 px-2 fw-bold @( GetSelection(it) )"
@@ -75,7 +76,8 @@
                         </div>
                     </div>
 
-                    @foreach (IItemType child in it.GetItemTypes(AssociationTyp.Children).Result.Where(se => se.InSubNavigation == true))
+                    @foreach (IItemType child in it.GetItemTypes(AssociationTyp.Children).Result.Where(se => se.InSubNavigation == true)
+                                    .OrderBy(se => se.Order != 0 ? se.Order : int.MaxValue).ThenBy(se => se.Title))
                     {
                         <div class="col-12 p-1 ">
                             <div class="rounded-2 hover pointer p-1 px-2 ps-4 text-secondary @( GetSelection(child) )"

@@ -10,7 +10,8 @@ namespace theInfrastructure
         public ItemType_Checklist()
         {
             Name = "Checklist";
-            
+            this.Order = 12;
+
             this.InSubNavigation = false;
             this.ShowInTaskBarNavigation = false;
             this.IsNavigation = false;

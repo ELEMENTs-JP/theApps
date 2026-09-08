@@ -13,6 +13,7 @@ namespace theInfrastructure
             Title = "Time Frame";
             this.InSubNavigation = false;
             this.IsNavigation = false;
+            this.Order = 5;
             this.ShowInTaskBarNavigation = false;
             Description = "Ein klarer Timeframe bringt Struktur in die Unternehmensplanung: Er richtet Budgets, Teams und Fristen gezielt aufeinander aus, damit Projekte im zeitlichen und finanziellen Rahmen bleiben. Das schafft Verlässlichkeit, schützt vor unnötigen Kosten und sorgt dafür, dass aus Plänen pünktlich erfolgreiche Ergebnisse werden.";
         }

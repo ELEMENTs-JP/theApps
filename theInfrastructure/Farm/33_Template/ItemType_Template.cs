@@ -14,10 +14,13 @@ namespace theInfrastructure
             Item = dto;
 
             this.Name = dto.Title;
+            this.Title = dto.Title;
             this.Group = dto["Group"].ToSecureString();
             this.InSubNavigation = dto["InSubNavigation"].ToSecureBool();
             this.Typ = dto["ItemTypeTyp"].ToSecureString().ToEnumOrDefault<ItemTypeTyp>(ItemTypeTyp.Item);
             this.Description = dto["Description"].ToSecureString();
+
+            this.Order = dto["Order"].ToSecureInt();
         }
 
         public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
