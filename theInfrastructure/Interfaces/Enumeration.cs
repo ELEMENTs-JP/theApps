@@ -4,6 +4,12 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public enum SecuredFeature
+    { 
+        NULL = 0,
+        List = 1,
+        Item = 2,
+    }
     public enum SecurityFunction
     {
         NULL = 0,
@@ -79,6 +85,7 @@ namespace theInfrastructure
         Information = 10,
         Link = 11,
         Video = 12,
+        Checklist = 13,
     }
     public enum Orientation
     {
@@ -207,6 +214,7 @@ namespace theInfrastructure
         Performance = 2,
         File = 3,
         Appointment = 4,
+        Checklist = 5
     }
     public enum DeviceDisplay
     { 

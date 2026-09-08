@@ -7,7 +7,7 @@
 {
     @if (Context != null)
     {
-        @if (Helper.ValidateVisibility(ItemType) == true)
+        @if (Helper.ValidateVisibility(SecuredFeature.Item, ItemType, sec.User))
         {
             <div class="row g-0">
                 <div class="col-12 col-lg-7 p-2">

@@ -6,7 +6,7 @@
 {
     @if (Context.ItemType != null && Context.ItemType.GetFields().Result != null)
     {
-        <SortableContainer Zone="@( "Default")"
+        <SortableContainer Zone="@( "Default")" MinStyleHeight=""
                            Items="@Context.Items">
             <ItemTemplate Context="item">
                 <ListItem @key="@item.GUID" Context="@Context" Item="@item"
@@ -14,14 +14,6 @@
             </ItemTemplate>
         </SortableContainer>
 
-
-        @* <div class="table-responsive" >
-
-            @foreach (IDTO item in Context.Items)
-            {
-                <ListItem Context="@Context" Item="@item" IsRelated="@( (RelatedItem != null))" />
-            }
-        </div> *@
     }
 }
 

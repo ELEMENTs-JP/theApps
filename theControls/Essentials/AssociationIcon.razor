@@ -1,7 +1,7 @@
 ﻿
 @if (Association != AssociationTyp.NULL)
 {
-    <div class="text-muted px-1" title="@Association.ToSecureString()">
+    <div class="text-muted px-1 @CSS" title="@Association.ToSecureString()">
 
         @if (Association == AssociationTyp.Children || Association == AssociationTyp.Default)
         {
@@ -23,5 +23,8 @@
 
     [Parameter]
     public AssociationTyp Association { get; set; } = AssociationTyp.NULL;
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
 
 }

@@ -1,18 +1,28 @@
 ﻿@using theControls.Icons
 @inject ISecurityService sec
-
+@inject NavigationManager nm
 
 @if(sec.Principal != null)
 {
-    <div class="d-flex flex-row bg-surface p-2 align-items-center  border-bottom border-start border-end">
+    @if (sec.User != null)
+    {
+    <div class="d-flex flex-row bg-surface @(sec.User["IsAdmin"].ToSecureBool() == true ? " hover pointer  " : "" ) p-2 align-items-center  border-bottom border-start border-end"
+                @onclick="NavigateToPrincipal" >
         <SymbolIcon Symbol="Icon.Principal" />
         <span class="ps-2">@sec.Principal.Title</span>
     </div>
+    }
 }
 
 @code {
 
-    
-
+    private async Task NavigateToPrincipal()
+    {
+        if (sec.User["IsAdmin"].ToSecureBool() == true)
+        {
+            nm.NavToItem(sec.Principal.ItemType, sec.Principal.GUID);
+            await Task.CompletedTask;
+        }
+    }
 
 }

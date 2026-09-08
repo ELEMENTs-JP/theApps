@@ -154,6 +154,19 @@ namespace theInfrastructure
                 Fields.Add(new Field() { Title = "Ende", Typ = FieldTyp.Time, Column = "Ende", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
             }
 
+            if (typ == DefaultFieldTypes.Checklist)
+            {
+                Fields.Add(new Field()
+                {
+                    Title = "Aktiv",
+                    Typ = FieldTyp.CheckBox,
+                    Column = "IsChecked",
+                    DefaultValue = "false",
+                    OnDisplay = new FieldDisplay(false, false, false, false),
+                    CSS = " col-12 col-md-4 col-lg-4 "
+                });
+            }
+
             return Fields;
         }
 

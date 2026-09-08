@@ -1,8 +1,6 @@
 ﻿
-
 @inherits BaseList
 @inject ILogger<Index> Logger
-
 @inject NavigationManager nm
 
 @if (Context != null && ItemType != null)
@@ -14,14 +12,26 @@
                 <thead>
                     <tr>
                         <TableHeader Context="@Context" 
-                            OnSort="@( async e => { await Context.Search();  } )"
-                            IsRelated="@( (RelatedItem != null))"  />
+                                     OnSort="@( async e => { await Context.Search(); } )"
+                                     IsRelated="@( (RelatedItem != null))" />
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (IDTO item in Context.Items)
+                    @if (Context.Items != null)
                     {
-                        <TableRow @key="@( "item_entry_" + item.GUID)" Context="@Context" Item="@item" IsRelated="@( (RelatedItem != null))" />
+                        <Virtualize Items="Context.Items" Context="item" SpacerElement="tr" ItemSize="48">
+                            <ItemContent>
+                                <TableRow @key="@( "item_entry_" + item.GUID)" 
+                                          Context="@Context" 
+                                          Item="@item" 
+                                          IsRelated="@( (RelatedItem != null))" />
+                            </ItemContent>
+                            <Placeholder>
+                                <tr>
+                                    <td colspan="100" class="text-muted p-2">Lade Daten...</td>
+                                </tr>
+                            </Placeholder>
+                        </Virtualize>
                     }
                 </tbody>
             </table>
@@ -37,7 +47,6 @@
     }
 }
 
-
 @code {
 
     [Parameter]
@@ -50,31 +59,9 @@
     {
         await base.OnInitializedAsync();
     }
+
     protected override async Task OnParametersSetAsync()
     {
-        // // 1. Setze den Matchcode im Context, BEVOR base aufgerufen wird
-        // if (Context != null)
-        // {
-        //     // IFilterParameter filter = new FilterParameter();
-        //     // filter.Matchcode = this.Matchcode;
-
-        //     // Context.Filter = filter;
-        //     await Context.Search();
-        // }
-
-        // 2. Ruf nur die Basisklasse auf, dort wird genau EINMAL gesucht
         await base.OnParametersSetAsync();
     }
-
-    // public async Task Filter()
-    // {
-    //     IFilterParameter filter = new FilterParameter();
-    //     filter.Matchcode = this.Matchcode;
-
-    //     if (Context != null)
-    //     {
-    //         await Context.Search();
-    //     }
-    // }
-    
 }

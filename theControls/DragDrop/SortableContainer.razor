@@ -6,7 +6,7 @@
 @inject ISqlDatabaseService sql
 
 
-<div class="@( drop + Zone ) DefaultDragDropZone list" data-zone="@Zone" style="min-height:3rem; border-top-width:1px !important;">
+<div class="@( drop + Zone ) DefaultDragDropZone list" data-zone="@Zone" style=" @MinStyleHeight ">
 
     @foreach (IDTO entry in Items.Where(se =>
                     se["Zone"].ToSecureString() == this.Zone)
@@ -30,6 +30,9 @@
 
     [Parameter]
     public string Zone { get; set; } = string.Empty;
+
+    [Parameter]
+    public string MinStyleHeight { get; set; } = " min-height:3rem; ";
 
     [Parameter]
     public List<IDTO> Items { get; set; } = new();

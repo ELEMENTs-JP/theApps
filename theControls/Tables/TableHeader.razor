@@ -12,7 +12,10 @@
     {
         <th scope="col" class="col-050"></th>
     }
-
+    @if (Context.ItemType.Typ == ItemTypeTyp.Checklist)
+    {
+        <th scope="col" class="col-050"></th>
+    }
     <th scope="col">Title</th>
 
     @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnDisplay.Table == true))

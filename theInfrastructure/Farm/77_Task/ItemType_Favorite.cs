@@ -12,6 +12,8 @@ namespace theInfrastructure
             Title = "Favorite";
             Typ = ItemTypeTyp.Item;
             this.InSubNavigation = false;
+            this.ShowInTaskBarNavigation = false;
+            this.IsNavigation = false;
         }
 
         public override async Task<List<IField>> GetFields(string view = "")

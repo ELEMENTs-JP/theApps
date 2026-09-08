@@ -7,16 +7,24 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
-        public static bool ValidateVisibility(IItemType ItemType)
+        public static bool ValidateVisibility(SecuredFeature feature, IItemType ItemType, IDTO User)
         {
-            if (ItemType != null)
-            {
-                if (ItemType.Typ == ItemTypeTyp.Comment)
-                {
-                    return false;
-                }
+            if (feature == SecuredFeature.NULL || ItemType == null)
+                return false;
 
+            // Kommentare grundsätzlich NEIN, keine Liste, kein Item 
+            // RelatedItems == ja 
+            if (ItemType.Typ == ItemTypeTyp.Comment)
+            {
+                return false;
             }
+
+            // Sicherheitsrelevante Daten 
+            if (ItemType.Name == "Principal" || ItemType.Name == "User" || ItemType.Name == "Permission")
+            {
+                return User["IsAdmin"].ToSecureBool();
+            }
+
 
             return true;
         }

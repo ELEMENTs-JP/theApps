@@ -36,11 +36,17 @@
 
 
 /* Der obere Rahmen wird nur gesetzt, wenn der Container nicht leer ist */
+.list {
+    border-top: 1px solid transparent;
+}
 .list:hover:not(:empty) {
     border-top: var(--tblr-border-width) solid var(--tblr-border-color);
 }
 
 /* Jedes Zeilenelement erhält den unteren Rahmen */
+.list-item {
+    border-bottom: 1px solid transparent;
+}
 .list-item:hover {
     border-bottom: var(--tblr-border-width) solid var(--tblr-border-color);
 }
@@ -68,6 +74,14 @@
     box-shadow: #ccc; /* Das hellblaue Leuchten */
 }
 
+
+
+.form-check {
+    /*display: block;
+    min-height: 1.25rem;
+    padding-left: 2rem;*/
+    margin-bottom: 0 !important;
+}
 
 
 

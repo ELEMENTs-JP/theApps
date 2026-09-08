@@ -1,11 +1,10 @@
-﻿@using theControls.Essentials
-@using theControls.Icons
+﻿
 
 @inherits BaseRow
 
 @if (Context != null)
 {
-    <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-1 hover align-items-center drag list-item">
+    <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-05 hover align-items-center drag list-item">
 
         @if (IsSortable)
         {
@@ -16,24 +15,35 @@
 
         @if (ShowID)
         {
-            <div class="col-auto p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
+            <div class="col-auto p-05 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
+        }
+
+        @if (Context.ItemType.Typ == ItemTypeTyp.Checklist)
+        {
+            @if (Item != null)
+            {
+                <div class="col-auto ps-2">
+                    <CheckBox Value="@Item["IsChecked"]" Style="" IsSwitch="false"
+                              ValueChanged="@( async e => {  Item["IsChecked"] = e; await Context.Update(Item); } )" />
+                </div>
+            }
         }
 
         @if (Context.ItemType.Typ == ItemTypeTyp.Comment)
         {
-            <div class="col p-1 px-2 fw-bold text-truncate text-nowrap" title="@Item.ItemType">
+            <div class="col p-05 px-2 fw-bold text-truncate text-nowrap" title="@Item.ItemType">
                 @(Item.Title.ToSecureString())
             </div>
         }
         else
         {
-            <div class="col p-1 px-2 fw-bold pointer text-truncate text-nowrap" title="@Item.ItemType"
+            <div class="col p-05 px-2 fw-bold pointer text-truncate text-nowrap" title="@Item.ItemType"
                  @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
                 @(Item.Title.ToSecureString())
             </div>
         }
-        
 
+        
         @*       @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR))
         {
             <div class="@Helper.GetClassByDevice(col) align-items-center">
@@ -43,21 +53,21 @@
 
         @if (IsRelated)
         {
-            <div class="col-auto p-1" title="@( Item["Sort"].ToSecureString() )">
-             
+            <div class="col-auto p-05" title="@( Item["Sort"].ToSecureString() )">
+
                 <AssociationIcon Association="@( Item.RelationType.ToEnumOrDefault<AssociationTyp>())" />
             </div>
 
             if (Context.ItemType.Typ == ItemTypeTyp.Comment)
             {
-                <div class="col-auto p-1">
+                <div class="col-auto p-05">
                     <SymbolIcon Symbol="Icon.Delete" OnClick="@( async e => { await Delete(); })"
-                        CSS="pointer hover rounded" Style="color:var(--tblr-red); margin-top:-3px" />
+                                CSS="pointer hover rounded" Style="color:var(--tblr-red); margin-top:-3px" />
                 </div>
             }
             else
             {
-                <div class="col-auto p-1">
+                <div class="col-auto p-05">
                     <SymbolIcon Symbol="Icon.Disconnect" CSS="pointer hover"
                                 OnClick="@( async  e => { await Disconnect(); })" />
                 </div>

@@ -19,6 +19,7 @@ namespace theInfrastructure
 
             // ItemTypes 
             ItemTypes.Add(new ItemType_Favorite());
+            ItemTypes.Add(new ItemType_Checklist());
             ItemTypes.Add(new ItemType_Comment());
             ItemTypes.Add(new ItemType_Note());
             ItemTypes.Add(new ItemType_Video());

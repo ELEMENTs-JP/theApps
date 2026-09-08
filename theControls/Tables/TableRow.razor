@@ -25,6 +25,14 @@
             </td>
         }
 
+        @if (Context.ItemType.Typ == ItemTypeTyp.Checklist)
+        {
+            <td>
+            <CheckBox Value="@Context.Item["IsChecked"]"
+                      ValueChanged="@( async e => {  Context.Item["IsChecked"] = e; await Context.Update(Context.Item); } )" />
+            </td>
+        }
+
         <td class="text-truncate" title="@Item.ItemType" style="max-width:15rem;">
             <div class="d-flex align-items-center gap-2">
 

@@ -5,7 +5,7 @@
 
 @if (ItemType != null)
 {
-    @if (Helper.ValidateVisibility(ItemType) == true)
+    @if (Helper.ValidateVisibility(SecuredFeature.List, ItemType, sec.User))
     {
         <Frame Border="true" >
             <Header>

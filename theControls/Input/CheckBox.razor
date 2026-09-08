@@ -5,7 +5,8 @@
     </label>
 }
 
-<div class="form-check form-switch no-focus @CssClass" style="margin-left: 9px; padding-top: 9px;">
+
+<div class="form-check @( (IsSwitch ? " form-switch " : " ") ) no-focus @CssClass" style="@Style">
     <input id="@Id"
            name="@InputName"
            class="form-check-input"
@@ -74,6 +75,9 @@
     [Parameter]
     public string Name { get; set; } = string.Empty;
 
+    [Parameter]
+    public bool IsSwitch { get; set; } = true;
+
 
     [Parameter]
     public string Label { get; set; } = string.Empty;
@@ -99,6 +103,9 @@
 
     [Parameter]
     public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Style { get; set; } = " margin-left: 9px; padding-top: 9px; ";
 
 
     [Parameter]

@@ -1,7 +1,4 @@
-﻿
-
-
-@inject ISqlDatabaseService sql
+﻿@inject ISqlDatabaseService sql
 @inject ISecurityService sec
 @inject IAppService app
 
@@ -10,75 +7,77 @@
 
 @if (ItemType != null && !string.IsNullOrEmpty(ID))
 {
-    <Frame Border="true"  CSS="pt-2">
-        <Icon>
-            @if (ItemType.Typ == ItemTypeTyp.User)
-            {
-                <MinUserProfileImg Style="margin-top:6px;" User="@Context.Item" SizeStyle="height: 60px; width: 60px;" />
-            }
-        </Icon>
-        <Header>
-            <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)" 
-                        Field="@TitleField" Binding="ValueBindingTyp.Title" 
-                     Context="@Context" Border="false" ControlStyle=" min-width:21rem; " />
-            <div class="d-flex align-items-center" style="margin-left: 8px; margin-top: -8px;">
+   
 
-                @if (app != null && app.App != null)
+        <Frame Border="true" CSS="pt-2">
+            <Icon>
+                @if (ItemType.Typ == ItemTypeTyp.User)
                 {
-                    <a href="@("/app/" + app.App.Name)" class="text-muted small" title="Application">
-                        @app.App.Name.ToSecureString()
-                    </a>
-                    <div class="vr"></div>
+                    <MinUserProfileImg Style="margin-top:6px;" User="@Context.Item" SizeStyle="height: 60px; width: 60px;" />
                 }
+            </Icon>
+            <Header>
+                <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)"
+                         Field="@TitleField" Binding="ValueBindingTyp.Title"
+                         Context="@Context" Border="false" ControlStyle=" min-width:21rem; " />
+                <div class="d-flex align-items-center" style="margin-left: 8px; margin-top: -8px;">
 
-                @if (Context != null && Context.ItemType != null)
-                {
-                    <a href="@( Helper.LibraryUrl(Context.ItemType.Name, Context.ItemType.Typ) )" class="text-muted small" title="ItemType">
-                        @Context.ItemType.Name.ToSecureString()
-                    </a>
-                    <div class="vr"></div>
-                    <small class="text-muted small px-2 no-select">Typ: @Context.ItemType.Typ.ToSecureString()</small>
-                }
-
-                @if (Context != null && Context.Item != null)
-                {
-                    <div class="vr"></div>
-                    <small class="text-muted small px-2 no-select">ID: @Context.Item.ID.ToSecureString()</small>
-                }
-            </div>
-        </Header>
-        <Related>
-            <ContextMenu Context="@Context" ItemType="@ItemType" CSS="me-3"/>
-            @if (Context.ItemType.Name == "User")
-            {
-                <SetPasswordComp Context="@Context" />
-            }
-        </Related>
-        <Content>
-            <div class="row g-0">
-                @foreach (IField field in Fields)
-                {
-                    @if (field.Typ == FieldTyp.HR)
+                    @if (app != null && app.App != null)
                     {
-                        <div class="hr-text px-3">@field.Title</div>
+                        <a href="@("/app/" + app.App.Name)" class="text-muted small" title="Application">
+                            @app.App.Name.ToSecureString()
+                        </a>
+                        <div class="vr"></div>
                     }
-                    else
+
+                    @if (Context != null && Context.ItemType != null)
                     {
-                        <div class="@( field.CSS + " p-2 " )">
-                            <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column + "-" + Context.Item.GUID)"
-                                     Field="@field" Context="@Context"
-                                     IsEditable="@field.IsEditable" Border="false" />
-                        </div>
+                        <a href="@( Helper.LibraryUrl(Context.ItemType.Name, Context.ItemType.Typ) )" class="text-muted small" title="ItemType">
+                            @Context.ItemType.Name.ToSecureString()
+                        </a>
+                        <div class="vr"></div>
+                        <small class="text-muted small px-2 no-select">Typ: @Context.ItemType.Typ.ToSecureString()</small>
                     }
+
+                    @if (Context != null && Context.Item != null)
+                    {
+                        <div class="vr"></div>
+                        <small class="text-muted small px-2 no-select">ID: @Context.Item.ID.ToSecureString()</small>
+                    }
+                </div>
+            </Header>
+            <Related>
+                <ContextMenu Context="@Context" ItemType="@ItemType" CSS="me-3" />
+                @if (Context.ItemType.Name == "User")
+                {
+                    <SetPasswordComp Context="@Context" />
                 }
-            </div>
-        </Content>
-    </Frame>
+            </Related>
+            <Content>
+                <div class="row g-0">
+                    @foreach (IField field in Fields)
+                    {
+                        @if (field.Typ == FieldTyp.HR)
+                        {
+                            <div class="hr-text px-3">@field.Title</div>
+                        }
+                        else
+                        {
+                            <div class="@( field.CSS + " p-2 " )">
+                                <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column + "-" + Context.Item.GUID)"
+                                         Field="@field" Context="@Context"
+                                         IsEditable="@field.IsEditable" Border="false" />
+                            </div>
+                        }
+                    }
+                </div>
+            </Content>
+        </Frame>
+ 
 }
 
 
 @code {
-
 
     [Parameter]
     public IItemType ItemType { get; set; } // Injectiopn
@@ -107,7 +106,11 @@
         Context = new QueryContext(sql, sec);
         Context.ItemType = ItemType;
         await Context.Load(ID);
+
+
     }
+
+ 
 
     public async ValueTask DisposeAsync()
     {
