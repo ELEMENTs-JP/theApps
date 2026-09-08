@@ -16,9 +16,18 @@ namespace theInfrastructure
         {
             List<IItemType> ItemTypes = new List<IItemType>();
 
-            if(ast == AssociationTyp.Children)
+            if (ast == AssociationTyp.Related)
+            {
+                ItemTypes.Add(new ItemType_Favorite());
+            }
+
+            if (ast == AssociationTyp.Children)
             { 
                 ItemTypes.Add(new ItemType_Permission());
+            }
+            if (ast == AssociationTyp.Default)
+            {
+                
             }
             return ItemTypes;
         }
@@ -29,7 +38,13 @@ namespace theInfrastructure
 
             Fields.Add(new Field() { Title = "Nutzer", Typ = FieldTyp.HR });
             Fields.Add(new Field() { Title = "E-Mail", Typ = FieldTyp.Email, Column = "Mail", CSS = " col-12 col-md-4 col-lg-4 " });
-            Fields.Add(new Field() { Title = "Password", Typ = FieldTyp.Password, Column = "Password", CSS = " col-12 col-md-4 col-lg-4 " });
+            
+            Fields.Add(new Field() { 
+                Title = "Password", Typ = FieldTyp.Password, 
+                Column = "Password", 
+                OnDisplay = new FieldDisplay(false, false, false, false),
+                CSS = " col-12 col-md-4 col-lg-4 " });
+            
             Fields.Add(new Field() { Title = "Administrator", Typ = FieldTyp.CheckBox, Column = "IsAdmin", CSS = " col-12 col-md-4 col-lg-4 " });
             Fields.Add(new Field() { Title = "Wallpaper", Typ = FieldTyp.Text, Column = "Wallpaper", CSS = " col-12 col-md-12 col-lg-12 " });
 

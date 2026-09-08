@@ -64,6 +64,25 @@ namespace theInfrastructure
 
         public virtual async Task<IDTO> OnCreateItem(IItemEventArgs args)
         {
+
+            // Year 
+            string column = await GetRelevantPropertyName(RelevantPropertyType.Year);
+            if (!string.IsNullOrEmpty(column))
+            {
+                // Value 
+                string val = args.Item[column].ToSecureString();
+
+                // Empty 
+                if (string.IsNullOrEmpty(val))
+                {
+                    // set Year 
+                    args.Item[column] = DateTime.Now.Year.ToSecureString();
+
+                    // Update 
+                    await args.SqlService.Update(args.Item);
+                }
+            }
+
             // return 
             return args.Item;
         }
@@ -108,41 +127,52 @@ namespace theInfrastructure
         public async Task<string> GetRelevantPropertyName(RelevantPropertyType typ = RelevantPropertyType.Date)
         {
 
-            string propertyName = string.Empty;
+            string prop = string.Empty;
 
-            List<IField> fields = await this.GetFields(); 
+            List<IField> fields = await this.GetFields();
+
+            // Year 
+            if (typ == RelevantPropertyType.Year)
+            {
+                // 1. Prio = Generell die Frage nach einem Datum 
+                IField? f = fields.Find(se => se.Typ == FieldTyp.Year);
+                if (f != null)
+                {
+                    prop = f.Column;
+                }
+            }
 
             // Date 
             if (typ == RelevantPropertyType.Date)
             {
                 // 1. Prio = Generell die Frage nach einem Datum 
-                IField dateField = fields.Where(se => se.Typ == FieldTyp.Date).FirstOrDefault();
+                IField? dateField = fields.Where(se => se.Typ == FieldTyp.Date).FirstOrDefault();
                 if (dateField != null)
                 {
-                    propertyName = dateField.Column;
+                    prop = dateField.Column;
                 }
                 else
                 {
                     // 2. Prio = Ende Termin 
-                    IField endField = fields.Where(se => se.Typ == FieldTyp.DateTime).FirstOrDefault();
+                    IField? endField = fields.Where(se => se.Typ == FieldTyp.DateTime).FirstOrDefault();
                     if (endField != null)
                     {
-                        propertyName = endField.Column;
+                        prop = endField.Column;
                     }
                     else
                     {
                         // 3. Prio = Start Termin 
-                        IField startField = fields.Where(se => se.Typ == FieldTyp.Time).FirstOrDefault();
+                        IField? startField = fields.Where(se => se.Typ == FieldTyp.Time).FirstOrDefault();
                         if (startField != null)
                         {
-                            propertyName = startField.Column;
+                            prop = startField.Column;
                         }
                     }
                 }
             }
 
-            // Property
-            return propertyName;
+            // Property 
+            return prop;
         }
 
         // To String 

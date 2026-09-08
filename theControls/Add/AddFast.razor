@@ -96,8 +96,7 @@
 
         if (ItemType != null)
         {
-            Context = new QueryContext(sqlService, secService);
-            Context.ItemType = this.ItemType;
+            Context = new QueryContext(sqlService, secService, this.ItemType);
         }
     }
 
@@ -199,6 +198,32 @@
             await OnOK();
         }
     }
+ 
+    
+    [Parameter]
+    public EventCallback<IDTO> OnRelatedItemAdded { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnItemAdded { get; set; }
+
+    private async Task ItemAdd(IDTO dto)
+    {
+        if (OnItemAdded.HasDelegate)
+        {
+            await OnItemAdded.InvokeAsync(dto);
+        }
+    }
+
+    private async Task RelatedItemAdd(IDTO dto)
+    {
+        if (OnRelatedItemAdded.HasDelegate)
+        {
+            await OnRelatedItemAdded.InvokeAsync(dto);
+        }
+    }
+    
+    
+    
     public async ValueTask DisposeAsync()
     {
         try

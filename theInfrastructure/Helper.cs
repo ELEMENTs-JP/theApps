@@ -465,6 +465,7 @@ namespace theInfrastructure
                 FieldTyp.Date => "date",
                 FieldTyp.Time => "time",
                 FieldTyp.DateTime => "datetime-local",
+                FieldTyp.Year => "integer",
                 FieldTyp.Month => "month",
                 FieldTyp.Week => "week",
                 FieldTyp.Color => "color",

@@ -28,8 +28,6 @@
 
 @code {
 
-
-
     [Parameter]
     public bool IsSortable { get; set; } = true;
 
@@ -40,8 +38,15 @@
     {
         await base.OnParametersSetAsync();
 
+        if (Context == null && ItemType != null)
+        {
+            Context = new QueryContext(sql, sec, ItemType);
+        }
         if (Context != null)
         {
+            // ItemType 
+            Context.ItemType = ItemType;
+
             if (RelatedItem != null)
             {
                 Context.Items = await Context.RelatedItems(Context.ItemType.Name, Association);

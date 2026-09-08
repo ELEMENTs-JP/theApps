@@ -60,6 +60,7 @@ namespace theInfrastructure
         NULL = 0,
 
         Date = 11,
+        Year = 12,
 
     }
     public enum ItemTypeTyp
@@ -126,6 +127,8 @@ namespace theInfrastructure
         Filter,
         Config,
         Help,
+        Favorite,
+        NoFavorite,
         Connect,
         Disconnect,
         Keyboard,
@@ -241,6 +244,7 @@ namespace theInfrastructure
         Date,
         Time,
         
+        Year,
         Month,
         Week,
         Tel,

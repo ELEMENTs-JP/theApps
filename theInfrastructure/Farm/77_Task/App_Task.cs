@@ -18,6 +18,7 @@ namespace theInfrastructure
             List<IItemType> ItemTypes = new();
 
             // ItemTypes 
+            ItemTypes.Add(new ItemType_Favorite());
             ItemTypes.Add(new ItemType_Comment());
             ItemTypes.Add(new ItemType_Note());
             ItemTypes.Add(new ItemType_Video());

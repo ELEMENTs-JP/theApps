@@ -35,7 +35,7 @@ namespace theInfrastructure
             List<IField> Fields = new List<IField>();
 
             // Termin 
-            Fields.Add(new Field() { Title = "Jahr", Typ = FieldTyp.Integer, Column = "Year", CSS = " col-12 col-md-12 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
+            Fields.Add(new Field() { Title = "Jahr", Typ = FieldTyp.Year, Column = "Year", CSS = " col-12 col-md-12 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
             Fields.Add(new Field() { Title = "Start", Typ = FieldTyp.Date, Column = "Start", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
             Fields.Add(new Field() { Title = "Ende", Typ = FieldTyp.Date, Column = "Ende", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
 

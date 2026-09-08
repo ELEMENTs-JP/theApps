@@ -20,10 +20,25 @@
 
         <div class="p-2 mb-2 fw-bold border-bottom text-secondary">Aktionen</div>
 
-        @*       <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2 text-nowrap "
-             @onclick="ToFavorite">
-            Favorit
-        </div> *@
+          
+
+        @if (!isFavoriteItem)
+        {
+            <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2 text-nowrap  d-flex flex-row "
+                 @onclick="MakeFavorite">
+                <SymbolIcon Symbol="Icon.Favorite" CSS="me-2" />
+                als Favorite markieren...
+            </div>
+        }
+        else
+        {
+            <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2 text-nowrap  d-flex flex-row "
+                 @onclick="NoFavorite">
+                <SymbolIcon Symbol="Icon.NoFavorite" CSS="me-2" />
+                Favorite entfernen...
+            </div>
+        }
+
 
 
         @if (Context.ItemType.Typ == ItemTypeTyp.File ||
@@ -124,6 +139,7 @@
     public IQueryContext Context { get; set; } // Injection
 
     bool hasDeletePermission { get; set; } = true;
+    bool isFavoriteItem { get; set; } = false;
 
     [Parameter]
     public string CSS { get; set; } = string.Empty;
@@ -142,6 +158,7 @@
         if (ItemType != null)
         {
             hasDeletePermission = await sec.HasItemTypePermission(this.ItemType, SecurityFunction.Delete);
+            isFavoriteItem = await IsFavorite();
         }
     }
     private async void OnMessageIncome(AppMessage message)
@@ -182,6 +199,62 @@
 
         return false;
     }
+
+    private async Task MakeFavorite()
+    {
+        // Query 
+        IQueryParameter qp = QueryParameter.Default(Context.Item.Title);
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = "Favorite";
+
+        // Create Favorite 
+        await sql.Create(qp);
+
+        // Load 
+        IQueryResult result = await sql.GetItem(qp);
+
+        // Item 
+        IDTO? newItem = result.Items.FirstOrDefault();
+        if (newItem != null)
+        {
+            newItem["ItemType"] = Context.Item.ItemType.ToSecureString();
+            newItem["GUID"] = Context.Item.GUID.ToSecureString();
+            await sql.Update(newItem);
+
+            // Assign 
+            await sql.Assign(sec.User, newItem, AssociationTyp.Related);
+            isFavoriteItem = await IsFavorite();
+        }
+    }
+    private async Task NoFavorite()
+    {
+        IQueryResult result = await sql.GetRelatedItems(sec.User, "Favorite", AssociationTyp.Related);
+
+        // Item
+        IDTO? fav = result.Items.Find(se =>
+             se["GUID"] == Context.Item.GUID.ToSecureString() &&
+             se["ItemType"] == Context.ItemType.ToSecureString());
+        if (fav != null)
+        {
+            await sql.Remove(sec.User, fav);
+            await sql.Delete(fav);
+
+            isFavoriteItem = await IsFavorite();
+        }
+    }
+    private async Task<bool> IsFavorite()
+    {
+        IQueryResult result = await sql.GetRelatedItems(sec.User, "Favorite", AssociationTyp.Related);
+
+        IDTO? fav = result.Items.Find(se => 
+            se["GUID"] == Context.Item.GUID.ToSecureString() && 
+            se["ItemType"] == Context.ItemType.ToSecureString());
+        if(fav != null)
+            return true;
+
+        return false;
+    }
+
     private async Task MakePrivate()
     {
         if (Context != null)
@@ -198,6 +271,8 @@
             await sql.Update(Context.Item);
         }
     }
+    
+    
     private async Task ToOriginalList()
     {
         if (Context != null)

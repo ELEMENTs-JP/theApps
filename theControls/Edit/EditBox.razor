@@ -285,6 +285,13 @@
     {
         this.Items = await Helper.InitDropDown(Field, sql);
 
+        if (Field.Typ == FieldTyp.Year)
+        {
+            this.Step = "1";
+            this.Min = "0";
+            this.Max = "2999";
+        }
+
         msg.OnMessage += OnMessageRun;
     }
     private string CheckCondition(IDTO? dto)

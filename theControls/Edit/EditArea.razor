@@ -101,6 +101,7 @@
         // Field
         TitleField = new Factory(sql).BuildField(FieldTyp.Heading);
         Fields = await ItemType.GetFields();
+        Fields = Fields.Where(se => se.OnDisplay.Edit == true).ToList();
 
         // Context
         Context = new QueryContext(sql, sec);
