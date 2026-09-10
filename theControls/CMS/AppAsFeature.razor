@@ -1,0 +1,88 @@
+﻿@using theControls.Input
+@inject ILocalizationService loc
+@inject ISecurityService sec
+@inject IMessagingBusService msg
+@inject ISqlDatabaseService sql
+
+
+
+<div class="border-bottom pb-2 mb-2">
+    <h1 class="h1 w-100">Features</h1>
+</div>
+
+
+@if (loc.Configuration != null)
+{
+    <div class="overflow-y-auto" style="max-height:40rem;">
+
+
+        @foreach (ITemplateApp app in Apps)
+        {
+            <div class="row g-0 align-items-center bg-surface border-bottom p-2 my-2">
+                <div class="col p-2">
+                    <div class="fw-bold">Hilfe</div>
+                    <div class="text-muted">aktiviert / deaktiviert die Hilfe</div>
+                </div>
+                <div class="col-auto p-2">
+                    <CheckBox Value="@sec.Configuration.Hilfe.ToSecureString()"
+                              TrueText="aktiviert" FalseText="deaktiviert"
+                              ValueChanged="@(async e => { await CreateDeleteApp(app, e.ToSecureBool()); })" />
+                </div>
+            </div>
+        }
+
+
+
+    </div>
+}
+
+
+
+
+
+
+
+
+
+
+@code {
+
+    List<ITemplateApp> Apps { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Apps = TemplateAppFactory.GetAllTemplateApps();
+    }
+
+
+    private async Task CreateDeleteApp(ITemplateApp app, bool value)
+    {
+        if (app != null)
+        {
+            if (value)
+            {
+                var _app = app.GetApp();
+
+                IQueryParameter qp = QueryParameter.Default(_app.Title);
+                qp.MasterGUID = sql.MasterGUID;
+                qp.ItemType = "App";
+
+               IQueryResult result = await sql.GetItems(qp);
+
+                await sql.Create(qp);
+            }
+            else
+            {
+                
+            }
+        }
+    }
+
+    private async Task PushFeatureUpdate()
+    {
+        msg.Publish(new AppMessage("Feature", BusAction.Refresh));
+    }
+
+}

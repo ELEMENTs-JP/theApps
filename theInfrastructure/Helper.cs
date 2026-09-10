@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Globalization;
+using System.Net;
+using System.Net.Mail;
+using System.Net.Mime;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
@@ -20,6 +23,80 @@ namespace theInfrastructure
 
     public static partial class Helper
     {
+
+    
+
+
+        public static async Task SetSetting(ISqlDatabaseService sql, string settingName, string value, string ItemType)
+        {
+
+            IQueryParameter qp = new QueryParameter();
+            qp.ItemType = "Setting";
+            qp.MasterGUID = sql.MasterGUID;
+
+            IQueryResult result = await sql.GetItems(qp);
+
+            // Find 
+            IDTO? setting = result.Items.Find(se =>
+                        se["ItemType"] == ItemType
+                        && se["Typ"] == "List"
+                        && se["Setting"] == settingName
+                        && se["Level"] == "Principal");
+
+            if (setting == null)
+            {
+                // GUID 
+                qp.GUID = Guid.NewGuid();
+                qp.Title = "List-" + ItemType + "-" + settingName;
+                await sql.Create(qp);
+
+                // Load 
+                result = await sql.GetItem(qp);
+                setting = result.Items.FirstOrDefault();
+
+                if (setting != null)
+                {
+                    // set Values 
+                    setting["ItemType"] = ItemType;
+                    setting["Typ"] = "List";
+                    setting["Setting"] = settingName;
+                    setting["Level"] = "Principal";
+                }
+            }
+
+            if (setting != null)
+            {
+                setting["Value"] = value;
+
+                // Update 
+                await sql.Update(setting);
+            }
+        }
+        public static async Task<string> GetSettingValue(ISqlDatabaseService sql, string settingName = "Title", string ItemType = "")
+        {
+            IQueryParameter qp = new QueryParameter();
+            qp.ItemType = "Setting";
+            qp.MasterGUID = sql.MasterGUID;
+
+            IQueryResult result = await sql.GetItems(qp);
+
+            // Find 
+            IDTO? setting = result.Items.Find(se =>
+                        se["ItemType"] == ItemType
+                        && se["Typ"] == "List"
+                        && se["Setting"] == settingName
+                        && se["Level"] == "Principal");
+            if (setting != null)
+            {
+                return setting["Value"].ToSecureString();
+            }
+
+            return string.Empty;
+        }
+
+
+
+
         // Static Fields 
         public static string? SplitGetIndex(this string input, string separator, int index)
         {

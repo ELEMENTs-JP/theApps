@@ -87,6 +87,60 @@ namespace theInfrastructure
                 }
             }
 
+            // Datum 
+            string date = await GetRelevantPropertyName(RelevantPropertyType.Date);
+            if (!string.IsNullOrEmpty(date))
+            {
+                // Value 
+                string val = args.Item[date].ToSecureString();
+
+                // Empty 
+                if (string.IsNullOrEmpty(val))
+                {
+                    // set Year 
+                    args.Item[date] = DateTime.Now.Date.ToShortDateString();
+
+                    // Update 
+                    await args.SqlService.Update(args.Item);
+                }
+            }
+
+            // Start 
+            string start = await GetRelevantPropertyName(RelevantPropertyType.Start);
+            if (!string.IsNullOrEmpty(start))
+            {
+                // Value 
+                string val = args.Item[start].ToSecureString();
+
+                // Empty 
+                if (string.IsNullOrEmpty(val))
+                {
+                    // set Year 
+                    args.Item[start] = DateTime.Now.ToShortTimeString();
+
+                    // Update 
+                    await args.SqlService.Update(args.Item);
+                }
+            }
+
+            // Ende 
+            string end = await GetRelevantPropertyName(RelevantPropertyType.End);
+            if (!string.IsNullOrEmpty(end))
+            {
+                // Value 
+                string val = args.Item[end].ToSecureString();
+
+                // Empty 
+                if (string.IsNullOrEmpty(val))
+                {
+                    // set Year 
+                    args.Item[end] = DateTime.Now.AddHours(1).ToShortTimeString();
+
+                    // Update 
+                    await args.SqlService.Update(args.Item);
+                }
+            }
+
             // return 
             return args.Item;
         }
@@ -172,6 +226,26 @@ namespace theInfrastructure
                             prop = startField.Column;
                         }
                     }
+                }
+            }
+
+            // Start 
+            if(typ == RelevantPropertyType.Start)
+            {
+                IField? startField = fields.Find(se => se.Typ == FieldTyp.Time && se.Column == "Start");
+                if (startField != null)
+                {
+                    prop = startField.Column;
+                }
+            }
+
+            // End 
+            if(typ == RelevantPropertyType.End)
+            {
+                IField? endField = fields.Find(se => se.Typ == FieldTyp.Time && (se.Column == "End" || se.Column == "Ende"));
+                if (endField != null)
+                {
+                    prop = endField.Column;
                 }
             }
 

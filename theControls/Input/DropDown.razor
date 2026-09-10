@@ -163,6 +163,9 @@
     public EventCallback<string> IDChanged { get; set; }
 
     [Parameter]
+    public EventCallback<(string ID, string Value)> IDValueChanged { get; set; }
+
+    [Parameter]
     public EventCallback<IDTO> ItemChanged { get; set; }
 
     [Parameter]
@@ -206,6 +209,8 @@
         await IDChanged.InvokeAsync(dto.ID);
 
         await ValueChanged.InvokeAsync(dto.Title);
+
+        await IDValueChanged.InvokeAsync((dto.ID.ToSecureString(), dto.Title.ToSecureString()));
 
         await ItemChanged.InvokeAsync(dto);
 

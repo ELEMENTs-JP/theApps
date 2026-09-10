@@ -7,28 +7,43 @@
 {
     @if (IsSecure)
     {
-        <Frame Border="true" >
+        <Frame Border="true">
             <Header>
-                <ControlHeader PreTitle="List" Title="@ItemType.ToString()" PostTitle="@ItemType.Description" />
+                <ControlHeader PreTitle="List" Title="@Title" PostTitle="@ItemType.Description" />
             </Header>
-              <Controls>
-                <Filter ItemType="@ItemType" Context="@Context" 
-                        OnFilter="@( async e => { await Context.Search(); })"  />
-        </Controls> 
+            <Controls>
+                <div class="d-flex align-items-center">
+
+                    <Gruppierung ItemType="@ItemType" Context="@Context"
+                                 OnGroup="@( async e => { await Context.Search(); })" />
+                    <Filter ItemType="@ItemType" Context="@Context"
+                            OnFilter="@( async e => { await Context.Search(); })" />
+
+                    @if (this.ItemType.Typ == ItemTypeTyp.Appointment)
+                    {
+                        <ButtonSelectionBox Value="@View" ItemChanged="@(e => { View = e.ID; })"
+                                        Items="@(new List<IDTO>() {
+                                            new DTO() { ID = "Monat", Title = "Monat" },
+                                            new DTO() { ID = "Woche", Title = "Woche" },
+                                                new DTO() { ID = "Tag", Title = "Tag" } } )" />
+                    }
+                </div>
+            </Controls>
             <Search>
-                <LocalSearchComp OnSearch="@( e => { Matchcode = e.ToSecureString(); })" 
-                        ItemType="@this.ItemType" />
+                <LocalSearchComp OnSearch="@( e => { Matchcode = e.ToSecureString(); })"
+                                 ItemType="@this.ItemType" />
             </Search>
             <Related>
                 @if (this.ItemType.Name != "Trash")
                 {
-                    <ListSetting ItemType="@this.ItemType" CSS="mx-2" />
+                    <ListSetting ItemType="@this.ItemType" CSS="mx-2" 
+                        OnSettingChanged="@( async e => {  })" />
                     <div class="vr"></div>
-                    
+
                     @if (this.ItemType.Typ == ItemTypeTyp.File ||
-                        this.ItemType.Typ == ItemTypeTyp.Image ||
-                        this.ItemType.Typ == ItemTypeTyp.Video ||
-                        this.ItemType.Typ == ItemTypeTyp.Audio)
+                                            this.ItemType.Typ == ItemTypeTyp.Image ||
+                                            this.ItemType.Typ == ItemTypeTyp.Video ||
+                                            this.ItemType.Typ == ItemTypeTyp.Audio)
                     {
                         <ClipboardCopyPaste ItemType="@this.ItemType" />
                         <FileUploadComp ItemType="@this.ItemType" />
@@ -51,7 +66,7 @@
                 {
                     <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode" Context="@Context">
                         <Empty>
-                            <QuickAdd ItemType="@this.ItemType"  OnAdd="@( e => { } )" />
+                            <QuickAdd ItemType="@this.ItemType" OnAdd="@( e => { })" />
                         </Empty>
                     </DataTable>
                 }
@@ -63,7 +78,19 @@
                 }
                 else if (this.ItemType.Typ == ItemTypeTyp.Appointment)
                 {
-                    <CalendarComp ItemType="@ItemType" Context="@Context" />
+                    @if (View == "Monat")
+                    {
+                        <CalendarMonthComp ItemType="@ItemType" Context="@Context" />
+                    }
+                    else if (View == "Woche")
+                    {
+                        <CalendarWeekComp ItemType="@ItemType" Context="@Context" />
+                    }
+                    else if (View == "Tag")
+                    {
+                        <CalendarDayComp ItemType="@ItemType" Context="@Context" />
+                    }
+
                 }
 
                 
@@ -74,7 +101,7 @@
                        this.ItemType.Typ == ItemTypeTyp.Video ||
                       this.ItemType.Typ == ItemTypeTyp.Audio)
                 {
-                   
+
                 }
                 else
                 {
@@ -88,12 +115,12 @@
     {
         <div class="row g-0 p-2 align-items-center">
             <div class="col-auto p-2">
-                <SymbolIcon Symbol="Icon.Invariant"/>
+                <SymbolIcon Symbol="Icon.Invariant" />
             </div>
             <div class="col p-2">
                 <h1 class="h1">Dieser ItemType ist nicht einsehbar.</h1>
             </div>
-        </div>    
+        </div>
     }
 }
 
@@ -103,7 +130,9 @@
     [Parameter]
     public IItemType ItemType { get; set; }
 
+    private string Title { get; set; } = string.Empty;
     private bool IsSecure { get; set; } = false;
+    private string View { get; set; } = "Monat";
 
     private IQueryContext Context { get; set; }
     private string Matchcode { get; set; } = string.Empty;
@@ -126,6 +155,10 @@
 
             // Kontext für den neuen ItemType frisch instanziieren
             Context = new QueryContext(sql, sec, ItemType);
+
+            // Title 
+            Title = await Helper.GetSettingValue(sql, "Title", ItemType.Name);
+            Title = Title.IsEmpty() ? ItemType.Name : Title;
 
             IsSecure = Helper.ValidateVisibility(SecuredFeature.List, ItemType, sec.User);
         }

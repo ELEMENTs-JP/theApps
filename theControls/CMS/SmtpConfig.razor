@@ -1,0 +1,69 @@
+﻿@using theControls.Input
+@inject ILocalizationService loc
+@inject ISecurityService sec
+@inject IMessagingBusService msg
+@inject ISqlDatabaseService sql
+
+
+
+<div class="border-bottom pb-2 mb-2">
+    <h1 class="h1 w-100">SMTP Einstellungen</h1>
+</div>
+
+<div class="overflow-y-auto" style="max-height:40rem;">
+
+    <div class="row g-0 p-2">
+
+        <div class="col-12 col-md-4 col-lg-4 p-2">
+            <CheckBox Label="IsEMailActive" 
+                     Value="@sec.Mail.IsEMailActive.ToSecureString()"
+                     ValueChanged="@(e => { sec.Mail.IsEMailActive = e.ToSecureBool();
+                             sec.Mail.Save(); })" />
+
+            <div class="my-3"></div>
+
+            <CheckBox Label="SSL" 
+                     Value="@sec.Mail.SSL.ToSecureString()"
+                     ValueChanged="@(e => { sec.Mail.SSL = e.ToSecureBool();
+                             sec.Mail.Save();  })" />
+        </div>
+         <div class="col-12 col-md-4 col-lg-4 p-2">
+
+            <TextBox Label="Server" Type="FieldTyp.Text"
+                     Value="@sec.Mail.Server.ToSecureString()"
+                     ValueChanged="@(e => { sec.Mail.Server = e.ToSecureString();
+                     sec.Mail.Save();  })" />
+
+            <div class="my-3"></div>
+
+            <TextBox Label="Port" Type="FieldTyp.Text"
+                     Value="@sec.Mail.Port.ToSecureString()"
+                     ValueChanged="@(e => { sec.Mail.Port = e.ToSecureString();
+                     sec.Mail.Save(); })" />
+
+         
+        </div>
+
+
+        <div class="col-12 col-md-4 col-lg-4 p-2">
+
+
+            <TextBox Label="User" Type="FieldTyp.Text"
+                     Value="@sec.Mail.User.ToSecureString()"
+                     ValueChanged="@(e => { sec.Mail.User = e.ToSecureString();
+                                     sec.Mail.Save(); })" />
+
+            <div class="my-3"></div>
+
+            <TextBox Label="Password" Type="FieldTyp.Text"
+                     Value="@sec.Mail.Password.ToSecureString()"
+                     ValueChanged="@(e => {  sec.Mail.Password = e.ToSecureString();
+                                     sec.Mail.Save(); })" />
+
+        </div>
+    </div>
+</div>
+
+@code {
+
+}

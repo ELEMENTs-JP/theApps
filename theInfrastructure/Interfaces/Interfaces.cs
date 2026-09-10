@@ -13,6 +13,8 @@ namespace theInfrastructure
 
         string SortColumn { get; set; }
         ListSortDirection? Direction { get; set; }
+
+        string GroupColumn { get; set; }
     }
     public interface IAssignableItems
     {
@@ -58,6 +60,7 @@ namespace theInfrastructure
         Task<bool> HasItemTypePermission(IItemType itemType, SecurityFunction seFunc);
         event PropertyChangedEventHandler PropertyChanged;
         SystemConfiguration Configuration { get; set; }
+        SMTPConfiguration Mail { get; set; }
         Task Logoff();
     }
     public interface ISearchService

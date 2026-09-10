@@ -19,6 +19,7 @@ namespace theDatabase
         public IItemType ItemType { get; set; } = null;
         public IDTO RelatedItem { get; set; } = null;
         public IDTO Item { get; set; } = null;
+        public List<string> Groups { get; set; } = new List<string>();
 
         // Result 
         public List<IDTO> Items { get; set; } = new List<IDTO>();
@@ -129,6 +130,65 @@ namespace theDatabase
                     filteredItems = filteredItems.OrderByDescending(se => se[sortColumn]);
                 }
             }
+
+            // Gruppierung 
+            this.Groups.Clear();
+            if (this.Filter != null && !string.IsNullOrEmpty(this.Filter.GroupColumn))
+            {
+                string groupColumn = this.Filter.GroupColumn;
+
+                // Distinct Groups ermitteln    .Where(val => !string.IsNullOrWhiteSpace(val))
+                this.Groups = filteredItems
+                    .Select(se => se[groupColumn])
+                
+                    .Distinct()
+                    .OrderBy(val => val)
+                    .ToList();
+
+                var grouped = filteredItems.GroupBy(se => se[groupColumn].ToSecureString());
+                var resultList = new List<IDTO>();
+
+                foreach (var group in grouped)
+                {
+                    string headerTitle = string.IsNullOrWhiteSpace(group.Key) ? "Ohne Zuordnung" : group.Key;
+
+                    // 1. Gruppenheader-DTO einfügen
+                    resultList.Add(new DTO { Title = headerTitle, ["GroupName"] = headerTitle });
+
+                    // 2. Reguläre Datensätze der Gruppe anfügen
+                    resultList.AddRange(group);
+                }
+
+                filteredItems = resultList;
+            }
+
+            //// Gruppierung 
+            //this.Groups.Clear();
+            //if (this.Filter != null && this.Filter.GroupColumn != string.Empty)
+            //{
+            //    string groupColumn = this.Filter.GroupColumn;
+
+            //    // Distinct Groups ermitteln
+            //    this.Groups = filteredItems
+            //        .Select(se => se[groupColumn])
+            //        .Where(val => !string.IsNullOrWhiteSpace(val))
+            //        .Distinct()
+            //        .OrderBy(val => val)
+            //        .ToList();
+
+            //    // Beibehaltung der vorherigen Sortierung 
+            //    filteredItems = filteredItems
+            //        .GroupBy(se => se[groupColumn])
+            //        .SelectMany(g => g);
+            //}
+
+            // Gruppierung Alternative
+            //if (this.Filter != null && this.Filter.GroupColumn != string.Empty)
+            //{
+            //    // erzeugt potenziell neue Sortierung 
+            //    string groupColumn = this.Filter.GroupColumn;
+            //    filteredItems = filteredItems.OrderBy(se => se[groupColumn]);
+            //}
 
             // Sequenz in finale Liste 
             Items = filteredItems.ToList();

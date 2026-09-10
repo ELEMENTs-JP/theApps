@@ -60,7 +60,7 @@
         {
             <DropDown @key="@( "DropDown-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
                       Label="@Title" Description="@Description" Value="@Value" Items="@Items"
-                      ValueChanged="@(async e =>{ onValueChanged(e); await Change(); await Save(); })"
+                      IDValueChanged="@(async e =>{ onValueChanged(e.Item2, e.Item1); await Change(); await Save(); })"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
                       IsEditable="@IsEditable">
@@ -76,6 +76,10 @@
                     else if (Field.Typ == FieldTyp.Status)
                     {
                         <StatusBox ID="@headitem.ID" Value="@headitem.Title" />
+                    }
+                    else if (Field.Typ == FieldTyp.Color)
+                    {
+                        <ColorBar Item="@headitem" />
                     }
                     else if (Field.Typ == FieldTyp.Color)
                     {
@@ -107,12 +111,7 @@
                         }
                         else if (Field.Typ == FieldTyp.Color)
                         {
-                            <div class="col-auto px-1" style="">
-                                <div style="width: 20px; height: 20px; border-radius: 50%; border:2px solid #fff; background-color:@entry.ID"></div>
-                            </div>
-                            <div class="col px-1">
-                                @entry.Title
-                            </div>
+                           <ColorBar Item="@entry" />
                         }
                         else
                         {
@@ -453,14 +452,23 @@
     {
         if (Binding == ValueBindingTyp.Property)
         {
-            if (!string.IsNullOrEmpty(value))
-            {
-                Context.Item[Field.Column] = value;
-            }
-            else if (!string.IsNullOrEmpty(id))
+            if (Field.Typ == FieldTyp.Color)
             {
                 Context.Item[Field.Column] = id;
             }
+            else
+            {
+                
+            }
+
+            // if (!string.IsNullOrEmpty(value))
+            // {
+            //     Context.Item[Field.Column] = value;
+            // }
+            // else if (!string.IsNullOrEmpty(id))
+            // {
+            //     Context.Item[Field.Column] = id;
+            // }
         }
         else if (Binding == ValueBindingTyp.Description)
         {

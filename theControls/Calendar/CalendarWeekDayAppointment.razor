@@ -1,0 +1,34 @@
+﻿<div class="position-relative overflow-hidden border rounded p-1 bg-light text-dark me-1"
+     style="grid-row: @RowStart / span @RowSpan; left: @LeftCss; width: @WidthCss;">
+    <div class="fw-bold small text-truncate">@Item.Title</div>
+    <div class="text-truncate" style="font-size: 0.75rem;">
+        @FormattedTimeSpan
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public IDTO Item { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public int RowStart { get; set; }
+
+    [Parameter, EditorRequired]
+    public int RowSpan { get; set; }
+
+    [Parameter, EditorRequired]
+    public int ColumnIndex { get; set; }
+
+    [Parameter, EditorRequired]
+    public int MaxColumns { get; set; }
+
+    [Parameter, EditorRequired]
+    public TimeSpan StartTime { get; set; }
+
+    [Parameter, EditorRequired]
+    public TimeSpan EndTime { get; set; }
+
+    private string LeftCss => $"{(ColumnIndex * 100.0 / MaxColumns):F2}%";
+    private string WidthCss => $"{(100.0 / MaxColumns):F2}%";
+    private string FormattedTimeSpan => $"{StartTime:hh\\:mm} - {EndTime:hh\\:mm}";
+}

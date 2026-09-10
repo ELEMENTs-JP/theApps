@@ -6,7 +6,8 @@
 }
 
 
-<div class="form-check @( (IsSwitch ? " form-switch " : " ") ) no-focus @CssClass" style="@Style">
+<div class="form-check @( (IsSwitch ? " form-switch " : " ") ) no-focus @CssClass" 
+        style="@Style @( (IsSwitch ? " min-height: 2.35rem; " : " ") )">
     <input id="@Id"
            name="@InputName"
            class="form-check-input"

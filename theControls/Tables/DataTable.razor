@@ -1,5 +1,4 @@
-﻿
-@inherits BaseList
+﻿@inherits BaseList
 @inject ILogger<Index> Logger
 @inject NavigationManager nm
 
@@ -11,7 +10,7 @@
             <table class="table table-hover align-middle">
                 <thead>
                     <tr>
-                        <TableHeader Context="@Context" 
+                        <TableHeader Context="@Context"
                                      OnSort="@( async e => { await Context.Search(); } )"
                                      IsRelated="@( (RelatedItem != null))" />
                     </tr>
@@ -21,10 +20,34 @@
                     {
                         <Virtualize Items="Context.Items" Context="item" SpacerElement="tr" ItemSize="48">
                             <ItemContent>
-                                <TableRow @key="@( "item_entry_" + item.GUID)" 
-                                          Context="@Context" 
-                                          Item="@item" 
-                                          IsRelated="@( (RelatedItem != null))" />
+
+                                @if (!string.IsNullOrEmpty(item["GroupName"]))
+                                {
+                                    <tr @key="@( "group_header_" + item["GroupName"])" 
+                                        class="fw-bold text-secondary">
+                                        <td colspan="100" class="p-2 border-bottom">
+                                            <div class="d-flex align-items-center">
+                                                <div class="pe-1">
+                                                    <SymbolIcon Symbol="Icon.Gruppierung" />
+                                                </div>
+                                                <div class="px-1 flex-fill">
+                                                    @item["GroupName"].ToSecureString()
+                                                </div>
+                                                <div class="px-1">
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <TableRow @key="@( "item_entry_" + item.GUID)"
+                                              Context="@Context"
+                                              Item="@item"
+                                              IsRelated="@( (RelatedItem != null))" />
+                                }
+
                             </ItemContent>
                             <Placeholder>
                                 <tr>

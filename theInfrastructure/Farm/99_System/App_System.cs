@@ -19,6 +19,7 @@ namespace theInfrastructure
             List<IItemType> ItemTypes = new();
 
             // ItemTypes 
+            ItemTypes.Add(new ItemType_Setting());
             ItemTypes.Add(new ItemType_Trash());
             ItemTypes.Add(new ItemType_Archive());
 

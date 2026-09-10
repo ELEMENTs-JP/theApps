@@ -1,7 +1,13 @@
 ﻿
 
 
-
+window.scrollToById = function (elementId, scrollTop)
+{
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.scrollTop = scrollTop;
+    }
+};
 
 
 

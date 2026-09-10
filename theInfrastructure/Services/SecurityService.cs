@@ -17,6 +17,7 @@ namespace theInfrastructure
         readonly IWebHostEnvironment Environment;
         ISqlDatabaseService SqlService;
         public SystemConfiguration Configuration { get; set; } = null;
+        public SMTPConfiguration Mail { get; set; } = null;
 
         public IDTO Principal { get; set; }
 
@@ -54,6 +55,12 @@ namespace theInfrastructure
             if (Configuration == null)
             {
                 Configuration = SystemConfiguration.Load();
+            }
+
+            // MailConfig 
+            if (Mail == null)
+            {
+                Mail = SMTPConfiguration.Load();
             }
 
             // User 

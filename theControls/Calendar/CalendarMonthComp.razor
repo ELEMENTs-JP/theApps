@@ -59,7 +59,7 @@
             {
                 // Samstag // Sonntag
                 <div class="col-md-1 p-2 border-bottom border-end border-hover">
-                    <CalendarDayComp OnItemAdded="OnItemAdded"
+                    <CalendarMonthDayComp OnItemAdded="OnItemAdded"
                                      OnItemDeleted="OnItemDeleted"
                                      Date="@date" Context="@Context" ItemType="@ItemType" />
                 </div>
@@ -68,7 +68,7 @@
             {
                 // anderer Monat
                 <div class="col-md-1 p-2 border-bottom border-end border-hover">
-                    <CalendarDayComp OnItemAdded="OnItemAdded"
+                    <CalendarMonthDayComp OnItemAdded="OnItemAdded"
                                      OnItemDeleted="OnItemDeleted"
                                      Date="@date" Context="@Context" ItemType="@ItemType" />
                 </div>
@@ -77,7 +77,7 @@
             {
                 // aktueller Monat
                 <div class="col-md-1 p-2 border-bottom border-end border-hover" style="@ControlStyle">
-                    <CalendarDayComp OnItemAdded="OnItemAdded"
+                    <CalendarMonthDayComp OnItemAdded="OnItemAdded"
                                      OnItemDeleted="OnItemDeleted"
                                      Date="@date" Context="@Context" ItemType="@ItemType" />
                 </div>

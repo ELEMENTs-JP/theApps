@@ -28,6 +28,15 @@
 
 
 
+.bg-worktime {
+    background: linear-gradient( to bottom, 
+            var(--off-hours-color, #77777711) 0%, 
+            var(--off-hours-color, #77777711) calc(100% * var(--start-hour, 7) / 24), 
+            transparent calc(100% * var(--start-hour, 7) / 24), 
+            transparent calc(100% * var(--end-hour, 18) / 24), 
+            var(--off-hours-color, #77777711) calc(100% * var(--end-hour, 18) / 24), 
+            var(--off-hours-color, #77777711) 100% );
+}
 
 
 

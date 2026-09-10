@@ -1,0 +1,158 @@
+﻿@inject IMessagingBusService msg
+@inject ISearchService search
+
+@if (ItemType != null)
+{
+    @if (Fields.Count() >= 1)
+    {
+        <div id="@( "frame_popup_" + ID )" class="@(" dropdown-center ") ">
+            <div id="@( "link_popup_" + ID )" data-bs-toggle="dropdown"
+                 class="@(" d-flex p-1 align-items-center text-reset " + ButtonCssClass)">
+                <div id="@( "head_popup_" + ID )" class="rounded-2 hover pointer p-1">
+                    <SymbolIcon Symbol="Icon.Gruppierung" />
+                </div>
+            </div>
+
+            <div id="@( "body_popup_" + ID )" class="@( "dropdown-menu " )" style="@MenuStyle">
+                <div class="vstack">
+                    <div class="dropdown-header">Gruppierung</div>
+                    <div class="px-2 mb-1 small text-muted text-truncate-2 overflow-hidden">@SubTitle</div>
+                </div>
+
+                <div class="dropdown-divider"></div>
+                <div class="@( " px-2 " + " overflow-y-auto " )" style="@( ContentStyle + " " + MaxHeightCSS )">
+
+                    @if (ItemType != null)
+                    {
+                        @foreach (IField field in Fields)
+                        {
+                            <div class="row g-0 rounded-2 p-1 hover"
+                                 @onclick="@( async e => { await Group(field.Column); })">
+                                <div class="col">
+                                    @field.Title.ToSecureString()
+                                </div>
+                                @if (IsGrouped(field.Column))
+                                {
+                                    <div class="col-auto p-1">
+                                        <SymbolIcon Symbol="Icon.Gruppierung" />
+                                    </div>
+                                }
+                            </div>
+
+                        }
+
+                        <div class="border-top py-2 mt-2">
+                            <div class="btn btn-sm btn-primary w-100" @onclick="ClearGroups">
+                                Gruppierung entfernen
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+}
+
+
+
+
+
+@code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    [Parameter]
+    public string ID { get; set; } = "" + Guid.NewGuid();
+
+    [Parameter]
+    public string MaxHeightCSS { get; set; } = "max-height:44rem;";
+
+    [Parameter]
+    public string ContentStyle { get; set; } = "  ";
+
+    [Parameter]
+    public string SubTitle { get; set; } = "Filtert das Ergebnis nach Auswahl";
+
+    [Parameter]
+    public string MenuStyle { get; set; } = "min-width:13rem;";
+
+    [Parameter]
+    public bool TextColorReset { get; set; } = true;
+
+    [Parameter]
+    public string ButtonCssClass { get; set; } = "  ";
+
+    [Parameter]
+    public IQueryContext Context { get; set; }
+
+    List<IField> Fields { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Fields.Clear();
+        if (ItemType != null)
+        {
+            Fields = await ItemType.GetFields();
+
+            Fields = Fields.Where(se => se.Funktionen.IsFilterable == true).ToList();
+        }
+    }
+
+    private async Task Group(string column)
+    {
+        if (Context != null)
+        {
+            if (Context.Filter == null)
+            {
+                Context.Filter = new FilterParameter();
+            }
+
+            // set Filter
+            Context.Filter.GroupColumn = column;
+
+            // run
+            await GroupData();
+        }
+    }
+    private async Task ClearGroups()
+    {
+        if (Context != null)
+        {
+            if (Context.Filter == null)
+            {
+                Context.Filter = new FilterParameter();
+            }
+
+            // set Filter
+            Context.Filter.GroupColumn = string.Empty;
+
+            // run
+            await GroupData();
+        }
+    }
+
+    private bool IsGrouped(string column)
+    {
+        if (Context?.Filter?.GroupColumn == column)
+            return true;
+
+        return false;
+    }
+
+    [Parameter]
+    public EventCallback OnGroup { get; set; }
+    private async Task GroupData()
+    {
+        if (OnGroup.HasDelegate)
+        {
+            await OnGroup.InvokeAsync();
+
+            // Liste aktualisieren
+            // msg.Publish("List", BusAction.Refresh);
+        }
+    }
+}

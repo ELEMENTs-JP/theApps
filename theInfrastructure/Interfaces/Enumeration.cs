@@ -4,6 +4,7 @@ using System.Text;
 
 namespace theInfrastructure
 {
+  
     public enum SecuredFeature
     { 
         NULL = 0,
@@ -67,7 +68,8 @@ namespace theInfrastructure
 
         Date = 11,
         Year = 12,
-
+        End = 13,
+        Start = 14,
     }
     public enum ItemTypeTyp
     {
@@ -136,6 +138,7 @@ namespace theInfrastructure
         Help,
         Favorite,
         NoFavorite,
+        Gruppierung,
         Connect,
         Disconnect,
         Keyboard,

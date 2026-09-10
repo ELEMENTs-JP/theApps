@@ -7,6 +7,31 @@ using System.Text;
 
 namespace theInfrastructure
 {
+
+
+
+
+    public class EventRenderItem
+    {
+        public CalendarEvent Event { get; set; } = default!;
+        public int RowStart { get; set; }
+        public int RowSpan { get; set; }
+        public int ColumnIndex { get; set; }
+        public int MaxColumns { get; set; }
+
+        public string LeftPositionCss => $"{(ColumnIndex * 100.0 / MaxColumns):F2}%";
+        public string WidthCss => $"{(100.0 / MaxColumns):F2}%";
+    }
+    public class CalendarEvent
+    {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string Title { get; set; } = string.Empty;
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+        public string BackgroundColor { get; set; } = "#e7f1ff";
+    }
+
+
     public class AudioEvent
     {
         public double CurrentTime { get; set; }
@@ -195,11 +220,18 @@ namespace theInfrastructure
 
     public class FilterParameter : IFilterParameter
     {
+        // Suche 
         public string Matchcode { get; set; } = string.Empty;
+
+        // Filterung 
         public List<KeyValuePair<string, string>> Parameters { get; set; } = new();
 
+        // Sortierung 
         public string SortColumn { get; set; } = string.Empty;
         public ListSortDirection? Direction { get; set; } = null;
+
+        // Gruppierung 
+        public string GroupColumn { get; set; } = string.Empty;
     }
     public class QueryParameter : IQueryParameter
     {

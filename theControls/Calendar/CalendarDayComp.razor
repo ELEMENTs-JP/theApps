@@ -1,181 +1,125 @@
-﻿@inject IAppService app
-@inject NavigationManager nm
-@inject ISqlDatabaseService sql
-@inject IMessagingBusService msg
+﻿@using System.Globalization
+@inherits BaseList
 
-<div class="d-flex position-relative">
+<div class="row d-flex align-items-center p-2">
 
-  
+    <div class="col-auto">
+        <div class="hover pointer rounded-2 p-1" @onclick="Pre">
+            <i class="ti ti-chevron-left text-muted"></i>
+        </div>
+    </div>
 
-    @if (CurrentDate.ToYearMonth() == Date.ToYearMonth())
+    <div class="col-auto px-2">
+        <strong class="fw-bold">
+            @(CurrentDate.Date.ToString("dddd, d. MMMM yyyy", CultureInfo.CurrentCulture))
+        </strong>
+    </div>
+
+    <div class="col-auto">
+        <div class="hover pointer rounded-2 p-1" @onclick="Next">
+            <i class="ti ti-chevron-right text-muted"></i>
+        </div>
+    </div>
+
+    @if (DateTime.Today != CurrentDate.Date)
     {
-        if (Date.Date.DayOfWeek == DayOfWeek.Saturday ||
-            Date.Date.DayOfWeek == DayOfWeek.Sunday)
-        {
-            <div class="@( (Date.Date == DateTime.Now.Date) ? "badge text-bg-light mb-1" : "mb-1" )">@Date.Day.ToSecureString()</div>
-        }
-        else
-        {
-            if (Date.Date.Day == 1)
-            {
-                <strong class="@( (Date.Date == DateTime.Now.Date) ? "badge text-bg-light mb-1" : "mb-1" )">@Date.ToString("dd. MMM")</strong>
-            }
-            else
-            {
-                <strong class="@( (Date.Date == DateTime.Now.Date) ? "badge text-bg-light mb-1" : "mb-1" )">@Date.Day.ToSecureString()</strong>
-            }
-        }
-    }
-    else
-    {
-        if (Date.Date.Day == 1)
-        {
-            <div class="mb-1 text-muted" style="opacity:0.5;">@Date.ToString("dd. MMM")</div>
-        }
-        else
-        {
-            <div class="mb-1 text-muted" style="opacity:0.5;">@Date.Day.ToSecureString()</div>
-        }
+        <div class="col-auto px-2">
+            <div class="hover pointer rounded-2 p-1" @onclick="SetToday">
+                <small class="text-muted">Heute</small>
+            </div>
+        </div>
     }
 
-    
+    @if (RelatedContent.HasContent())
+    {
+        @RelatedContent
+    }
 
-    @*  <tpt.Controls.v2.Collection.AddItem Title="@( "Eintrag hinzufügen" )"
-                                        ButtonTitle="+" ItemType="@this.ItemType.Name"
-                                        FieldHeader="Bezeichnung"
-                                        ButtonGroupCSS=" in ms-auto "
-                                        ButtonTitleCSS="@( "text-muted hover rounded-2 pointer px-2" )"
-                                        DefaultDate="@( Date )"
-                                        OnOKClicked="@( e => { ItemAdded(e); })" /> *@
+    <div class="col-auto ms-auto px-2">
+        @* <AddArea ItemType="@ItemType" /> *@
+    </div>
 </div>
 
-<div class="overflow-auto position-relative" style="height:108px;">
+@if (Context != null && Context.Items != null)
+{
+    <div class="border overflow-auto" style="height: 720px;">
+        <div class="row g-0 border-bottom bg-surface sticky-top" style="z-index: 10;">
+            <div class="col-auto text-end pe-2 fw-bold text-muted border-end" style="width: 60px;"></div>
 
-    @if (!string.IsNullOrEmpty(DateColumn))
-    {
-        @foreach (IDTO dto in Items)
-        {
-            <div class="bg-secondary py-1 px-2 mb-1 rounded-1">
-                <div class="row g-0 align-items-center out">
-                    <div class="col fw-bold pointer">
-                        <small class="text-truncate-line"
-                               @onclick="@( e => { nm.NavigateTo(Helper.GetItemUrl(dto)); })">
-                            @dto.Title.ToSecureString()
-                        </small>
-                    </div>
-
-                    @if (dto[DateColumn].ToSecureString().ToSecureDateTime().ToString("HH:mm") != "00:00")
-                    {
-                        <div class="col-auto ps-2 fw-normal">
-                            <small>
-                                @dto[DateColumn].ToSecureString().ToSecureDateTime().ToString("HH:mm")
-                            </small>
-                        </div>
-                    }
-
-                    <div class="col-auto ps-1 hover">
-                        <div class="pointer rounded-2"
-                             @onclick="@( e => { ItemDelete(dto); })">
-                            <SymbolIcon Symbol="Icon.Delete" />
-                        </div>
-                    </div>
+            <div class="col p-2 border-end ">
+                <div class="d-inline-flex rounded align-items-center @(CurrentDate.Date == DateTime.Today ? "bg-light text-dark fw-bold" : "")">
+                    <div class="fw-bold px-1">@CurrentDate.ToString("ddd", CultureInfo.CurrentCulture)</div>
+                    <div class="fs-5 px-1">@CurrentDate.Day</div>
                 </div>
             </div>
-        }
-    }
 
-    @if (Date.Date.DayOfWeek == DayOfWeek.Monday)
-    {
-        <small class="position-absolute bottom-0 start-0 p-1 text-muted">
-            W:@Date.Date.WeekOfYear()
-        </small>
-    }
-</div>
+        </div>
 
+        <div class="row g-0 position-relative">
+
+            <div class="col-auto border-end d-grid grid-96-rows position-relative"
+                 style="width: 60px; height: 1440px; display: grid !important;">
+                @for (int hour = 0; hour < 24; hour++)
+                {
+                    int gridRow = (hour * 4) + 1;
+                    <div class="text-end pe-2 text-muted small position-relative"
+                         style="grid-row: @gridRow; top: -7px;">
+                        @($"{hour:D2}:00")
+                    </div>
+                }
+            </div>
+
+            <CalendarWeekDayComp Day="CurrentDate"
+                                 Items="@Items.Where(se => se["Date"].ToSecureDateTime().Date == CurrentDate.Date).ToList()" />
+        </div>
+    </div>
+}
 
 @code {
 
     [Parameter]
-    public DateTime Date { get; set; } = DateTime.Now.Date;
+    public RenderFragment RelatedContent { get; set; }
 
     [Parameter]
-    public IItemType ItemType { get; set; }
-
-    private DateTime CurrentDate { get; set; } = DateTime.Now.Date;
-
-    private string DateColumn = string.Empty;
+    public DateTime CurrentDate { get; set; } = DateTime.Today;
 
     [Parameter]
     public List<IDTO> Items { get; set; } = new();
-
-    [Parameter]
-    public IQueryContext Context { get; set; }
-
 
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
 
-        LoadItems();
-
-    }
-    private async void LoadItems()
-    {
-
-        DateColumn = await this.ItemType.GetRelevantPropertyName(RelevantPropertyType.Date);
-
-        // Filter
-        if (!string.IsNullOrEmpty(DateColumn))
+        if (Context != null && Context.Items != null)
         {
-            if (Context.Items != null)
-            {
-                Items = Context.Items.Where(se => se[DateColumn].ToSecureString().ToSecureDateTime().Date == Date.Date).ToList();
-            }
+            Items = Context.Items;
         }
     }
 
     [Parameter]
-    public EventCallback<IDTO> OnItemAdded { get; set; }
-
-    private async Task ItemAdded(IDTO dto)
-    {
-        try
-        {
-            if (dto == null)
-                return;
-
-            // Store.Add(dto);
-
-            LoadItems();
-
-            await OnItemAdded.InvokeAsync(dto);
-        }
-        catch (Exception ex)
-        {
-
-        }
-    }
+    public EventCallback<DateTime> OnNextMonth { get; set; }
 
     [Parameter]
-    public EventCallback<IDTO> OnItemDeleted { get; set; }
+    public EventCallback<DateTime> OnSetToday { get; set; }
 
-    private async Task ItemDelete(IDTO dto)
+    [Parameter]
+    public EventCallback<DateTime> OnPreMonth { get; set; }
+
+    private async Task Next()
     {
-        try
-        {
-            if (dto == null)
-                return;
+        CurrentDate = CurrentDate.AddDays(1);
+        await OnNextMonth.InvokeAsync(CurrentDate);
+    }
 
-        
-            await Context.Delete(dto);
-            msg.Publish("", BusAction.Refresh);
-            msg.Publish("", BusAction.Info, "Item wurde gelöscht");
-            await OnItemDeleted.InvokeAsync(dto);
+    private async Task Pre()
+    {
+        CurrentDate = CurrentDate.AddDays(-1);
+        await OnPreMonth.InvokeAsync(CurrentDate);
+    }
 
-        }
-        catch (Exception ex)
-        {
-
-        }
+    private async Task SetToday()
+    {
+        CurrentDate = DateTime.Today;
+        await OnSetToday.InvokeAsync(CurrentDate);
     }
 }

@@ -1,5 +1,4 @@
-﻿
-@inject ISqlDatabaseService sqlService
+﻿@inject ISqlDatabaseService sqlService
 @inject ISecurityService secService
 @inject ILocalizationService loc
 @inject IAppService appService
@@ -24,7 +23,7 @@
                     <div class="text-secondary fw-bold">@ItemType.Name</div>
                     <small class="text-muted small">Einstellungen für die Liste: @ItemType.Name</small>
                 </div>
-              
+
                 <div class="flex-fill vstack p-2 px-3">
                 </div>
             </div>
@@ -39,19 +38,30 @@
                 }
 
                 <div class="col-12 p-2">
-                    <TextBox Label="Titel" Value="@Title" Description="Titel des Datensatzes" 
-                            Placeholder="Titel hier formulieren..."
-                             ValueChanged="@( async e => { Title = e; })" />
+                    <TextBox Label="Titel" Value="@Title" Description="Titel des Datensatzes"
+                             Placeholder="Titel formulieren..."
+                             ValueChanged="@( async e => { await Helper.SetSetting(sqlService, "Title", e, ItemType.Name); })" />
                 </div>
+
+                @if (this.ItemType.Typ == ItemTypeTyp.Appointment)
+                {
+                    <div class="col-12 p-2">
+                        <CheckBox Label="Wochenende" Value="@ShowWeekend" Description="Wochenende anzeigen"
+                                  ValueChanged="@(async e => {
+                                  await Helper.SetSetting(sqlService, "ShowWeekend", e, ItemType.Name);
+                                  await RaiseSettingChanged();
+                              })" />
+                    </div>
+                }
 
             </div>
         </ChildContent>
         <FooterContent>
-               <div class="d-flex flex-row align-items-center">
-              <EventHandlerInfo />
+            <div class="d-flex flex-row align-items-center">
+                <EventHandlerInfo />
             </div>
-        </FooterContent>    
-</ModalForm>
+        </FooterContent>
+    </ModalForm>
 }
 
 @code {
@@ -69,6 +79,7 @@
 
     // Fields
     private string Title { get; set; } = string.Empty;
+    private string ShowWeekend { get; set; } = "true";
     private string Message { get; set; } = string.Empty;
 
 
@@ -84,19 +95,15 @@
         {
             Context = new QueryContext(sqlService, secService);
             Context.ItemType = this.ItemType;
+
+            Title = await Helper.GetSettingValue(sqlService, "Title", ItemType.Name);
+            ShowWeekend = await Helper.GetSettingValue(sqlService, "ShowWeekend", ItemType.Name);
+
         }
     }
 
-
-
     private async Task<bool> BeforeOK()
     {
-        if (string.IsNullOrEmpty(Title))
-        {
-            msg.Publish("Notwendige Felder", BusAction.Info, "Titel muss gesetzt sein.");
-            return false;
-        }
-
         return true;
     }
 
@@ -114,7 +121,7 @@
 
 
 
-        // // Update 
+        // // Update
         // await Context.Update(Context.Item);
 
 
@@ -128,13 +135,8 @@
         //     Context.Item = await Context.ItemType.OnCreateItem(args);
         // }
 
-        // Clean
-        Title = string.Empty;
-
-
         // Message
-        AppMessage am = new AppMessage("ID", BusAction.Refresh, "...");
-        msg.Publish(am);
+        msg.Publish("Information", BusAction.Info, "Einstellungen gespeichert");
 
         // Visual Update
         await InvokeAsync(this.StateHasChanged);
@@ -145,6 +147,15 @@
         // Values.AddOrUpdate(val);
     }
 
+    [Parameter]
+    public EventCallback OnSettingChanged { get; set; }
+    private async Task RaiseSettingChanged()
+    {
+        if (OnSettingChanged.HasDelegate)
+        {
+            await OnSettingChanged.InvokeAsync();
+        }
+    }
     public async ValueTask DisposeAsync()
     {
         try

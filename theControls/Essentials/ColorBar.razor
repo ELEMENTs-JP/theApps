@@ -1,0 +1,19 @@
+﻿@if (Item != null)
+{
+    <div class="row align-items-center">
+        <div class="col-auto px-2" style="">
+            <div style="width: 20px; height: 20px; border-radius: 50%; border:1px solid #fff; background-color:@Item.ID"></div>
+        </div>
+        <div class="col px-1">
+            @Item.Title
+        </div>
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+}

@@ -1,18 +1,7 @@
 ﻿@page "/Setting"
+@using theControls.CMS
 
-@using theComponents.CMS
-@using theComponents.Database
-@using theComponents.Items
-@using theControls.Add
-@using theControls.Container
-@using theControls.Edit
-@using theControls.Input
-@using theControls.Layout
-@using theControls.Tables
-@using theControls.Text
-@using theDatabase
-@using theDatabase.Controls
-@using theInfrastructure
+
 
 @inject ISqlDatabaseService sql
 @inject IAppService apps
@@ -33,6 +22,8 @@
                 <TabsItem ID="@( ID + "3")" Title="Dateien" Layout="TabsLayout.Buttons" />
                 <TabsItem ID="@( ID + "4")" Title="Features" Layout="TabsLayout.Buttons" />
                 <TabsItem ID="@( ID + "5")" Title="Sicherheit" Layout="TabsLayout.Buttons" />
+                <TabsItem ID="@( ID + "6")" Title="Apps" Layout="TabsLayout.Buttons" />
+                <TabsItem ID="@( ID + "7")" Title="SMTP" Layout="TabsLayout.Buttons" />
             </HeaderContent>
             <ChildContent>
                 <TabsPanel ID="@( ID + "1")" IsActive="true">
@@ -211,6 +202,14 @@
                         </div>
                     </div>
 
+                </TabsPanel>
+         
+                <TabsPanel ID="@( ID + "6")">
+                    <AppAsFeature />
+                </TabsPanel>
+
+                <TabsPanel ID="@( ID + "7")">
+                    <SmtpConfig />
                 </TabsPanel>
             </ChildContent>
         </TabsFrame>
