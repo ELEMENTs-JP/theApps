@@ -108,9 +108,9 @@ namespace theInfrastructure
                 { 
                     Title = "Beschreibung", 
                     Typ = FieldTyp.TextArea, 
-                    Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", 
+                    Column = "Description", CSS = " col-12 col-md-12 col-lg-12 ", 
                     OnDevice = DeviceDisplay.Desktop,
-                    OnDisplay = new FieldDisplay(false, false, false, false),
+                    OnDisplay = new FieldDisplay(true, true, false, false),
                 });
             }
 
@@ -177,6 +177,25 @@ namespace theInfrastructure
 
             if (typ == DefaultFieldTypes.Appointment)
             {
+                Fields.Add(new Field() 
+                { 
+                    Title = "Agenda", Typ = FieldTyp.TextArea, 
+                    Column = "Agenda", CSS = " col-12 col-md-6 col-lg-6 ", 
+                    OnDisplay = new FieldDisplay(true, true, false, false) });
+
+
+                Fields.Add(new Field()
+                {
+                    Title = "Teilnehmer",
+                    Typ = FieldTyp.Select,
+                    Association = AssociationTyp.Children,
+                    ItemType = "User",
+                    Column = "Teilnehmer",
+                    CSS = " col-12 col-md-6 col-lg-6 ",
+                    OnDisplay = new FieldDisplay(true, true, true, false)
+                });
+
+                Fields.Add(new Field() { Title = "Termin", Typ = FieldTyp.HR, CSS = " col-12 col-md-12 col-lg-12 " });
                 Fields.Add(new Field() { Title = "Datum", Typ = FieldTyp.Date, Column = "Date", CSS = " col-12 col-md-12 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
                 Fields.Add(new Field() { Title = "Start", Typ = FieldTyp.Time, Column = "Start", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
                 Fields.Add(new Field() { Title = "Ende", Typ = FieldTyp.Time, Column = "Ende", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });

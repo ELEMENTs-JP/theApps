@@ -14,6 +14,26 @@ namespace theInfrastructure
             this.Order = 2;
         }
 
+        // ItemTypes 
+        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
+        {
+            List<IItemType> ItemTypes = new();
+
+
+            //if (ast == AssociationTyp.Children)
+            //{
+            //    ItemTypes.Add(new ItemType_Checklist());
+            //}
+
+            if (ast == AssociationTyp.Default)
+            {
+                ItemTypes.Add(new ItemType_Comment());
+                ItemTypes.Add(new ItemType_File());
+            }
+
+            return ItemTypes;
+        }
+
         public override async Task<List<IField>> GetFields(string view = "")
         {
             // Fields 

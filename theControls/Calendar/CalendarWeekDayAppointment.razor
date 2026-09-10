@@ -1,7 +1,15 @@
-﻿<div class="position-relative overflow-hidden border rounded p-1 bg-light text-dark me-1"
-     style="grid-row: @RowStart / span @RowSpan; left: @LeftCss; width: @WidthCss;">
-    <div class="fw-bold small text-truncate">@Item.Title</div>
-    <div class="text-truncate" style="font-size: 0.75rem;">
+﻿@inject IAppService app
+@inject NavigationManager nm
+@inject ISqlDatabaseService sql
+@inject IMessagingBusService msg
+
+<div class="position-relative overflow-hidden border rounded-2 p-1 bg-light text-dark me-1"
+     style="grid-row: @RowStart / span @RowSpan; left: @LeftCss; width: @WidthCss; opacity: @OpacityCss;"
+     @onclick="@( e => { nm.NavigateTo(Helper.GetItemUrl(Item)); })">
+
+    <div class="fw-bold small pointer text-truncate ps-1">@Item.Title</div>
+
+    <div class="text-truncate ps-1" style="font-size: 0.75rem;">
         @FormattedTimeSpan
     </div>
 </div>
@@ -31,4 +39,7 @@
     private string LeftCss => $"{(ColumnIndex * 100.0 / MaxColumns):F2}%";
     private string WidthCss => $"{(100.0 / MaxColumns):F2}%";
     private string FormattedTimeSpan => $"{StartTime:hh\\:mm} - {EndTime:hh\\:mm}";
+
+    private bool IsPast => DateTime.Now.TimeOfDay > EndTime;
+    private string OpacityCss => IsPast ? "0.5" : "1.0";
 }

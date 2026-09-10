@@ -21,7 +21,7 @@
 
     <!-- Termine-Overlay -->
     <div class="position-absolute top-0 start-0 w-100 h-100 d-grid grid-96-rows bg-worktime"
-         style="display: grid !important; @((IsWeekend() ? "--start-hour: 18; --end-hour: 18;" : "--start-hour: 8; --end-hour: 17;"))">
+         style="display: grid !important; @((IsWeekend() ? "--start-hour: 0; --end-hour: 0;" : "--start-hour: 8; --end-hour: 17;"))">
         @foreach (var entry in RenderEvents)
         {
             <CalendarWeekDayAppointment Item="@entry.Item"
