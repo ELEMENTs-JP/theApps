@@ -2,8 +2,6 @@
 @page "/Security/{Typ}/{Token}"
 @layout EmptyLayout
 
-@using theInfrastructure
-
 @inject ISqlDatabaseService sql
 
 <PageTitle>the App | Anmeldung und Registrierung</PageTitle>
@@ -12,11 +10,25 @@
 
     @if (Typ.ToLowerInvariant() == "Login".ToLowerInvariant())
     {
-        <LoginComp />
+        @if (sql.DatabaseExists)
+        {
+            <LoginComp />
+        }
+        else
+        {
+            <SetupComp />
+        }
     }
     @if (Typ.ToLowerInvariant() == "Register".ToLowerInvariant())
     {
-        <RegisterComp />
+        @if (sql.DatabaseExists)
+        {
+            <RegisterComp />
+        }
+        else
+        {
+            <SetupComp />
+        }
     }
     @if (Typ.ToLowerInvariant() == "RequestNewPwd".ToLowerInvariant())
     {
@@ -29,6 +41,10 @@
     @if (Typ.ToLowerInvariant() == "SetNewPwd".ToLowerInvariant())
     {
         <SetNewPwdComp Token="@Token" />
+    }
+    @if (Typ.ToLowerInvariant() == "Setup".ToLowerInvariant())
+    {
+        <SetupComp />
     }
 
 </div>

@@ -94,7 +94,6 @@ namespace theDatabase
         // Administration 
         public IQueryResult CreateDatabase()
         {
-
             IQueryResult info = new QueryResult();
             info.Status = "";
             info.Message = "";

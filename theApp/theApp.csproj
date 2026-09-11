@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <Folder Include="Configuration\" />
-    <Folder Include="Database\" />
     <Folder Include="FILES\" />
   </ItemGroup>
 

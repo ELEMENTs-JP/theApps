@@ -1,0 +1,70 @@
+﻿@page "/Setup"
+@using Microsoft.AspNetCore.Components.Forms
+@using theControls.Layout
+@layout EmptyLayout
+@inject NavigationManager nm
+@inject ISqlDatabaseService sql
+
+@if (sql.DatabaseExists == false)
+{
+    <div class="container mt-5">
+        <div class="card mx-auto" style="max-width: 400px;">
+            <div class="card-body">
+
+                <h2 class="h2 text-center fw-bold">Setup</h2>
+                <div class="hr-text">Geschäftsaccount</div>
+
+                <form action="/api/auth/setup" method="post">
+                    <AntiforgeryToken />
+
+                    <div class="mb-3">
+                        <label class="form-label">Mandant</label>
+                        <input type="text" name="principal" class="form-control" placeholder="Unternehmensbezeichnung" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Administrator</label>
+                        <input type="text" name="username" class="form-control" placeholder="Name hier eintippen..." />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mail</label>
+                        <input type="text" name="mail" class="form-control" placeholder="E-Mail hier eintippen..." />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Passwort</label>
+                        <input type="password" name="password" class="form-control" placeholder="Passwort hier eintippen..." />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Setup</button>
+                </form>
+
+                @if (nm.Uri.Contains("error"))
+                {
+                    <div class="alert alert-danger mt-3">Zugriff verweigert!</div>
+                }
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container mt-5">
+        <div class="card mx-auto" style="max-width: 400px;">
+            <div class="card-body">
+
+                <h2 class="h2 text-center fw-bold">Setup</h2>
+                <div class="hr-text">Information</div>
+
+         
+                 <div class="bg-success text-white p-2">
+                    Datenbank existiert
+                </div>
+                
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code {
+
+}

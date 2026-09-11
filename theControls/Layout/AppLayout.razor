@@ -1,14 +1,9 @@
-﻿@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.Routing
-@using theControls.Image
-
-@inject NavigationManager nm
-@inject ISecurityService sec
+﻿@inject NavigationManager nm
 @inject IMessagingBusService msg
 @inject ILocalizationService loc
 @inject ISecurityService sec
 @inject IAppService app
+@inject ISqlDatabaseService sql
 
 @implements IAsyncDisposable
 @attribute [Authorize]
@@ -59,7 +54,9 @@
     </Authorized>
     <NotAuthorized>
 
-        <div class="container p-5 mt-5">
+        @if (sql.DatabaseExists == true)
+        {
+            <div class="container p-5 mt-5">
 
             <h1 class="display-1">Access Denied...</h1>
             <h1 class="display-1">Zugriff verweigert...</h1>
@@ -85,6 +82,17 @@
                 </div>
             </div>
         </div>
+        }
+        @if (sql.DatabaseExists == false)
+        {
+            <div class="container my-5 p-5">
+                <h1 class="display-5">Willkommen zum Setup</h1>
+                <h1 class="h1 fw-light">Keine Sorge, es ist ganz einfach.</h1>
+                <h3 class="h3 fw-light">Einfach 4 Mal tippen... und 1 Mal klicken.</h3>
+                <div class="hr"></div>
+            </div>
+            <SetupComp />    
+        }
 
     </NotAuthorized>
 </AuthorizeView>

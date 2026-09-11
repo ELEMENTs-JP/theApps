@@ -159,7 +159,7 @@ public class AuthController : ControllerBase
 
     [HttpPost("setup")]
     public async Task<IActionResult> Setup(
-        [FromForm] string principal, [FromForm] string username, [FromForm] string password)
+        [FromForm] string principal, [FromForm] string username, [FromForm] string mail, [FromForm] string password)
     {
         // Principal 
         if (string.IsNullOrEmpty(principal))
@@ -172,22 +172,32 @@ public class AuthController : ControllerBase
         {
             return Redirect("/setup?error=true");
         }
+        // Username 
+        if (string.IsNullOrEmpty(username))
+        {
+            return Redirect("/setup?error=true");
+        }
         // Mail Format 
-        if (username.IsMailFormat() == false)
+        if (mail.IsMailFormat() == false)
         {
             return Redirect("/setup?error=true");
         }
 
         // Datenbank 
         IQueryResult dbResult = sqlService.CreateDatabase();
+        if (dbResult.Status == "FAIL")
+        {
+            return Redirect("/setup?error=true");
+        }
 
+        // Suche 
         IQueryParameter qp = new QueryParameter();
         qp.Matchcode = string.Empty;
         qp.MasterGUID = SQLiteService.GeneralMasterGUID;
         qp.GUID = SQLiteService.GeneralMasterGUID;
         qp.ItemType = "Principal";
         IQueryResult result = await sqlService.GetItem(qp);
-
+        
         int count = result.Items.Count();
         if (count >= 1)
         {
@@ -197,11 +207,46 @@ public class AuthController : ControllerBase
 
         // Principal erzeugen 
         qp.GUID = SQLiteService.GeneralMasterGUID;
-        qp.Title = "Default";
-        qp.UserGUID = security.User.GUID;
-        qp.UserName = security.User.Title;
+        qp.Title = principal;
+        qp.ItemType = "Principal";
         result = await sqlService.Create(qp);
 
+        // Load Principal 
+        result = await sqlService.GetItem(qp);
+
+        IDTO p = result.Items.FirstOrDefault();
+        if (p == null)
+        {
+            return Redirect("/setup?error=true");
+        }
+
+        // User erzeugen 
+        qp.GUID = Guid.NewGuid();
+        qp.MasterGUID = SQLiteService.GeneralMasterGUID;
+        qp.Title = username;
+        qp.ItemType = "User";
+        result = await sqlService.Create(qp);
+
+        // Load User 
+        result = await sqlService.GetItem(qp);
+
+        IDTO? user = result.Items.FirstOrDefault();
+        if (user != null)
+        {
+            user["IsActive"] = "true";
+            user["IsAdmin"] = "true";
+            user["Mail"] = mail;
+
+            string hash = Encryption.HashPassword(password);
+            user["Password"] = hash;
+
+            await sqlService.Update(user);
+
+            // Assign Principal > User 
+            await sqlService.Assign(p, user, AssociationTyp.Children);
+
+            return Redirect("/login");
+        }
 
         return Redirect("/setup?error=true");
     }

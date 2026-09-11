@@ -38,8 +38,6 @@ namespace theApp
                 builder.Services.AddRazorComponents()
                     .AddInteractiveServerComponents();
 
-
-
                 builder.Services.AddServerSideBlazor()
                     .AddHubOptions(options =>
                     {
