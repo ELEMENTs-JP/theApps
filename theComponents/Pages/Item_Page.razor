@@ -1,8 +1,5 @@
 ﻿@page "/Item/{IT}/{ID}"
 
-@using theComponents.Items
-@using theDatabase
-@using theInfrastructure
 
 @inject ISqlDatabaseService sql
 
@@ -10,15 +7,10 @@
 
 @if (ItemType != null)
 {
- 
         <div class="container-flex">
-
             <ItemComp ItemType="@ItemType" ID="@ID" />
         </div>
-   
 }
-
-
 
 @code {
 

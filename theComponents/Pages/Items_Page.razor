@@ -1,13 +1,4 @@
 ﻿@page "/{Typ}/{IT}"
-@using theComponents.Items
-@using theControls.Add
-@using theControls.Calendar
-@using theControls.Files
-@using theControls.Layout
-@using theControls.Tables
-@using theDatabase
-@using theInfrastructure
-
 @inject ISqlDatabaseService sql
 
 <PageTitle>the App | Items</PageTitle>
@@ -17,7 +8,6 @@
     @if (Typ == "Hierarchy")
     {
         <HierarchyComp ItemType="@ItemType" />
-        
     }
     else
     {
@@ -25,7 +15,6 @@
     }
 
 </div>
-
 
 @code {
 
