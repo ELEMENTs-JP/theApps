@@ -1,4 +1,6 @@
-﻿@using theControls.Video
+﻿@using theControls.Audio
+@using theControls.Detail
+@using theControls.Video
 
 @inject ISqlDatabaseService sql
 @inject ISecurityService sec
@@ -13,7 +15,7 @@
                 <div class="col-12 col-lg-7 p-2">
                     <EditArea ItemType="@this.ItemType" ID="@ID" />
 
-                    <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Children).Value ?? new List<IItemType>())"
+                    <RelatedItemsComp CSS="mb-3 mt-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Children).Value ?? new List<IItemType>())"
                                       RelatedItem="@RelatedItem" Association="AssociationTyp.Children" />
 
                     <RelatedItemsComp CSS="mb-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Default).Value ?? new List<IItemType>())"
@@ -21,7 +23,7 @@
                 </div>
                 <div class="col-12 col-lg-5 p-2">
 
-                    <HelpByItemType ItemType="@this.ItemType" />
+                    <theControls.Hilfe.HelpByItemType ItemType="@this.ItemType" />
 
                     <ItemAssignments  Context="@Context"/>
 

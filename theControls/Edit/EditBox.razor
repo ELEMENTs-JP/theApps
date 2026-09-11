@@ -12,7 +12,7 @@
 
 @if (Field != null && Context != null && Context.Item != null)
 {
-    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-1 px-2 @CheckCondition(Context.Item) @CssClass">
+    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-1 px-2 position-relative @CheckCondition(Context.Item) @CssClass">
 
         @if (Field.Typ == FieldTyp.TextArea)
         {
@@ -209,6 +209,14 @@
                 </Overlay>
             </TextBox>
         }
+    
+  @*       @if (hasUpdatePermission == false)
+        {
+            <ToolTip CSS="position-absolute top-0 end-0 " Title="Eingeschränkte Berechtigungen">
+                <span class="red-circle"></span>
+            </ToolTip>
+        } *@
+    
     </div>
 }
 
@@ -217,6 +225,7 @@
     private string Title { get; set; } = string.Empty;
     private string Description { get; set; } = string.Empty;
     private string Value { get; set; } = string.Empty;
+    bool hasUpdatePermission { get; set; } = true;
 
     [Parameter]
     public List<IDTO> Items { get; set; } = new();
@@ -283,6 +292,8 @@
     // Methods
     public async Task Init()
     {
+        hasUpdatePermission = await sec.HasItemTypePermission(Context.ItemType, SecurityFunction.Update);
+
         this.Items = await Helper.InitDropDown(Field, sql);
 
         if (Field.Typ == FieldTyp.Year)
@@ -337,6 +348,14 @@
     // Helper
     private async Task<IDTO> Save()
     {
+        hasUpdatePermission = await sec.HasItemTypePermission(Context.ItemType, SecurityFunction.Update);
+        if (hasUpdatePermission == false)
+        {
+            // Update
+            msg.Publish("", BusAction.Info, "Keine Berechtigung um zu aktualisieren");
+            return null;
+        }
+
         // Update 
         await Context.Update(Context.Item);
 

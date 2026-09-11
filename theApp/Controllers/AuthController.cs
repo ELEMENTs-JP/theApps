@@ -214,7 +214,13 @@ public class AuthController : ControllerBase
         // Load Principal 
         result = await sqlService.GetItem(qp);
 
-        IDTO p = result.Items.FirstOrDefault();
+        IDTO? p = result.Items.FirstOrDefault();
+        if (p != null)
+        {
+            p["IsActive"] = "true";
+
+            await sqlService.Update(p);
+        }
         if (p == null)
         {
             return Redirect("/setup?error=true");

@@ -25,6 +25,16 @@ namespace theInfrastructure
         public override async Task<List<IField>> GetFields(string view = "")
         {
             List<IField> Fields = new();
+
+            Fields.Add(new Field()
+            {
+                Title = "Aktiv",
+                Typ = FieldTyp.CheckBox,
+                Column = "IsActive",
+                DefaultValue = "true",
+                CSS = " col-12 col-md-6 col-lg-6 "
+            });
+
             return Fields;
         }
     }

@@ -8,7 +8,15 @@
 
 
 
-
+.red-circle {
+    width: 5px;
+    height: 5px;
+    background-color: #d0075d; 
+    border-radius: 50%;
+    display: inline-block; 
+    margin-top:10px;
+    margin-right:10px;
+}
 
 
 

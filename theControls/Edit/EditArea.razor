@@ -79,6 +79,15 @@
                 }
             </div>
         </Content>
+        <Bottom>
+
+            @if (hasUpdatePermission == false)
+            {
+                <small class="text-muted small">Eingeschränkte Berechtigungen</small>    
+            }
+
+        </Bottom>
+    
     </Frame>
 
 }
@@ -97,6 +106,7 @@
     List<IField> Fields { get; set; } = new();
 
     private List<IDTO> RelatedItems { get; set; } = new();
+    bool hasUpdatePermission { get; set; } = false;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -114,6 +124,8 @@
         Context = new QueryContext(sql, sec);
         Context.ItemType = ItemType;
         await Context.Load(ID);
+
+        // hasUpdatePermission = await sec.HasItemTypePermission(Context.ItemType, SecurityFunction.Update);
 
         await ValidateParents();
     }
