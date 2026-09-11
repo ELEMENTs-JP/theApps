@@ -68,6 +68,19 @@ namespace theInfrastructure
 
         public virtual async Task<IDTO> OnCreateItem(IItemEventArgs args)
         {
+            // Default Values 
+            List<IField> fields = await GetFields();
+            foreach (IField field in fields.Where(se => !string.IsNullOrEmpty(se.DefaultValue)))
+            {
+                if (string.IsNullOrEmpty(args.Item[field.Column].ToSecureString()))
+                {
+                    args.Item[field.Column] = field.DefaultValue;
+                }
+            }
+
+            // Update 
+            await args.SqlService.Update(args.Item);
+
 
             // Year 
             string column = await GetRelevantPropertyName(RelevantPropertyType.Year);
@@ -188,6 +201,17 @@ namespace theInfrastructure
             string prop = string.Empty;
 
             List<IField> fields = await this.GetFields();
+
+            // Progress 
+            if (typ == RelevantPropertyType.Progress)
+            {
+                // Progress 
+                IField? f = fields.Find(se => se.Typ == FieldTyp.Progress);
+                if (f != null)
+                {
+                    prop = f.Column;
+                }
+            }
 
             // Year 
             if (typ == RelevantPropertyType.Year)

@@ -4,7 +4,11 @@ using System.Text;
 
 namespace theInfrastructure
 {
-  
+    public enum ModalRenderMode
+    {
+        Modal,
+        Inline
+    }
     public enum SecuredFeature
     { 
         NULL = 0,
@@ -70,6 +74,7 @@ namespace theInfrastructure
         Year = 12,
         End = 13,
         Start = 14,
+        Progress = 15,
     }
     public enum ItemTypeTyp
     {
@@ -138,6 +143,8 @@ namespace theInfrastructure
         Help,
         Favorite,
         NoFavorite,
+        Follow,
+        UnFollow,
         Gruppierung,
         Connect,
         Disconnect,

@@ -3,7 +3,7 @@
 
 @if (RelatedItem != null && ItemType != null)
 {
-    <Frame Border="true" CSS="@CSS">
+    <Frame Border="true" CSS="@CSS" ContentCSS=" " BottomBorderCSS=" " HeadBorderCSS=" ">
         <Header>
             @if (ItemType != null)
             {
@@ -22,14 +22,15 @@
             <div class="hstack align-items-center">
                 <ConnectComp ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" ButtonTitle="" />
                 <div class="vr mx-1"></div>
-                <AddArea ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" ButtonTitle="" />
+                <AddArea ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" ButtonTitle=""  />
             </div>
         </Related>
         <Content>
             <ItemsList ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" />
         </Content>
         <Bottom>
-            <AddFast ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" />
+            <AddFast ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" 
+                     OnItemAdded="@( e => {  })" OnRelatedItemAdded="@( e => {  })" />
         </Bottom>
     </Frame>
 }
@@ -66,6 +67,10 @@
         if (ItemTypes.Count() >= 1)
         {
             ItemType = ItemTypes.FirstOrDefault();
+        }
+        else
+        {
+            ItemType = null;    
         }
 
     }

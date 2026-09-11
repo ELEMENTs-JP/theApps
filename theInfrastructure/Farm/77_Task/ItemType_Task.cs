@@ -42,10 +42,19 @@ namespace theInfrastructure
 
             Fields.Add(new Field()
             {
-                Title = "Aufgabe",
+                Title = "Aufgabe", Description ="Beschreibt die inhaltliche Aufgabe.",
                 Typ = FieldTyp.TextArea,
                 Column = "Description",
-                CSS = " col-12 col-md-6 col-lg-12 ",
+                CSS = " col-12 col-md-6 col-lg-6 ",
+                OnDevice = DeviceDisplay.Desktop,
+                OnDisplay = new FieldDisplay(true, true, false, false),
+            });
+            Fields.Add(new Field()
+            {
+                Title = "Ergebnis", Description="Beschreibt das erwartete Ergebnis.",
+                Typ = FieldTyp.TextArea,
+                Column = "Result",
+                CSS = " col-12 col-md-6 col-lg-6 ",
                 OnDevice = DeviceDisplay.Desktop,
                 OnDisplay = new FieldDisplay(true, true, false, false),
             });
@@ -83,7 +92,33 @@ namespace theInfrastructure
             // Performance 
             Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
 
-      
+            Fields.Add(new Field()
+            {
+                Title = "Assign To",
+                Typ = FieldTyp.ItemTypeList,
+                ItemType = "User",
+                Column = "AssignTo",
+                CSS = " col-12 col-md-4 col-lg-4 ",
+                OnDevice = DeviceDisplay.Desktop
+            });
+
+            Fields.Add(new Field()
+            {
+                Title = "Aufwand",
+                Typ = FieldTyp.Integer,
+                Column = "Effort",
+                CSS = " col-12 col-md-4 col-lg-4 ",
+                OnDevice = DeviceDisplay.Desktop
+            });
+
+            Fields.Add(new Field()
+            {
+                Title = "Budget",
+                Typ = FieldTyp.Money,
+                Column = "Budget",
+                CSS = " col-12 col-md-4 col-lg-4 ",
+                OnDevice = DeviceDisplay.Desktop
+            });
 
             return Fields;
         }
@@ -92,18 +127,18 @@ namespace theInfrastructure
         {
             await base.OnCreateItem(args);
 
-            // Default Values 
-            List<IField> fields = await GetFields();
-            foreach (IField field in fields.Where(se => !string.IsNullOrEmpty(se.DefaultValue)))
-            {
-                if (string.IsNullOrEmpty(args.Item[field.Column].ToSecureString()))
-                { 
-                    args.Item[field.Column] = field.DefaultValue;
-                }
-            }
+            //// Default Values 
+            //List<IField> fields = await GetFields();
+            //foreach (IField field in fields.Where(se => !string.IsNullOrEmpty(se.DefaultValue)))
+            //{
+            //    if (string.IsNullOrEmpty(args.Item[field.Column].ToSecureString()))
+            //    { 
+            //        args.Item[field.Column] = field.DefaultValue;
+            //    }
+            //}
             
-            // Update 
-            await args.SqlService.Update(args.Item);
+            //// Update 
+            //await args.SqlService.Update(args.Item);
             
             // RETURN 
             return args.Item;

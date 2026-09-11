@@ -1,4 +1,5 @@
 ﻿@inherits BaseList
+@implements IAsyncDisposable
 
 @inject NavigationManager nm
 
@@ -6,6 +7,11 @@
 {
     @if (Context.ItemType != null && Context.ItemType.GetFields().Result != null)
     {
+        @if (ShowProgressBar)
+        {
+            <ProgressBar Value="@Progress" CSS="border-top p-1" />
+        }
+
         <SortableContainer Zone="@( "Default")" MinStyleHeight=""
                            Items="@Context.Items">
             <ItemTemplate Context="item">
@@ -26,30 +32,24 @@
     [Parameter]
     public bool ShowID { get; set; } = true;
 
-    protected override async Task OnParametersSetAsync()
+
+    // Events
+    protected override async Task OnInitializedAsync()
     {
-        await base.OnParametersSetAsync();
-
-        if (Context == null && ItemType != null)
-        {
-            Context = new QueryContext(sql, sec, ItemType);
-        }
-        if (Context != null)
-        {
-            // ItemType 
-            Context.ItemType = ItemType;
-
-            if (RelatedItem != null)
-            {
-                Context.Items = await Context.RelatedItems(Context.ItemType.Name, Association);
-            }
-            else
-            {
-                await Context.Search();
-            }
-        }
+    
     }
 
-  
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
 
 }

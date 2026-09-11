@@ -5,65 +5,60 @@
 @inject ISqlDatabaseService sqlService
 @inject IAppService appService
 @inject ISecurityService secService
-@inject IMessagingBusService msg
 @inject ILocalizationService loc
+@inject IMessagingBusService msg
 @inject ISearchService search
 @inject IJSRuntime js
 @implements IAsyncDisposable
 
 @if (ItemType != null)
 {
-
-  
-        @if (ItemType.Typ == ItemTypeTyp.Note || ItemType.Typ == ItemTypeTyp.Comment)
-        {
-            <div class="vstack">
-                <TextArea Value="@Title"
-                          Placeholder="@loc.GetLabel("hinzufügen...", "add...")"
-                          ValueChanged="@(async e => { Title = e; })">
-                      <Overlay>
-                             @if (!string.IsNullOrEmpty(this.Title))
-                {
-                    <button type="button" class="btn btn-sm btn-primary"
-                            @onclick="OnOK">
-                        <SymbolIcon Symbol="Icon.Neu" />
-                    </button>
-                }
-                      </Overlay>
-                      </TextArea>
-
-             
-
-            </div>
-        }
-        else
-        {
-            <div class="input-group input-group-sm" style="max-width:21rem;">
-                @*        <span class="input-group-text fw-bold px-2">
+    @if (ItemType.Typ == ItemTypeTyp.Note || ItemType.Typ == ItemTypeTyp.Comment)
+    {
+        <div class="vstack">
+            <TextArea Value="@Title"
+                      Placeholder="@loc.GetLabel("hinzufügen...", "add...")"
+                      ValueChanged="@(async e => { Title = e; })">
+                <Overlay>
+                    @if (!string.IsNullOrEmpty(this.Title))
+                    {
+                        <button type="button" class="btn btn-sm btn-primary"
+                                @onclick="OnOK">
+                            <SymbolIcon Symbol="Icon.Neu" />
+                        </button>
+                    }
+                </Overlay>
+            </TextArea>
+        </div>
+    }
+    else
+    {
+        <div class="input-group input-group-sm" style="max-width:21rem;">
+            <span class="input-group-text fw-bold px-2">
                 @ItemType.Name
-            </span> *@
-                <input id="@ID" class="form-control form-control-sm" type="text" value="@Title"
-                       placeholder="@loc.GetLabel("hinzufügen...", "add...")"
-                       @oninput="@(  e => { Title = e.Value?.ToString() ?? string.Empty; })"
-                       @onkeydown="HandleKeyDown" />
+            </span>
+            <input id="@ID" class="form-control form-control-sm" type="text" value="@Title"
+                   placeholder="@loc.GetLabel("hinzufügen...", "add...")"
+                   @oninput="@(  e => { Title = e.Value?.ToString() ?? string.Empty; })"
+                   @onkeydown="HandleKeyDown" />
 
-                @if (!string.IsNullOrEmpty(this.Title))
-                {
-                    <button type="button" class="btn btn-sm"
-                            @onclick="OnOK">
-                        <SymbolIcon Symbol="Icon.Neu" />
-                    </button>
-                }
-            </div>
-        }
+            @if (!string.IsNullOrEmpty(this.Title))
+            {
+                <button type="button" class="btn btn-sm"
+                        @onclick="OnOK">
+                    <SymbolIcon Symbol="Icon.Neu" />
+                </button>
+            }
+        </div>
+    }
 
-        @if (!string.IsNullOrEmpty(Message))
-        {
-            <div class="p-2 px-3">
-                <div class="alert alert-danger p-2 m-2">@Message</div>
-            </div>
-        }
-   
+    @if (!string.IsNullOrEmpty(Message))
+    {
+        <div class="p-2 px-3">
+            <div class="alert alert-danger p-2 m-2">@Message</div>
+        </div>
+    }
+
 }
 
 @code {
@@ -94,7 +89,7 @@
     {
         await base.OnParametersSetAsync();
 
-        if (ItemType != null)
+        if (ItemType != null && Context == null)
         {
             Context = new QueryContext(sqlService, secService, this.ItemType);
         }
@@ -112,7 +107,7 @@
         filter.Matchcode = this.Title;
         Context.Filter = filter;
 
-        // Search 
+        // Search
         await Context.Search();
 
         IDTO? item = Context.Items.FirstOrDefault(se => se.Title == this.Title);
@@ -142,6 +137,9 @@
             }
         }
 
+        if (ItemType == null)
+            return;
+
         if (Context == null)
             return;
 
@@ -151,6 +149,7 @@
         }
 
         // Erstellen
+        Context.ItemType = this.ItemType;
         Guid ID = await Context.Create(Title);
 
         // Laden
@@ -166,12 +165,16 @@
 
             // Create Event
             Context.Item = await Context.ItemType.OnCreateItem(args);
+
+            await this.ItemAdd(Context.Item);
         }
 
         // Related Item
         if (RelatedItem != null)
         {
             await sqlService.Assign(RelatedItem, Context.Item, Association);
+
+            await this.RelatedItemAdd(Context.Item);
         }
 
         // Clean
@@ -181,7 +184,7 @@
         AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
         msg.Publish(am);
 
-        // Search 
+        // Search
         await search.Init();
 
         // JSInterop: Fokus beim Laden direkt in die Textbox setzen
@@ -198,8 +201,8 @@
             await OnOK();
         }
     }
+
  
-    
     [Parameter]
     public EventCallback<IDTO> OnRelatedItemAdded { get; set; }
 
@@ -221,7 +224,7 @@
             await OnRelatedItemAdded.InvokeAsync(dto);
         }
     }
-    
+
     
     
     public async ValueTask DisposeAsync()

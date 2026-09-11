@@ -4,7 +4,7 @@
 
 @if (Context != null)
 {
-    <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-05 hover align-items-center drag list-item">
+    <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-1 hover align-items-center drag list-item">
 
         @if (IsSortable)
         {
@@ -37,7 +37,7 @@
         }
         else
         {
-            <div class="col px-2 fw-bold pointer text-truncate text-nowrap" title="@Item.ItemType"
+            <div class="col px-2 fw-bold pointer text-truncate text-nowrap @CheckStrikeOut()" title="@Item.ItemType"
                  @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
                 @(Item.Title.ToSecureString())
             </div>
@@ -95,6 +95,19 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private string CheckStrikeOut()
+    {
+        if (this.Item.ItemType == "Checklist")
+        {
+            if (Item["IsChecked"].ToSecureBool())
+            {
+                return " text-muted fw-normal text-decoration-line-through "; 
+            }
+        }
+
+        return string.Empty;
     }
 
 }

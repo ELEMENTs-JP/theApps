@@ -6,11 +6,12 @@
 {
     if (string.IsNullOrEmpty(this.Base64String))
     {
-        <FileInputBox OnFileUploaded="@( async e => { await OnFileUpload(e); })" />
+        <FileInputBox OnFileUploaded="@( async e => { await OnFileUpload(e); })"
+                      ItemType="@( ItemType )" FrameCSS="m-5" />
     }
     else
     {
-        <div id="@( "user_image_relative_" + ID )" class="align-items-center p-2" style="@MinStyle">
+        <div id="@( "user_image_relative_" + ID )" class="position-relative align-items-center p-2" style="@MinStyle">
 
             <div class="@( UserImageCSS  + " row col-auto mx-auto " )"  style="@(UserImageStyle + " "
                                        + BackgroundColor +
@@ -23,6 +24,11 @@
             </div>
             <div class="row g-0 col-12 p-2">
                 <h3 class="h3 text-center">@sec.User.Title</h3>
+            </div>
+
+
+            <div class="position-absolute top-0 end-0" style="opacity:0.35;" @onclick="DeleteUserImage">
+                <SymbolIcon Symbol="Icon.Delete" CSS="hover pointer rounded-2 p-1 mt-1 me-1" />
             </div>
         </div>
     }
@@ -52,10 +58,12 @@
 
     string BackgroundColor { get; set; } = "  ";
 
+    private IItemType ItemType { get; set; }
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-
+        ItemType = await new Factory(sql).BuildItemType("File");
 
     }
 
@@ -70,8 +78,7 @@
         }
     }
 
-
-    private async Task LoadUserImage()
+    private async Task DeleteUserImage()
     {
         // Check
         if (sec.User == null)
@@ -85,6 +92,30 @@
         IDTO? image = result.Items.FirstOrDefault();
         if (image == null)
             return;
+
+        await sql.Delete(image);
+
+        await LoadUserImage();
+    }
+    private async Task LoadUserImage()
+    {
+        // Check
+        if (sec.User == null)
+            return;
+
+        // Create
+        IQueryResult result = await sql.GetRelatedItems(sec.User, "File", AssociationTyp.UserImage);
+        if (result == null)
+            return;
+
+        IDTO? image = result.Items.FirstOrDefault();
+        if (image == null)
+        {
+            // Update
+            await InvokeAsync(StateHasChanged);
+            return;
+        }
+
 
         this.Base64String = await Helper.ToBase64String(image);
 

@@ -20,10 +20,14 @@ namespace theInfrastructure
             List<IItemType> ItemTypes = new();
 
 
-            //if (ast == AssociationTyp.Children)
-            //{
-            //    ItemTypes.Add(new ItemType_Checklist());
-            //}
+            if (ast == AssociationTyp.Related)
+            {
+                ItemTypes.Add(new ItemType_Task());
+            }
+            if (ast == AssociationTyp.Children)
+            {
+                ItemTypes.Add(new ItemType_Checklist());
+            }
 
             if (ast == AssociationTyp.Default)
             {

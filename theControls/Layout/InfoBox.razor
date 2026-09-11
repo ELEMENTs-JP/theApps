@@ -1,6 +1,9 @@
 @inject IJSRuntime JS
 @inject IMessagingBusService msg
-
+@inject INotificationService notify
+@inject ISqlDatabaseService sql
+@inject ISecurityService sec
+@implements IAsyncDisposable
 
 @if (!string.IsNullOrEmpty(this.Message))
 {
@@ -22,7 +25,7 @@
                 </div>
             </div>
             <div class="col p-2 pb-1 pt-0 ps-3">
-                <h4 class="alert-title">Information</h4>
+                <h4 class="alert-title">@Title</h4>
                 <div class="text-muted">@Message</div>
             </div>
 
@@ -46,6 +49,8 @@
     [Parameter]
     public string Message { get; set; } = "";
 
+    private string Title { get; set; } = "Information";
+
     [Parameter]
     public string FrameCSS { get; set; } = "";
 
@@ -64,13 +69,52 @@
         await base.OnInitializedAsync();
 
         msg.OnMessage += OnMessageIncome;
+        notify.OnNotify += OnNotification;
     }
 
+    private async void OnNotification(IDTO item, NotificationType typ, IDTO user)
+    {
+        if (typ == NotificationType.Update)
+        {
+            IQueryResult result = await sql.GetRelatedItems(sec.User, "Notification", AssociationTyp.Related);
+
+            IDTO? fav = result.Items.Find(se => 
+                se["GUID"] == item.GUID.ToSecureString() &&
+                se["Update"] == "true".ToSecureString() &&
+                se["ItemType"] == item.ItemType.ToSecureString());
+            if (fav != null)
+            {
+                Title = "Benachrichtigung";
+                Message = item.Title + " wurde von " + user.Title + " aktualisiert.";
+                await InvokeAsync(StateHasChanged);
+                await HideInfoAfterDelay();
+            }
+        }
+
+        if (typ == NotificationType.Delete)
+        {
+            IQueryResult result = await sql.GetRelatedItems(sec.User, "Notification", AssociationTyp.Related);
+
+            IDTO? fav = result.Items.Find(se =>
+                se["GUID"] == item.GUID.ToSecureString() &&
+                se["Delete"] == "true".ToSecureString() &&
+                se["ItemType"] == item.ItemType.ToSecureString());
+            if (fav != null)
+            {
+                Title = "Benachrichtigung";
+                Message = item.Title + " wurde von " + user.Title + " gelöscht.";
+                await InvokeAsync(StateHasChanged);
+                await HideInfoAfterDelay();
+            }
+        }
+    }
     private async void OnMessageIncome(AppMessage msg)
     {
         if (msg.Action == BusAction.Info)
         {
+            Title = "Information";
             Message = msg.Payload.ToSecureString();
+
             await InvokeAsync(StateHasChanged);
             await HideInfoAfterDelay();
         }
@@ -89,6 +133,17 @@
     {
         Message = string.Empty;
     }
-
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageIncome;
+            notify.OnNotify -= OnNotification;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
 
 }

@@ -1,6 +1,6 @@
 ﻿
 
-<div class="d-flex align-items-center flex-nowrap w-100">
+<div class="d-flex align-items-center flex-nowrap w-100 @CSS">
 @*     <i class="ti ti-progress px-1 text-muted"></i> *@
 
     <div class="progress me-2" style="height:0.7rem !important; width: 100% !important;" title="@("Progress: " + Number.ToSecureString() + " %")">
@@ -21,6 +21,9 @@
 
     [Parameter]
     public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
 
     public int Number { get; set; } = 0;
 

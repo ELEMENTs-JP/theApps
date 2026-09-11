@@ -62,6 +62,9 @@ namespace theApp
                 // Messaging Bus Service 
                 builder.Services.AddScoped<IMessagingBusService, MessagingBusService>();
 
+                // Wichtig: MUSS Singleton sein, damit alle User dieselbe Instanz teilen
+                builder.Services.AddSingleton<INotificationService, NotificationService>();
+
                 // Database Service 
                 builder.Services.AddScoped<ISqlDatabaseService>(provider =>
                 {

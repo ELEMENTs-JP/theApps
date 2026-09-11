@@ -6,6 +6,7 @@
 @inject ISqlDatabaseService sql
 @inject IAppService app
 @inject NavigationManager nm
+@inject INotificationService notify
 @inject IJSRuntime js
 @implements IAsyncDisposable
 
@@ -361,6 +362,9 @@
         // andere EditBox aufgrund Update oder Condition aktualisieren
         msg.Publish("EditBox", BusAction.Refresh, Context.Item);
 
+        // Notification Service 
+        notify.NotifyChanged(Context.Item, NotificationType.Update, sec.User);
+
         return Context.Item;
     }
     private async Task<IDTO> Change()
@@ -458,7 +462,7 @@
             }
             else
             {
-                
+                Context.Item[Field.Column] = value;
             }
 
             // if (!string.IsNullOrEmpty(value))

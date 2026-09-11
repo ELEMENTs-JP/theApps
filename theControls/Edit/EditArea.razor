@@ -1,4 +1,5 @@
-﻿@inject ISqlDatabaseService sql
+﻿@using theControls.List
+@inject ISqlDatabaseService sql
 @inject ISecurityService sec
 @inject IAppService app
 
@@ -7,73 +8,80 @@
 
 @if (ItemType != null && !string.IsNullOrEmpty(ID))
 {
+
    
+    <Frame Border="true" CSS="pt-2">
+        <Icon>
+            @if (ItemType.Typ == ItemTypeTyp.User)
+            {
+                <MinUserProfileImg Style="margin-top:6px;" User="@Context.Item" SizeStyle="height: 60px; width: 60px;" />
+            }
+        </Icon>
+        <Header>
+            <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)"
+                     Field="@TitleField" Binding="ValueBindingTyp.Title"
+                     Context="@Context" Border="false" ControlStyle=" min-width:21rem; " />
+            <div class="d-flex align-items-center" style="margin-left: 8px; margin-top: -8px;">
 
-        <Frame Border="true" CSS="pt-2">
-            <Icon>
-                @if (ItemType.Typ == ItemTypeTyp.User)
+                @if (app != null && app.App != null)
                 {
-                    <MinUserProfileImg Style="margin-top:6px;" User="@Context.Item" SizeStyle="height: 60px; width: 60px;" />
+                    <a href="@("/app/" + app.App.Name)" class="text-muted small" title="Application">
+                        @app.App.Name.ToSecureString()
+                    </a>
+                    <div class="vr"></div>
                 }
-            </Icon>
-            <Header>
-                <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)"
-                         Field="@TitleField" Binding="ValueBindingTyp.Title"
-                         Context="@Context" Border="false" ControlStyle=" min-width:21rem; " />
-                <div class="d-flex align-items-center" style="margin-left: 8px; margin-top: -8px;">
 
-                    @if (app != null && app.App != null)
-                    {
-                        <a href="@("/app/" + app.App.Name)" class="text-muted small" title="Application">
-                            @app.App.Name.ToSecureString()
-                        </a>
-                        <div class="vr"></div>
-                    }
-
-                    @if (Context != null && Context.ItemType != null)
-                    {
-                        <a href="@( Helper.LibraryUrl(Context.ItemType.Name, Context.ItemType.Typ) )" class="text-muted small" title="ItemType">
-                            @Context.ItemType.Name.ToSecureString()
-                        </a>
-                        <div class="vr"></div>
-                        <small class="text-muted small px-2 no-select">Typ: @Context.ItemType.Typ.ToSecureString()</small>
-                    }
-
-                    @if (Context != null && Context.Item != null)
-                    {
-                        <div class="vr"></div>
-                        <small class="text-muted small px-2 no-select">ID: @Context.Item.ID.ToSecureString()</small>
-                    }
-                </div>
-            </Header>
-            <Related>
-                <ContextMenu Context="@Context" ItemType="@ItemType" CSS="me-3" />
-                @if (Context.ItemType.Name == "User")
+                @if (Context != null && Context.ItemType != null)
                 {
-                    <SetPasswordComp Context="@Context" />
+                    <a href="@( Helper.LibraryUrl(Context.ItemType.Name, Context.ItemType.Typ) )" class="text-muted small" title="ItemType">
+                        @Context.ItemType.Name.ToSecureString()
+                    </a>
+                    <div class="vr"></div>
+                    <small class="text-muted small px-2 no-select">Typ: @Context.ItemType.Typ.ToSecureString()</small>
                 }
-            </Related>
-            <Content>
-                <div class="row g-0">
-                    @foreach (IField field in Fields)
+
+                @if (Context != null && Context.Item != null)
+                {
+                    <div class="vr"></div>
+                    <small class="text-muted small px-2 no-select">ID: @Context.Item.ID.ToSecureString()</small>
+                }
+
+                @if (RelatedItems != null && RelatedItems.Count > 0)
+                {
+                    <div class="vr"></div>
+                    <AllRelatedItemsPopup Items="@RelatedItems" />
+                }
+                    
+            </div>
+        </Header>
+        <Related>
+            <ContextMenu Context="@Context" ItemType="@ItemType" CSS="me-3" />
+            @if (Context.ItemType.Name == "User")
+            {
+                <SetPasswordComp Item="@Context.Item" Mode="ModalRenderMode.Modal" />
+            }
+        </Related>
+        <Content>
+            <div class="row g-0">
+                @foreach (IField field in Fields)
+                {
+                    @if (field.Typ == FieldTyp.HR)
                     {
-                        @if (field.Typ == FieldTyp.HR)
-                        {
-                            <div class="hr-text px-3">@field.Title</div>
-                        }
-                        else
-                        {
-                            <div class="@( field.CSS + " p-2 " )">
-                                <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column + "-" + Context.Item.GUID)"
-                                         Field="@field" Context="@Context"
-                                         IsEditable="@field.IsEditable" Border="false" />
-                            </div>
-                        }
+                        <div class="hr-text px-3">@field.Title</div>
                     }
-                </div>
-            </Content>
-        </Frame>
- 
+                    else
+                    {
+                        <div class="@( field.CSS + " p-2 " )">
+                            <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column + "-" + Context.Item.GUID)"
+                                     Field="@field" Context="@Context"
+                                     IsEditable="@field.IsEditable" Border="false" />
+                        </div>
+                    }
+                }
+            </div>
+        </Content>
+    </Frame>
+
 }
 
 
@@ -89,13 +97,14 @@
     IField TitleField { get; set; }
     List<IField> Fields { get; set; } = new();
 
+    private List<IDTO> RelatedItems { get; set; } = new();
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
 
         if (ItemType == null)
             return;
-
 
         // Field
         TitleField = new Factory(sql).BuildField(FieldTyp.Heading);
@@ -107,10 +116,23 @@
         Context.ItemType = ItemType;
         await Context.Load(ID);
 
-
+        await ValidateParents();
     }
 
- 
+    private async Task ValidateParents()
+    {
+        if (ItemType == null)
+            return;
+
+        if (Context == null)
+            return;
+
+        IQueryParameter query = new QueryParameter();
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.ItemType = ItemType.Name;
+        IQueryResult result = await sql.GetRelatedItems(Context.Item, "", AssociationTyp.Association);
+        RelatedItems = result.Items;
+    }
 
     public async ValueTask DisposeAsync()
     {

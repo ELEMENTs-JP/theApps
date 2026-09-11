@@ -6,6 +6,10 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
 
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
+
 namespace theInfrastructure
 {
     public class SMTPConfiguration
@@ -31,7 +35,6 @@ namespace theInfrastructure
         }
 
     }
-
     public enum EMailType
     {
         NULL = 0,
@@ -55,8 +58,6 @@ namespace theInfrastructure
         public byte[] Array { get; set; } = null;
     }
   
-    
-
     public static partial class Helper
     {
 
@@ -125,7 +126,7 @@ namespace theInfrastructure
                         if (file?.Array == null)
                             continue;
 
-                        var contentType = new ContentType(file.ContentType);
+                        var contentType = new System.Net.Mime.ContentType(file.ContentType);
                         var contentStream = new MemoryStream(file.Array);
                         var fa = new Attachment(contentStream, contentType);
 
@@ -163,9 +164,9 @@ namespace theInfrastructure
             }
         }
 
-        private static SmtpClient CreateSmtpClient(SMTPConfiguration config, int port)
+        private static System.Net.Mail.SmtpClient CreateSmtpClient(SMTPConfiguration config, int port)
         {
-            return new SmtpClient(config.Server, port)
+            return new System.Net.Mail.SmtpClient(config.Server, port)
             {
                 Credentials = new NetworkCredential(config.User, config.Password),
                 EnableSsl = config.SSL
@@ -457,4 +458,137 @@ namespace theInfrastructure
         }
 
     }
+
+    public static partial class Helper
+    {
+        // Mailkit 
+        public static async Task SendSmtpMailKitAsync(string to, string topic, string message, EMailType mailtype,
+                    SMTPConfiguration config, string filename = "", string from = "", string template = "mail",
+                        string link = "", string code = "", string inlineTitle = "",
+                            List<MailFileAttachment> attachments = null, Guid userGUID = default)
+        {
+            // Validierung
+            if (config == null || !config.IsEMailActive || string.IsNullOrWhiteSpace(to) || !to.Contains("@"))
+                return;
+
+            if (string.IsNullOrEmpty(config.Server) || string.IsNullOrEmpty(config.Port) || !int.TryParse(config.Port, out int port))
+                return;
+
+            // Mail-Inhalt generieren
+            string innerHTML = GetHtmlByMailType(topic, message, mailtype, link, code);
+            string fullHTML = GetEmptyHtmlMailTemplate(innerHTML, topic, config, userGUID);
+
+            try
+            {
+                var email = new MimeMessage();
+
+                // Absender & Empfänger
+                string senderAddress = string.IsNullOrWhiteSpace(from) ? config.User : from;
+                email.From.Add(new MailboxAddress("the App Tools", senderAddress));
+                email.To.Add(MailboxAddress.Parse(to));
+
+                // Betreff
+                email.Subject = !string.IsNullOrEmpty(topic) ? topic : "Mail";
+
+                // BodyBuilder verwaltet Text, HTML und Anhänge
+                var builder = new BodyBuilder
+                {
+                    HtmlBody = fullHTML
+                };
+
+                // 1. Datei-Anhang (Pfad)
+                if (!string.IsNullOrEmpty(filename) && File.Exists(filename))
+                {
+                    builder.Attachments.Add(filename);
+                }
+
+                // 2. Automatischer Widerruf-Anhang bei bestimmten E-Mail-Typen
+                if (mailtype == EMailType.InvoiceMail || mailtype == EMailType.OrderMail)
+                {
+                    string wdrlink = "./files/Widerrufserklaerung.docx";
+                    if (File.Exists(wdrlink))
+                    {
+                        builder.Attachments.Add(wdrlink);
+                    }
+                }
+
+                // 3. Dynamische In-Memory Anhänge
+                if (attachments != null && attachments.Count > 0)
+                {
+                    foreach (var file in attachments)
+                    {
+                        if (file?.Array == null)
+                            continue;
+
+                        // ContentType parsen oder Fallback nutzen
+                        if (!MimeKit.ContentType.TryParse(file.ContentType, out var parsedContentType))
+                        {
+                            parsedContentType = new MimeKit.ContentType("application", "octet-stream");
+                        }
+
+                        builder.Attachments.Add(file.FileName, file.Array, parsedContentType);
+                    }
+                }
+
+                email.Body = builder.ToMessageBody();
+
+                // Versand-Logik via MailKit
+                await ExecuteSendAsync(config, port, email);
+            }
+            catch (Exception ex)
+            {
+                // Fehlerbehandlung / Logging
+            }
+        }
+
+        private static async Task ExecuteSendAsync(SMTPConfiguration config, int port, MimeMessage message)
+        {
+            try
+            {
+                await SendWithPortAsync(config, port, message);
+            }
+            catch
+            {
+                // Fallback-Port versuchen (z. B. 465 statt 587 oder umgekehrt)
+                int fallbackPort = (port == 587) ? 465 : 587;
+                await SendWithPortAsync(config, fallbackPort, message);
+            }
+        }
+
+        private static async Task SendWithPortAsync(SMTPConfiguration config, int port, MimeMessage message)
+        {
+            using var client = new MailKit.Net.Smtp.SmtpClient();
+
+            // SSL/TLS-Option basierend auf Port und Config festlegen
+            SecureSocketOptions socketOptions;
+            if (!config.SSL)
+            {
+                socketOptions = SecureSocketOptions.None;
+            }
+            else if (port == 465)
+            {
+                socketOptions = SecureSocketOptions.SslOnConnect;
+            }
+            else
+            {
+                socketOptions = SecureSocketOptions.StartTls;
+            }
+
+            // Verbindung aufbauen
+            await client.ConnectAsync(config.Server, port, socketOptions);
+
+            // Authentifizieren (falls Anmeldedaten vorhanden sind)
+            if (!string.IsNullOrEmpty(config.User) && !string.IsNullOrEmpty(config.Password))
+            {
+                await client.AuthenticateAsync(config.User, config.Password);
+            }
+
+            // E-Mail senden & Verbindung trennen
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
+        }
+    }
+
+
+
 }

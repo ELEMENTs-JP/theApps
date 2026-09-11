@@ -951,7 +951,56 @@ namespace theDatabase
 
             return resultList;
         }
+
         public async Task<List<IDTO>> GetAll(IDTO dto, string ItemType, AssociationTyp typ)
+        {
+            List<IDTO> resultList = new List<IDTO>();
+
+            try
+            {
+                using SQLiteContext ctx = GetContext();
+
+                var query = await (from content in ctx.tbl_CON_Content
+
+                                   // Suche Relationen, wo Content das Parent ist und dto.GUID das Child
+                                   join pr in ctx.tbl_TEC_Relation
+                                     on new { Parent = content.GUID, Child = dto.GUID }
+                                 equals new { Parent = pr.ParentGUID, Child = pr.ChildGUID } into parentRelations
+                                   from pr in parentRelations.DefaultIfEmpty()
+
+                                       // Suche Relationen, wo Content das Child ist und dto.GUID das Parent
+                                   join cr in ctx.tbl_TEC_Relation
+                                     on new { Child = content.GUID, Parent = dto.GUID }
+                                 equals new { Child = cr.ChildGUID, Parent = cr.ParentGUID } into childRelations
+                                   from cr in childRelations.DefaultIfEmpty()
+
+                                       // Es dürfen nur Einträge geladen werden, die mindestens eine Treffer-Relation haben
+                                   where (pr != null || cr != null)
+                                      && (string.IsNullOrEmpty(ItemType) || content.ItemType == ItemType)
+
+                                   select new
+                                   {
+                                       Content = content,
+                                       RelationType = pr != null ? pr.RelationType : cr.RelationType
+                                   }).Distinct().ToListAsync();
+
+                foreach (var item in query)
+                {
+                    if (item.Content is IDTO dtoItem)
+                    {
+                        dtoItem.RelationType = item.RelationType;
+                        resultList.Add(dtoItem);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return resultList.DistinctBy(se => se.GUID).ToList();
+        }
+        public async Task<List<IDTO>> GetAllObsolete(IDTO dto, string ItemType, AssociationTyp typ)
         {
             List<IDTO> resultList = new List<IDTO>();
             
@@ -969,7 +1018,7 @@ namespace theDatabase
                                      on content.GUID equals relation2.ChildGUID into childRelations
                                    from cr in childRelations.DefaultIfEmpty()
 
-                                   where content.ItemType == ItemType 
+                                   where string.IsNullOrEmpty(ItemType) || content.ItemType == ItemType
 
                                    select new
                                    {

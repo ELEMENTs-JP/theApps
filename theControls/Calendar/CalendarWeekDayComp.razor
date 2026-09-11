@@ -1,4 +1,12 @@
-﻿<div class="col border-end position-relative" style="height: 1440px;">
+﻿@inject ISqlDatabaseService sql
+@inject NavigationManager nm
+@inject IMessagingBusService msg
+@inject ISearchService search
+@inject ISecurityService sec
+@inject IAppService app
+@inject ISqlDatabaseService sql
+
+<div class="col border-end position-relative" style="height: 1440px;">
 
     <!-- Hintergrund-Zeitraster (24 Stunden x 60px = 1440px) -->
     <div class="h-100">
@@ -13,9 +21,14 @@
     {
         int topOffset = (DateTime.Now.Hour * 60) + DateTime.Now.Minute;
         <div class="position-absolute start-0 w-100 d-flex align-items-center"
-             style="top: @(topOffset)px; z-index: 20; pointer-events: none;">
+             style="top: @(topOffset)px; z-index: 20; ">
             <div class="bg-secondary rounded-circle" style="width: 8px; height: 8px; margin-left: -4px;"></div>
-            <div class="border-top border-secondary border-2 w-100"></div>
+            <div class="border-top border-secondary border-2 w-100 position-relative">
+                <div class="position-absolute top-0 end-0 p-1 rounded-2 hover pointer"
+                        @onclick="CreateRedirect">
+                    <SymbolIcon Symbol="Icon.Neu" CSS="" />
+                </div>
+            </div>
         </div>
     }
 
@@ -165,5 +178,38 @@
             return true;
 
         return false;
+    }
+
+    private async Task CreateRedirect()
+    {
+        IQueryParameter qp = QueryParameter.Default("neuer Termin");
+        qp.ItemType = "Appointment";
+        qp.MasterGUID = sql.MasterGUID;
+
+        await sql.Create(qp);
+
+        IQueryResult result = await sql.GetItem(qp);
+        IDTO newItem = result.Items.FirstOrDefault();
+        if (newItem != null)
+        {
+            nm.NavToItem(qp.ItemType, qp.GUID);
+
+            if (sec.Configuration.EventHandler == true)
+            {
+                // Event
+                IItemEventArgs args = new ItemEventArgs(newItem, null, sql, sec, app);
+
+                // Create Event 
+                IItemType it = await new Factory(sql).BuildItemType(qp.ItemType);
+                newItem = await it.OnCreateItem(args);
+            }
+
+            // Message
+            AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
+            msg.Publish(am);
+
+            // Search
+            await search.Init();
+        }
     }
 }

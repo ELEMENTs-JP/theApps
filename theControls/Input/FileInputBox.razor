@@ -14,7 +14,7 @@
 
 @if (ItemType != null)
 {
-    <div class="pointer @app.Configuration.GetRoundedCSS() overflow-hidden bg-surface text-secondary position-relative mx-2"
+    <div class="@FrameCSS pointer @app.Configuration.GetRoundedCSS() overflow-hidden bg-surface text-secondary position-relative mx-2"
          style="@( (SizeMode == FileInputSizeMode.Maximized 
                         ? " border: 2px dashed #999 !important; " 
                         : " border: 1px dashed #555 !important; " ) + " " + InternalStyle )">

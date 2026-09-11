@@ -1,0 +1,72 @@
+﻿@inject ISqlDatabaseService sql
+@inject ILocalizationService loc
+@inject IAppService app
+
+@if (Context != null)
+{
+    <div class="border-hover rounded-2 bg-surface p-2" style="@app.Configuration.GetAkzentStyle()">
+
+
+        <div class="row g-0">
+            <div class="col-12 p-1">
+
+                <EditBox @key="@( "RelBox-" + Context.ID + "-" + Context.Item.GUID)"
+                         Field="@( TimeFrame )" Context="@Context" Border="false" />
+            </div>
+        </div>
+
+        <div class="row g-0">
+            <div class="col-12 col-md-4 col-lg-4 p-1">
+
+                <EditBox @key="@( "RelBox-" + Context.ID + "-" + Context.Item.GUID)"
+                         Field="@( Folder )" Context="@Context" Border="false" />
+            </div>
+            <div class="col-12 col-md-4 col-lg-4 p-1">
+                <EditBox @key="@( "RelBox-" + Context.ID + "-" + Context.Item.GUID)"
+                         Field="@( Tag )" Context="@Context" Border="false" />
+
+            </div>
+            <div class="col-12 col-md-4 col-lg-4 p-1">
+
+                <EditBox @key="@( "RelBox-" + Context.ID + "-" + Context.Item.GUID)"
+                         Field="@( Label )" Context="@Context" Border="false" />
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code {
+
+    [Parameter]
+    public IQueryContext Context { get; set; }
+
+    IField TimeFrame { get; set; }
+    IField Folder { get; set; }
+    IField Tag { get; set; }
+    IField Label { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        TimeFrame = new Factory(sql).BuildField(FieldTyp.Select);
+        TimeFrame.Title = "Time Frame";
+        TimeFrame.ItemType = "TimeFrame";
+
+        Folder = new Factory(sql).BuildField(FieldTyp.Select);
+        Folder.Title = "Folder";
+        Folder.ItemType = "Folder";
+
+        Tag = new Factory(sql).BuildField(FieldTyp.Select);
+        Tag.Title = "Tag";
+        Tag.Title = "Tag";
+        Tag.ItemType = "Tag";
+
+        Label = new Factory(sql).BuildField(FieldTyp.Select);
+        Label.Title = "Label";
+        Label.ItemType = "Label";
+    }
+
+}

@@ -14,14 +14,11 @@ namespace theControls.Elements
 {
     public class BaseList : ComponentBase, IAsyncDisposable
     {
-        [Inject]
-        public IMessagingBusService bus { get; set; } = default!;
+        [Inject]public IMessagingBusService bus { get; set; } = default!;
 
-        [Inject]
-        public ISqlDatabaseService sql { get; set; } = default!;
+        [Inject]public ISqlDatabaseService sql { get; set; } = default!;
 
-        [Inject]
-        public ISecurityService sec { get; set; } = default!;
+        [Inject]public ISecurityService sec { get; set; } = default!;
 
         [Parameter]
         public AssociationTyp Association { get; set; } = AssociationTyp.NULL;
@@ -38,14 +35,32 @@ namespace theControls.Elements
         [Parameter]
         public bool HasItems { get; set; } = false;
 
+        [Parameter]
+        public EventCallback<string> OnSearch { get; set; }
+
+        public int InternalSearchCount { get; set; } = 0;
+
         // Events 
         protected override async Task OnInitializedAsync()
         {
             bus.OnMessage += OnMessageIncome;
+
+       
         }
         protected override async Task OnParametersSetAsync()
         {
             await base.OnParametersSetAsync();
+
+            await Search();
+        }
+
+        // Methoden 
+        private async Task Search()
+        {
+            if (Context == null && ItemType != null)
+            {
+                Context = new QueryContext(sql, sec, ItemType);
+            }
 
             if (ItemType != null && Context != null)
             {
@@ -53,7 +68,7 @@ namespace theControls.Elements
                 if (this is DataTable dataTable)
                 {
                     if (Context.Filter == null)
-                    { 
+                    {
                         IFilterParameter filter = new FilterParameter();
                         Context.Filter = filter;
                     }
@@ -66,6 +81,10 @@ namespace theControls.Elements
                 {
                     Context.RelatedItem = RelatedItem;
                     Context.Items = await Context.RelatedItems(ItemType.Name, Association);
+
+                    InternalSearchCount++;
+
+                    await ValidateProgressVisibility();
                 }
                 else
                 {
@@ -77,26 +96,12 @@ namespace theControls.Elements
             }
         }
 
-        [Parameter]
-        public EventCallback<string> OnSearch { get; set; }
-
+        // Callback 
         private async void OnMessageIncome(AppMessage msg)
         {
             if (msg.Action == BusAction.Refresh)
             {
-                if (ItemType != null && Context != null)
-                {
-                    if (RelatedItem != null)
-                    {
-                        // Related Items
-                        Context.RelatedItem = RelatedItem;
-                        Context.Items = await Context.RelatedItems(ItemType.Name, Association);
-                    }
-                    else
-                    {
-                        await Context.Search();
-                    }
-                }
+                await Search();
 
                 await InvokeAsync(this.StateHasChanged);
 
@@ -108,23 +113,44 @@ namespace theControls.Elements
                     msg.Reply?.Invoke(new AppMessage(msg.Id, BusAction.Refresh));
                 }
             }
+        }
 
+        public bool ShowProgressBar { get; set; } = false;
+        public string Progress { get; set; } = "0";
 
-            if (msg.Id == "LocalSearch" && msg.Action == BusAction.Search)
+        private async Task ValidateProgressVisibility()
+        {
+            ShowProgressBar = false;
+
+            if (Context?.Items == null || Context.Items.Count == 0)
+                return;
+
+            string col = await Context.ItemType.GetRelevantPropertyName(RelevantPropertyType.Progress);
+            if (string.IsNullOrEmpty(col))
+                return;
+
+            ShowProgressBar = true;
+            int count = Context.Items.Count;
+            int sum = 0;
+
+            // Lokale Referenz oder Aufruf einmalig abrufen
+            var values = Context.ValuesByColumn(col);
+
+            // Bei Listen/Arrays ist for-Schleife performanter als foreach (vermeidet Enumerator-Allokation)
+            if (values is IList<string> list)
             {
-                //List<IDTO> items = new();
-                //string matchcode = msg.Payload.ToSecureString();
-                //if (string.IsNullOrEmpty(matchcode))
-                //{
-                //    await Context.Search();
-                //}
-                //else
-                //{ 
-                //    await Context.Filter(matchcode);
-                //}
+                int listCount = list.Count;
+                for (int i = 0; i < listCount; i++)
+                {
+                    sum += list[i].ExtractNumber();
+                }
             }
 
+            // Präzise Division (Decimal) und Guard gegen Division durch Null
+            decimal average = (decimal)sum / count;
+            Progress = average.ToSecureInt().ToSecureString();
         }
+
         public async ValueTask DisposeAsync()
         {
             try

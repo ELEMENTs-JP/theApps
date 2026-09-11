@@ -1,26 +1,70 @@
 ﻿@using theControls.Icons
+@using theControls.Security
 @inject ISecurityService sec
 
 
-@if(sec.User != null)
+@if (sec.User != null)
 {
-    <div class="d-flex flex-row bg-surface p-2 align-items-center  border-bottom border-start border-end">
-        <SymbolIcon Symbol="Icon.User" />
+    <div class="d-flex flex-row bg-surface align-items-center  border-bottom border-start border-end">
+
         
-        <span class="px-2">
-            @sec.User.Title
-        </span>
-        
-        @if (IsAdmin)
-        {
-            <SymbolIcon Symbol="Icon.Admin" Color="var(--tblr-red)" Title="Nutzer ist Administrator" />
-        }
+        <ModalForm @key="@(new Guid().ToSecureString())" Title="Persönliche Einstellungen"
+                   ShowTitleInButton="false" FrameCSS="@CSS"
+                   ButtonText="@sec.User.Title" Value="">
+            <Icon>
+                @if (IsAdmin)
+                {
+                    <SymbolIcon Symbol="Icon.Admin" Color="var(--tblr-red)" Title="Nutzer ist Administrator" />
+                }
+                else
+                {
+                    <SymbolIcon Symbol="Icon.User" />
+                }
+            </Icon>
+            <ChildContent>
+
+                <div class="row g-0 align-items-center">
+                    <div class="col-6 align-items-center">
+                        <TextBlock Label="Bezeichnung" Value="@sec.User.Title" />
+                    </div>
+                    <div class="col-6 align-items-center">
+                        <TextBlock Label="Account" Value="@sec.User["Mail"].ToSecureString()" />
+                    </div>
+                </div>
+
+                <div class="hr" />
+
+                <div class="row g-0 align-items-center">
+                    <div class="col-12 p-2 align-items-center">
+                        <h3 class="h3">Neues Passwort setzen...</h3>
+                    </div>
+                    <div class="col-12 align-items-center">
+                        <SetPasswordComp Item="@sec.User" Mode="ModalRenderMode.Inline" />
+                    </div>
+                </div>
+
+            </ChildContent>
+            <FooterContent>
+
+            </FooterContent>
+        </ModalForm>
+
     </div>
+
+
+
+
+
+
+  
 }
 
 
 
 @code {
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
 
     bool IsAdmin { get; set; } = false;
 

@@ -20,4 +20,10 @@
     <Folder Include="FILES\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\favicon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

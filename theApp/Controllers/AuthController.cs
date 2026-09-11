@@ -55,7 +55,7 @@ public class AuthController : ControllerBase
         // Password 
         string pwd = user["Password"].ToSecureString();
         if (pwd != password)
-        { 
+        {
             string hash = Encryption.HashPassword(password);
             if (pwd != hash)
             {
@@ -63,24 +63,25 @@ public class AuthController : ControllerBase
             }
         }
 
-        if (user != null)
-        {
-            // Nutzer zuordnen falls nicht zugeordnet 
-            await AssignToPrincipal(user);
+        bool isActive = user["IsActive"].ToSecureBool();
+        if (isActive == false)
+            return Redirect("/login?error=true");
 
-            // Einloggen 
-            await SignIn(username, user.GUID, remember);
-            return LocalRedirect("/");
-        }
 
-        return Redirect("/login?error=true");
+        // Nutzer zuordnen falls nicht zugeordnet 
+        await AssignToPrincipal(user);
+
+        // Einloggen 
+        await SignIn(username, user.GUID, remember);
+        return LocalRedirect("/");
+
     }
 
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        
+
         // Clean Security Service 
         await security.Logoff();
 
@@ -137,12 +138,12 @@ public class AuthController : ControllerBase
             await sqlService.Update(newUser);
 
             string hash = Encryption.HashPassword(password);
-          
-                newUser["Password"] = hash;
 
-                // Update 
-                await sqlService.Update(newUser);
-          
+            newUser["Password"] = hash;
+
+            // Update 
+            await sqlService.Update(newUser);
+
 
             // Nutzer zuordnen falls nicht zugeordnet 
             await AssignToPrincipal(newUser);
@@ -225,7 +226,7 @@ public class AuthController : ControllerBase
 
         return Redirect("/setup?error=true");
     }
-    
+
 
 
 
@@ -245,10 +246,10 @@ public class AuthController : ControllerBase
         IQueryResult pResult = await sqlService.GetItems(query);
 
         // Principal filtern 
-        IDTO principal = pResult.Items.Where(se => 
-                            se.GUID == SQLiteService.GeneralMasterGUID && 
+        IDTO principal = pResult.Items.Where(se =>
+                            se.GUID == SQLiteService.GeneralMasterGUID &&
                             se.MasterGUID == SQLiteService.GeneralMasterGUID).FirstOrDefault();
-        
+
         // prüfen ob existiert : falls NEIN 
         if (principal == null)
         {
@@ -273,10 +274,10 @@ public class AuthController : ControllerBase
         // nach zugeordneten User suchen 
         IQueryResult userListResult = await sqlService.GetRelatedItems(principal, "User");
         IDTO findUser = userListResult.Items.Where(se => se.GUID == user.GUID).FirstOrDefault();
-        
+
         // wenn kein Nutzer zugeordnet ist 
         if (findUser == null)
-        { 
+        {
             // zuordnen 
             await sqlService.Assign(principal, user);
         }
@@ -292,8 +293,8 @@ public class AuthController : ControllerBase
             };
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var authProperties = new AuthenticationProperties 
-        { 
+        var authProperties = new AuthenticationProperties
+        {
             IsPersistent = remember,
 
             ExpiresUtc = remember

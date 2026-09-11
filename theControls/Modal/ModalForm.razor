@@ -5,124 +5,133 @@
 @inject IAppService app
 @inject IJSRuntime js
 
-<!-- Button -->
-<div class="@( GetButtonGroupClass() + " " + FrameCSS )"
-     data-bs-toggle="modal" title="@ButtonToolTip"
-     data-bs-target="@( "#modal_" + modalGUID.ToString() )">
+@if (Mode == ModalRenderMode.Modal)
+{
+    <!-- Button -->
+    <div class="@( GetButtonGroupClass() + " " + FrameCSS )"
+         data-bs-toggle="modal" title="@ButtonToolTip"
+         data-bs-target="@( "#modal_" + modalGUID.ToString() )">
 
-
-
-    @if (!string.IsNullOrEmpty(ButtonText))
-    {
-        @if (ShowTitleInButton)
+        @if (!string.IsNullOrEmpty(ButtonText))
         {
-            <div id="@( "Title_Text_" + modalGUID )" class="@( "" + TitleCSS )">
+            @if (ShowTitleInButton)
+            {
+                <div id="@( "Title_Text_" + modalGUID )" class="@( "" + TitleCSS )">
 
+                    @if (!string.IsNullOrEmpty(ButtonIcon))
+                    {
+                        @(((MarkupString)ButtonIcon.ToSecureString()))
+                    }
+
+                    @(((MarkupString)Title.ToSecureString()))
+                </div>
+            }
+        }
+
+        @if (!string.IsNullOrEmpty(Value))
+        {
+            <div id="@( "Button_Value_" + modalGUID )" class="@( " " + ValueCSS )" @onclick="onBtnClck">
+                @(((MarkupString)Value.ToSecureString()))
+            </div>
+        }
+
+    
+        <div id="@( "Toggle_Button_" + modalGUID )" class="@( ButtonCSS + " d-flex gap-1 align-items-center position-relative " )">
+
+            @if (Icon.HasContent())
+            {
+                @Icon
+            }
+
+            @if (!string.IsNullOrEmpty(ButtonText))
+            {
                 @if (!string.IsNullOrEmpty(ButtonIcon))
                 {
                     @(((MarkupString)ButtonIcon.ToSecureString()))
                 }
-
-                @(((MarkupString)Title.ToSecureString()))
-            </div>
-        }
-    }
-
-    @if (!string.IsNullOrEmpty(Value))
-    {
-        <div id="@( "Button_Value_" + modalGUID )" class="@( " " + ValueCSS )" @onclick="onBtnClck">
-            @(((MarkupString)Value.ToSecureString()))
-        </div>
-    }
-
-    
-    <div id="@( "Toggle_Button_" + modalGUID )" class="@( ButtonCSS + " d-flex gap-1 align-items-center position-relative " )">
-
-        @if (Icon.HasContent())
-        {
-            @Icon
-        }
-
-        @if (!string.IsNullOrEmpty(ButtonText))
-        {
-            @if (!string.IsNullOrEmpty(ButtonIcon))
-            {
-                @(((MarkupString)ButtonIcon.ToSecureString()))
+                @(((MarkupString)ButtonText.ToSecureString()))
             }
-            @(((MarkupString)ButtonText.ToSecureString()))
-        }
-        else
-        {
-            @if (!string.IsNullOrEmpty(ButtonIcon))
+            else
             {
-                @(((MarkupString)ButtonIcon.ToSecureString()))
-            }
-       @*      @(((MarkupString)Title.ToSecureString())) *@
-        }
-
-        @if (Count >= 1)
-        {
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                @Count.ToSecureString()
-            </span>
-        }
-    </div>
-
-</div>
-
-
-<!-- Modal -->
-<div class="@FormCSS" id="@( "modal_" + modalGUID.ToString() )" tabindex="-1"
-     aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false">
-    <div class="@( ModalCSS + " " + SetSize() )" style="@( "" )">
-        <div class="modal-content rounded-2 border-start border-end border-bottom border-top-primary-3"
-             style="@( " " + GetFrameStyle() + " " + SetHeight()  )">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">@((MarkupString)Title)</h5>
-                <div class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="closeclick"></div>
-            </div>
-            @if (!string.IsNullOrEmpty(Description))
-            {
-                <div class="w-100 border-bottom bg-surface-secondary p-2 ps-4 overflow-hidden">
-                    <small class="text-muted text-truncate-line">@Description.ToSecureString()</small>
-                </div>
-
-            }
-            <div class="@ContentCSS modal-body" style="height:625px;">
-
-                @if (RelatedContent.HasContent())
+                @if (!string.IsNullOrEmpty(ButtonIcon))
                 {
-                    <div>
-                        @RelatedContent
-                    </div>
+                    @(((MarkupString)ButtonIcon.ToSecureString()))
                 }
+                @*      @(((MarkupString)Title.ToSecureString())) *@
+            }
 
-                @ChildContent
-            </div>
-            <div class="modal-footer">
-                <div class="row g-0 align-items-center">
-                    <div class="col">
-                        @FooterContent
+            @if (Count >= 1)
+            {
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    @Count.ToSecureString()
+                </span>
+            }
+        </div>
+
+    </div>
+
+
+    <!-- Modal -->
+    <div class="@FormCSS" id="@( "modal_" + modalGUID.ToString() )" tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false">
+        <div class="@( ModalCSS + " " + SetSize() )" style="@( "" )">
+            <div class="modal-content rounded-2 border-start border-end border-bottom border-top-primary-3"
+                 style="@( " " + GetFrameStyle() + " " + SetHeight()  )">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">@((MarkupString)Title)</h5>
+                    <div class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="closeclick"></div>
+                </div>
+                @if (!string.IsNullOrEmpty(Description))
+                {
+                    <div class="w-100 border-bottom bg-surface-secondary p-2 ps-4 overflow-hidden">
+                        <small class="text-muted text-truncate-line">@Description.ToSecureString()</small>
                     </div>
-                    <div class="col-auto">
-                        <div class="hover pointer p-2 px-3 rounded me-3" data-bs-dismiss="modal" @onclick="cancelclick">@CancelTitle</div>
-                    </div>
-                    <div class="col-auto">
-                        @* data-bs-dismiss="@dismissObject" *@
-                        <div class="btn btn-primary"  @onclick="okclick">@OKTitle</div>
+
+                }
+                <div class="@ContentCSS modal-body" style="height:625px;">
+
+                    @if (RelatedContent.HasContent())
+                    {
+                        <div>
+                            @RelatedContent
+                        </div>
+                    }
+
+                    @ChildContent
+                </div>
+                <div class="modal-footer">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            @FooterContent
+                        </div>
+                        <div class="col-auto">
+                            <div class="hover pointer p-2 px-3 rounded me-3" data-bs-dismiss="modal" @onclick="cancelclick">@CancelTitle</div>
+                        </div>
+                        <div class="col-auto">
+                            @* data-bs-dismiss="@dismissObject" *@
+                            <div class="btn btn-primary" @onclick="okclick">@OKTitle</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
+ 
+}
+else
+{
+    @ChildContent
+}
 
 
 @code {
 
     private string modalGUID = Guid.NewGuid() + "_modal_form_" + DateTime.Now.ToShortDateString();
-     // private string dismissObject = ""; // modal
+    // private string dismissObject = ""; // modal
+
+    [Parameter]
+    public ModalRenderMode Mode { get; set; } = ModalRenderMode.Modal;
 
     [Parameter]
     public string Title { get; set; } = string.Empty;

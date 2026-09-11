@@ -1,0 +1,49 @@
+﻿@inject NavigationManager nm
+
+@if (Items != null && Items.Count > 0)
+{
+    <div class="dropdown-center @CSS " role="group">
+
+        <div class="align-items-center pointer hover rounded-1 px-2 mx-1" data-bs-toggle="dropdown">
+            <small class="text-muted d-inline-flex">
+                <SymbolIcon Symbol="Icon.Connect" CSS="me-2" Style=" "/>@Items.Count
+            </small>
+        </div>
+
+        <div class="dropdown-menu" style="min-width:15rem;max-width:21rem;">
+
+            <div class="p-2 mb-2 fw-bold border-bottom text-secondary">Verbundene Einträge</div>
+
+            @foreach (IDTO item in Items.ValidateNavigateableItems())
+            {
+                <div class="dropdown-item d-flex align-items-center px-2"
+                     @onclick="@(() => nm.NavToItem(item.ItemType, item.GUID))">
+                    <div class="flex-grow-1 text-truncate pe-3">@item.Title</div>
+                    <div class="text-muted small">@item.ItemType</div>
+                </div>
+            }
+
+            @if (Items.Count != Items.ValidateNavigateableItems().Count)
+            {
+                <div class="border-top d-flex align-items-center p-2 text-muted small">
+                    <div class="flex-grow-1 text-truncate pe-3">Nicht einsehbare Einträge</div>
+                    <div class="text-muted small">
+                        @((Items.Count - Items.ValidateNavigateableItems().Count))
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
+
+    [Parameter]
+    public List<IDTO> Items { get; set; } = new();
+
+}

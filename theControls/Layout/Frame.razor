@@ -7,7 +7,7 @@
 <div class="@( " bg-surface " + CSS + "   " + GetCssClass() + " " + app.Configuration.GetRoundedCSS() )" 
             style="@( " " + app.Configuration.GetAkzentStyle() + " " )">
 
-    <div class="d-flex flex-row border-bottom align-items-center py-1">
+    <div class="d-flex flex-row @HeadBorderCSS align-items-center py-1">
 
         @if (Icon.HasContent())
         {
@@ -54,7 +54,7 @@
     @if (Content.HasContent())
     {
         <div class="row g-0 px-1">
-            <div class="col-12 p-2">
+            <div class="col-12 @ContentCSS">
                 @Content
             </div>
         </div>
@@ -62,7 +62,7 @@
 
     @if (Bottom.HasContent())
     {
-        <div class="row g-0 px-1 border-top">
+        <div class="row g-0 px-1 @BottomBorderCSS">
             <div class="col-12 p-2">
                 @Bottom
             </div>
@@ -77,7 +77,16 @@
     public bool Border { get; set; } = false;
 
     [Parameter]
+    public string BottomBorderCSS { get; set; } = " border-top ";
+
+    [Parameter]
+    public string HeadBorderCSS { get; set; } = " border-bottom ";
+
+    [Parameter]
     public string CSS { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ContentCSS { get; set; } = " p-2 ";
 
     [Parameter]
     public RenderFragment Icon { get; set; }

@@ -23,6 +23,10 @@ namespace theInfrastructure
             ItemTypes.Add(new ItemType_Trash());
             ItemTypes.Add(new ItemType_Archive());
 
+            ItemTypes.Add(new ItemType_Folder());
+            ItemTypes.Add(new ItemType_Tag());
+            ItemTypes.Add(new ItemType_Label());
+
             return ItemTypes;
         }
     }

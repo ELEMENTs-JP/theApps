@@ -7,6 +7,11 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        public static List<IDTO> ValidateNavigateableItems(this List<IDTO> items)
+        {
+            List<string> notNavigateableItemTypes = new List<string>() { "Comment", "Principal", "User", "Permission" };
+            return items.Where(item => !notNavigateableItemTypes.Contains(item.ItemType)).ToList();
+        }
         public static bool ValidateVisibility(SecuredFeature feature, IItemType ItemType, IDTO User)
         {
             if (feature == SecuredFeature.NULL || ItemType == null)

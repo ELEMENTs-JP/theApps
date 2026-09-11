@@ -2,10 +2,10 @@
 @inject NavigationManager nm
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
+@inject INotificationService notify
+@inject ISecurityService sec
 
 <div class="d-flex position-relative">
-
-  
 
     @if (CurrentDate.ToYearMonth() == Date.ToYearMonth())
     {
@@ -75,7 +75,7 @@
 
                     <div class="col-auto ps-1 hover">
                         <div class="pointer rounded-2"
-                             @onclick="@( e => { ItemDelete(dto); })">
+                             @onclick="@( async e => { await ItemDelete(dto); })">
                             <SymbolIcon Symbol="Icon.Delete" />
                         </div>
                     </div>
@@ -171,6 +171,9 @@
             msg.Publish("", BusAction.Refresh);
             msg.Publish("", BusAction.Info, "Item wurde gelöscht");
             await OnItemDeleted.InvokeAsync(dto);
+
+            // Notification Service
+            notify.NotifyChanged(Context.Item, NotificationType.Update, sec.User);
 
         }
         catch (Exception ex)

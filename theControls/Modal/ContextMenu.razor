@@ -7,6 +7,7 @@
 @inject IAppService app
 @inject IMessagingBusService msg
 @inject IWebHostEnvironment env
+@inject INotificationService notify
 @inject IJSRuntime JS
 @implements IAsyncDisposable
 
@@ -20,7 +21,28 @@
 
         <div class="p-2 mb-2 fw-bold border-bottom text-secondary">Aktionen</div>
 
-          
+        <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2 text-nowrap  d-flex flex-row "
+                 @onclick="Copy">
+                
+                kopieren
+            </div>
+
+        @if (!isFollowedByMe)
+        {
+            <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2 text-nowrap  d-flex flex-row "
+                 @onclick="Follow">
+                <SymbolIcon Symbol="Icon.Follow" CSS="me-2" />
+                folgen...
+            </div>
+        }
+        else
+        {
+            <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2 text-nowrap  d-flex flex-row "
+                 @onclick="UnFollow">
+                <SymbolIcon Symbol="Icon.UnFollow" CSS="me-2" />
+                nicht folgen...
+            </div>
+        }
 
         @if (!isFavoriteItem)
         {
@@ -140,6 +162,7 @@
 
     bool hasDeletePermission { get; set; } = true;
     bool isFavoriteItem { get; set; } = false;
+    bool isFollowedByMe { get; set; } = false;
 
     [Parameter]
     public string CSS { get; set; } = string.Empty;
@@ -159,6 +182,7 @@
         {
             hasDeletePermission = await sec.HasItemTypePermission(this.ItemType, SecurityFunction.Delete);
             isFavoriteItem = await IsFavorite();
+            isFollowedByMe = await IsFollowed();
         }
     }
     private async void OnMessageIncome(AppMessage message)
@@ -196,6 +220,93 @@
         {
             return Context.Item["IsPrivate"].ToSecureBool();
         }
+
+        return false;
+    }
+
+    private async Task Copy()
+    {
+        IDTO CurrentItem = Context.Item;
+
+        // Query 
+        IQueryParameter qp = QueryParameter.Default("[Copy] " + Context.Item.Title);
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = ItemType.Name;
+
+        // Create Favorite
+        await sql.Create(qp);
+
+        // Load
+        IQueryResult result = await sql.GetItem(qp);
+        // Item
+        IDTO? newItem = result.Items.FirstOrDefault();
+        if (newItem != null)
+        {
+            // Head 
+            CurrentItem.GUID = newItem.GUID;
+            CurrentItem.Title = newItem.Title;
+
+            // Metadata 
+            IMetadata? oldMtd = CurrentItem as IMetadata;
+            IMetadata? newMtd = newItem as IMetadata;
+            oldMtd?.Metadata = newMtd?.Metadata;
+
+            await sql.Update(CurrentItem);
+
+            nm.NavToItem(ItemType.Name, CurrentItem.GUID);
+        }
+    }
+    private async Task Follow()
+    {
+        // Query 
+        IQueryParameter qp = QueryParameter.Default(Context.Item.Title);
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = "Notification";
+
+        // Create Favorite 
+        await sql.Create(qp);
+
+        // Load 
+        IQueryResult result = await sql.GetItem(qp);
+
+        // Item 
+        IDTO? newItem = result.Items.FirstOrDefault();
+        if (newItem != null)
+        {
+            newItem["ItemType"] = Context.Item.ItemType.ToSecureString();
+            newItem["GUID"] = Context.Item.GUID.ToSecureString();
+            await sql.Update(newItem);
+
+            // Assign 
+            await sql.Assign(sec.User, newItem, AssociationTyp.Related);
+            isFollowedByMe = await IsFollowed();
+        }
+    }
+    private async Task UnFollow()
+    {
+        IQueryResult result = await sql.GetRelatedItems(sec.User, "Notification", AssociationTyp.Related);
+
+        // Item
+        IDTO? fav = result.Items.Find(se =>
+             se["GUID"] == Context.Item.GUID.ToSecureString() &&
+             se["ItemType"] == Context.ItemType.ToSecureString());
+        if (fav != null)
+        {
+            await sql.Remove(sec.User, fav);
+            await sql.Delete(fav);
+
+            isFollowedByMe = await IsFollowed();
+        }
+    }
+    private async Task<bool> IsFollowed()
+    {
+        IQueryResult result = await sql.GetRelatedItems(sec.User, "Notification", AssociationTyp.Related);
+
+        IDTO? fav = result.Items.Find(se => 
+            se["GUID"] == Context.Item.GUID.ToSecureString() && 
+            se["ItemType"] == Context.ItemType.ToSecureString());
+        if(fav != null)
+            return true;
 
         return false;
     }
@@ -363,6 +474,9 @@
             nm.NavToLibrary(ItemType.Name, ItemType.Typ);
 
             msg.Publish("", BusAction.Info, info);
+
+            // Notification Service
+            notify.NotifyChanged(Context.Item, NotificationType.Delete, sec.User);
         }
     }
 

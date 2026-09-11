@@ -16,7 +16,8 @@
 
     @if (app != null && app.ItemType != null)
     {
-        <div class="col-auto bg-surface p-2 px-3 align-items-center border-bottom border-end">
+        <div class="col-auto bg-surface p-2 px-3 align-items-center border-bottom border-end hover pointer"
+            @onclick="@( e => {  nm.NavToLibrary(app.ItemType.Name, app.ItemType.Typ); })">
             @app.ItemType.ToString()
         </div>
     }
