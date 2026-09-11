@@ -47,7 +47,9 @@
         @if (Item != null)
         {
             <div class="col-12 col-lg-9 px-2" >
-                <EditArea ItemType="@EditItemType" ID="@( ((Item != null) ? Item.GUID.ToString() : string.Empty) )" />
+                <EditArea ItemType="@EditItemType" 
+                    ID="@( ((Item != null) ? Item.GUID.ToString() : string.Empty) )" 
+                    ItemDeleted="@( async e => { Item = null;  })" />
 
                 <RelatedItemsComp CSS="mt-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Children).Value ?? new List<IItemType>())"
                                   RelatedItem="@Item" Association="AssociationTyp.Children" />
@@ -120,6 +122,11 @@
 
             await InvokeAsync(StateHasChanged);
         }
+
+        // if (message.Id == "Hierarchy" && message.Action == BusAction.Refresh)
+        // {
+        //     await InvokeAsync(StateHasChanged);
+        // }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

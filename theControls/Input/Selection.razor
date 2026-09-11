@@ -1,6 +1,7 @@
 ﻿@inject ISqlDatabaseService sql
 @inject ILocalizationService loc
 @inject IMessagingBusService msg
+@inject IJSRuntime js
 @implements IAsyncDisposable
 @implements IAssignableItems
 
@@ -20,11 +21,9 @@
                 @foreach (IDTO dto in this.AssignedItems)
                 {
                     <div class="d-inline-flex p-025 px-1 rounded-2 hover pointer mx-1">
-                        <div class="px-1 text-nowrap text-truncate" 
-                            style="max-width:5rem;" 
-                                title="@dto.Title">
+                            <ToolTip Title="@dto.Title" CSS="px-1 text-nowrap text-truncate" Style="max-width:5rem;">
                             @dto.Title
-                        </div>
+                             </ToolTip>
                     </div>
 
                 }
@@ -111,7 +110,7 @@
 
 @if (!string.IsNullOrEmpty(Description))
 {
-    <div class="text-muted small border-top mt-1" style="padding-left:3px; padding-top:3px; ">
+    <div class="text-muted small border-top mt-1 mx-1" style="padding-left:3px; padding-top:3px; ">
         <div class="text-truncate-2">
             @this.Description.ToSecureString()
       </div>
@@ -119,7 +118,7 @@
 }
 @if (!string.IsNullOrEmpty(Hint))
 {
-    <div class="form-hint text-truncate-3" style="padding-left:3px; padding-top:3px; ">
+    <div class="form-hint text-truncate-3 mx-1" style="padding-left:3px; padding-top:3px; ">
         @Hint.ToSecureString()
     </div>
 }
@@ -303,6 +302,13 @@
         ? Name
         : Helper.GenerateName(Label);
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+         
+        }
+    }
 
     public async ValueTask DisposeAsync()
     {

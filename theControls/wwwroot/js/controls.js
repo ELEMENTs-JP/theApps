@@ -1,4 +1,17 @@
 ﻿
+window.initTooltips = function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (el) {
+        // Zugriff über das Tabler-Objekt
+        var instance = tabler.Tooltip.getInstance(el);
+        if (!instance) {
+            new tabler.Tooltip(el);
+        }
+    });
+};
+
+
+
 
 
 window.scrollToById = function (elementId, scrollTop)

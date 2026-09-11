@@ -138,6 +138,7 @@ namespace theInfrastructure
         Search,
         Check,
         Menu,
+        Copy,
         Filter,
         Config,
         Help,

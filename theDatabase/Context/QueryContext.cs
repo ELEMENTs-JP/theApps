@@ -115,8 +115,8 @@ namespace theDatabase
             }
 
             // Sortierung 
-            if (this.Filter != null 
-                    && this.Filter.Direction != null 
+            if (this.Filter != null
+                    && this.Filter.Direction != null
                         && this.Filter.SortColumn != string.Empty)
             {
                 string sortColumn = this.Filter.SortColumn;
@@ -140,7 +140,7 @@ namespace theDatabase
                 // Distinct Groups ermitteln    .Where(val => !string.IsNullOrWhiteSpace(val))
                 this.Groups = filteredItems
                     .Select(se => se[groupColumn])
-                
+
                     .Distinct()
                     .OrderBy(val => val)
                     .ToList();
@@ -217,9 +217,9 @@ namespace theDatabase
                 query.ItemType = this.ItemType.Name;
                 IQueryResult result = await sqlService.GetItem(query);
 
-                if (result.Items[0] != null)
+                if (result.Items.Count >= 1)
                 {
-                    Item = result.Items[0];
+                   Item = result.Items.FirstOrDefault();
                 }
 
                 IsLoading = false;
@@ -336,11 +336,11 @@ namespace theDatabase
         {
             //Filter = null;
             //ItemType = null;
-            
+
             //// Item 
             //Item = null;
             //RelatedItem = null;
-            
+
             //// Items 
             //if (Items != null)
             //{

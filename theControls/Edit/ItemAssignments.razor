@@ -14,7 +14,7 @@
                          Field="@( TimeFrame )" Context="@Context" Border="false" />
             </div>
         </div>
-
+        <div class="border-bottom my-2"></div>
         <div class="row g-0">
             <div class="col-12 col-md-4 col-lg-4 p-1">
 
@@ -54,19 +54,23 @@
         TimeFrame = new Factory(sql).BuildField(FieldTyp.Select);
         TimeFrame.Title = "Time Frame";
         TimeFrame.ItemType = "TimeFrame";
+        TimeFrame.Description = "Ordnet den Eintrag einem geschäftlichen Zeitraum zu.";
 
         Folder = new Factory(sql).BuildField(FieldTyp.Select);
         Folder.Title = "Folder";
         Folder.ItemType = "Folder";
+        Folder.Description = "Fügt den Eintrag einem Ordner hinzu.";
 
         Tag = new Factory(sql).BuildField(FieldTyp.Select);
         Tag.Title = "Tag";
         Tag.Title = "Tag";
         Tag.ItemType = "Tag";
+        Tag.Description = "Versieht den Eintrag mit einem globalen, hierarchischen Tag.";
 
         Label = new Factory(sql).BuildField(FieldTyp.Select);
         Label.Title = "Label";
         Label.ItemType = "Label";
+        Label.Description = "Versieht den Eintrag mit einem flexiblen Label.";
     }
 
 }

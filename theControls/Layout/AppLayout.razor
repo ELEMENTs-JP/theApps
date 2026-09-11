@@ -144,7 +144,7 @@
         UrlAnalysis analysis = UrlAnalysis.AnalyzeUrl(nm);
         if (analysis.Segments.Count() == 0)
         {
-            // Home
+            // Home 
             app.App = null;
             msg.Publish("App", BusAction.Refresh);
         }

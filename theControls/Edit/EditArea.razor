@@ -1,15 +1,13 @@
 ﻿@using theControls.List
 @inject ISqlDatabaseService sql
 @inject ISecurityService sec
-@inject IAppService app
+@inject IAppService appService
 
 @implements IAsyncDisposable
 
 
 @if (ItemType != null && !string.IsNullOrEmpty(ID))
 {
-
-   
     <Frame Border="true" CSS="pt-2">
         <Icon>
             @if (ItemType.Typ == ItemTypeTyp.User)
@@ -23,10 +21,10 @@
                      Context="@Context" Border="false" ControlStyle=" min-width:21rem; " />
             <div class="d-flex align-items-center" style="margin-left: 8px; margin-top: -8px;">
 
-                @if (app != null && app.App != null)
+                @if (appService != null && appService.App != null)
                 {
-                    <a href="@("/app/" + app.App.Name)" class="text-muted small" title="Application">
-                        @app.App.Name.ToSecureString()
+                    <a href="@("/app/" + appService.App.Name)" class="text-muted small" title="Application">
+                        @appService.App.Name.ToSecureString()
                     </a>
                     <div class="vr"></div>
                 }
@@ -55,7 +53,8 @@
             </div>
         </Header>
         <Related>
-            <ContextMenu Context="@Context" ItemType="@ItemType" CSS="me-3" />
+            <ContextMenu Context="@Context" ItemType="@ItemType" CSS="me-3" 
+                ItemDeleted="@( async e => { await ItemDeleted.InvokeAsync(e);  } )" />
             @if (Context.ItemType.Name == "User")
             {
                 <SetPasswordComp Item="@Context.Item" Mode="ModalRenderMode.Modal" />
@@ -118,6 +117,9 @@
 
         await ValidateParents();
     }
+
+    [Parameter]
+    public EventCallback<string> ItemDeleted { get; set; }
 
     private async Task ValidateParents()
     {

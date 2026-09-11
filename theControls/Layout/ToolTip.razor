@@ -1,0 +1,32 @@
+﻿
+@inject IJSRuntime js
+
+<div class="@CSS" style="@Style" data-bs-toggle="tooltip"
+     data-bs-placement="top"
+     data-bs-title="@Title">
+     @ChildContent
+</div>
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Style { get; set; } = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Wird bei JEDEM Rendern ausgeführt, damit neue Elemente Tooltips erhalten
+        if (firstRender)
+        {
+            await js.InvokeVoidAsync("initTooltips");
+        }
+    }
+}

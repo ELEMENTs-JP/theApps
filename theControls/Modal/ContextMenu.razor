@@ -23,10 +23,10 @@
 
         <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2 text-nowrap  d-flex flex-row "
                  @onclick="Copy">
-                
+            <SymbolIcon Symbol="Icon.Copy" CSS="me-2" />
                 kopieren
-            </div>
-
+        </div>
+        <div class="dropdown-divider"></div>
         @if (!isFollowedByMe)
         {
             <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2 text-nowrap  d-flex flex-row "
@@ -98,6 +98,8 @@
 
         @if (sec.Configuration.Archive == true)
         {
+            <div class="dropdown-divider"></div>
+
             @if (Context.Item.ItemType != "Archive")
             {
                 <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2 d-flex flex-row "
@@ -139,6 +141,7 @@
         {
             @if (Context.Item.ItemType != "Archive")
             {
+                <div class="dropdown-divider"></div>
                 <div class="hover pointer rounded-2 p-1 px-2 m-1 mx-2 d-flex flex-row "
                      @onclick="DeleteItem">
                     <SymbolIcon Symbol="Icon.Delete" CSS="me-2" Color="var(--tblr-red)" />
@@ -382,8 +385,7 @@
             await sql.Update(Context.Item);
         }
     }
-    
-    
+
     private async Task ToOriginalList()
     {
         if (Context != null)
@@ -392,7 +394,7 @@
             if (!string.IsNullOrEmpty(originalItemType))
             {
                 await Context.ChangeItemType(Context.Item, originalItemType);
-                
+
                 // Search Refresh
                 await search.Init();
 
@@ -471,12 +473,24 @@
             // Search Refresh
             await search.Init();
 
+            // Callback 
+            if (ItemDeleted.HasDelegate)
+            {
+                await ItemDeleted.InvokeAsync("Deleted");    
+            }
+
             nm.NavToLibrary(ItemType.Name, ItemType.Typ);
 
             msg.Publish("", BusAction.Info, info);
 
+            // Hierarchy Refresh 
+            // msg.Publish("Hiearchy", BusAction.Refresh);
+            msg.Publish(new AppMessage("Item", BusAction.Select, null));
+
             // Notification Service
             notify.NotifyChanged(Context.Item, NotificationType.Delete, sec.User);
+
+           
         }
     }
 
@@ -501,6 +515,10 @@
 
         }
     }
+
+    // Callback 
+    [Parameter]
+    public EventCallback<string> ItemDeleted { get; set; }
 
     public async ValueTask DisposeAsync()
     {
