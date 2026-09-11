@@ -54,7 +54,7 @@
     @if (Content.HasContent())
     {
         <div class="row g-0 px-1">
-            <div class="col-12 @ContentCSS">
+            <div class="col-12 @ContentCSS" style="@ContentStyle">
                 @Content
             </div>
         </div>
@@ -87,6 +87,10 @@
 
     [Parameter]
     public string ContentCSS { get; set; } = " p-2 ";
+
+    
+    [Parameter]
+    public string ContentStyle { get; set; } = "  ";
 
     [Parameter]
     public RenderFragment Icon { get; set; }

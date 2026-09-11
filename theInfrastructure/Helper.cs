@@ -19,14 +19,20 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace theInfrastructure
 {
-
-
     public static partial class Helper
     {
+        public static bool FileBoxVisibility(ItemTypeTyp typ)
+        {
+            if (typ == ItemTypeTyp.File ||
+                typ == ItemTypeTyp.Image ||
+                typ == ItemTypeTyp.Video ||
+                typ == ItemTypeTyp.Audio)
+            {
+                return true;
+            }
 
-    
-
-
+            return false;
+        }
         public static async Task SetSetting(ISqlDatabaseService sql, string settingName, string value, string ItemType)
         {
 
@@ -402,10 +408,11 @@ namespace theInfrastructure
             {
                 Items.Add(new DTO() { ID = ItemTypeTyp.Item.ToString(), Title = ItemTypeTyp.Item.ToString()});
                 Items.Add(new DTO() { ID = ItemTypeTyp.Appointment.ToString(), Title = ItemTypeTyp.Appointment.ToString() });
+                Items.Add(new DTO() { ID = ItemTypeTyp.Hierarchy.ToString(), Title = ItemTypeTyp.Hierarchy.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.File.ToString(), Title = ItemTypeTyp.File.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.Audio.ToString(), Title = ItemTypeTyp.Audio.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.Image.ToString(), Title = ItemTypeTyp.Image.ToString() });
-                Items.Add(new DTO() { ID = ItemTypeTyp.Hierarchy.ToString(), Title = ItemTypeTyp.Hierarchy.ToString() });
+                Items.Add(new DTO() { ID = ItemTypeTyp.Video.ToString(), Title = ItemTypeTyp.Video.ToString() });
             }
             else if (field.Typ == FieldTyp.User)
             {

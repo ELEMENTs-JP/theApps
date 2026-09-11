@@ -40,10 +40,7 @@
                         OnSettingChanged="@( async e => {  })" />
                     <div class="vr"></div>
 
-                    @if (this.ItemType.Typ == ItemTypeTyp.File ||
-                                            this.ItemType.Typ == ItemTypeTyp.Image ||
-                                            this.ItemType.Typ == ItemTypeTyp.Video ||
-                                            this.ItemType.Typ == ItemTypeTyp.Audio)
+                    @if (Helper.FileBoxVisibility(this.ItemType.Typ))
                     {
                         <ClipboardCopyPaste ItemType="@this.ItemType" />
                         <FileUploadComp ItemType="@this.ItemType" />
@@ -57,12 +54,12 @@
             <Content>
 
                 @if (this.ItemType.Typ == ItemTypeTyp.Item ||
-                                                        this.ItemType.Typ == ItemTypeTyp.User ||
-                                                        this.ItemType.Typ == ItemTypeTyp.Note ||
-                                                        this.ItemType.Typ == ItemTypeTyp.Link ||
-                                                        this.ItemType.Typ == ItemTypeTyp.Information ||
-                                                        this.ItemType.Typ == ItemTypeTyp.Comment ||
-                                                            this.ItemType.Typ == ItemTypeTyp.Audio)
+                        this.ItemType.Typ == ItemTypeTyp.User ||
+                        this.ItemType.Typ == ItemTypeTyp.Note ||
+                        this.ItemType.Typ == ItemTypeTyp.Link ||
+                        this.ItemType.Typ == ItemTypeTyp.Information ||
+                        this.ItemType.Typ == ItemTypeTyp.Comment ||
+                            this.ItemType.Typ == ItemTypeTyp.Audio)
                 {
                     <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode" Context="@Context">
                         <Empty>
@@ -96,12 +93,11 @@
                 
             </Content>
             <Bottom>
-                @if (this.ItemType.Typ == ItemTypeTyp.File ||
-                       this.ItemType.Typ == ItemTypeTyp.Image ||
-                       this.ItemType.Typ == ItemTypeTyp.Video ||
-                      this.ItemType.Typ == ItemTypeTyp.Audio)
-                {
+             
 
+                @if (Helper.FileBoxVisibility(this.ItemType.Typ))
+                {
+                   
                 }
                 else
                 {

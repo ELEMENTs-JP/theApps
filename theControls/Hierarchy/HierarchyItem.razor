@@ -6,12 +6,12 @@
 
 @if (Context != null)
 {
-    <div class="row g-0 rounded-1 hover p-1 px-2 fw-bold pointer my-2" title="@Item.ItemType"
+    <div class="row g-0 rounded-1 hover p-1 px-2 fw-bold pointer my-1" title="@Item.ItemType"
          @onclick="@( async e => { await Select(Item);  })">
 
         @if (IsChild)
         {
-            <div class="col-auto px-2">
+            <div class="col-auto px-1">
                 <SymbolIcon Symbol="Icon.Corner" />
             </div>
         }

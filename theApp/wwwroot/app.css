@@ -5,6 +5,7 @@
     --tsp-footer-height: 1.5rem;
     --tsp-menu-height: 2.5rem;
     --tsp-user-profile-height: 9.5rem;
+    --tsp-hierarchiy-content-spacer-height: 9.0rem;
 }
 
 [data-bs-theme=light] {
@@ -115,6 +116,16 @@ a, a:visited {
 .hierarchy {
     height: calc(100vh - var(--tsp-header-height) - (var(--tsp-user-profile-height) / 3) - var(--tsp-menu-height) - var(--tsp-footer-height));
 }
+    .hierarchy .hierarchy-content {
+        height: calc(100vh 
+            - var(--tsp-header-height) 
+            - (var(--tsp-user-profile-height) / 3) 
+            - var(--tsp-menu-height) 
+            - var(--tsp-footer-height) 
+            - var(--tsp-hierarchiy-content-spacer-height));
+
+        
+    }
 
 .scrollable {
     display: block;

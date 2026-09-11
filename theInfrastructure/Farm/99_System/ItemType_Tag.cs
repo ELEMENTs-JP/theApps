@@ -23,6 +23,11 @@ namespace theInfrastructure
         {
             List<IItemType> ItemTypes = new();
 
+            if (ast == AssociationTyp.Children)
+            {
+                ItemTypes.Add(new ItemType_Tag());
+            }
+
             return ItemTypes;
         }
 

@@ -5,21 +5,22 @@
 @if (ItemType != null)
 {
     <div class="row g-0">
-        <div class="col-auto pe-2" style="min-width:24rem;">
-            <Frame Border="true"  CSS="hierarchy">
+        <div class="@(Item != null ? "col-12 col-lg-3 px-2" : "col-12 px-2")">
+            <Frame Border="true" CSS="hierarchy" ContentCSS=" hierarchy-content overflow-y-auto p-1 " ContentStyle="">
                 <Header>
                     <ControlHeader PreTitle="List" Title="@ItemType.Name" PostTitle="@ItemType.Description" />
                 </Header>
                 <Related>
                     @if (this.ItemType.Name != "Trash")
                     {
-                        @if (this.ItemType.Typ == ItemTypeTyp.Item)
+                        @if (Helper.FileBoxVisibility(this.ItemType.Typ))
                         {
-                            <AddArea ItemType="@ItemType" />
+                            <ClipboardCopyPaste ItemType="@this.ItemType" />
+                            <FileUploadComp ItemType="@this.ItemType" />
                         }
-                        @if (this.ItemType.Typ == ItemTypeTyp.File)
+                        else
                         {
-                            <FileUploadComp />
+                            <AddArea ItemType="@ItemType" CSS="me-2" />
                         }
                     }
                 </Related>
@@ -28,12 +29,31 @@
 
                     </HierarchyList>
                 </Content>
+                <Bottom>
+
+             
+                    @if (Helper.FileBoxVisibility(this.ItemType.Typ))
+                    {
+
+                    }
+                    else
+                    {
+                        <AddFast ItemType="@ItemType" OnItemAdded="@( e => { })" />
+                    }
+
+                </Bottom>
             </Frame>
         </div>
         @if (Item != null)
         {
-            <div class="col ps-2">
+            <div class="col-12 col-lg-9 px-2" >
                 <EditArea ItemType="@EditItemType" ID="@( ((Item != null) ? Item.GUID.ToString() : string.Empty) )" />
+
+                <RelatedItemsComp CSS="mt-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Children).Value ?? new List<IItemType>())"
+                                  RelatedItem="@Item" Association="AssociationTyp.Children" />
+
+                <RelatedItemsComp CSS="mt-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Default).Value ?? new List<IItemType>())"
+                                  RelatedItem="@Item" Association="AssociationTyp.Default" />
             </div>
         }
     </div>
@@ -48,11 +68,43 @@
 
     private IDTO Item { get; set; } = null;
 
+
+    private List<KeyValuePair<AssociationTyp, List<IItemType>>> ItemTypes { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
         msg.OnMessage += OnMessageIncome;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (ItemType != null)
+        {
+            // Clear
+            ItemTypes.Clear();
+
+            var types = new[]
+              {
+                AssociationTyp.Default,
+                AssociationTyp.Children,
+                AssociationTyp.Parallels,
+                AssociationTyp.Parents,
+                AssociationTyp.Related
+            };
+
+            foreach (var type in types)
+            {
+                var its = await ItemType.GetItemTypes(type);
+                if (its?.Count > 0)
+                {
+                    ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(type, its));
+                }
+            }
+        }
     }
 
     private async void OnMessageIncome(AppMessage message)

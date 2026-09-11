@@ -64,11 +64,11 @@
 
     private bool IsSecure { get; set; } = false;
 
-    private IDTO RelatedItem { get; set; }
 
     [Parameter]
     public IItemType ItemType { get; set; } = null;
 
+    private IDTO RelatedItem { get; set; }
     private List<KeyValuePair<AssociationTyp, List<IItemType>>> ItemTypes { get; set; } = new();
     private List<string> ItemTypeGroups { get; set; } = new();
 
