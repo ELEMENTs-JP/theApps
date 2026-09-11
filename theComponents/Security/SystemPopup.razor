@@ -13,10 +13,10 @@
 @implements IAsyncDisposable
 
 <div id="@( "frame_popup_" + ID )" class="@(" " +
-                           ((Centered) ? " dropdown-center " : " dropdown ")) ">
+                               ((Centered) ? " dropdown-center " : " dropdown ")) ">
 
     <div id="@( "link_popup_" + ID )" class="@(" d-flex p-1 align-items-center " + ButtonCssClass
-                                           + ((TextColorReset) ? " text-reset " : "") )  " data-bs-toggle="dropdown">
+                                                   + ((TextColorReset) ? " text-reset " : "") )  " data-bs-toggle="dropdown">
 
         @if (!string.IsNullOrEmpty(ImageUrl))
         {
@@ -61,8 +61,8 @@
 
                     @if (sec.User["IsAdmin"].ToSecureBool())
                     {
-                        <div class="dropdown-item d-flex" 
-                                @onclick="@( async e => { nm.NavigateTo("/Setting"); })">
+                        <div class="dropdown-item d-flex"
+                             @onclick="@( async e => { nm.NavigateTo("/Setting"); })">
                             <div class="flex-fill">Einstellungen</div>
                             <SymbolIcon Symbol="Icon.Admin" Color="var(--tblr-red)" Title="Admin Funktion" />
                         </div>
@@ -98,6 +98,17 @@
                         </div>
                         <div class="dropdown-divider"></div>
                     }
+
+                    <div class="dropdown-item" @onclick="@( async e => { await OnItemTypeSelect("Tag"); })">
+                        Tagging
+                    </div>
+                    <div class="dropdown-item" @onclick="@( async e => { await OnItemTypeSelect("Label"); })">
+                        Label
+                    </div>
+                    <div class="dropdown-item" @onclick="@( async e => { await OnItemTypeSelect("Folder"); })">
+                        Folder
+                    </div>
+                    <div class="dropdown-divider"></div>
 
                     <form action="/api/auth/logout" method="post">
                         <AntiforgeryToken />
@@ -200,9 +211,11 @@
 
     private async Task OnItemTypeSelect(string itemType)
     {
-        nm.NavToLibrary(itemType);
 
         IItemType it = await new Factory(sql).BuildItemType(itemType);
+        
+        nm.NavToLibrary(it.Name, it.Typ);
+        
         await app.AppByItemType(it);
 
         // Refresh
@@ -220,7 +233,7 @@
 
             nm.NavToApp(_app.Name);
 
-            // Refresh 
+            // Refresh
             msg.Publish(new AppMessage("App", BusAction.Refresh));
         }
 
