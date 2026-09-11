@@ -362,6 +362,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /theApp/internal-nlog.txt
+/theApp/FILES/
 /theApp/FILES/4437eb19-21ce-4369-bc7d-d23f0d675729.jpg
 /theApp/FILES/acc48725-573a-4f90-90f8-e3b6c4f82d67.jpg
 /theApp/FILES/8f4431ba-bb24-4bf1-accb-6230bb2d03ce.mp3
@@ -392,7 +393,12 @@ FodyWeavers.xsd
 /theApp/FILES/73164d1b-f9b6-4e33-880e-88e5d0adbd47_min.jpg
 /theApp/FILES/f906950e-cf65-4c30-a966-f34dcd56153f.jpg
 /theApp/FILES/f906950e-cf65-4c30-a966-f34dcd56153f_min.jpg
+/theApp/Configuration/
 /theApp/Configuration/layout.config
 /theApp/Configuration/locale.config
 /theApp/Configuration/smtp.config
 /theApp/Configuration/system.config
+/theApp/Database/
+/theApp/Database/Default.db
+/theApp/Database/Default.db-shm
+/theApp/Database/Default.db-wal
