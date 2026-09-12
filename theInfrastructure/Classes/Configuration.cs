@@ -12,6 +12,7 @@ namespace theInfrastructure
     public class LayoutConfiguration
     {
         public string Background { get; set; } = string.Empty;
+        public string AppSelector { get; set; } = "List";
         public bool Akzente { get; set; } = false; // weiße Akzente anzeigen oder nicht 
         public bool Blur { get; set; } = false; // Legt fest ob der Hintergrund blur ist 
         public bool Glass { get; set; } = false; // Legt fest ob der Vordergrund blur ist 

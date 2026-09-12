@@ -134,6 +134,7 @@ namespace theInfrastructure
     public enum Icon
     {
         NULL = 0,
+        Apps,
         Empty,
         Search,
         Check,

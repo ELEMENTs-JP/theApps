@@ -15,7 +15,9 @@
     {
         <Frame Border="true">
             <Header>
-                <ControlHeader PreTitle="List" Title="@Title" PostTitle="@ItemType.Description" />
+                <ControlHeader PreTitle="List" Title="@Title" 
+                    SubTitle="@("Typ " + ItemType.Typ.ToSecureString())" 
+                    Description="@ItemType.Description" />
             </Header>
             <Controls>
                 <div class="d-flex align-items-center">

@@ -1,0 +1,62 @@
+﻿
+
+@inject IAppService app
+@inject ISecurityService sec
+
+@foreach (string group in app.AllApps.Where(se => se.IsNavigation == true && se.IsActive == true).Select(se => se.Group).Distinct())
+{
+    <div class="text-muted small fw-bold px-3 mt-2">@group</div>
+    <div class="row g-0">
+        @foreach (IApp _app in app.AllApps.Where(se => se.Group == group && se.IsNavigation == true && se.IsActive == true))
+        {
+            @if (sec.HasAppPermission(_app).Result)
+            {
+                <div class="col-12 p-1 px-2">
+                    <div class="rounded-2 hover pointer p-1 px-2 fw-bold @( GetSelection(_app) )"
+                         @onclick="@( async e => { await OnAppSelected.InvokeAsync(_app); })">
+                        @_app.ToString()
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+
+
+
+@code {
+
+    [Parameter]
+    public EventCallback<IApp> OnAppSelected { get; set; }
+
+    private string GetSelection(IApp _app)
+    {
+        if (app.App == null)
+            return string.Empty;
+
+        if (app.App.Name == _app.Name)
+            return " selected ";
+
+        return string.Empty;
+    }
+    private string GetSelection(IItemType it)
+    {
+        if (app.ItemType == null)
+            return string.Empty;
+
+        if (app.ItemType.Name == it.Name)
+            return " selected ";
+
+        return string.Empty;
+    }
+    private string GetSelection(IDTO dto)
+    {
+        if (app.Page == null)
+            return string.Empty;
+
+        if (app.Page.Title == dto.Title)
+            return " selected ";
+
+        return string.Empty;
+    }
+}

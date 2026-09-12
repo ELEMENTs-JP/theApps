@@ -8,6 +8,7 @@
 @inject IAppService apps
 @inject ILocalizationService loc
 @inject ISecurityService sec
+@inject IMessagingBusService msg
 
 <PageTitle>the App | Einstellungen</PageTitle>
 
@@ -35,11 +36,21 @@
                     <div class="row">
                         <div class="col-12 col-md-4 col-lg-4 px-2">
                             <TextBox Label="Titel" Value="@sec.Configuration.Title"
-                                     ValueChanged="@(e =>
-                                                                                 {
-                                                                                     sec.Configuration.Title = e;
-                                                                                     sec.Configuration.Save();
-                                                                                 })" />
+                                     ValueChanged="@(e => { sec.Configuration.Title = e;
+                                                sec.Configuration.Save();  })" />
+
+                                                              <div class="my-3"></div>
+
+                            <ButtonSelectionBox Label="App Selector"
+                                                Value="@apps.Configuration.AppSelector.ToSecureString()"
+                                                ItemChanged="@( async e => {  
+                                                apps.Configuration.AppSelector = e.ID.ToSecureString();
+                                                apps.Configuration.Save(); 
+                                                await PushFeatureUpdate(); })"
+                                                Items="@(new List<IDTO>() {
+                                                    new DTO() { ID = "List", Title = loc.GetLabel("Liste", "List") },
+                                                    new DTO() { ID = "Popup", Title = loc.GetLabel("Popup", "Popup") },
+                                                } )" />
                         </div>
                         <div class="col-12 col-md-4 col-lg-4 px-2 border-start border-end">
                             <ThemeSwitch />
@@ -235,4 +246,8 @@
         await base.OnParametersSetAsync();
     }
 
+    private async Task PushFeatureUpdate()
+    {
+        msg.Publish(new AppMessage("Feature", BusAction.Refresh));
+    }
 }

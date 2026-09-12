@@ -3,23 +3,78 @@
 @inject IAppService app
 @inject NavigationManager nm
 @inject IMessagingBusService msg
+@inject IAppService apps
 @inject ISecurityService sec
 @implements IAsyncDisposable
 
 <div class="p-3">
 
-    @* --- App selektiert --- *@
+    @* --- App Modus (App wurde selektiert) --- *@
     @if (app.App != null)
     {
-        <div class="row g-0 rounded-2 hover pointer p-2 m-2"
+        @* --- HOME (go back to HOME) --- *@
+        <div class="row g-0 rounded-2 hover pointer p-2 m-1"
              @onclick="@( async e => { app.App = null; app.ItemType = null; app.Page = null; nm.NavigateTo("/", false); })">
             <div class="col-auto pe-2"><SymbolIcon Symbol="Icon.Home" /></div>
             <div class="col fw-bold"> Home</div>
-            <div class="col-12 text-muted">zurück zum Start</div>
+            <div class="col-12 text-muted  ps-4">zurück zum Start</div>
         </div>
+    }
 
-        <div class="my-3"></div>
+    
+    @* --- HOME Modus --- *@
+    @if (app.App == null)
+    {
+        @if (apps.Configuration.AppSelector == "List")
+        {
+            <AppSelectionList OnAppSelected="@( async e => { await OnAppSelect(e); })" />
+        }
+        else if (apps.Configuration.AppSelector == "Popup")
+        {
+            @* --- App DROP DOWN --- *@
+            <div class="w-100 dropdown-center my-1">
+                <div class="@(" p-2 hover rounded-2 pointer align-items-center ")"
+                     data-bs-toggle="dropdown">
+                    <div class="d-flex">
+                        <div class="px-1">
+                            <SymbolIcon Symbol="Icon.Apps" />
+                        </div>
+                        <div class="flex-fill fw-bold px-1">
+                            Apps
+                        </div>
+                    </div>
+                    <div class="text-muted small ps-4 ms-1">
+                        App wählen...
+                    </div>
+                </div>
 
+                <div class="@( "dropdown-menu w-100")">
+
+                    <div class="d-flex align-items-center border-bottom">
+                        <div class="p-2">
+                            <SymbolIcon Symbol="Icon.Apps" />
+                        </div>
+                        <div class="flex-fill p-2 fw-bold">
+                            Apps
+                        </div>
+                    </div>
+
+                    @* --- App List --- *@
+                    <div class="overflow-y-auto" style="max-height:40rem;">
+                        <AppSelectionList OnAppSelected="@( async e => { await OnAppSelect(e); })" />
+                    </div>
+                </div>
+            </div>
+        }
+
+    }
+
+    @* --- App INHALT --- *@
+    @if (app.App != null)
+    {
+        <div class="border-top my-3"></div>
+
+        @* --- APP (selected App) --- *@
         <div class="selected pointer p-2 m-2"
              @onclick="@( async e => { await OnAppSelect(app.App); })">
             <div class="fw-bold">
@@ -32,35 +87,7 @@
                 </small>
             }
         </div>
-    }
 
-    
-    @* --- keine App --- *@
-    @if (app.App == null)
-    {
-        @foreach (string group in app.AllApps.Where(se => se.IsNavigation == true && se.IsActive == true).Select(se => se.Group).Distinct())
-        {
-            <div class="text-muted small fw-bold ps-2 mt-2">@group</div>
-            <div class="row g-0">
-                @foreach (IApp _app in app.AllApps.Where(se => se.Group == group && se.IsNavigation == true && se.IsActive == true))
-                {
-                    @if (sec.HasAppPermission(_app).Result)
-                    {
-                        <div class="col-12 p-1">
-                            <div class="rounded-2 hover pointer p-1 px-2 fw-bold @( GetSelection(_app) )"
-                                    @onclick="@( async e => { await OnAppSelect(_app); })">
-                                @_app.ToString()
-                            </div>
-                        </div>
-                    }
-                }
-            </div>
-        }
-    }
-
-    @* --- App INHALT --- *@
-    @if (app.App != null)
-    {
         @if (CurrentItemTypes.Count() >= 1)
         {
             <div class="border-top my-3"></div>
@@ -139,6 +166,11 @@
                 await InvokeAsync(StateHasChanged);
             }
         }
+
+        if (message.Id == "Feature" && message.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
 
@@ -163,7 +195,7 @@
         await app.SetItemType(it);
         nm.NavToLibrary(it.Name, it.Typ);
 
-        // App Selection 
+        // App Selection
         await app.AppByItemType(it);
 
         // Refresh

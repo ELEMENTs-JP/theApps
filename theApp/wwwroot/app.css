@@ -79,6 +79,13 @@ iframe {
     transition: backdrop-filter 700ms ease-in-out;
 }
 
+.glass-hover:hover {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: backdrop-filter 700ms ease-in-out;
+}
+
 .glass-dark {
     background: rgba(33, 33, 33, 0.5);
     backdrop-filter: blur(20px);

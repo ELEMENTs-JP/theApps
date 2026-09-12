@@ -4,10 +4,10 @@
 @inject IMessagingBusService msg
 @implements IAsyncDisposable
 
-<div class="@( " bg-surface " + CSS + "   " + GetCssClass() + " " + app.Configuration.GetRoundedCSS() )" 
+<div id="@( ID + "frame")" class="@( " bg-surface " + CSS + "   " + GetCssClass() + " " + app.Configuration.GetRoundedCSS() )" 
             style="@( " " + app.Configuration.GetAkzentStyle() + " " )">
 
-    <div class="d-flex flex-row @HeadBorderCSS align-items-center py-1">
+    <div id="@( ID + "header")" class="d-flex flex-row @HeadBorderCSS align-items-center py-1">
 
         @if (Icon.HasContent())
         {
@@ -53,7 +53,7 @@
 
     @if (Content.HasContent())
     {
-        <div class="row g-0 px-1">
+        <div id="@( ID + "content")" class="row g-0 px-1">
             <div class="col-12 @ContentCSS" style="@ContentStyle">
                 @Content
             </div>
@@ -62,7 +62,7 @@
 
     @if (Bottom.HasContent())
     {
-        <div class="row g-0 px-1 @BottomBorderCSS">
+        <div id="@( ID + "bottom")" class="row g-0 px-1 @BottomBorderCSS">
             <div class="col-12 p-2">
                 @Bottom
             </div>
@@ -72,6 +72,8 @@
 </div>
 
 @code {
+
+    private string ID { get; set; } = $"frame-{Guid.NewGuid()}-";
 
     [Parameter]
     public bool Border { get; set; } = false;
