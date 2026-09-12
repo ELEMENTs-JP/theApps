@@ -76,9 +76,14 @@
         // Initialisiere erst, wenn IsAudioFile true ist und es noch nicht initialisiert wurde
         if (IsAudioFile && !_isInitialized)
         {
-            _isInitialized = true;
-            _dotNetRef = DotNetObjectReference.Create(this);
-            await JS.InvokeVoidAsync("window.audioInterop.initPlaylist", _audioElement, _dotNetRef, new[] { AudioUrl });
+            try
+            {
+                _isInitialized = true;
+                _dotNetRef = DotNetObjectReference.Create(this);
+                await JS.InvokeVoidAsync("window.audioInterop.initPlaylist", _audioElement, _dotNetRef, new[] { AudioUrl });
+            }
+            catch (Exception ex)
+            { }
         }
     }
 

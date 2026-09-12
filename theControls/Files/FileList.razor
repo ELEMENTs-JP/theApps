@@ -10,16 +10,17 @@
         <div class="table-responsive">
             <div class="row g-0">
 
-                <div class="col-2 p-3">
+                <div class="@( (ItemType.Typ == ItemTypeTyp.Video) ? " col-3 p-3" : " col-2 p-3 " ) ">
                     <FileUploadComp ItemType="@ItemType"
                                     SizeMode="FileInputBox.FileInputSizeMode.Maximized" Width="96" Height="156" />
                 </div>
 
                 @foreach (IDTO item in Context.Items)
                 {
-                    <div class="col-2">
+                    <div class="@( (ItemType.Typ == ItemTypeTyp.Video) ? " col-3 " : " col-2 " ) ">
                         <FileItem @key="@( "file-audio-image-" + item.GUID)"
-                                  Context="@Context" Item="@item"
+                                  Context="@Context" Item="@item" 
+                                  OnItemDelete="@( async e => { await DeleteItem(e); } )"
                                   IsRelated="@( (RelatedItem != null))" />
                     </div>
                 }
@@ -44,6 +45,23 @@
 
     }
 
+    [Parameter]
+    public EventCallback<IDTO> OnItemDelete { get; set; }
 
+    private async Task DeleteItem(IDTO Item)
+    {
+        if (Item == null)
+            return;
+
+        if (Context == null)
+            return;
+
+        await Context.Delete(Item);
+
+        if (OnItemDelete.HasDelegate)
+        {
+            await OnItemDelete.InvokeAsync(Item);
+        }
+    }
 
 }

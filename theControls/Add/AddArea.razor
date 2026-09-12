@@ -266,14 +266,22 @@
         // Search
         await search.Init();
 
-        // Visual Update
+        // Visual Update 
         await InvokeAsync(this.StateHasChanged);
+
+        if (OnItemAdded.HasDelegate)
+        {
+            await OnItemAdded.InvokeAsync(Context.Item);
+        }
     }
     private async Task OnChange(IField field, string Value)
     {
         IDataValue val = new DataValue(field, Value);
         Values.AddOrUpdate(val);
     }
+
+    [Parameter]
+    public EventCallback<IDTO> OnItemAdded { get; set; }
 
     public async ValueTask DisposeAsync()
     {

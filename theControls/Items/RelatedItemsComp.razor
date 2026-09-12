@@ -23,15 +23,34 @@
             <div class="hstack align-items-center">
                 <ConnectComp ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" ButtonTitle="" />
                 <div class="vr mx-1"></div>
-                <AddArea ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" ButtonTitle=""  />
+
+                @if (Helper.FileBoxVisibility(this.ItemType.Typ))
+                {
+                    <FileUploadComp ItemType="@this.ItemType" OnFileUploaded="@( e => {   })"
+                        RelatedItem="@RelatedItem" Association="@this.Association" />
+                }
+                else
+                {
+                    <AddArea ItemType="@ItemType" OnItemAdded="@( e => { } )"
+                        RelatedItem="@RelatedItem" Association="@this.Association" ButtonTitle=""  />
+                }
+
             </div>
         </Related>
         <Content>
             <ItemsList ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" />
         </Content>
         <Bottom>
-            <AddFast ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" 
+
+            @if (Helper.FileBoxVisibility(this.ItemType.Typ))
+            {
+
+            }
+            else
+            {
+                <AddFast ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" 
                      OnItemAdded="@( e => {  })" OnRelatedItemAdded="@( e => {  })" />
+            }
         </Bottom>
     </Frame>
 }

@@ -53,7 +53,8 @@
                     }
                     else
                     {
-                        <AddArea ItemType="@ItemType" CSS="me-2" />
+                        <AddArea ItemType="@ItemType" CSS="me-2" 
+                            OnItemAdded="@( async e => { await PartialItemsReload(); })" />
                     }
                 }
             </Related>
@@ -77,7 +78,8 @@
                             this.ItemType.Typ == ItemTypeTyp.Video ||
                             this.ItemType.Typ == ItemTypeTyp.Image)
                 {
-                    <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" Context="@Context" />
+                    <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" Context="@Context" 
+                        OnItemDelete="@( e => {  })" />
                 }
                 else if (this.ItemType.Typ == ItemTypeTyp.Appointment)
                 {
@@ -128,7 +130,7 @@
                 }
                 else
                 {
-                    <AddFast ItemType="@ItemType" OnItemAdded="@( e => {  })" />
+                    <AddFast ItemType="@ItemType" OnItemAdded="@( async e => { await PartialItemsReload();  })" />
                 }
 
             </Bottom>
@@ -207,6 +209,13 @@
     }
 
     // Helper 
+    private async Task PartialItemsReload()
+    {
+        if (this.ItemType.Typ == ItemTypeTyp.Appointment)
+        {
+            await Context.Search();    
+        }
+    }
     private async Task CreateRedirect()
     {
         IQueryParameter qp = QueryParameter.Default("neuer Termin");

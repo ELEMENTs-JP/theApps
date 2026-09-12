@@ -1,5 +1,6 @@
 ﻿@using theControls.Audio
 @using theControls.Icons
+@using theControls.Video
 @inject IAppService app
 
 @inherits BaseRow
@@ -9,24 +10,42 @@
 
     <div class="hover rounded-2 p-2 overflow-hidden m-1">
 
-        @if (string.IsNullOrEmpty(this.Base64String))
+        @if (Context.ItemType.Typ == ItemTypeTyp.Video)
         {
-            <SymbolIcon Symbol="Icon.Empty" MaxWidth="120" MaxHeight="120" CSS="p-3 align-items-center" />
+            <VideoItem Item="@Item" />
         }
         else
         {
-            @* w-100 sorgt dafür, dass sich das Bild voll an den äußeren Container anpasst *@
-            <div class="@( UserImageCSS + " w-100 mx-auto " + app.Configuration.GetRoundedCSS(4) )"
-             style="@(UserImageStyle + " " + BackgroundColor +
-                        " background-image: url(" + this.Base64String + "); " )"></div>
+            @if (string.IsNullOrEmpty(this.Base64String))
+            {
+                <SymbolIcon Symbol="Icon.Empty" MaxWidth="120" MaxHeight="120" CSS="p-3 align-items-center" />
+            }
+            else
+            {
+                @* w-100 sorgt dafür, dass sich das Bild voll an den äußeren Container anpasst *@
+                <div class="@( UserImageCSS + " w-100 mx-auto " + app.Configuration.GetRoundedCSS(4) )"
+                     style="@(UserImageStyle + " " + BackgroundColor +
+                                        " background-image: url(" + this.Base64String + "); " )"></div>
+            }
         }
+        
 
         <div class="row g-0 p-1">
-            <div class="align-items-center">
+            <div class="d-flex justify-content-between align-items-center">
                 <span class="p-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</span>
-                <span class="px-1">
-                    <MiniAudioPlayer Item="@Item" />
-                </span>
+
+                @if (Context.ItemType.Typ == ItemTypeTyp.Audio)
+                {
+                    <span class="px-1">
+                        <MiniAudioPlayer Item="@Item" />
+                    </span>
+                }
+                @if (Context.ItemType.Typ == ItemTypeTyp.Video)
+                {
+                    <span class="p-1 hover pointer rounded" @onclick="DeleteItem">
+                        <SymbolIcon Symbol="Icon.Delete" />
+                    </span>
+                }
             </div>
             <div class="col-12 p-1 fw-bold pointer text-truncate" title="@Item.Title.ToSecureString()"
                  @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
@@ -83,6 +102,20 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    [Parameter]
+    public EventCallback<IDTO> OnItemDelete { get; set; }
+
+    private async Task DeleteItem()
+    {
+        if (Item == null)
+            return;
+
+        if (OnItemDelete.HasDelegate)
+        {
+            await OnItemDelete.InvokeAsync(Item);    
+        }
     }
 
 }

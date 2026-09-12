@@ -20,6 +20,12 @@
     public IItemType ItemType { get; set; }
 
     [Parameter]
+    public IDTO RelatedItem { get; set; } // Parent Item in RelatedItemsComp 
+
+    [Parameter]
+    public AssociationTyp Association { get; set; } = AssociationTyp.NULL;
+
+    [Parameter]
     public FileInputBox.FileInputSizeMode SizeMode { get; set; } = FileInputBox.FileInputSizeMode.Fixed;
 
     [Parameter]
@@ -77,10 +83,24 @@
         // Update 
         await sql.Update(item);
 
+        if (RelatedItem != null)
+        {
+            await sql.Assign(RelatedItem, item, Association);
+        }
+
         // Refresh 
         msg.Publish(new AppMessage("List", BusAction.Refresh));
 
         // Search
         await search.Init();
+
+        if (OnFileUploaded.HasDelegate)
+        {
+            await OnFileUploaded.InvokeAsync(item);    
+        }
     }
+
+    [Parameter]
+    public EventCallback<IDTO> OnFileUploaded { get; set; }
+
 }

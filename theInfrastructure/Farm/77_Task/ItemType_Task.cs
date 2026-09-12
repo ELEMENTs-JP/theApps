@@ -30,6 +30,7 @@ namespace theInfrastructure
             {
                 ItemTypes.Add(new ItemType_Comment());
                 ItemTypes.Add(new ItemType_Note());
+                ItemTypes.Add(new ItemType_File());
             }
 
             return ItemTypes;
@@ -63,52 +64,53 @@ namespace theInfrastructure
             Fields.Add(new Field() { Title = "Assignment", Typ = FieldTyp.HR });
             Fields.Add(new Field()
             {
-                Title = "Owner", Description= "Mit dem Owner legen Sie die eindeutige fachliche und operative Verantwortung für eine Aufgabe fest, wodurch Sie Unklarheiten bei Zuständigkeiten vermeiden, gezielte Rückfragen im Team ermöglichen und die verbindliche Umsetzung unternehmerischer Ziele sicherstellen.",
+                Title = "Owner", Description= "Legt den Eigentümer der Aufgabe fest.",
                 Typ = FieldTyp.Select,
                 Association = AssociationTyp.Children,
                 ItemType = "User",
                 Column = "Owner",
                 CSS = " col-12 col-md-4 col-lg-4 ",
-                OnDevice = DeviceDisplay.Desktop
+                OnDisplay = new FieldDisplay(true, true, false, false),
+
             });
-
-            Fields.Add(new Field()
-            {
-                Title = "Projekt",
-                Typ = FieldTyp.Text,
-                Column = "Projekt",
-                CSS = " col-12 col-md-4 col-lg-4 ",
-                IsNecessary = true,
-                Funktionen = new FieldFunction(true, true),
-                OnDevice = DeviceDisplay.Desktop
-            });
-
-            Fields.Add(new Field() { 
-                Title = "Aktiv", Typ = FieldTyp.CheckBox, Column = "IsActive",
-                DefaultValue = "true",
-                TrueText="Aktiv", FalseText="Inaktiv",
-                CSS = " col-12 col-md-4 col-lg-4 " });
-
-            // Performance 
-            Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
 
             Fields.Add(new Field()
             {
                 Title = "Assign To",
-                Typ = FieldTyp.ItemTypeList,
+                Typ = FieldTyp.Select,
+                Association = AssociationTyp.Related,
                 ItemType = "User",
                 Column = "AssignTo",
-                CSS = " col-12 col-md-4 col-lg-4 ",
-                OnDevice = DeviceDisplay.Desktop
+                Description = "Legt die fachliche und operative Verantwortung fest",
+                CSS = " col-12 col-md-4 col-lg-4 "
             });
 
             Fields.Add(new Field()
             {
-                Title = "Aufwand",
-                Typ = FieldTyp.Integer,
-                Column = "Effort",
+                Title = "Due To",
+                Typ = FieldTyp.Date,
+                Column = "DueTo",
+                Description = "Legt den Termin der erwarteten oder notwendigen Fertigstellung fest",
                 CSS = " col-12 col-md-4 col-lg-4 ",
                 OnDevice = DeviceDisplay.Desktop
+            });
+
+
+
+            // Performance
+            Fields.Add(new Field() { Title = "Performance", Typ = FieldTyp.HR });
+            Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
+
+            Fields.Add(new Field() { Title = "Estimation", Typ = FieldTyp.HR });
+            Fields.Add(new Field()
+            {
+                Title = "Aufwand (h)",
+                Typ = FieldTyp.Integer,
+                Column = "Effort",
+                Extension = "h",
+                Description = "Geschätzter Aufwand in Arbeitsstunden",
+                CSS = " col-12 col-md-4 col-lg-4 ",
+                OnDisplay = new FieldDisplay(true, true, false, false),
             });
 
             Fields.Add(new Field()
@@ -116,8 +118,21 @@ namespace theInfrastructure
                 Title = "Budget",
                 Typ = FieldTyp.Money,
                 Column = "Budget",
+                Description = "Benötigtes Budget in EUR",
                 CSS = " col-12 col-md-4 col-lg-4 ",
-                OnDevice = DeviceDisplay.Desktop
+                OnDisplay = new FieldDisplay(true, true, false, false),
+            });
+
+            Fields.Add(new Field()
+            {
+                Title = "Aktiv",
+                Typ = FieldTyp.CheckBox,
+                Column = "IsActive",
+                DefaultValue = "true",
+                TrueText = "Aktiv",
+                FalseText = "Inaktiv",
+                CSS = " col-12 col-md-4 col-lg-4 ",
+                OnDisplay = new FieldDisplay(true, true, false, false),
             });
 
             return Fields;

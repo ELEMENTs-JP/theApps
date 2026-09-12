@@ -1,30 +1,34 @@
 ﻿@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
 
 @if (Item != null)
 {
-    <div class="video-card-container rounded overflow-hidden position-relative"
-         @onmouseenter="PlayVideo"
-         @onmouseleave="PauseVideo">
-
+    <div class="video-card-container rounded overflow-hidden position-relative">
         <video id="@PlayerId"
                class="video-js vjs-fluid netflix-preview-player"
                muted
-               preload="metadata"
-               playsinline >
+               preload="auto"
+               playsinline
+               controls
+               data-setup='{
+                    "controlBar": {
+                    "playToggle": true,
+                    "volumePanel": false,
+                    "fullscreenToggle": false,
+                    "pictureInPictureToggle": false }
+                    }'>
             <source src="@VideoUrl" type="video/mp4" />
         </video>
-
     </div>
 }
-
-
 
 @code {
     [Parameter]
     public IDTO Item { get; set; }
 
-    string PlayerId { get; set; } = $"video-{Guid.NewGuid():N}";
-    string VideoUrl { get; set; } = string.Empty;
+    private string PlayerId { get; set; } = $"video-{Guid.NewGuid():N}";
+    private string VideoUrl { get; set; } = string.Empty;
+    private bool isInitialized = false;
 
     protected override void OnParametersSet()
     {
@@ -33,7 +37,7 @@
             string fileGUID = Item.GUID.ToSecureString();
             string fileEXT = Item["FileExtension"].ToSecureString();
 
-            VideoUrl = $"/stream/{fileGUID + "." + fileEXT}";
+            VideoUrl = $"/stream/{fileGUID}.{fileEXT}";
         }
     }
 
@@ -41,17 +45,23 @@
     {
         if (firstRender && Item != null)
         {
-            await JSRuntime.InvokeVoidAsync("netflixPlayer.init", PlayerId);
+            // await JSRuntime.InvokeVoidAsync("netflixPlayer.init", PlayerId);
+            isInitialized = true;
         }
     }
 
-    private async Task PlayVideo()
+    public async ValueTask DisposeAsync()
     {
-        await JSRuntime.InvokeVoidAsync("netflixPlayer.play", PlayerId);
-    }
-
-    private async Task PauseVideo()
-    {
-        await JSRuntime.InvokeVoidAsync("netflixPlayer.pause", PlayerId);
+        if (isInitialized)
+        {
+            try
+            {
+                // await JSRuntime.InvokeVoidAsync("netflixPlayer.dispose", PlayerId);
+            }
+            catch (JSDisconnectedException)
+            {
+                // Circuit getrennt
+            }
+        }
     }
 }
