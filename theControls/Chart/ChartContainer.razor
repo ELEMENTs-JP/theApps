@@ -1,0 +1,160 @@
+﻿@using theCharts
+@using theCharts.Charts
+
+
+
+<div class="border rounded-2 p-2 bg-surface">
+    <h3>ChartComp</h3>
+
+    <div class="row p-2 m-2">
+        @* Pie *@
+        <div class="col-4 p-2">
+            <ChartComp Configuration="@c_pieCore" />
+        </div>
+        <div class="col-4 p-2">
+            <ChartComp Configuration="@c_pieChart" />
+        </div>
+        <div class="col-4 p-2">
+            <ChartComp Configuration="@c_pieKPI" />
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    eConfiguration c_pieCore = new eConfiguration(EChartTyp.pie);
+    eConfiguration c_pieChart = new eConfiguration(EChartTyp.pie, size: eSize.S, mode: eChartMode.Chart);
+    eConfiguration c_pieKPI = new eConfiguration(EChartTyp.pie, size: eSize.S, mode: eChartMode.KPI);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        load1Serie(c_pieCore);
+        load1Serie(c_pieChart);
+        load1Serie(c_pieKPI);
+    }
+
+    private void load1Serie(eConfiguration config)
+    {
+        eSeries s = new eSeries();
+        s.Name = "Chicago";
+        s.Color = "#34A853";
+        s.Data.Add(new eDataItem() { Name = "Pulli", Value = 55, Color = config.Colors[2] });
+        s.Data.Add(new eDataItem() { Name = "Schuh", Value = 35, Color = config.Colors[3] });
+        s.Data.Add(new eDataItem() { Name = "Hose", Value = 25, Color = config.Colors[1] });
+        s.Data.Add(new eDataItem() { Name = "Socke", Value = 15, Color = config.Colors[4] });
+        s.Data.Add(new eDataItem() { Name = "Shirt", Value = 10, Color = config.Colors[0] });
+
+        config.Series.Add(s);
+    }
+    private void loadSeries(eConfiguration config)
+    {
+        eSeries s = new eSeries();
+        s.Name = "Chicago";
+        s.Color = "#34A853";
+        s.Data.Add(new eDataItem() { Name = "Shirt", Value = 10 });
+        s.Data.Add(new eDataItem() { Name = "Hose", Value = 25 });
+        s.Data.Add(new eDataItem() { Name = "Pulli", Value = 55 });
+        s.Data.Add(new eDataItem() { Name = "Schuh", Value = 35 });
+        s.Data.Add(new eDataItem() { Name = "Socke", Value = 15 });
+
+        config.Series.Add(s);
+
+
+        // Serie
+        eSeries b = new eSeries();
+        b.Name = "New York";
+        b.Color = "#e01256";
+        b.Data.Add(new eDataItem() { Name = "Shirt", Value = 12 });
+        b.Data.Add(new eDataItem() { Name = "Hose", Value = 27 });
+        b.Data.Add(new eDataItem() { Name = "Pulli", Value = 33 });
+        b.Data.Add(new eDataItem() { Name = "Schuh", Value = 37 });
+        b.Data.Add(new eDataItem() { Name = "Socke", Value = 12 });
+
+        config.Series.Add(b);
+
+        // Serie
+        eSeries c = new eSeries();
+        c.Name = "Miami";
+        c.Color = "#008CD8";
+        c.Data.Add(new eDataItem() { Name = "Shirt", Value = 8 });
+        c.Data.Add(new eDataItem() { Name = "Hose", Value = 13 });
+        c.Data.Add(new eDataItem() { Name = "Pulli", Value = 24 });
+        c.Data.Add(new eDataItem() { Name = "Schuh", Value = 19 });
+        c.Data.Add(new eDataItem() { Name = "Socke", Value = 14 });
+
+        config.Series.Add(c);
+    }
+    private void loadScatterBubbleSeries(eConfiguration config)
+    {
+        // Serie Chicago
+        eSeries s = new eSeries();
+        s.Name = "Chicago";
+        s.Color = "#34A853";
+        // Format: new double[] { X, Y, Size }
+        s.Data.Add(new eDataItem() { Name = "Shirt", Value = new double[] { 10, 8.04, 20 } });
+        s.Data.Add(new eDataItem() { Name = "Hose", Value = new double[] { 25, 6.95, 45 } });
+        s.Data.Add(new eDataItem() { Name = "Pulli", Value = new double[] { 55, 7.58, 80 } });
+        s.Data.Add(new eDataItem() { Name = "Schuh", Value = new double[] { 35, 8.81, 30 } });
+        s.Data.Add(new eDataItem() { Name = "Socke", Value = new double[] { 15, 8.33, 15 } });
+        config.Series.Add(s);
+
+        // Serie New York
+        eSeries b = new eSeries();
+        b.Name = "New York";
+        b.Color = "#e01256";
+        b.Data.Add(new eDataItem() { Name = "Shirt", Value = new double[] { 12, 5.02, 25 } });
+        b.Data.Add(new eDataItem() { Name = "Hose", Value = new double[] { 27, 4.47, 50 } });
+        b.Data.Add(new eDataItem() { Name = "Pulli", Value = new double[] { 33, 6.33, 65 } });
+        b.Data.Add(new eDataItem() { Name = "Schuh", Value = new double[] { 37, 3.33, 40 } });
+        b.Data.Add(new eDataItem() { Name = "Socke", Value = new double[] { 12, 4.96, 12 } });
+        config.Series.Add(b);
+
+        // Serie Miami
+        eSeries c = new eSeries();
+        c.Name = "Miami";
+        c.Color = "#008CD8";
+        c.Data.Add(new eDataItem() { Name = "Shirt", Value = new double[] { 8, 7.24, 18 } });
+        c.Data.Add(new eDataItem() { Name = "Hose", Value = new double[] { 13, 6.26, 35 } });
+        c.Data.Add(new eDataItem() { Name = "Pulli", Value = new double[] { 24, 8.84, 55 } });
+        c.Data.Add(new eDataItem() { Name = "Schuh", Value = new double[] { 19, 5.82, 28 } });
+        c.Data.Add(new eDataItem() { Name = "Socke", Value = new double[] { 14, 5.68, 14 } });
+        config.Series.Add(c);
+    }
+    private void loadHeatmapSerie(eConfiguration config)
+    {
+        // 1. Achsen definieren (Die Labels)
+        config.HeatmapXAxis = new List<string> { "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag" };
+        config.HeatmapYAxis = new List<string> { "Morgens", "Mittags", "Abends" };
+
+        // 2. Serie erstellen
+        var serie = new eSeries { Name = "Auslastung" };
+
+        // 3. Daten mappen [X-Index, Y-Index, Wert]
+        serie.Data.Add(new eDataItem { Value = new int[] { 0, 0, 5 } });
+        serie.Data.Add(new eDataItem { Value = new int[] { 0, 1, 8 } });
+        serie.Data.Add(new eDataItem { Value = new int[] { 0, 2, 12 } });
+
+        serie.Data.Add(new eDataItem { Value = new int[] { 1, 0, 34 } });
+        serie.Data.Add(new eDataItem { Value = new int[] { 1, 1, 21 } });
+        serie.Data.Add(new eDataItem { Value = new int[] { 1, 2, 44 } });
+
+        serie.Data.Add(new eDataItem { Value = new int[] { 2, 0, 66 } });
+        serie.Data.Add(new eDataItem { Value = new int[] { 2, 1, 77 } });
+        serie.Data.Add(new eDataItem { Value = new int[] { 2, 2, 88 } });
+
+
+        serie.Data.Add(new eDataItem { Value = new int[] { 3, 0, 42 } });
+        serie.Data.Add(new eDataItem { Value = new int[] { 3, 1, 55 } });
+        serie.Data.Add(new eDataItem { Value = new int[] { 3, 2, 34 } });
+
+        serie.Data.Add(new eDataItem { Value = new int[] { 4, 0, 99 } });
+        serie.Data.Add(new eDataItem { Value = new int[] { 4, 1, 76 } });
+        serie.Data.Add(new eDataItem { Value = new int[] { 4, 2, 12 } });
+
+        config.Series.Add(serie);
+    }
+
+}

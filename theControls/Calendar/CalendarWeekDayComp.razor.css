@@ -1,4 +1,0 @@
-﻿.grid-96-rows {
-    display: grid;
-    grid-template-rows: repeat(96, 15px);
-}

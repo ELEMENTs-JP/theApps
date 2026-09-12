@@ -1,7 +1,13 @@
 ﻿
 
+@inject IAppService app
 @inject ISqlDatabaseService sql
 @inject ISecurityService sec
+@inject IMessagingBusService msg
+@inject ISearchService search
+@inject INotificationService notify
+
+@inject NavigationManager nm
 
 @if (ItemType != null)
 {
@@ -77,15 +83,36 @@
                 {
                     @if (View == "Monat")
                     {
-                        <CalendarMonthComp ItemType="@ItemType" Context="@Context" />
+                        <CalendarMonthComp TItem="IDTO"
+                                           Items="@Context.Items"
+                                           DateSelector="@(dto => dto[dateColumn].ToSecureString().ToSecureDateTime())"
+                                           TitleSelector="@(dto => dto.Title.ToSecureString())"
+                                           OnItemClick="@(dto => nm.NavigateTo(Helper.GetItemUrl(dto)))"
+                                           OnItemDeleted="@(async dto => await ItemDelete(dto))" />
+                
                     }
                     else if (View == "Woche")
                     {
-                        <CalendarWeekComp ItemType="@ItemType" Context="@Context" />
+                        <CalendarWeekComp TItem="IDTO"
+                                          Items="@Context.Items"
+                                      ShowWeekend="@showWeekendSetting"
+                                      DateSelector="@(item => item["Date"].ToSecureDateTime().Date)"
+                                      StartSelector="@(item => item["Start"].ToSecureDateTime().TimeOfDay)"
+                                      EndSelector="@(item => item["Ende"].ToSecureDateTime().TimeOfDay)"
+                                      TitleSelector="@(item => item.Title)"
+                                      OnItemClick="@(item => nm.NavToItem(item.ItemType, item.GUID))"
+                                          OnCreateAppointment="@CreateRedirect" />
                     }
                     else if (View == "Tag")
                     {
-                        <CalendarDayComp ItemType="@ItemType" Context="@Context" />
+                        <CalendarDayComp TItem="IDTO"
+                                         Items="@Context.Items"
+                                 DateSelector="@(item => item["Date"].ToSecureDateTime().Date)"
+                                 StartSelector="@(item => item["Start"].ToSecureDateTime().TimeOfDay)"
+                                 EndSelector="@(item => item["Ende"].ToSecureDateTime().TimeOfDay)"
+                                 TitleSelector="@(item => item.Title)"
+                                 OnItemClick="@(item => nm.NavToItem(item.ItemType, item.GUID))"
+                                         OnCreateAppointment="@CreateRedirect" />
                     }
 
                 }
@@ -129,17 +156,23 @@
     private string Title { get; set; } = string.Empty;
     private bool IsSecure { get; set; } = false;
     private string View { get; set; } = "Monat";
+    private bool showWeekendSetting = true;
 
     private IQueryContext Context { get; set; }
     private string Matchcode { get; set; } = string.Empty;
 
+    private string dateColumn = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
+        dateColumn = await ItemType.GetRelevantPropertyName(RelevantPropertyType.Date);
     }
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
+
+        var setting = await Helper.GetSettingValue(sql, "ShowWeekend", "Appointment");
+        showWeekendSetting = (setting == "true");
 
         if (ItemType != null)
         {
@@ -152,6 +185,10 @@
             // Kontext für den neuen ItemType frisch instanziieren
             Context = new QueryContext(sql, sec, ItemType);
 
+            if (this.ItemType.Typ == ItemTypeTyp.Appointment)
+            {
+                await Context.Search();    
+            }
             // Title 
             Title = await Helper.GetSettingValue(sql, "Title", ItemType.Name);
             Title = Title.IsEmpty() ? ItemType.Name : Title;
@@ -169,6 +206,60 @@
         }
     }
 
- 
+    // Helper 
+    private async Task CreateRedirect()
+    {
+        IQueryParameter qp = QueryParameter.Default("neuer Termin");
+        qp.ItemType = "Appointment";
+        qp.MasterGUID = sql.MasterGUID;
 
+        await sql.Create(qp);
+
+        IQueryResult result = await sql.GetItem(qp);
+        IDTO newItem = result.Items.FirstOrDefault();
+        if (newItem != null)
+        {
+            nm.NavToItem(qp.ItemType, qp.GUID);
+
+            if (sec.Configuration.EventHandler == true)
+            {
+                // Event
+                IItemEventArgs args = new ItemEventArgs(newItem, null, sql, sec, app);
+
+                // Create Event
+                IItemType it = await new Factory(sql).BuildItemType(qp.ItemType);
+                newItem = await it.OnCreateItem(args);
+            }
+
+            // Message
+            AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
+            msg.Publish(am);
+
+            // Search
+            await search.Init();
+        }
+    }
+    private async Task ItemDelete(IDTO dto)
+    {
+        try
+        {
+            if (dto == null)
+                return;
+
+            await Context.Delete(dto);
+            await Context.Search();
+
+            msg.Publish("", BusAction.Refresh);
+            msg.Publish("", BusAction.Info, "Item wurde gelöscht");
+
+            // Notification Service
+            notify.NotifyChanged(Context.Item, NotificationType.Update, sec.User);
+
+        }
+        catch (Exception ex)
+        {
+
+        }
+        
+    }
 }

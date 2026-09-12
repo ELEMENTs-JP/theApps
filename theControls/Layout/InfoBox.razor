@@ -74,6 +74,10 @@
 
     private async void OnNotification(IDTO item, NotificationType typ, IDTO user)
     {
+        if(item == null)
+            return;
+
+
         if (typ == NotificationType.Update)
         {
             IQueryResult result = await sql.GetRelatedItems(sec.User, "Notification", AssociationTyp.Related);
