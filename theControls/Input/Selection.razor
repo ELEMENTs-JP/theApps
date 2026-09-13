@@ -17,15 +17,28 @@
         <div id="@( "link_popup_" + ID )" class="@(" row align-items-center ")" data-bs-toggle="dropdown">
 
             @*  d-none d-xl-block   *@
-            <div id="@( "head_popup_" + ID )" class="col p-025 d-flex flex-nowrap overflow-x-auto align-items-center">
+            <div id="@( "head_popup_" + ID )" class="col p-025 @HeadCSS overflow-x-auto align-items-center">
                 @foreach (IDTO dto in this.AssignedItems)
                 {
-                    <div class="d-inline-flex p-025 px-1 rounded-2 hover pointer mx-1">
-                            <ToolTip Title="@dto.Title" CSS="px-1 text-nowrap text-truncate" Style="max-width:5rem;">
-                            @dto.Title
-                             </ToolTip>
-                    </div>
 
+                    @if (HeaderTemplate is not null)
+                    {
+                        @if (dto != null)
+                        {
+                            @HeaderTemplate(dto)
+                        }
+                    }
+                    else
+                    {
+                        @if (dto != null)
+                        {
+                            <div class="d-inline-flex p-025 px-1 rounded-2 hover pointer mx-1">
+                                <ToolTip Title="@dto.Title" CSS="px-1 text-nowrap text-truncate" Style="max-width:5rem;">
+                                    @dto.Title
+                                </ToolTip>
+                            </div>
+                        }
+                    }
                 }
 
             </div>
@@ -126,6 +139,9 @@
 @code {
 
     [Parameter]
+    public RenderFragment<IDTO>? HeaderTemplate { get; set; }
+
+    [Parameter]
     public AssociationTyp Association { get; set; } = AssociationTyp.Association;
 
     [Parameter]
@@ -159,6 +175,9 @@
 
     [Parameter]
     public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public string HeadCSS { get; set; } = "  d-inline-flex gap-1  ";
 
     [Parameter]
     public string MenuStyle { get; set; } = "min-width:13rem;";

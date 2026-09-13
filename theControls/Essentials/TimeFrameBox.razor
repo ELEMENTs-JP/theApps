@@ -1,0 +1,31 @@
+﻿@if (Item != null)
+{
+    <div class="hover pointer p-2 py-1 mx-2 w-100"
+         style="border-left: 3px solid #fff;">
+        <div class="row g-0">
+            <div class="col px-1">
+                <strong>@Item.Title</strong>
+            </div>
+        </div>
+        <div class="row g-0 text-secondary">
+            <div class="col px-1 text-muted truncate-text">
+                <strong>Start</strong> @Item["Start"].ToSecureDateTime().ToShortDateString()
+            </div>
+            <div class="col px-1 text-muted truncate-text">
+                <strong>Ende</strong> @Item["Ende"].ToSecureDateTime().ToShortDateString()
+            </div>
+            <div class="col px-1 text-muted truncate-text">
+                <strong>Budget</strong> @Item["Budget"].ToSecureDecimal()
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+@code {
+
+    [Parameter]
+    public IDTO Item { get; set; }
+}

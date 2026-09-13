@@ -48,7 +48,7 @@ namespace theInfrastructure
         public string Description { get; set; } = string.Empty;
         public Icon Icon { get; set; } = Icon.NULL;
         public bool IsNavigation { get; set; } = true; // In Hauptnavigation anzeigen 
-        public bool InSubNavigation { get; set; } = true; // In untergeordneter Navigation anzeigen 
+        public bool InSubNavigation { get; set; } = false; // In untergeordneter Navigation anzeigen 
         public bool ShowInTaskBarNavigation { get; set; } = true; // In der Taskbar unten rechts anzeigen 
         public int Order { get; set; } = 0;
         

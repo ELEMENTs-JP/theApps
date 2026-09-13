@@ -30,6 +30,16 @@ namespace theInfrastructure
             // Fields 
             List<IField> Fields = new List<IField>();
 
+            Fields.Add(new Field()
+            {
+                Title = "Farbe",
+                Typ = FieldTyp.Color,
+                Column = "Color",
+                DefaultValue = "#ffffff",
+                CSS = " col-12 col-md-12 col-lg-12 ",
+                OnDisplay = new FieldDisplay(true, true, true, false)
+            });
+
             // Description 
             Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Description));
 

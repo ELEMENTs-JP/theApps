@@ -1,6 +1,38 @@
 ﻿
 <div class="@( CSS + "  " )" style="@Style" @onclick="@onBtnClck">
 
+    @if (Symbol == Icon.Label)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+        fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+        class="icon icon-tabler icons-tabler-outline icon-tabler-label">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M16.52 7h-10.52a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h10.52a1 1 0 0 0 .78 -.375l3.7 -4.625l-3.7 -4.625a1 1 0 0 0 -.78 -.375" />
+        </svg>
+    }
+
+    @if (Symbol == Icon.Tag)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+        fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+        class="icon icon-tabler icons-tabler-outline icon-tabler-tag">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M6.5 7.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            <path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3" />
+        </svg>
+    }
+
+
+    @if(Symbol == Icon.Folder)
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+            fill="none" stroke="@Color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            class="icon icon-tabler icons-tabler-outline icon-tabler-folder">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2" />
+        </svg>
+    }
+
     @if(Symbol == Icon.Apps)
     {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 

@@ -1,0 +1,19 @@
+﻿
+
+@if (Item != null)
+{
+    <div class="d-flex p-1 rounded hover align-items-center text-nowrap ">
+        <SymbolIcon Symbol="Icon.Tag" CSS="me-1" />
+        <ToolTip Title="@Item.Title" CSS="text-truncate"  Style="max-width:5rem;">
+        @Item.Title
+        </ToolTip>
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+}

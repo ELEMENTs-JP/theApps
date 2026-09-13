@@ -88,16 +88,20 @@ namespace theInfrastructure
         {
             List<IDTO> Items = new();
 
+        
+            Items.Add(new DTO() { ID = "#00000000", Title = "transparent" });
+            Items.Add(new DTO() { ID = "#ffffff", Title = "weiß" });
+            Items.Add(new DTO() { ID = "#a1a5ab", Title = "hellgrau" });
+            Items.Add(new DTO() { ID = "#626976", Title = "grau" });
+            Items.Add(new DTO() { ID = "#444a55", Title = "dunkelgrau" });
+            Items.Add(new DTO() { ID = "#182433", Title = "schwarz" });
             Items.Add(new DTO() { ID = "#8914a5", Title = "violett" });
             Items.Add(new DTO() { ID = "#c11515", Title = "rot" });
             Items.Add(new DTO() { ID = "#f76707", Title = "orange" });
             Items.Add(new DTO() { ID = "#f59f00", Title = "gelb" });
             Items.Add(new DTO() { ID = "#1d9d31", Title = "grün" });
             Items.Add(new DTO() { ID = "#066fd1", Title = "blau" });
-            Items.Add(new DTO() { ID = "#ffffff", Title = "weiß" });
-            Items.Add(new DTO() { ID = "#626976", Title = "grau" });
-            Items.Add(new DTO() { ID = "#182433", Title = "schwarz" });
-            Items.Add(new DTO() { ID = "#00000000", Title = "transparent" });
+            Items.Add(new DTO() { ID = "#084a87", Title = "marine" });
 
             return Items;
         }
