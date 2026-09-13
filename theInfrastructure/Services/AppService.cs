@@ -27,6 +27,7 @@ namespace theInfrastructure
             set { _app = value; OnPropertyChanged(); } 
         } 
         public List<IApp> AllApps { get; set; } = new();
+        public List<IDTO> AllPages { get; set; } = new();
         private IItemType _it = null;
         public IItemType ItemType
         {
@@ -77,18 +78,22 @@ namespace theInfrastructure
 
             // Individuall Apps 
             IQueryParameter qp = new QueryParameter();
-            qp.ItemType = "App";
             qp.MasterGUID = SqlService.MasterGUID;
 
+            // Apps 
+            qp.ItemType = "App";
             IQueryResult result = await SqlService.GetItems(qp);
             List<IDTO> apps = result.Items;
-
             foreach (IDTO app in apps)
             {
                 IApp template = new App_Template(app, SqlService);
                 AllApps.Add(template);
             }
 
+            // Pages 
+            qp.ItemType = "Page";
+            result = await SqlService.GetItems(qp);
+            AllPages = result.Items;
         }
         public async Task SetApp(IApp? _app)
         {
@@ -113,35 +118,60 @@ namespace theInfrastructure
             this.Page = null;
 
             await AppByItemType(it);
-
-            await Task.CompletedTask;
         }
         public async Task SetPage(IDTO page)
         {
             this.Page = page;
             this.ItemType = null;
+            await AppByPage(page);
+        }
+        public async Task SetPage(Guid GUID)
+        {
+            this.Page = AllPages.Find(se => se.GUID == GUID);
+            this.ItemType = null;
             await Task.CompletedTask;
         }
-
-        public async Task AppByItemType(IItemType it)
+        public async Task<IApp?> AppByPage(IDTO? page)
         {
-            if (it == null || AllApps == null || !AllApps.Any())
-                return;
+            if (page == null || AllApps == null || !AllApps.Any())
+                return null;
 
+            // 1.) App by ItemType 
             foreach (IApp _app in AllApps)
             {
-                foreach (IItemType _it in _app.GetItemTypes(AssociationTyp.Children).Result)
+                List<IDTO> _pages = await _app.GetPages();
+                foreach (IDTO _page in _pages)
                 {
-                    if (it.Name == _it.Name)
+                    if (page.GUID == _page.GUID)
                     {
                         App = _app;
-                        await Task.CompletedTask;
-                        return;
+                        return _app;
                     }
                 }
             }
 
-            await Task.CompletedTask;
+            return null;
+        }
+        public async Task<IApp?> AppByItemType(IItemType? it)
+        {
+            if (it == null || AllApps == null || !AllApps.Any())
+                return null;
+
+            // 1.) App by ItemType 
+            foreach (IApp _app in AllApps)
+            {
+                List<IItemType> _its = await _app.GetItemTypes(AssociationTyp.Children);
+                foreach (IItemType _it in _its)
+                {
+                    if (it.Name == _it.Name)
+                    {
+                        App = _app;
+                        return _app;
+                    }
+                }
+            }
+
+            return null;
         }
 
         // Property Changed 

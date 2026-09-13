@@ -131,15 +131,17 @@ namespace theInfrastructure
 
         public static UrlAnalysis AnalyzeUrl(NavigationManager nm)
         {
-            Uri uri = new Uri(nm.Uri);
+            Uri uri = nm.ToAbsoluteUri(nm.Uri);
 
             // Bestimmung, ob es sich um eine Entwicklungsumgebung handelt
             bool isDev = uri.IsLoopback || uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase);
 
-            // Säuberung des Pfades von Query-Parametern und Aufteilung in Segmente
-            string relativePath = nm.ToBaseRelativePath(nm.Uri);
-            string pathOnly = relativePath.Split('?')[0];
-            string[] cleanSegments = pathOnly.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            // AbsolutePath nimmt nur den Pfad (ohne Query ? und ohne Fragment #)
+            // ToBaseRelativePath sorgt dafür, dass die Base-URL der App abgezogen wird
+            string relativePath = nm.ToBaseRelativePath(uri.GetLeftPart(UriPartial.Path));
+
+            // Aufteilung in die einzelnen Segmente
+            string[] cleanSegments = relativePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
             return new UrlAnalysis
             {

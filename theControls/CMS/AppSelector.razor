@@ -97,22 +97,14 @@
                             .OrderBy(se => se.Order != 0 ? se.Order : int.MaxValue).ThenBy(se => se.Title))
                 {
                     <div class="col-12 p-1">
-                        <div class="rounded-2 hover pointer p-1 px-2 fw-bold @( GetSelection(it) )"
+                        <div class="rounded-2 hover pointer p-1 px-2 fw-bold 
+                            @( " " + (it.InSubNavigation ? " text-secondary ps-4 " : "" ) )
+                                        @( " " + GetItemTypeSelection(it) )"
                              @onclick="@( async e => { await OnItemType(it); })">
                             @it.ToString()
                         </div>
                     </div>
 
-                    @foreach (IItemType child in it.GetItemTypes(AssociationTyp.Children).Result.Where(se => se.InSubNavigation == true)
-                                    .OrderBy(se => se.Order != 0 ? se.Order : int.MaxValue).ThenBy(se => se.Title))
-                    {
-                        <div class="col-12 p-1 ">
-                            <div class="rounded-2 hover pointer p-1 px-2 ps-4 text-secondary @( GetSelection(child) )"
-                                 @onclick="@( async e => { await OnItemType(child); })">
-                                @child.ToString()
-                            </div>
-                        </div>
-                    }
                 }
             </div>
         }
@@ -125,7 +117,7 @@
                 @foreach (IDTO _page in CurrentPages)
                 {
                     <div class="col-12 p-1">
-                        <div class="rounded-2 hover pointer p-1 px-2 fw-bold @( GetSelection(_page) )"
+                        <div class="rounded-2 hover pointer p-1 px-2 fw-bold @( GetPageSelection(_page) )"
                              @onclick="@( async e => { await OnPage(_page); })">
                             @_page.Title
                         </div>
@@ -167,6 +159,11 @@
             }
         }
 
+           if (message.Id == "ItemType" && message.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+
         if (message.Id == "Feature" && message.Action == BusAction.Refresh)
         {
             await InvokeAsync(StateHasChanged);
@@ -175,20 +172,16 @@
 
 
     // Structure
-
     private async Task OnAppSelect(IApp _app)
     {
         await app.SetApp(_app);
 
-        // CurrentItemTypes = await app.App.GetItemTypes(AssociationTyp.Children);
-        // CurrentPages = await app.App.GetPages();
-
         nm.NavToApp(_app.Name);
 
-        // Refresh
-        msg.Publish(new AppMessage("App", BusAction.Refresh));
+        // // Refresh
+        // msg.Publish(new AppMessage("App", BusAction.Refresh));
 
-        await Task.CompletedTask;
+        // await Task.CompletedTask;
     }
     private async Task OnItemType(IItemType it)
     {
@@ -199,9 +192,9 @@
         await app.AppByItemType(it);
 
         // Refresh
-        msg.Publish(new AppMessage("ItemType", BusAction.Refresh));
+        // msg.Publish(new AppMessage("ItemType", BusAction.Refresh));
 
-        await Task.CompletedTask;
+        // await Task.CompletedTask;
     }
     private async Task OnPage(IDTO page)
     {
@@ -213,7 +206,9 @@
 
         await Task.CompletedTask;
     }
-    private string GetSelection(IApp _app)
+    
+    // Layout 
+    private string GetAppSelection(IApp _app)
     {
         if (app.App == null)
             return string.Empty;
@@ -223,7 +218,7 @@
 
         return string.Empty;
     }
-    private string GetSelection(IItemType it)
+    private string GetItemTypeSelection(IItemType it)
     {
         if (app.ItemType == null)
             return string.Empty;
@@ -233,7 +228,7 @@
 
         return string.Empty;
     }
-    private string GetSelection(IDTO dto)
+    private string GetPageSelection(IDTO dto)
     {
         if (app.Page == null)
             return string.Empty;
@@ -243,9 +238,8 @@
 
         return string.Empty;
     }
-
   
-
+    // Dispose 
     public async ValueTask DisposeAsync()
     {
         try
@@ -258,6 +252,7 @@
         }
     }
 
+    // Groups 
     private readonly List<string> PreferredGroupOrder = new()
     {
         "Strategy",

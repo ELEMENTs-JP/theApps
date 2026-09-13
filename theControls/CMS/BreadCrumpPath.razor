@@ -3,6 +3,8 @@
 @implements IAsyncDisposable
 @inject NavigationManager nm
 @inject IMessagingBusService msg
+@inject ISqlDatabaseService sql
+
 
 <div class="row g-0">
 
@@ -17,7 +19,7 @@
     @if (app != null && app.ItemType != null)
     {
         <div class="col-auto bg-surface p-2 px-3 align-items-center border-bottom border-end hover pointer"
-            @onclick="@( e => {  nm.NavToLibrary(app.ItemType.Name, app.ItemType.Typ); })">
+             @onclick="@( e => { nm.NavToLibrary(app.ItemType.Name, app.ItemType.Typ); })">
             @app.ItemType.ToString()
         </div>
     }
@@ -29,33 +31,55 @@
         </div>
     }
 
+
+    @*    @if (PotentialApp != null)
+    {
+        <div class="col-auto bg-primary p-2 px-3 align-items-center border-bottom border-end">
+            @PotentialApp?.ToString()
+        </div>
+    }
+    @if (PotentialItemType != null)
+    {
+        <div class="col-auto bg-primary p-2 px-3 align-items-center border-bottom border-end">
+            @PotentialItemType?.ToString()
+        </div>
+    } *@
+
 </div>
 
 
 @code {
 
+    // [Parameter]
+    // public IItemType? PotentialItemType { get; set; }
 
+    // [Parameter]
+    // public IApp? PotentialApp { get; set; }
+
+    // Events
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
         message.OnMessage += OnMessageRun;
+
+        // Navigation Handler
+        nm.LocationChanged += OnLocationChanged;
     }
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-
     }
+
+    // Method
     private async Task OnAppSelect(IApp _app)
     {
         await app.SetApp(_app);
 
         nm.NavToApp(_app.Name);
 
-        // Refresh 
+        // Refresh
         msg.Publish(new AppMessage("App", BusAction.Refresh));
-
-        await Task.CompletedTask;
     }
     private async void OnMessageRun(AppMessage msg)
     {
@@ -73,11 +97,85 @@
         }
     }
 
+    // Events
+    private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        // Globaler Code bei jeder Navigation (z. B. Logging, Analytics)
+        string newUrl = e.Location;
+
+        UrlAnalysis analysis = UrlAnalysis.AnalyzeUrl(nm);
+        if (analysis.Segments.PrepareUriSegments().Count() >= 1)
+        {
+            // Filterung u. Uri Escaping
+            var segments = analysis.Segments.PrepareUriSegments().ToList();
+            segments = segments.Select(s => Uri.UnescapeDataString(s)).ToList();
+
+            // 1. Versuch: Suche nach der Kombination aus App (i - 1) und ItemType (i)
+            if (segments.Count >= 2)
+            {
+                for (int i = 1; i < segments.Count; i++)
+                {
+                    string itemTypeCandidate = segments[i];
+
+                    IItemType? _it = await new Factory(sql).BuildItemType(itemTypeCandidate);
+                    if (_it != null)
+                    {
+                        IApp? _app = await app.AppByItemType(_it);
+                        if (_app != null)
+                        {
+                            // setzt ItemType und App
+                            await app.SetItemType(_it);
+                            msg.Publish("ItemType", BusAction.Refresh);
+                            // await InvokeAsync(StateHasChanged);
+                            return; // Pärchen erfolgreich gefunden -> Ende
+                        }
+                    }
+                }
+            }
+
+            // 2. Versuch (Fallback): Prüfen, ob ein Segment eine reine App ist (über die Factory)
+            foreach (string seg in segments.AsEnumerable().Reverse())
+            {
+                IApp? _app = await new Factory(sql).BuildApp(seg);
+                if (_app != null)
+                {
+                    await app.SetApp(_app);
+                    msg.Publish("App", BusAction.Refresh);
+                    // await InvokeAsync(StateHasChanged);
+                    return;
+                }
+            }
+
+            // 3. Versuch: Prüfen ob die Segmente in Form von /.../Page/58439309-585904-75843/... vorliegen
+            foreach (string seg in segments)
+            {
+                Guid pageGUID = seg.ToSecureGUID();
+                if (pageGUID != Guid.Empty)
+                {
+                    IDTO? Page = app.AllPages.Find(se => se.GUID == pageGUID);
+                    if (Page != null)
+                    {
+                        await app.SetPage(Page);
+                        msg.Publish("Page", BusAction.Refresh);
+                        return;
+                    }
+                }
+            }
+
+        }
+
+        // Setzt App, ItemType u. Page == null
+        await app.SetApp(null);
+        msg.Publish("App", BusAction.Refresh);
+    }
+
+    // Dipose
     public async ValueTask DisposeAsync()
     {
         try
         {
             message.OnMessage -= OnMessageRun;
+            nm.LocationChanged -= OnLocationChanged;
         }
         catch (Exception ex)
         {

@@ -133,8 +133,7 @@
         // Message Handler
         msg.OnMessage += OnMessageIncome;
 
-        // Navigation Handler
-        nm.LocationChanged += OnLocationChanged;
+
     }
 
     private async void OnMessageIncome(AppMessage message)
@@ -144,26 +143,14 @@
             await InvokeAsync(StateHasChanged);
         }
     }
-    private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        // Globaler Code bei jeder Navigation (z. B. Logging, Analytics)
-        string newUrl = e.Location;
 
-        UrlAnalysis analysis = UrlAnalysis.AnalyzeUrl(nm);
-        if (analysis.Segments.Count() == 0)
-        {
-            // Home 
-            app.App = null;
-            msg.Publish("App", BusAction.Refresh);
-        }
-    }
 
     public async ValueTask DisposeAsync()
     {
         try
         {
             msg.OnMessage -= OnMessageIncome;
-            nm.LocationChanged -= OnLocationChanged;
+      
         }
         catch (Exception ex)
         {

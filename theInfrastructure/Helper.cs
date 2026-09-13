@@ -21,6 +21,15 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        public static DateTime RoundUpToNext15Minutes(this DateTime dt)
+        {
+            int delta = 15 - (dt.Minute % 15);
+            if (delta == 15 && dt.Second == 0 && dt.Millisecond == 0)
+            {
+                return dt; // Bereits exakt auf 15 Minuten
+            }
+            return dt.AddMinutes(delta).AddSeconds(-dt.Second).AddMilliseconds(-dt.Millisecond);
+        }
         public static bool FileBoxVisibility(ItemTypeTyp typ)
         {
             if (typ == ItemTypeTyp.File ||

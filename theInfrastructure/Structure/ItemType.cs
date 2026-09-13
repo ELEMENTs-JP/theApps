@@ -51,6 +51,7 @@ namespace theInfrastructure
         public bool InSubNavigation { get; set; } = true; // In untergeordneter Navigation anzeigen 
         public bool ShowInTaskBarNavigation { get; set; } = true; // In der Taskbar unten rechts anzeigen 
         public int Order { get; set; } = 0;
+        
         public ItemTypeTyp Typ { get; set; } = ItemTypeTyp.Item;
         public BaseItemType()
         { 
@@ -129,7 +130,7 @@ namespace theInfrastructure
                 if (string.IsNullOrEmpty(val))
                 {
                     // set Year 
-                    args.Item[start] = DateTime.Now.ToShortTimeString();
+                    args.Item[start] = DateTime.Now.RoundUpToNext15Minutes().ToShortTimeString();
 
                     // Update 
                     await args.SqlService.Update(args.Item);
@@ -147,7 +148,7 @@ namespace theInfrastructure
                 if (string.IsNullOrEmpty(val))
                 {
                     // set Year 
-                    args.Item[end] = DateTime.Now.AddHours(1).ToShortTimeString();
+                    args.Item[end] = DateTime.Now.AddHours(1).RoundUpToNext15Minutes().ToShortTimeString();
 
                     // Update 
                     await args.SqlService.Update(args.Item);

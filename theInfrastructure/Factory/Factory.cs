@@ -14,7 +14,7 @@ namespace theInfrastructure
         }
 
         // App 
-        public async Task<IApp> BuildApp(string name)
+        public async Task<IApp?> BuildApp(string name)
         {
             string className = $"App_{name}";
 
@@ -38,11 +38,16 @@ namespace theInfrastructure
                 }
             }
 
+            if (type == null)
+            {
+                return null;
+            }
+
             return (IApp)Activator.CreateInstance(type)!;
         }
 
         // ItemType 
-        public async Task<IItemType> BuildItemType(string name)
+        public async Task<IItemType?> BuildItemType(string name)
         {
             string className = $"ItemType_{name}";
 
@@ -58,7 +63,7 @@ namespace theInfrastructure
                 qp.MasterGUID = sqlService.MasterGUID;
                 IQueryResult result = await sqlService.GetItems(qp);
                 
-                IDTO dto = result.Items.FirstOrDefault(se => se.Title == name);
+                IDTO? dto = result.Items.FirstOrDefault(se => se.Title == name);
                 if (dto != null)
                 { 
                     IItemType template = new ItemType_Template(dto, sqlService);
@@ -68,8 +73,9 @@ namespace theInfrastructure
 
             if (type == null)
             {
-                throw new NullReferenceException("Typ konnte nicht gefunden werden.");
+                return null;
             }
+
             return (IItemType)Activator.CreateInstance(type)!;
         }
         public List<IItemType> InjectItemTypes(IApp app)

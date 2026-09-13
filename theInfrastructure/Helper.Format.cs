@@ -402,6 +402,42 @@ namespace theInfrastructure
 
             return val;
         }
+        public static string ToDateField(this object? obj)
+        {
+            if (obj == null)
+            {
+                return string.Empty;
+            }
+
+            // 1. Echter DateTime-Typ
+            if (obj is DateTime dt)
+            {
+                return dt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            }
+
+            // 2. TimeSpan-Typ (Interpretation als Dauer seit/ab einem Basisdatum oder Zeitanteil)
+            if (obj is TimeSpan ts)
+            {
+                return DateTime.MinValue.Add(ts).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            }
+
+            // 3. String-Eingaben
+            string strInput = obj.ToString()?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(strInput))
+            {
+                return string.Empty;
+            }
+
+            // Versuch, den String in ein gültiges Datum zu parsen (unterstützt verschiedene Formate & Kulturen)
+            if (DateTime.TryParse(strInput, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate) ||
+                DateTime.TryParse(strInput, CultureInfo.CurrentCulture, DateTimeStyles.None, out parsedDate))
+            {
+                return parsedDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            }
+
+            // Rückgabe bei nicht parsbaren Werten
+            return string.Empty;
+        }
         public static string SplitGetFirst(this string text, string separator = "-")
         {
             if (!text.Contains(separator))
