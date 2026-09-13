@@ -79,7 +79,7 @@ namespace theInfrastructure
                     Typ = FieldTyp.Status,
                     DefaultValue = "neu",
                     Column = "Status", CSS = " col-12 col-md-6 col-lg-4 ",
-                    Funktionen = new FieldFunction(true),
+                    Funktionen = new FieldFunction(true, true),
                     OnDevice = DeviceDisplay.Tablet
                 });
                 Fields.Add(new Field() 
@@ -88,7 +88,7 @@ namespace theInfrastructure
                     Typ = FieldTyp.Progress, 
                     DefaultValue = "0",
                     Column = "Progress", CSS = " col-12 col-md-6 col-lg-4 ",
-                    Funktionen = new FieldFunction(true),
+                    Funktionen = new FieldFunction(true, true),
                     OnDevice = DeviceDisplay.Tablet 
                 });
                 Fields.Add(new Field() 
@@ -97,7 +97,7 @@ namespace theInfrastructure
                     Typ = FieldTyp.Priority, 
                     DefaultValue = "ausgeglichen",
                     Column = "Prio", CSS = " col-12 col-md-6 col-lg-4 ",
-                    Funktionen = new FieldFunction(true),
+                    Funktionen = new FieldFunction(true, true),
                     OnDevice = DeviceDisplay.Tablet });
             }
 

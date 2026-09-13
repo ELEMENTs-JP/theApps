@@ -10,52 +10,46 @@
             <table class="table table-hover align-middle">
                 <thead>
                     <tr>
-                        <TableHeader Context="@Context"
-                                     OnSort="@( async e => { await Context.Search(); } )"
-                                     IsRelated="@( (RelatedItem != null))" />
+                        <TableHeader Context="@Context" OnSort="Sort" IsRelated="@( (RelatedItem != null))" />
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Context.Items != null)
-                    {
-                        <Virtualize Items="Context.Items" Context="item" SpacerElement="tr" ItemSize="48">
-                            <ItemContent>
+                    <Virtualize Items="@Context.Items" Context="item" SpacerElement="tr" ItemSize="48">
+                        <ItemContent>
 
-                                @if (!string.IsNullOrEmpty(item["GroupName"]))
-                                {
-                                    <tr @key="@( "group_header_" + item["GroupName"])" 
-                                        class="fw-bold text-secondary">
-                                        <td colspan="100" class="p-2 border-bottom">
-                                            <div class="d-flex align-items-center">
-                                                <div class="pe-1">
-                                                    <SymbolIcon Symbol="Icon.Gruppierung" />
-                                                </div>
-                                                <div class="px-1 flex-fill">
-                                                    @item["GroupName"].ToSecureString()
-                                                </div>
-                                                <div class="px-1">
-
-                                                </div>
+                            @if (!string.IsNullOrEmpty(item["GroupName"]))
+                            {
+                                <tr @key="@( "group_header_" + item["GroupName"])"
+                                    class="fw-bold text-secondary">
+                                    <td colspan="100" class="p-2 border-bottom">
+                                        <div class="d-flex align-items-center">
+                                            <div class="pe-1">
+                                                <SymbolIcon Symbol="Icon.Gruppierung" />
                                             </div>
-                                        </td>
-                                    </tr>
-                                }
-                                else
-                                {
-                                    <TableRow @key="@( "item_entry_" + item.GUID)"
-                                              Context="@Context"
-                                              Item="@item"
-                                              IsRelated="@( (RelatedItem != null))" />
-                                }
-
-                            </ItemContent>
-                            <Placeholder>
-                                <tr>
-                                    <td colspan="100" class="text-muted p-2">Lade Daten...</td>
+                                            <div class="px-1 flex-fill">
+                                                @item["GroupName"].ToSecureString()
+                                            </div>
+                                            <div class="px-1">
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </Placeholder>
-                        </Virtualize>
-                    }
+                            }
+                            else
+                            {
+                                <TableRow @key="@( "item_entry_" + item.GUID)"
+                                          Context="@Context"
+                                          Item="@item"
+                                          IsRelated="@( (RelatedItem != null))" />
+                            }
+
+                        </ItemContent>
+                        <Placeholder>
+                            <tr>
+                                <td colspan="100" class="text-muted p-2">Lade Daten...</td>
+                            </tr>
+                        </Placeholder>
+                    </Virtualize>
                 </tbody>
             </table>
         </div>
@@ -78,6 +72,9 @@
     [Parameter]
     public string Matchcode { get; set; } = string.Empty;
 
+    [Parameter]
+    public List<IDTO> Items { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -87,4 +84,15 @@
     {
         await base.OnParametersSetAsync();
     }
+
+    private async Task Sort()
+    {
+        if (OnSort.HasDelegate)
+        {
+            await OnSort.InvokeAsync("");
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> OnSort { get; set; }
 }

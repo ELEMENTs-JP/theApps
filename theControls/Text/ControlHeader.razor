@@ -1,8 +1,9 @@
 ﻿@inject IAppService app
 
 
-<div class="@app.Configuration.GetGlassClass()  row g-0 p-2 rounded-2  @( ((Border) ? " border-bottom " : "")  )">
-    <div class="col-auto p-1">
+<div id="@( "ch-frame-" + ID )" 
+class="@app.Configuration.GetGlassClass()  d-inline-flex p-1 rounded-2  @( ((Border) ? " border-bottom " : "")  )">
+    <div class="p-1">
         @if (!string.IsNullOrEmpty(PreTitle))
         {
             <div class="page-pretitle">
@@ -20,7 +21,7 @@
         @if (!string.IsNullOrEmpty(SubTitle))
         {
             <div class="text-muted"
-                 style="max-width:15rem;" title="@SubTitle">
+                 style="max-width:12rem;" title="@SubTitle">
                 @SubTitle
             </div>
         }
@@ -28,14 +29,22 @@
         @if (!string.IsNullOrEmpty(PostTitle))
         {
             <div class="text-muted text-truncate"
-                 style="max-width:15rem;" title="@PostTitle">
+                 style="max-width:12rem;" title="@PostTitle">
                 @PostTitle
             </div>
         }
+
+        @if (!string.IsNullOrEmpty(Description))
+        {
+            <div class="text-muted text-truncate"
+                 style="max-width:15rem;" title="@Description">
+                @Description
+            </div>
+        }
     </div>
-    <div class="col p-1">
+    <div class="flex-fill p-1">
     </div>
-    <div class="col-auto text-end p-1">
+    <div class="text-end p-1">
         @if (!string.IsNullOrEmpty(PreRelated))
         {
             <div class="page-pretitle">
@@ -57,17 +66,13 @@
             </span>
         }
     </div>
-
-    @if (!string.IsNullOrEmpty(Description))
-    {
-        <div class="col-12 px-1 text-muted truncate-text pe-5">
-            @Description
-        </div>
-    }
 </div>
 
 
+
 @code {
+
+    private string ID { get; set; } = $"{Guid.NewGuid()}";
 
     [Parameter]
     public string Description { get; set; } = string.Empty;
