@@ -13,7 +13,7 @@
     {
         <Frame Border="true">
             <Header>
-                <ControlHeader PreTitle="List" Title="@Title"
+                <ControlHeader PreTitle="Calendar" Title="@Title"
                                SubTitle="@("Typ " + ItemType.Typ.ToSecureString())"
                                Description="@ItemType.Description" />
             </Header>
@@ -54,43 +54,48 @@
                     else
                     {
                         <AddArea ItemType="@ItemType" CSS="me-2"
-                                 OnItemAdded="@( async e => {  })" />
+                                 OnItemAdded="@( async e => { await PartialItemsReload(); })" />
                     }
                 }
             </Related>
             <Content>
 
-                @if (this.ItemType.Typ == ItemTypeTyp.Item ||
-                        this.ItemType.Typ == ItemTypeTyp.User ||
-                        this.ItemType.Typ == ItemTypeTyp.Note ||
-                        this.ItemType.Typ == ItemTypeTyp.Link ||
-                        this.ItemType.Typ == ItemTypeTyp.Information ||
-                        this.ItemType.Typ == ItemTypeTyp.Comment ||
-                            this.ItemType.Typ == ItemTypeTyp.Audio)
-                {
-                      <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode" 
-                            Context="@Context" Items="@Context.Items"
-                                OnSort="@( async e => { await Context.Search(); } )">
-                        <Empty>
-                            <QuickAdd ItemType="@this.ItemType" OnAdd="@( e => { })" />
-                        </Empty>
-                    </DataTable>
+                    @if (View == "Monat")
+                    {
+                        <CalendarMonthComp TItem="IDTO"
+                                           Items="@Context.Items"
+                                           DateSelector="@(dto => dto[dateColumn].ToSecureString().ToSecureDateTime())"
+                                           TitleSelector="@(dto => dto.Title.ToSecureString())"
+                                           OnItemClick="@(dto => nm.NavigateTo(Helper.GetItemUrl(dto)))"
+                                           OnItemDeleted="@(async dto => await ItemDelete(dto))" />
 
-                   
-                }
-                else if (this.ItemType.Typ == ItemTypeTyp.File ||
-                            this.ItemType.Typ == ItemTypeTyp.Video ||
-                            this.ItemType.Typ == ItemTypeTyp.Image)
-                {
-                    <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" Context="@Context"
-                              OnItemDelete="@( e => {  })" />
-                }
-        
-
+                    }
+                    else if (View == "Woche")
+                    {
+                        <CalendarWeekComp TItem="IDTO"
+                                          Items="@Context.Items"
+                                          ShowWeekend="@showWeekendSetting"
+                                      DateSelector="@(item => item[dateColumn].ToSecureDateTime())"
+                                          StartSelector="@(item => item["Start"].ToSecureDateTime().TimeOfDay)"
+                                          EndSelector="@(item => item["Ende"].ToSecureDateTime().TimeOfDay)"
+                                          TitleSelector="@(item => item.Title)"
+                                          OnItemClick="@(item => nm.NavToItem(item.ItemType, item.GUID))"
+                                          OnCreateAppointment="@CreateRedirect" />
+                    }
+                    else if (View == "Tag")
+                    {
+                        <CalendarDayComp TItem="IDTO"
+                                         Items="@Context.Items"
+                                     DateSelector="@(item => item[dateColumn].ToSecureDateTime().Date)"
+                                         StartSelector="@(item => item["Start"].ToSecureDateTime().TimeOfDay)"
+                                         EndSelector="@(item => item["Ende"].ToSecureDateTime().TimeOfDay)"
+                                         TitleSelector="@(item => item.Title)"
+                                         OnItemClick="@(item => nm.NavToItem(item.ItemType, item.GUID))"
+                                         OnCreateAppointment="@CreateRedirect" />
+                    }
                 
             </Content>
             <Bottom>
-
              
                 @if (Helper.FileBoxVisibility(this.ItemType.Typ))
                 {
@@ -98,7 +103,7 @@
                 }
                 else
                 {
-                    <AddFast ItemType="@ItemType" OnItemAdded="@( async e => { await Context.Search(); })" />
+                    <AddFast ItemType="@ItemType" OnItemAdded="@( async e => { await PartialItemsReload(); })" />
                 }
 
             </Bottom>
@@ -126,6 +131,7 @@
     private string Title { get; set; } = string.Empty;
     private bool IsSecure { get; set; } = false;
     private string View { get; set; } = "Monat";
+    private bool showWeekendSetting = true;
 
     private IQueryContext Context { get; set; }
     private string Matchcode { get; set; } = string.Empty;
@@ -141,22 +147,16 @@
     {
         await base.OnParametersSetAsync();
 
+        var setting = await Helper.GetSettingValue(sql, "ShowWeekend", "Appointment");
+        showWeekendSetting = (setting == "true");
 
         if (ItemType != null)
         {
             Fields = await ItemType.GetFields();
 
-            if (Context == null)
-            {
-                Context = new QueryContext(sql, sec, ItemType);
-            }
-            
-            Context.ItemType = ItemType;
-
-            // if (this.ItemType.Typ == ItemTypeTyp.Appointment)
-            // {
-            //     await Context.Search();
-            // }
+            Context = new QueryContext(sql, sec, ItemType);
+            await Context.Search();
+        
             // Title
             Title = await Helper.GetSettingValue(sql, "Title", ItemType.Name);
             Title = Title.IsEmpty() ? ItemType.Name : Title;
@@ -175,6 +175,17 @@
     }
 
     // Helper
+    private async Task ItemsReload()
+    {
+        await Context.Search();
+    }
+    private async Task PartialItemsReload()
+    {
+        if (this.ItemType.Typ == ItemTypeTyp.Appointment)
+        {
+            await Context.Search();
+        }
+    }
     private async Task CreateRedirect()
     {
         IQueryParameter qp = QueryParameter.Default("neuer Termin");

@@ -479,6 +479,7 @@ namespace theInfrastructure
         }
         public static DateTime ToSecureDateTime(this object text)
         {
+           
             try
             {
                 if (text == null)

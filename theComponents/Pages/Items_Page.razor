@@ -9,11 +9,14 @@
     {
         <HierarchyComp ItemType="@ItemType" />
     }
+    else if (Typ == "Calendar")
+    {
+        <CalendarComp ItemType="@ItemType" />    
+    }
     else
     {
         <ItemsComp ItemType="@ItemType" />
     }
-
 </div>
 
 @code {
