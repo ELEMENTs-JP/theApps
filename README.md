@@ -25,6 +25,7 @@ We use the following external libraries:
 - Sortable.JS for drag-and-drop operations
 - Apache eCharts for charting
 - videojs for video streaming
+- calendar and charts are from a separate open-source library via NuGet.
 
 **System Requirements**
 
