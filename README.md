@@ -31,6 +31,7 @@ We use the following external libraries:
 Currently, the following system requirements are needed. The system was developed and tested using these requirements.
 - Microsoft Windows 11 Professional
 - Microsoft Internet Information Server
+- .net Core 10 (Blazor Server App)
 - Disk space: Depends on how many files are stored in the system. The software itself is currently a maximum of 50 MB in size
 
 **Installation and Setup**
