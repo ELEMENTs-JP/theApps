@@ -9,3 +9,6 @@ The app includes a wide range of features that are continuously being expanded a
 - Search (global search, local search in tables)
 - Tables, Calendar, Images, Videos, Audio, Files, Checklist
 - Multilingual support (German, English, French, Spanish) is not yet complete (in progress)
+
+## Single-Client vs. Multi-Client System
+This is a single-client system. However, upon request as part of a project, a multi-client system with multiple databases can be developed.
