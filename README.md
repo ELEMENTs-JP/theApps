@@ -47,3 +47,7 @@ Installation and setup are relatively simple.
 **Note**
   
 The system is not currently a fully-fledged business management system. It is an application builder that can create various applications based on specific data record types. The navigation shown in the screenshot is an example of the types of applications that can be designed.
+
+**Contact**
+
+If you have any further questions or development needs, please visit the website theSTRIDEsPath.com
