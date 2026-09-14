@@ -1,0 +1,72 @@
+﻿@using theInfrastructure
+@implements IDisposable
+@inject TimerService timer
+@inject ISqlDatabaseService sql
+@inject IMessagingBusService msg
+
+<div class="border rounded p-2 bg-surface">
+    <small class="text-muted small">
+        Letzte Überprüfung: @(lastExecution == DateTime.MinValue ? "Noch keine" : lastExecution.ToString("HH:mm:ss"))
+    </small>
+</div>
+
+@code {
+    private readonly string registrationKey = Guid.NewGuid().ToString();
+    private DateTime lastExecution = DateTime.MinValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        // Registrierung am TimerService mit Intervall 5 Minuten
+        // optional: runImmediately = true, falls der erste Check sofort beim Laden erfolgen soll
+        timer.Register(
+            key: registrationKey,
+            interval: UpdateInterval.OneMinute,
+            callback: CheckRemindersAsync,
+            runImmediately: true
+        );
+    }
+
+    private async Task CheckRemindersAsync()
+    {
+        // Ausführungslogik für den 5-Minuten-Tick
+        lastExecution = DateTime.Now;
+
+        List<IDTO> reminders = new();
+
+        IQueryParameter qp = QueryParameter.Default(string.Empty);
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = "Reminder";
+
+        IQueryResult result = await sql.GetItems(qp);
+        reminders = result.Items;
+
+        // Aktiv 
+        reminders = reminders.Where(se => se["IsActive"].ToSecureBool() == true).ToList();
+
+        // inkl. Heute (nicht beendet)
+        reminders = reminders.Where(se => se["Stop"].ToSecureDateTime().Date >= DateTime.Now.Date).ToList();
+
+        // nur heutige Reminder
+        reminders = reminders.Where(se => se["Date"].ToSecureDateTime().Date == DateTime.Now.Date).ToList();
+
+        // Uhrzeit 
+        reminders = reminders.Where(se => se["Time"].ToSecureDateTime().TrimToMinute() <= DateTime.Now.TrimToMinute()).ToList();
+
+        foreach (IDTO rem in reminders)
+        {
+            string info = rem.Title;
+            msg.Publish("Info", BusAction.Info, info);
+        }
+
+        // UI-Update anfordern, da der Callback vom Background-Timer aufgerufen wird
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        // Entfernt die Registrierung beim Zerstören der Komponente
+        timer.Unregister(registrationKey);
+    }
+}

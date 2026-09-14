@@ -477,6 +477,19 @@ namespace theInfrastructure
                 return string.Empty;
             }
         }
+
+        public static DateTime TrimToMinute(this DateTime dateTime)
+        {
+            return new DateTime(
+                dateTime.Year,
+                dateTime.Month,
+                dateTime.Day,
+                dateTime.Hour,
+                dateTime.Minute,
+                0,
+                0,
+                dateTime.Kind);
+        }
         public static DateTime ToSecureDateTime(this object text)
         {
            

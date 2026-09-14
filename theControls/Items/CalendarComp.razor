@@ -46,16 +46,10 @@
                                  OnSettingChanged="@( async e => {  })" />
                     <div class="vr"></div>
 
-                    @if (Helper.FileBoxVisibility(this.ItemType.Typ))
-                    {
-                        <ClipboardCopyPaste ItemType="@this.ItemType" />
-                        <FileUploadComp ItemType="@this.ItemType" />
-                    }
-                    else
-                    {
+                  
                         <AddArea ItemType="@ItemType" CSS="me-2"
                                  OnItemAdded="@( async e => { await PartialItemsReload(); })" />
-                    }
+                  
                 }
             </Related>
             <Content>
@@ -147,7 +141,7 @@
     {
         await base.OnParametersSetAsync();
 
-        var setting = await Helper.GetSettingValue(sql, "ShowWeekend", "Appointment");
+        var setting = await Helper.GetSettingValue(sql, "ShowWeekend", ItemType.Name);
         showWeekendSetting = (setting == "true");
 
         if (ItemType != null)
@@ -188,8 +182,8 @@
     }
     private async Task CreateRedirect()
     {
-        IQueryParameter qp = QueryParameter.Default("neuer Termin");
-        qp.ItemType = "Appointment";
+        IQueryParameter qp = QueryParameter.Default("neuer:e " + this.ItemType.Name);
+        qp.ItemType = this.ItemType.Name;
         qp.MasterGUID = sql.MasterGUID;
 
         await sql.Create(qp);

@@ -112,7 +112,7 @@ namespace theInfrastructure
                 if (string.IsNullOrEmpty(val))
                 {
                     // set Year 
-                    args.Item[date] = DateTime.Now.Date.ToShortDateString();
+                    args.Item[date] = DateTime.Now.Date.ToDateField();
 
                     // Update 
                     await args.SqlService.Update(args.Item);
@@ -154,6 +154,25 @@ namespace theInfrastructure
                     await args.SqlService.Update(args.Item);
                 }
             }
+
+            // Stop
+            string stop = await GetRelevantPropertyName(RelevantPropertyType.Stop);
+            if (!string.IsNullOrEmpty(stop))
+            {
+                // Value 
+                string val = args.Item[stop].ToSecureString();
+
+                // Empty 
+                if (string.IsNullOrEmpty(val))
+                {
+                    // set Year 
+                    args.Item[stop] = DateTime.Now.AddDays(14).ToDateField();
+
+                    // Update 
+                    await args.SqlService.Update(args.Item);
+                }
+            }
+
 
             // return 
             return args.Item;
@@ -229,7 +248,7 @@ namespace theInfrastructure
             if (typ == RelevantPropertyType.Date)
             {
                 // 1. Prio = Generell die Frage nach einem Datum 
-                IField? dateField = fields.Where(se => se.Typ == FieldTyp.Date).FirstOrDefault();
+                IField? dateField = fields.Where(se => se.Typ == FieldTyp.Date && (se.Column == "Date" || se.Column == "Datum")).FirstOrDefault();
                 if (dateField != null)
                 {
                     prop = dateField.Column;
@@ -257,7 +276,7 @@ namespace theInfrastructure
             // Start 
             if(typ == RelevantPropertyType.Start)
             {
-                IField? startField = fields.Find(se => se.Typ == FieldTyp.Time && se.Column == "Start");
+                IField? startField = fields.Find(se => se.Typ == FieldTyp.Time && se.Column == "Start" && se.Typ == FieldTyp.Time);
                 if (startField != null)
                 {
                     prop = startField.Column;
@@ -267,7 +286,17 @@ namespace theInfrastructure
             // End 
             if(typ == RelevantPropertyType.End)
             {
-                IField? endField = fields.Find(se => se.Typ == FieldTyp.Time && (se.Column == "End" || se.Column == "Ende"));
+                IField? endField = fields.Find(se => se.Typ == FieldTyp.Time && (se.Column == "End" || se.Column == "Ende" && se.Typ == FieldTyp.Time));
+                if (endField != null)
+                {
+                    prop = endField.Column;
+                }
+            }
+
+            // Stop 
+            if (typ == RelevantPropertyType.Stop)
+            {
+                IField? endField = fields.Find(se => se.Typ == FieldTyp.Time && (se.Column == "Stop" && se.Typ == FieldTyp.Date));
                 if (endField != null)
                 {
                     prop = endField.Column;

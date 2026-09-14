@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,12 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace theInfrastructure
 {
-    public class ScopedTimerService : IDisposable
+    public class TimerService : IDisposable
     {
         private readonly Dictionary<string, RegistrationEntry> _registrations = new();
         private readonly object _lock = new();
         private readonly CancellationTokenSource _cts = new();
-        private ulong _executionCycle = 0;
 
         private class RegistrationEntry
         {
@@ -20,9 +18,8 @@ namespace theInfrastructure
             public UpdateInterval Interval { get; set; }
         }
 
-        public ScopedTimerService()
+        public TimerService()
         {
-            // Verwendung von PeriodicTimer statt System.Threading.Timer zur Vermeidung von Überlappungen
             Task.Run(() => StartTimerAsync(_cts.Token));
         }
 
@@ -45,9 +42,9 @@ namespace theInfrastructure
                     {
                         await callback();
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        
+                        // Logging hier ergänzen
                     }
                 });
             }
@@ -63,36 +60,58 @@ namespace theInfrastructure
 
         private async Task StartTimerAsync(CancellationToken cancellationToken)
         {
+            // 1. Synchronisierung auf die nächste volle Minute (HH:MM:00.000)
+            var now = DateTime.Now;
+            var nextMinute = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0, now.Kind).AddMinutes(1);
+            var initialDelay = nextMinute - now;
+
+            try
+            {
+                await Task.Delay(initialDelay, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+
+            // 2. PeriodicTimer startet exakt zur vollen Minute
             using var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
+
+            // Erste Ausführung direkt nach Ablauf des initialen Delays für Minute 00
+            await ProcessTickAsync();
 
             while (!cancellationToken.IsCancellationRequested && await timer.WaitForNextTickAsync(cancellationToken))
             {
-                List<Func<Task>> tasksToRun = new();
+                await ProcessTickAsync();
+            }
+        }
 
-                lock (_lock)
+        private async Task ProcessTickAsync()
+        {
+            List<Func<Task>> tasksToRun = new();
+            int currentMinute = DateTime.Now.Minute;
+
+            lock (_lock)
+            {
+                foreach (var entry in _registrations.Values)
                 {
-                    unchecked
-                    { _executionCycle++; }
-
-                    foreach (var entry in _registrations.Values)
+                    // 3. Auswertung gegen die reale Systemminute statt eines lokalen Zählers
+                    if (currentMinute % (int)entry.Interval == 0)
                     {
-                        if (_executionCycle % (ulong)entry.Interval == 0)
-                        {
-                            tasksToRun.Add(entry.Callback);
-                        }
+                        tasksToRun.Add(entry.Callback);
                     }
                 }
+            }
 
-                foreach (var task in tasksToRun)
+            foreach (var task in tasksToRun)
+            {
+                try
                 {
-                    try
-                    {
-                        await task();
-                    }
-                    catch (Exception ex)
-                    {
-                        
-                    }
+                    await task();
+                }
+                catch (Exception)
+                {
+                    // Logging hier ergänzen
                 }
             }
         }

@@ -19,7 +19,7 @@ namespace theInfrastructure
             List<IField> Fields = new List<IField>();
 
             // Performance 
-            Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Appointment));
+            Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Reminder));
 
             // Description 
             Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Description));

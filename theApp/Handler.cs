@@ -118,6 +118,9 @@ namespace theApp
                     return new SearchService(environment, new SQLiteService(rootPath));
                 });
 
+                // Timer Service 
+                builder.Services.AddScoped<TimerService>();
+
                 // A valid antiforgery token was not provided with the request. Add an antiforgery token, or disable antiforgery validation for this endpoint.
 
                 // --- 1. Cookie-Authentifizierung konfigurieren

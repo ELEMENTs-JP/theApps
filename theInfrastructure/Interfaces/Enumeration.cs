@@ -75,6 +75,7 @@ namespace theInfrastructure
         End = 13,
         Start = 14,
         Progress = 15,
+        Stop = 16,
     }
     public enum ItemTypeTyp
     {
@@ -229,7 +230,8 @@ namespace theInfrastructure
         Performance = 2,
         File = 3,
         Appointment = 4,
-        Checklist = 5
+        Checklist = 5,
+        Reminder = 6
     }
     public enum DeviceDisplay
     { 

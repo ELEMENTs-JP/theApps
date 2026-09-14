@@ -201,6 +201,32 @@ namespace theInfrastructure
                 Fields.Add(new Field() { Title = "Ende", Typ = FieldTyp.Time, Column = "Ende", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
             }
 
+            if (typ == DefaultFieldTypes.Reminder)
+            {
+
+                Fields.Add(new Field() 
+                { 
+                    Title = "Aktiv", Typ = FieldTyp.CheckBox, TrueText="aktiv", FalseText="inaktiv", 
+                    Column = "IsActive", CSS = " col-12 col-md-12 col-lg-12 ", OnDevice = DeviceDisplay.Desktop 
+                });
+                Fields.Add(new Field()
+                {
+                    Title = "Intervall",
+                    Typ = FieldTyp.,
+                    TrueText = "aktiv",
+                    FalseText = "inaktiv",
+                    Column = "IsActive",
+                    CSS = " col-12 col-md-12 col-lg-12 ",
+                    OnDevice = DeviceDisplay.Desktop
+                });
+
+                Fields.Add(new Field() { Title = "Erinnerung", Typ = FieldTyp.HR, CSS = " col-12 col-md-12 col-lg-12 " });
+                Fields.Add(new Field() { Title = "Datum", Typ = FieldTyp.Date, Column = "Date", CSS = " col-12 col-md-4 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
+                Fields.Add(new Field() { Title = "Uhrzeit", Typ = FieldTyp.Time, Column = "Time", CSS = " col-12 col-md-4 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
+                Fields.Add(new Field() { Title = "Ende", Typ = FieldTyp.Date, Column = "Stop", CSS = " col-12 col-md-4 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
+            }
+
+
             if (typ == DefaultFieldTypes.Checklist)
             {
                 Fields.Add(new Field()
