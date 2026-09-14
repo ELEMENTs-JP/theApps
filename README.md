@@ -18,3 +18,6 @@ Currently, the following system requirements are needed. The system was develope
 - Microsoft Windows 11 Professional
 - Microsoft Internet Information Server
 - Disk space: Depends on how many files are stored in the system. The software itself is currently a maximum of 50 MB in size
+
+## Note
+The system is not currently a fully-fledged business management system. It is an application builder that can create various applications based on specific data record types. The navigation shown in the screenshot is an example of the types of applications that can be designed.
