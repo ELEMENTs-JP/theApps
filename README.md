@@ -19,5 +19,10 @@ Currently, the following system requirements are needed. The system was develope
 - Microsoft Internet Information Server
 - Disk space: Depends on how many files are stored in the system. The software itself is currently a maximum of 50 MB in size
 
+# Item Editing
+The interface for editing entries can be customized using code or the integrated designer (UI) or developed from scratch (code).
+
+<img width="1600" height="1297" alt="image" src="https://github.com/user-attachments/assets/150f8905-da39-455a-a5b4-c5a09ce8f717" />
+
 ## Note
 The system is not currently a fully-fledged business management system. It is an application builder that can create various applications based on specific data record types. The navigation shown in the screenshot is an example of the types of applications that can be designed.
