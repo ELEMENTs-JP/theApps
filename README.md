@@ -8,3 +8,4 @@ The app includes a wide range of features that are continuously being expanded a
 - Security (Login, Logoff, Register, Setup, Request new Password, etc.)
 - Search (global search, local search in tables)
 - Tables, Calendar, Images, Videos, Audio, Files, Checklist
+- Multilingual support (German, English, French, Spanish) is not yet complete (in progress)
