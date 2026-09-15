@@ -292,7 +292,9 @@ namespace theDatabase
                 return;
 
             if (this.Item == null)
-                return;
+            {
+                throw new Exception("Missing Item");
+            }
 
             if (ast == AssociationTyp.Association ||
                 ast == AssociationTyp.Default ||
@@ -323,6 +325,10 @@ namespace theDatabase
             //{ 
             //    IQueryResult result = await sqlService.Remove(this.Item, dto);
             //}
+            if (this.RelatedItem == null)
+            {
+                throw new Exception("Missing Related Item");
+            }
 
             if (this.RelatedItem != null)
             {

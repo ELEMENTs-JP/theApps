@@ -65,17 +65,17 @@ namespace theControls.Elements
             if (ItemType != null && Context != null)
             {
                 // Matchcode aus der abgeleiteten Klasse übernehmen (falls vorhanden)
-                if (this is DataTable dataTable)
-                {
-                    if (Context.Filter == null)
-                    {
-                        IFilterParameter filter = new FilterParameter();
-                        Context.Filter = filter;
-                    }
+                //if (this is DataTable dataTable)
+                //{
+                //    if (Context.Filter == null)
+                //    {
+                //        IFilterParameter filter = new FilterParameter();
+                //        Context.Filter = filter;
+                //    }
 
-                    // Matchcode 
-                    Context.Filter.Matchcode = dataTable.Matchcode;
-                }
+                //    // Matchcode 
+                //    Context.Filter.Matchcode = dataTable.Matchcode;
+                //}
 
                 if (RelatedItem != null)
                 {

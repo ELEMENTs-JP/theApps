@@ -5,18 +5,33 @@
 
 <div class="container-flex">
 
-    @if (Typ == "Hierarchy")
+    @if (ItemType != null)
     {
-        <HierarchyComp ItemType="@ItemType" />
+        @if (ItemType.Typ == ItemTypeTyp.Hierarchy)
+        {
+            <HierarchyComp ItemType="@ItemType" />
+        }
+        else if (ItemType.Typ == ItemTypeTyp.Appointment)
+        {
+            <CalendarComp ItemType="@ItemType" />
+        }
+        else if (ItemType.Typ == ItemTypeTyp.Folder)
+        {
+            <FoldersComp ItemType="@ItemType" />
+        }
+        else if (ItemType.Typ == ItemTypeTyp.File ||
+                    ItemType.Typ == ItemTypeTyp.Audio ||
+                    ItemType.Typ == ItemTypeTyp.Image ||
+                    ItemType.Typ == ItemTypeTyp.Video)
+        {
+            <FilesComp ItemType="@ItemType" />
+        }
+        else
+        {
+            <ItemsComp ItemType="@ItemType" />
+        }
     }
-    else if (Typ == "Calendar")
-    {
-        <CalendarComp ItemType="@ItemType" />    
-    }
-    else
-    {
-        <ItemsComp ItemType="@ItemType" />
-    }
+    
 </div>
 
 @code {

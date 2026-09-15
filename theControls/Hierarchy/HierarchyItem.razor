@@ -4,8 +4,7 @@
 
 @inherits BaseRow
 
-@if (Context != null)
-{
+
     <div class="row g-0 rounded-1 hover p-1 px-2 fw-bold pointer my-1" title="@Item.ItemType"
          @onclick="@( async e => { await Select(Item);  })">
 
@@ -31,7 +30,7 @@
         {
             @foreach (IDTO relItem in RelatedItems)
             {
-                <HierarchyItem Context="@Context" Item="@relItem" ItemType="ItemType" IsChild="true" Mode="HierarchyMode.Strict" />
+                <HierarchyItem Item="@relItem" ItemType="ItemType" IsChild="true" Mode="HierarchyMode.Strict" />
             }
         }
         @if (Mode == HierarchyMode.Related)
@@ -45,7 +44,7 @@
                 {
                     @foreach (IDTO childItem in RelatedItems.Where(se => se.ItemType == groupIT))
                     {
-                        <HierarchyItem Context="@Context" Item="@childItem" Mode="HierarchyMode.Related"
+                        <HierarchyItem Item="@childItem" Mode="HierarchyMode.Related"
                                 ItemType="@itemType.Name" IsChild="true" />
                     }
                 }
@@ -53,7 +52,7 @@
         }
     }
 
-}
+
 
 @code {
 
@@ -96,26 +95,26 @@
 
     private async Task LoadHierarchy()
     {
-        if (Mode == HierarchyMode.Strict)
-        {
-            // gleicher ItemType
-            Context.RelatedItem = Item;
-            RelatedItems = await Context.RelatedItems(ItemType, AssociationTyp.Children);
-        }
+    //     if (Mode == HierarchyMode.Strict)
+    //     {
+    //         // gleicher ItemType
+    //         Context.RelatedItem = Item;
+    //         RelatedItems = await Context.RelatedItems(ItemType, AssociationTyp.Children);
+    //     }
 
-        if (Mode == HierarchyMode.Related)
-        {
-            IItemType parent = await new Factory(sql).BuildItemType(this.ItemType);
-            RelatedItemTypes = await parent.GetItemTypes(AssociationTyp.Children);
-            RelatedItems.Clear();
+    //     if (Mode == HierarchyMode.Related)
+    //     {
+    //         IItemType parent = await new Factory(sql).BuildItemType(this.ItemType);
+    //         RelatedItemTypes = await parent.GetItemTypes(AssociationTyp.Children);
+    //         RelatedItems.Clear();
 
-            foreach (IItemType it in RelatedItemTypes)
-            {
-                Context.RelatedItem = Item;
-                List<IDTO> relatedItems = await Context.RelatedItems(it.Name, AssociationTyp.Children);
-                RelatedItems.AddRange(relatedItems);
-            }
-        }
+    //         foreach (IItemType it in RelatedItemTypes)
+    //         {
+    //             Context.RelatedItem = Item;
+    //             List<IDTO> relatedItems = await Context.RelatedItems(it.Name, AssociationTyp.Children);
+    //             RelatedItems.AddRange(relatedItems);
+    //         }
+    //     }
     }
 
 }

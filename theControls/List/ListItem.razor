@@ -1,8 +1,6 @@
-﻿
+﻿@inherits BaseRow
 
-@inherits BaseRow
-
-@if (Context != null)
+@if (ItemType != null)
 {
     <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-2 hover align-items-center drag list-item">
 
@@ -18,18 +16,18 @@
             <div class="col-auto px-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
         }
 
-        @if (Context.ItemType.Typ == ItemTypeTyp.Checklist)
+        @if (ItemType.Typ == ItemTypeTyp.Checklist)
         {
             @if (Item != null)
             {
                 <div class="col-auto ps-2">
                     <CheckBox Value="@Item["IsChecked"]" Style="" IsSwitch="false"
-                              ValueChanged="@( async e => {  Item["IsChecked"] = e; await Context.Update(Item); } )" />
+                              ValueChanged="@( async e => {  Item["IsChecked"] = e; await base.Update(); } )" />
                 </div>
             }
         }
 
-        @if (Context.ItemType.Typ == ItemTypeTyp.Comment)
+        @if (ItemType.Typ == ItemTypeTyp.Comment)
         {
             <div class="col px-2 fw-bold text-truncate text-nowrap" title="@Item.ItemType">
                 @(Item.Title.ToSecureString())
@@ -38,7 +36,7 @@
         else
         {
             <div class="col px-2 fw-bold pointer text-truncate text-nowrap @CheckStrikeOut()" title="@Item.ItemType"
-                 @onclick="@( e => { nm.NavToItem(Context.ItemType.Name, Item.GUID); })">
+                 @onclick="@( e => { nm.NavToItem(ItemType.Name, Item.GUID); })">
                 @(Item.Title.ToSecureString())
             </div>
         }
@@ -58,7 +56,7 @@
                 <AssociationIcon Association="@( Item.RelationType.ToEnumOrDefault<AssociationTyp>())" />
             </div>
 
-            if (Context.ItemType.Typ == ItemTypeTyp.Comment)
+            if (ItemType.Typ == ItemTypeTyp.Comment)
             {
                 <div class="col-auto p-05">
                     <SymbolIcon Symbol="Icon.Delete" OnClick="@( async e => { await Delete(); })"
@@ -74,6 +72,7 @@
             }
         }
     </div>
+
 }
 
 @code {
@@ -103,7 +102,7 @@
         {
             if (Item["IsChecked"].ToSecureBool())
             {
-                return " text-muted fw-normal text-decoration-line-through "; 
+                return " text-muted fw-normal text-decoration-line-through ";
             }
         }
 

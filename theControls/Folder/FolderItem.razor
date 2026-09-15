@@ -1,0 +1,55 @@
+﻿@if (Item != null)
+{
+    <div class="rounded-2 p-2 pt-5 h-100 pointer hover" @onclick="@( async e => { await SelectItem(Item); } )"
+        style="@( $"border: 3px solid #fff; background-color:{GetBackgroundColor()};" )">
+        <div class="my-5 py-5">
+
+        </div>
+        <div class="rounded-2 bg-white text-dark p-2 mt-5">
+            <div class="fw-bold">
+                @Item.Title.ToSecureString()
+            </div>
+            @if (!string.IsNullOrEmpty(Item["Description"].ToSecureString()))
+            {
+                <div class="text-muted text-truncate">
+                    @Item["Description"].ToSecureString()
+                </div>
+            }
+        </div>
+
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+
+
+    private string GetBackgroundColor()
+    {
+        if (Item == null)
+            return string.Empty;
+
+        string color = Item["Color"].ToSecureString();
+
+        if (string.IsNullOrEmpty(color))
+        {
+            return "#cccccc";    
+        }
+
+        return color;
+    }
+
+
+    [Parameter]
+    public EventCallback<IDTO> OnItemSelected { get; set; }
+    private async Task SelectItem(IDTO dto)
+    {
+        if (OnItemSelected.HasDelegate)
+        {
+            await OnItemSelected.InvokeAsync(dto);
+        }
+    }
+}

@@ -1,0 +1,34 @@
+﻿
+
+
+<div class="overflow-y-auto">
+    <div class="row g-0">
+    @foreach (IDTO item in Items)
+    {
+        <div class="col-auto p-2" style="width:11rem;">
+            <FolderItem Item="@item" 
+                    OnItemSelected="@( async e => { await SelectItem(e); } )" />
+        </div>
+    }
+    </div>
+</div>
+
+
+
+
+@code {
+
+    [Parameter]
+    public List<IDTO> Items { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<IDTO> OnItemSelected { get; set; }
+    private async Task SelectItem(IDTO dto)
+    {
+        if (OnItemSelected.HasDelegate)
+        {
+            await OnItemSelected.InvokeAsync(dto);
+        }
+    }
+
+}

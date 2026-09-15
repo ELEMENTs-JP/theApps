@@ -6,6 +6,8 @@
     --tsp-menu-height: 2.5rem;
     --tsp-user-profile-height: 9.5rem;
     --tsp-hierarchiy-content-spacer-height: 9.0rem;
+    --tsp-scrollbar-size: 5px;
+    --tsp-scrollbar-radius: 5px;
 }
 
 [data-bs-theme=light] {
@@ -44,7 +46,14 @@ iframe {
 
 
 
-
+/* Standard-Syntax für moderne Browser */
+input::placeholder,
+textarea::placeholder {
+    color: #999999cc;
+    font-style: italic;
+    font-size: 0.75rem;
+    opacity: 0.5; /* Verhindert, dass Firefox die Farbe transparenter macht */
+}
 
 .progress-bg {
     width: 100%;
@@ -185,4 +194,48 @@ a, a:visited {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+
+/* ==========================================================================
+   Globales Schlankes & Halbtransparentes Scrollbar-Design
+   ========================================================================== */
+
+/* Modern standard approach (Firefox, neuere Chromium-Browser) */
+* {
+    /* Dünner Scrollbar */
+    scrollbar-width: thin;
+    /* Scrollbar-Farbe: Thumb (50% Opacity) | Track (transparent/leicht getönt) */
+    scrollbar-color: rgba(108, 117, 125, 0.5) rgba(0, 0, 0, 0.05);
+}
+
+/* WebKit-basierte Browser (Chrome, Edge, Opera, Safari) */
+
+/* 1. Breite/Höhe des Scrollbars minimieren */
+::-webkit-scrollbar {
+    width: var(--tsp-scrollbar-size); /* Vertikaler Scrollbar */
+    height: var(--tsp-scrollbar-size); /* Horizontaler Scrollbar */
+}
+
+/* 2. Track (Hintergrundbereich der Scrollbar) */
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: var(--tsp-scrollbar-radius);
+}
+
+/* 3. Thumb (Der bewegliche Greifer) mit 50% Opacity */
+::-webkit-scrollbar-thumb {
+    background-color: rgba(108, 117, 125, 0.15); /* Nutzt Tabler/Bootstrap Muted Color mit 50% Alpha */
+    border-radius: var(--tsp-scrollbar-radius);
+    transition: background-color 0.2s ease-in-out;
+}
+
+    /* 4. Hover-Zustand für bessere Bedienbarkeit */
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(108, 117, 125, 0.25);
+    }
+
+/* 5. Ecken-Bereich bei gleichzeitigem horizontalen & vertikalen Scrollen */
+::-webkit-scrollbar-corner {
+    background: transparent;
 }

@@ -89,6 +89,7 @@ namespace theInfrastructure
             {
                 Title = "Due To",
                 Typ = FieldTyp.Date,
+                Formatierung = TextFormat.Datum,
                 Column = "DueTo",
                 Description = "Legt den Termin der erwarteten oder notwendigen Fertigstellung fest",
                 CSS = " col-12 col-md-4 col-lg-4 ",

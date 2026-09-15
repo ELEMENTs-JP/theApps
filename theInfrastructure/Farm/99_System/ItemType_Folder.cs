@@ -11,6 +11,7 @@ namespace theInfrastructure
         {
             Name = "Folder";
             Title = "Folder";
+            Typ = ItemTypeTyp.Folder;
             this.InSubNavigation = false;
 
             this.Order = 7;
@@ -30,18 +31,30 @@ namespace theInfrastructure
             // Fields 
             List<IField> Fields = new List<IField>();
 
+            // Description 
+            Fields.Add(new Field()
+            {
+                Title = "Beschreibung",
+                Typ = FieldTyp.TextArea,
+                Column = "Description",
+                CSS = " col-12 col-md-8 col-lg-8 ",
+                OnDevice = DeviceDisplay.Desktop,
+                OnDisplay = new FieldDisplay(true, true, false, false),
+            });
+
+
+
             Fields.Add(new Field()
             {
                 Title = "Farbe",
                 Typ = FieldTyp.Color,
                 Column = "Color",
                 DefaultValue = "#ffffff",
-                CSS = " col-12 col-md-12 col-lg-12 ",
+                CSS = " col-12 col-md-4 col-lg-4 ",
                 OnDisplay = new FieldDisplay(true, true, true, false)
             });
 
-            // Description 
-            Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Description));
+      
 
             return Fields;
         }

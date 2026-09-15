@@ -86,7 +86,10 @@ namespace theInfrastructure
             {
                 return "/Items/" + ItemType;
             }
-            if (typ == ItemTypeTyp.File)
+            if (typ == ItemTypeTyp.File || 
+                typ == ItemTypeTyp.Audio || 
+                typ == ItemTypeTyp.Video || 
+                typ == ItemTypeTyp.Image)
             {
                 return "/File/" + ItemType;
             }
@@ -97,6 +100,10 @@ namespace theInfrastructure
             if (typ == ItemTypeTyp.Hierarchy)
             {
                 return "/Hierarchy/" + ItemType;
+            }
+            if (typ == ItemTypeTyp.Folder)
+            {
+                return "/Folder/" + ItemType;
             }
 
             return "/Items/" + ItemType;

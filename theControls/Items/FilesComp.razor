@@ -39,25 +39,33 @@
                                  OnSettingChanged="@( async e => {  })" />
                     <div class="vr"></div>
 
-              
-                    <AddArea ItemType="@ItemType" CSS="me-2"
-                             OnItemAdded="@( async e => {  })" />
-
+                    <ClipboardCopyPaste ItemType="@this.ItemType" />
+                    <FileUploadComp ItemType="@this.ItemType" />
                 }
             </Related>
             <Content>
-                <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode" Items="@Context.Items"
-                            OnDelete="@( async e => { await ItemDelete(e); })"
-                            OnDisconnect="@( async e => { await Context.Search(); })"
-                           OnSort="@( async e => { await Context.Search(); } )">
-                    <Empty>
-                        <QuickAdd ItemType="@this.ItemType" OnAdd="@( e => { })" />
-                    </Empty>
-                </DataTable>
+
+                @if (this.ItemType.Typ == ItemTypeTyp.Audio)
+                {
+                    <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode" Items="@Context.Items"
+                               OnSort="@( async e => { await Context.Search(); } )">
+                        <Empty>
+                            <QuickAdd ItemType="@this.ItemType" OnAdd="@( e => { })" />
+                        </Empty>
+                    </DataTable>
+
+
+                }
+                else if (this.ItemType.Typ == ItemTypeTyp.File ||
+                            this.ItemType.Typ == ItemTypeTyp.Video ||
+                            this.ItemType.Typ == ItemTypeTyp.Image)
+                {
+                    <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" 
+                        Items="@Context.Items" OnItemDelete="@( e => {  })" />
+                }
+
             </Content>
-            <Bottom>
-                <AddFast ItemType="@ItemType" OnItemAdded="@( async e => { await Context.Search(); })" />
-            </Bottom>
+
         </Frame>
     }
     else
@@ -102,16 +110,16 @@
     {
         await base.OnParametersSetAsync();
 
+
         if (ItemType == null)
             return;
 
+        // Items 
         Fields = await ItemType.GetFields();
-
         Context.ItemType = ItemType;
-
         await Context.Search();
 
-        // Title
+        // Title 
         Title = await Helper.GetSettingValue(sql, "Title", ItemType.Name);
         Title = Title.IsEmpty() ? ItemType.Name : Title;
 
@@ -182,6 +190,6 @@
         {
 
         }
+
     }
-    
 }

@@ -15,7 +15,11 @@
         <SortableContainer Zone="@( "Default")" MinStyleHeight=""
                            Items="@Context.Items">
             <ItemTemplate Context="item">
-                <ListItem @key="@item.GUID" Context="@Context" Item="@item"
+                <ListItem @key="@item.GUID" ItemType="@ItemType" Item="@item" RelatedItem="@RelatedItem" 
+                          OnConnect="@( async e => { await OnConnect.InvokeAsync(e); })"
+                          OnDelete="@( async e => { await OnDelete.InvokeAsync(e); })"
+                          OnUpdate="@( async e => { await OnUpdate.InvokeAsync(e); })"
+                          OnDisconnect="@( async e => { await OnDisconnect.InvokeAsync(e); })"
                           IsRelated="@( (RelatedItem != null))" IsSortable="@IsSortable" ShowID="@ShowID" />
             </ItemTemplate>
         </SortableContainer>
@@ -38,6 +42,21 @@
     {
     
     }
+
+
+       
+    [Parameter]
+    public EventCallback<IDTO> OnUpdate { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnDisconnect { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnConnect { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnDelete { get; set; }
+
 
 
     public async ValueTask DisposeAsync()

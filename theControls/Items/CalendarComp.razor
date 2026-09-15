@@ -25,14 +25,13 @@
                     <Filter ItemType="@ItemType" Context="@Context"
                             OnFilter="@( async e => { await Context.Search(); })" />
 
-                    @if (this.ItemType.Typ == ItemTypeTyp.Appointment)
-                    {
+                 
                         <ButtonSelectionBox Value="@View" ItemChanged="@(e => { View = e.ID; })"
                                             Items="@(new List<IDTO>() {
                                             new DTO() { ID = "Monat", Title = "Monat" },
                                             new DTO() { ID = "Woche", Title = "Woche" },
                                                 new DTO() { ID = "Tag", Title = "Tag" } } )" />
-                    }
+                  
                 </div>
             </Controls>
             <Search>

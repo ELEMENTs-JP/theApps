@@ -1,30 +1,30 @@
 ﻿@inject NavigationManager nm
 
-@if (Context != null)
+@if (ItemType != null)
 {
     <th scope="col" class="col-050">ID</th>
 
-    @if (Context.ItemType.Typ == ItemTypeTyp.User)
+    @if (ItemType.Typ == ItemTypeTyp.User)
     {
         <th scope="col" class="col-050"></th>
     }
-    @if (Context.ItemType.Typ == ItemTypeTyp.Audio)
+    @if (ItemType.Typ == ItemTypeTyp.Audio)
     {
         <th scope="col" class="col-050"></th>
     }
-    @if (Context.ItemType.Typ == ItemTypeTyp.Checklist)
+    @if (ItemType.Typ == ItemTypeTyp.Checklist)
     {
         <th scope="col" class="col-050"></th>
     }
     <th scope="col">Title</th>
 
-    @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnDisplay.Table == true))
+    @foreach (IField col in ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnDisplay.Table == true))
     {
         <th scope="col" class="@( Helper.GetClassByDevice(col) + " " )">
 
             <div class="d-flex align-items-center gap-2">
                 @( col.Title)
-                <Sortierung Field="@col" ItemType="@Context.ItemType"
+                <Sortierung Field="@col" ItemType="@ItemType"
                             OnSort="@( async e => { await SortByColumn(e.Item1, e.Item2); })" />
             </div>
 
@@ -41,7 +41,7 @@
 @code {
 
     [Parameter]
-    public IQueryContext Context { get; set; }
+    public IItemType ItemType { get; set; }
 
     [Parameter]
     public bool IsRelated { get; set; } = false;
@@ -51,11 +51,11 @@
 
     private async Task SortByColumn(ListSortDirection? dir, IField field)
     {
-        if (Context != null && Context.Filter != null)
-        {
-            Context.Filter.Direction = dir;
-            Context.Filter.SortColumn = field.Column;
-        }
+        // if (Context != null && Context.Filter != null)
+        // {
+        //     Context.Filter.Direction = dir;
+        //     Context.Filter.SortColumn = field.Column;
+        // }
 
         if (OnSort.HasDelegate)
         {

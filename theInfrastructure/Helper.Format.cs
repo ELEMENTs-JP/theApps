@@ -594,6 +594,14 @@ namespace theInfrastructure
         {
             switch (format)
             {
+                case TextFormat.Datum:
+                    {
+                        if (string.IsNullOrEmpty(input))
+                            return string.Empty;
+
+                        CultureInfo culture = new CultureInfo("de-DE");
+                        return input.ToSecureDateTime().ToString("ddd, d. MMM yyyy", culture);
+                    }
                 case TextFormat.Text:
                     {
                         return input.ToSecureString();

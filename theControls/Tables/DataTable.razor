@@ -1,63 +1,61 @@
-﻿@inherits BaseList
-@inject ILogger<Index> Logger
+﻿@inject ILogger<Index> Logger
 @inject NavigationManager nm
 
-@if (Context != null && ItemType != null)
+@if (ItemType != null)
 {
-    @if (Context.ItemType != null && Context.ItemType.GetFields().Result != null)
-    {
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead>
-                    <tr>
-                        <TableHeader Context="@Context" OnSort="Sort" IsRelated="@( (RelatedItem != null))" />
-                    </tr>
-                </thead>
-                <tbody>
-                    <Virtualize Items="@Context.Items" Context="item" SpacerElement="tr" ItemSize="48">
-                        <ItemContent>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <TableHeader ItemType="@ItemType" OnSort="Sort" IsRelated="false" />
+                </tr>
+            </thead>
+            <tbody>
+                <Virtualize  Items="@Items" Context="item" SpacerElement="tr" ItemSize="48">
+                    <ItemContent>
 
-                            @if (!string.IsNullOrEmpty(item["GroupName"]))
-                            {
-                                <tr @key="@( "group_header_" + item["GroupName"])"
-                                    class="fw-bold text-secondary">
-                                    <td colspan="100" class="p-2 border-bottom">
-                                        <div class="d-flex align-items-center">
-                                            <div class="pe-1">
-                                                <SymbolIcon Symbol="Icon.Gruppierung" />
-                                            </div>
-                                            <div class="px-1 flex-fill">
-                                                @item["GroupName"].ToSecureString()
-                                            </div>
-                                            <div class="px-1">
-                                            </div>
+                        @if (!string.IsNullOrEmpty(item["GroupName"]))
+                        {
+                            <tr @key="@( "group_header_" + item["GroupName"])"
+                                class="fw-bold text-secondary">
+                                <td colspan="100" class="p-2 border-bottom">
+                                    <div class="d-flex align-items-center">
+                                        <div class="pe-1">
+                                            <SymbolIcon Symbol="Icon.Gruppierung" />
                                         </div>
-                                    </td>
-                                </tr>
-                            }
-                            else
-                            {
-                                <TableRow @key="@( "item_entry_" + item.GUID)"
-                                          Context="@Context"
-                                          Item="@item"
-                                          IsRelated="@( (RelatedItem != null))" />
-                            }
-
-                        </ItemContent>
-                        <Placeholder>
-                            <tr>
-                                <td colspan="100" class="text-muted p-2">Lade Daten...</td>
+                                        <div class="px-1 flex-fill">
+                                            @item["GroupName"].ToSecureString()
+                                        </div>
+                                        <div class="px-1">
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
-                        </Placeholder>
-                    </Virtualize>
-                </tbody>
-            </table>
-        </div>
-    }
+                        }
+                        else
+                        {
+                            <TableRow @key="@( "item_entry_" + item.GUID)"
+                                      OnConnect="@( async e => { await OnConnect.InvokeAsync(e); })" 
+                                      OnDelete="@( async e => { await OnDelete.InvokeAsync(e); })" 
+                                      OnUpdate="@( async e => { await OnUpdate.InvokeAsync(e); })" 
+                                      OnDisconnect="@( async e => { await OnDisconnect.InvokeAsync(e); })"
+                                      ItemType="@ItemType" Item="@item" IsRelated="false" />
+                        }
+
+                    </ItemContent>
+                    <Placeholder>
+                        <tr>
+                            <td colspan="100" class="text-muted p-2">Lade Daten...</td>
+                        </tr>
+                    </Placeholder>
+                </Virtualize>
+            </tbody>
+        </table>
+    </div>
 
     @if (Empty.HasContent())
     {
-        @if (!HasItems)
+        @if (Items.Count == 0)
         {
             @Empty
         }
@@ -74,6 +72,9 @@
 
     [Parameter]
     public List<IDTO> Items { get; set; } = new();
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -95,4 +96,17 @@
 
     [Parameter]
     public EventCallback<string> OnSort { get; set; }
+
+    
+    [Parameter]
+    public EventCallback<IDTO> OnUpdate { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnDisconnect { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnConnect { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnDelete { get; set; }
 }

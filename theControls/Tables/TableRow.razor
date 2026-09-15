@@ -1,35 +1,33 @@
 ﻿@using theControls.Audio
 @using theControls.Icons
 @using theControls.Image
-
-
 @inherits BaseRow
 
-@if (Context != null && Item != null)
+@if (Item != null)
 {
     <tr class="row-hover" style="border-left:1px solid transparent;">
         
         
         <td class="text-muted text-nowrap" title="@Item.GUID">@(Item.ID.ToSecureString())</td>
 
-        @if (Context.ItemType.Typ == ItemTypeTyp.User)
+        @if (ItemType.Typ == ItemTypeTyp.User)
         {
             <td>
                 <MinUserProfileImg @key="@Item.GUID" User="@Item" />
             </td>
         }
-        @if (Context.ItemType.Typ == ItemTypeTyp.Audio)
+        @if (ItemType.Typ == ItemTypeTyp.Audio)
         {
             <td>
                 <MiniAudioPlayer @key="@Item.GUID" Item="@Item" />
             </td>
         }
 
-        @if (Context.ItemType.Typ == ItemTypeTyp.Checklist)
+        @if (ItemType.Typ == ItemTypeTyp.Checklist)
         {
             <td>
-            <CheckBox Value="@Context.Item["IsChecked"]"
-                      ValueChanged="@( async e => {  Context.Item["IsChecked"] = e; await Context.Update(Context.Item); } )" />
+            <CheckBox Value="@Item["IsChecked"]"
+                      ValueChanged="@( async e => {  Item["IsChecked"] = e; await base.Update();  } )" />
             </td>
         }
 
@@ -37,7 +35,7 @@
             <div class="d-flex align-items-center gap-2">
 
                 <a class="fw-bold pointer text-truncate flex-grow-1"
-                   href="@( "/Item/" + Context.ItemType.Name + "/" + Item.GUID )">
+                   href="@( "/Item/" + ItemType.Name + "/" + Item.GUID )">
                     @(Item.Title.ToSecureString())
                 </a>
          
@@ -45,7 +43,7 @@
             </div>
         </td>
 
-        @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnDisplay.Table == true))
+        @foreach (IField col in ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnDisplay.Table == true))
         {
             <td class="@Helper.GetClassByDevice(col) align-items-center">
                 <TableCell @key="@( Item.GUID + col.Column + col.ItemType  )" 
@@ -64,8 +62,6 @@
 }
 
 @code {
-
-
 
     protected override async Task OnParametersSetAsync()
     {

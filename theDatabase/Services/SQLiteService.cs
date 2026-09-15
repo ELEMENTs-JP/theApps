@@ -858,6 +858,10 @@ namespace theDatabase
                 {
                     info.Items = await GetAll(dto, ItemType, Typ);
                 }
+                else if (Typ == AssociationTyp.Connection)
+                {
+                    info.Items = await GetAllConnected(dto, ItemType, Typ);
+                }
                 else
                 {
                     info.Items = await GetAll(dto, ItemType, Typ);
@@ -999,35 +1003,39 @@ namespace theDatabase
 
             return resultList.DistinctBy(se => se.GUID).ToList();
         }
-        public async Task<List<IDTO>> GetAllObsolete(IDTO dto, string ItemType, AssociationTyp typ)
+        public async Task<List<IDTO>> GetAllConnected(IDTO dto, string ItemType, AssociationTyp typ)
         {
             List<IDTO> resultList = new List<IDTO>();
-            
+
             try
             {
                 using SQLiteContext ctx = GetContext();
 
                 var query = await (from content in ctx.tbl_CON_Content
 
-                                   join relation in ctx.tbl_TEC_Relation
-                                     on content.GUID equals relation.ParentGUID into parentRelations
+                                   // Suche Relationen, wo Content das Parent ist und dto.GUID das Child
+                                   join pr in ctx.tbl_TEC_Relation.Where(se => se.RelationType == typ.ToString())
+                                     on new { Parent = content.GUID, Child = dto.GUID }
+                                 equals new { Parent = pr.ParentGUID, Child = pr.ChildGUID } into parentRelations
                                    from pr in parentRelations.DefaultIfEmpty()
 
-                                   join relation2 in ctx.tbl_TEC_Relation
-                                     on content.GUID equals relation2.ChildGUID into childRelations
+                                       // Suche Relationen, wo Content das Child ist und dto.GUID das Parent
+                                   join cr in ctx.tbl_TEC_Relation.Where(se => se.RelationType == typ.ToString())
+                                     on new { Child = content.GUID, Parent = dto.GUID }
+                                 equals new { Child = cr.ChildGUID, Parent = cr.ParentGUID } into childRelations
                                    from cr in childRelations.DefaultIfEmpty()
 
-                                   where string.IsNullOrEmpty(ItemType) || content.ItemType == ItemType
+                                       // Es dürfen nur Einträge geladen werden, die mindestens eine Treffer-Relation haben
+                                   where (pr != null || cr != null)
+                                      && (string.IsNullOrEmpty(ItemType) || content.ItemType == ItemType)
 
                                    select new
                                    {
                                        Content = content,
-                                       RelationType = pr != null && pr.ChildGUID == dto.GUID ? pr.RelationType : cr.RelationType
+                                       RelationType = pr != null ? pr.RelationType : cr.RelationType
                                    }).Distinct().ToListAsync();
 
-                var dbResult = query.ToList();
-
-                foreach (var item in dbResult)
+                foreach (var item in query)
                 {
                     if (item.Content is IDTO dtoItem)
                     {

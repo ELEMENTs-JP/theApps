@@ -75,7 +75,7 @@
     width: 100%;
     background-color: transparent !important;
     outline: none;
-    padding: 0.25rem 0.5rem;
+    padding: 0.2rem 0.4rem;
     flex: 1;
 }
     .editbox:hover {
@@ -97,11 +97,11 @@
 .searchbox {
     border: 1px solid transparent;
     border-bottom: 1px solid var(--tsp-hover) !important;
-    border-radius: 0.35rem;
+    border-radius: 0.15rem;
     width: 100%;
     background-color: var(--tsp-hover-light) !important;
     outline: none;
-    padding: 0.35rem 0.5rem;
+    padding: 0.15rem 0.35rem;
     flex: 1;
 }
 

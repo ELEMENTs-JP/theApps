@@ -212,10 +212,9 @@ namespace theInfrastructure
                 Fields.Add(new Field()
                 {
                     Title = "Intervall",
-                    Typ = FieldTyp.,
-                    TrueText = "aktiv",
-                    FalseText = "inaktiv",
-                    Column = "IsActive",
+                    Typ = FieldTyp.DropDown,
+                    Column = "Intervall",
+                    Items = new List<string>() { "täglich", "wöchentlich", "monatlich" },
                     CSS = " col-12 col-md-12 col-lg-12 ",
                     OnDevice = DeviceDisplay.Desktop
                 });

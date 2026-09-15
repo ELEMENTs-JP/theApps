@@ -39,6 +39,8 @@
         </Related>
         <Content>
             <ItemsList ItemType="@ItemType" RelatedItem="@RelatedItem" 
+                OnDelete="@( async e => { await OnDelete.InvokeAsync(e); })"
+                OnDisconnect="@( async e => { await OnDisconnect.InvokeAsync(e); })"
                             Association="@this.Association" />
         </Content>
         <Bottom>
@@ -104,4 +106,16 @@
             // this.StateHasChanged();
         }
     }
+
+    [Parameter]
+    public EventCallback<IDTO> OnUpdate { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnDisconnect { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnConnect { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnDelete { get; set; }
 }

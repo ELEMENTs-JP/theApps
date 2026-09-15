@@ -1,0 +1,188 @@
+﻿@*
+ * ============================================================================
+ * Copyright (c) 2026 the STRIDEs Path by Juergen Pott 
+ * 
+ * Licensed under the MIT License. 
+ * See LICENSE file in the project root for full license information. 
+ * ============================================================================
+ *@
+
+
+@inject NavigationManager nm
+@inject ISqlDatabaseService sql
+@inject IMessagingBusService msg
+
+@if (Item != null)
+{
+
+    
+    <Frame Border="true" CSS="@CSS" ContentCSS=" border-top " BottomBorderCSS=" " HeadBorderCSS=" ">
+        <Header>
+            <div class="d-flex flex-row align-items-center p-1 px-2">
+                <div class="fw-bold pe-2 me-2">Verbindungen</div>
+            </div>
+        </Header>
+        <Search>
+            <SimpleSearchComp Items="@this.Items" OnSearch="@( async e => { await Search(e); })" />
+        </Search>
+        <Related>
+            <div class="d-flex flex-row align-items-center p-1">
+
+                <DropDown @ref="@ddl1" Items="@ItemTypes" ItemChanged="@( async e => { await ItemsByItemType(e.Title); })" />
+
+                @if (ItemTypeItems.Count >= 1)
+                {
+                    <div class="vr mx-1"></div>
+                    <DropDown @ref="@ddl2" Items="@ItemTypeItems" ItemChanged="@( e => { SelectedItem = e; })" />
+                }
+
+                @if (SelectedItem != null)
+                {
+                    <div class="vr mx-1"></div>
+                    <div class="btn btn-sm btn-ghost-secondary" @onclick="@( async e => { await AssignItem(); })">
+                        <SymbolIcon Symbol="Icon.Neu" />
+                    </div>
+                }
+
+            </div>
+        </Related>
+        <Content>
+
+            <div class="overflow-y-auto" style="max-height:21rem;">
+                @foreach (string group in Groups)
+                {
+                    <div class="small fw-bold text-secondary px-2 p-1 border-bottom mt-2">@group</div>
+
+
+                    @foreach (IDTO Item in Items.Where(se => se.ItemType == group))
+                    {
+                        <div class="d-flex align-items-center hover px-1 border-bottom">
+                            
+                            <div class="text-muted p-1">
+                                @Item.ID.ToSecureString()
+                            </div>
+                            <a class="flex-fill p-1 px-2" href="@( $"{ Helper.GetItemUrl(Item) }" )">
+                                @Item.Title.ToSecureString()
+                            </a>
+                            <div class="hover pointer rounded-2 p-1 px-2" @onclick="@( async e => { await RemoveItem(Item); })">
+                                <SymbolIcon Symbol="Icon.Disconnect" CSS="small text-muted" />
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+        </Content>
+        <Bottom>
+            <div class="d-flex gap-1 text-muted small">
+                <small>Einträge:</small><strong>@Items.Count</strong>
+            </div>
+        </Bottom>
+    </Frame>
+
+}
+
+
+
+@code {
+
+    private DropDown ddl1 { get; set; }
+    private DropDown ddl2 { get; set; }
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
+
+    [Parameter]
+    public IDTO Item { get; set; } // Related Item
+
+    List<IDTO> Items { get; set; } = new();
+    List<IDTO> ItemTypes { get; set; } = new();
+    List<IDTO> ItemTypeItems { get; set; } = new();
+    List<string> Groups { get; set; } = new();
+    IDTO SelectedItem { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await Search();
+        await AllItemTypes();
+    }
+    private async Task AllItemTypes()
+    {
+        IQueryParameter query = new QueryParameter();
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.ItemType = "ItemType";
+
+        IQueryResult result = await sql.GetItems(query);
+        ItemTypes = result.Items;
+    }
+    private async Task ItemsByItemType(string itemType)
+    {
+        if (ddl2 != null)
+        {
+            ddl2.ClearSelectedItem();
+        }
+
+        IQueryParameter query = new QueryParameter();
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.ItemType = itemType;
+
+        IQueryResult result = await sql.GetItems(query);
+        ItemTypeItems = result.Items;
+    }
+    private async Task Search(string matchcode = "")
+    {
+        Groups.Clear();
+        Items.Clear();
+
+        IQueryParameter query = new QueryParameter();
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.ItemType = "Search";
+
+        IQueryResult result = await sql.GetRelatedItems(Item, "", AssociationTyp.Connection);
+        Items = result.Items.DistinctBy(se => se.GUID).ToList();
+
+        if (!string.IsNullOrWhiteSpace(matchcode))
+        {
+            Items = Items
+                .Where(se => se.Matchcode != null && se.Matchcode.IndexOf(matchcode, StringComparison.OrdinalIgnoreCase) >= 0)
+                .ToList();
+        }
+        Groups = Items.Select(se => se.ItemType).Distinct().ToList();
+    }
+    private async Task AssignItem()
+    {
+        if (Item == null)
+        {
+            // msg.Publish("Info", BusAction.Info, "Bitte wähle einen ItemType");
+            return;    
+        }
+
+        if (SelectedItem == null)
+        {
+            msg.Publish("Info", BusAction.Info, "Bitte wähle einen Eintrag");
+            return;
+        }
+
+        await sql.Assign(Item, SelectedItem, AssociationTyp.Connection);
+
+        await Search();
+    }
+    private async Task RemoveItem(IDTO dtoToRemove)
+    {
+        if (Item == null)
+            return;
+
+        if (dtoToRemove == null)
+            return;
+
+        await sql.Remove(Item, dtoToRemove);
+
+        await Search();
+    }
+}

@@ -1,0 +1,174 @@
+﻿@using theControls.Folder
+
+@inject ISqlDatabaseService sql
+@inject IMessagingBusService msg
+
+@if (ItemType != null)
+{
+    <div class="row g-0">
+        <div class="@(Item != null ? "col-12 col-lg-4 px-2" : "col-12 px-2")">
+            <Frame Border="true" CSS="hierarchy" ContentCSS=" hierarchy-content overflow-y-auto p-1 " ContentStyle="">
+                <Header>
+                    <ControlHeader PreTitle="List" Title="@ItemType.Name" PostTitle="@ItemType.Description" />
+                </Header>
+                <Related>
+                    @if (this.ItemType.Name != "Trash")
+                    {
+                        @if (Helper.FileBoxVisibility(this.ItemType.Typ))
+                        {
+                            <ClipboardCopyPaste ItemType="@this.ItemType" />
+                            <FileUploadComp ItemType="@this.ItemType" />
+                        }
+                        else
+                        {
+                            <AddArea ItemType="@ItemType" CSS="me-2" />
+                        }
+                    }
+                </Related>
+                <Content>
+                    <FolderList Items="@Items" OnItemSelected="@( async e => { await SelectItem(e); })" />
+                </Content>
+                <Bottom>
+
+             
+                    @if (Helper.FileBoxVisibility(this.ItemType.Typ))
+                    {
+
+                    }
+                    else
+                    {
+                        <AddFast ItemType="@ItemType" OnItemAdded="@( e => { })" />
+                    }
+
+                </Bottom>
+            </Frame>
+        </div>
+        @if (Item != null)
+        {
+            <div class="col-12 col-lg-8 px-2" >
+                <EditArea ItemType="@EditItemType" 
+                    ID="@( ((Item != null) ? Item.GUID.ToString() : string.Empty) )" 
+                    ItemDeleted="@( async e => { Item = null;  })" />
+
+                <RelatedItemsComp CSS="mt-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Children).Value ?? new List<IItemType>())"
+                                  RelatedItem="@Item" Association="AssociationTyp.Children" />
+
+                <RelatedItemsComp CSS="mt-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Default).Value ?? new List<IItemType>())"
+                                  RelatedItem="@Item" Association="AssociationTyp.Default" />
+            </div>
+        }
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    private IItemType EditItemType { get; set; }
+
+    private IDTO Item { get; set; } = null;
+
+    private List<IDTO> Items { get; set; } = new();
+
+
+    private List<KeyValuePair<AssociationTyp, List<IItemType>>> ItemTypes { get; set; } = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageIncome;
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (ItemType != null)
+        {
+            IQueryParameter qp = QueryParameter.Default("");
+            qp.ItemType = this.ItemType.Name;
+            qp.MasterGUID = sql.MasterGUID;
+
+            IQueryResult result = await sql.GetItems(qp);
+            Items = result.Items;
+
+            // Clear 
+            ItemTypes.Clear();
+
+            var types = new[]
+              {
+                AssociationTyp.Default,
+                AssociationTyp.Children,
+                AssociationTyp.Parallels,
+                AssociationTyp.Parents,
+                AssociationTyp.Related
+            };
+
+            foreach (var type in types)
+            {
+                var its = await ItemType.GetItemTypes(type);
+                if (its?.Count > 0)
+                {
+                    ItemTypes.Add(new KeyValuePair<AssociationTyp, List<IItemType>>(type, its));
+                }
+            }
+        }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            // this.StateHasChanged();
+        }
+    }
+
+    private async void OnMessageIncome(AppMessage message)
+    {
+        if (message.Id == "Item" && message.Action == BusAction.Select)
+        {
+            if (message.Payload != null)
+            {
+                Item = (IDTO)message.Payload;
+
+                EditItemType = await new Factory(sql).BuildItemType(Item.ItemType);
+            }
+            await InvokeAsync(StateHasChanged);
+        }
+
+        if (message.Action == BusAction.Refresh)
+        {
+            IQueryParameter qp = QueryParameter.Default("");
+            qp.ItemType = this.ItemType.Name;
+            qp.MasterGUID = sql.MasterGUID;
+
+            IQueryResult result = await sql.GetItems(qp);
+            Items = result.Items;
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task SelectItem(IDTO dto)
+    {
+        Item = dto;
+
+        EditItemType = await new Factory(sql).BuildItemType(dto.ItemType);
+    }
+   
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageIncome;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+
+}

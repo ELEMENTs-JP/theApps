@@ -31,7 +31,8 @@ namespace theInfrastructure
         Parents = 3,
         Parallels = 4,
         Related = 5,
-        Association = 6,
+        Association = 6, // == alles 
+        Connection = 7, // spezifisch: Connection 
 
         // EXTRA 
         UserImage = 11,
@@ -65,6 +66,7 @@ namespace theInfrastructure
         Text = 21,
         Integer = 22,
         Decimal = 23,
+        Datum = 24,
     }
     public enum RelevantPropertyType
     {
@@ -94,6 +96,8 @@ namespace theInfrastructure
         Link = 11,
         Video = 12,
         Checklist = 13,
+
+        Folder = 14,
     }
     public enum Orientation
     {

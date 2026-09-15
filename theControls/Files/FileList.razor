@@ -1,12 +1,8 @@
 ﻿@using theControls.Add
-@inherits BaseList
-
 @inject NavigationManager nm
 
-@if (Context != null && ItemType != null)
+@if (ItemType != null)
 {
-    @if (Context.ItemType != null)
-    {
         <div class="table-responsive">
             <div class="row g-0">
 
@@ -15,18 +11,18 @@
                                     SizeMode="FileInputBox.FileInputSizeMode.Maximized" Width="96" Height="156" />
                 </div>
 
-                @foreach (IDTO item in Context.Items)
+                @foreach (IDTO item in Items)
                 {
                     <div class="@( (ItemType.Typ == ItemTypeTyp.Video) ? " col-3 " : " col-2 " ) ">
                         <FileItem @key="@( "file-audio-image-" + item.GUID)"
-                                  Context="@Context" Item="@item" 
+                                  Item="@item" ItemType="@ItemType"
                                   OnItemDelete="@( async e => { await DeleteItem(e); } )"
-                                  IsRelated="@( (RelatedItem != null))" />
+                                  IsRelated="@(false)" />
                     </div>
                 }
             </div>
         </div>
-    }
+ 
 }
 
 
@@ -34,6 +30,12 @@
 
     [Parameter]
     public string Matchcode { get; set; } = string.Empty;
+
+    [Parameter]
+    public List<IDTO> Items { get; set; } = new();
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,11 +54,6 @@
     {
         if (Item == null)
             return;
-
-        if (Context == null)
-            return;
-
-        await Context.Delete(Item);
 
         if (OnItemDelete.HasDelegate)
         {
