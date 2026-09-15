@@ -1,0 +1,242 @@
+﻿@using theControls.Icons
+@using theControls.Input
+@using theControls.Modal
+
+@inject ISqlDatabaseService sql
+@inject IMessagingBusService msg
+@inject ISecurityService sec
+
+@implements IAsyncDisposable
+
+@if (Item != null)
+{
+    <ModalForm @key="@(new Guid().ToSecureString())" Title="einen Eintrag verbinden"
+               ShowTitleInButton="false"
+               ButtonText="@ButtonTitle" Value=""
+               OnOKClicked="@( async e => { await OnOK(); } )">
+        <Icon>
+            <SymbolIcon Symbol="Icon.Connect" CSS="" />
+        </Icon>
+        <ChildContent>
+            <div class="d-flex flex-row border-bottom mb-3">
+
+                @if (Item != null)
+                {
+                    <div class="vstack p-2 px-3">
+                        <div class="text-secondary fw-bold">@Item.Title</div>
+                        <small class="text-muted small">Verbundener Eintrag vom Typ: @Item.ItemType</small>
+                    </div>
+
+                    <div class="vr"></div>
+                    <div class="vstack p-2 px-3">
+                        <div class="text-secondary fw-bold">Verbindung</div>
+                        <small class="text-muted small">Typ: @Association.ToSecureEnumString()</small>
+                    </div>
+                }
+
+                @if (SelectedItem != null)
+                {
+                    <div class="vr"></div>
+                    <div class="vstack p-2 px-3">
+                        <div class="text-secondary fw-bold">@SelectedItem.Title</div>
+                        <small class="text-muted small">zu verbindender Eintrag vom Typ: @SelectedItem.ItemType</small>
+                    </div>
+                }
+
+                <div class="flex-fill vstack p-2 px-3">
+                </div>
+            </div>
+
+            <div class="d-flex">
+                <DropDown @ref="@ddl1" Items="@ItemTypes" ItemChanged="@( async e => { await ItemsByItemType(e.Title); })" />
+
+                @if (ItemTypeItems.Count >= 1)
+                {
+                    <div class="vr mx-1"></div>
+                    <DropDown @ref="@ddl2" Items="@ItemTypeItems" ItemChanged="@( e => { SelectedItem = e; })" />
+                }
+
+                @if (SelectedItem != null)
+                {
+                    <div class="vr mx-1"></div>
+                    <div class="btn btn-sm btn-ghost-secondary" @onclick="@( async e => { await AssignItem(); })">
+                        <SymbolIcon Symbol="Icon.Neu" />
+                    </div>
+                }
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <TextBox Type="FieldTyp.Search" Placeholder="nach Einträgen suchen"
+                         ValueChanged="@( async e => { Matchcode = e; await Search(); })" />
+            </div>
+
+            @foreach (IDTO item in Items)
+            {
+                <div class="row g-0 hover pointer rounded-2 p-1 my-2" @onclick="@( async e => { SelectedItem = item; })">
+                    <div class="col-12 p-1">
+                        @item.Title.ToSecureString()
+                    </div>
+                </div>
+            }
+
+      
+
+        </ChildContent>
+    </ModalForm>
+}
+
+@code {
+
+    List<IDTO> ItemTypes { get; set; } = new();
+    List<IDTO> ItemTypeItems { get; set; } = new();
+
+    private DropDown ddl1 { get; set; }
+    private DropDown ddl2 { get; set; }
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+    [Parameter]
+    public string ButtonTitle { get; set; } = "Connect";
+
+    private IDTO SelectedItem { get; set; }
+
+    private List<IDTO> Items { get; set; } = new();
+
+    // Fields
+    private string Matchcode { get; set; } = string.Empty;
+
+    [Parameter]
+    public AssociationTyp Association { get; set; } = AssociationTyp.Connection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        // if (ItemType != null)
+        // {
+        //     Context = new QueryContext(sql, sec);
+        //     Context.ItemType = this.ItemType;
+        // }
+
+             await AllItemTypes();
+    }
+
+    private async Task Search()
+    {
+
+        // if (string.IsNullOrEmpty(this.Matchcode))
+        // {
+        //     Context.Items.Clear();
+        //     return;
+        // }
+
+        IFilterParameter filter = new FilterParameter();
+        filter.Matchcode = this.Matchcode;
+        // Context.Filter = filter;
+
+        // Search
+        // await Context.Search();
+    }
+
+    private async Task OnOK()
+    {
+
+        if (Item == null)
+            return;
+
+        if (SelectedItem == null)
+            return;
+
+        if (Item != null)
+        {
+            if (this.Association == AssociationTyp.NULL)
+            {
+                return;
+            }
+        }
+
+        // Assign
+
+        await sql.Assign(this.Item, this.SelectedItem, this.Association);
+
+        if (OnConnected.HasDelegate)
+        {
+            await OnConnected.InvokeAsync(this.SelectedItem);
+        }
+
+        SelectedItem = null;
+
+        // Message
+        AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz verbunden");
+        msg.Publish(am);
+
+        // Visual Update
+        await InvokeAsync(this.StateHasChanged);
+
+    }
+
+    [Parameter]
+    public EventCallback<IDTO> OnConnected { get; set; }
+
+       private async Task AllItemTypes()
+    {
+        IQueryParameter query = new QueryParameter();
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.ItemType = "ItemType";
+
+        IQueryResult result = await sql.GetItems(query);
+        ItemTypes = result.Items;
+    }
+    private async Task ItemsByItemType(string itemType)
+    {
+        if (ddl2 != null)
+        {
+            ddl2.ClearSelectedItem();
+        }
+
+        IQueryParameter query = new QueryParameter();
+        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.ItemType = itemType;
+
+        IQueryResult result = await sql.GetItems(query);
+        ItemTypeItems = result.Items;
+    }
+
+    private async Task AssignItem()
+    {
+        if (Item == null)
+        {
+            // msg.Publish("Info", BusAction.Info, "Bitte wähle einen ItemType");
+            return;
+        }
+
+        if (SelectedItem == null)
+        {
+            msg.Publish("Info", BusAction.Info, "Bitte wähle einen Eintrag");
+            return;
+        }
+
+        await sql.Assign(Item, SelectedItem, AssociationTyp.Connection);
+
+        await Search();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            Item = null;
+            Items.Clear();
+
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+}

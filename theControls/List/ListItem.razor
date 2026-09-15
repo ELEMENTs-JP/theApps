@@ -2,7 +2,7 @@
 
 @if (ItemType != null)
 {
-    <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-2 hover align-items-center drag list-item">
+    <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-1 hover align-items-center drag list-item">
 
         @if (IsSortable)
         {
@@ -35,7 +35,7 @@
         }
         else
         {
-            <div class="col px-2 fw-bold pointer text-truncate text-nowrap @CheckStrikeOut()" title="@Item.ItemType"
+            <div class="col px-2 py-1 hover pointer rounded-2 fw-bold pointer text-truncate text-nowrap @CheckStrikeOut()" title="@Item.ItemType"
                  @onclick="@( e => { nm.NavToItem(ItemType.Name, Item.GUID); })">
                 @(Item.Title.ToSecureString())
             </div>

@@ -109,13 +109,13 @@ textarea::placeholder {
 a, a:visited {
     color: var(--tsp-link-color);
     text-decoration: none !important;
-    padding: 0.2rem 0.5rem;
-    margin: 0.2rem;
+    padding: 0.15rem 0.35rem;
+    margin: 0.15rem;
 }
 
     a:hover {
         color: var(--tsp-link-color);
-        border-radius: 0.35rem;
+        border-radius: 0.25rem;
         background: rgba(255, 255, 255, 0.15) !important;
         backdrop-filter: blur(20px) !important;
         -webkit-backdrop-filter: blur(20px) !important;

@@ -23,17 +23,18 @@
             <div class="hstack align-items-center">
                 <ConnectComp ItemType="@ItemType" RelatedItem="@RelatedItem" 
                     Association="@this.Association" ButtonTitle=""
-                     OnConnected="@( e => { })" />
+                     OnConnected="@( async e => { await OnConnect.InvokeAsync(e); })" />
                 <div class="vr mx-1"></div>
 
                 @if (Helper.FileBoxVisibility(this.ItemType.Typ))
                 {
-                    <FileUploadComp ItemType="@this.ItemType" OnFileUploaded="@( e => {   })"
+                    <FileUploadComp ItemType="@this.ItemType" 
+                        OnFileUploaded="@( async e => { await OnCreate.InvokeAsync(e); })"
                         RelatedItem="@RelatedItem" Association="@this.Association" />
                 }
                 else
                 {
-                    <AddArea ItemType="@ItemType" OnItemAdded="@( e => { } )"
+                    <AddArea ItemType="@ItemType" OnItemAdded="@( async e => { await OnCreate.InvokeAsync(e); })"
                         RelatedItem="@RelatedItem" Association="@this.Association" ButtonTitle=""  />
                 }
 
@@ -120,4 +121,7 @@
 
     [Parameter]
     public EventCallback<IDTO> OnDelete { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnCreate { get; set; }
 }
