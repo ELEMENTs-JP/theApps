@@ -4,9 +4,19 @@
 
 @foreach (IItemType it in ItemTypes.Where(se => se.ShowInTaskBarNavigation == true))
 {
-    <div class="pointer hover rounded-2 p-2 fw-bold" 
+    <div class="pointer hover rounded-2 p-2 fw-bold align-items-center" 
             @onclick="@( async e => {  await NavigateToItemType(it); })">
-        @it.ToString()
+
+        @if (it.Icon != Icon.NULL)
+        {
+            <ToolTip Title="@it.ToString()">
+                <SymbolIcon Symbol="@it.Icon" Size="24" />
+            </ToolTip>
+        }
+        else
+        {
+            @it.ToString()
+        }
     </div>
 }
 

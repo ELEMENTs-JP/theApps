@@ -10,6 +10,7 @@ namespace theInfrastructure
         {
             Name = "Audio";
             Title = "Audio";
+            Icon = Icon.Audio;
             Typ = ItemTypeTyp.Audio;
             this.Order = 8;
         }

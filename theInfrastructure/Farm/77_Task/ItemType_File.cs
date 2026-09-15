@@ -11,6 +11,7 @@ namespace theInfrastructure
             Name = "File";
             Title = "Dateien";
             Typ = ItemTypeTyp.File;
+            Icon = Icon.File;
             this.Order = 6;
             Description = "Mit dem Dateimanagement fügen Sie relevante Dokumente und Dateien direkt an eine Aufgabe an, wodurch Sie dezentrale Informationssilos auflösen, allen Beteiligten den sofortigen Zugriff auf benötigte Unterlagen ermöglichen und den Suchaufwand im operativen Tagesgeschäft nachhaltig minimieren.";
         }

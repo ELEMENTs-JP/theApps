@@ -139,6 +139,14 @@ namespace theInfrastructure
     public enum Icon
     {
         NULL = 0,
+        News,
+        Reminder,
+        Image,
+        Audio,
+        Video,
+        Note,
+        Task,
+        Calendar,
         Apps,
         Empty,
         Search,

@@ -11,6 +11,7 @@ namespace theInfrastructure
             Name = "Note";
             Title = "Notizen";
             Typ = ItemTypeTyp.Note;
+            Icon = Icon.Note;
             this.Order = 10;
             this.InSubNavigation = false;
         }

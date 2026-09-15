@@ -10,6 +10,7 @@ namespace theInfrastructure
         {
             Name = "Reminder";
             Title = "Erinnerung";
+            Icon = Icon.Reminder;
             Typ = ItemTypeTyp.Appointment;
         }
 

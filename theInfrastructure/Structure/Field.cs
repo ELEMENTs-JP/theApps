@@ -207,15 +207,15 @@ namespace theInfrastructure
                 Fields.Add(new Field() 
                 { 
                     Title = "Aktiv", Typ = FieldTyp.CheckBox, TrueText="aktiv", FalseText="inaktiv", 
-                    Column = "IsActive", CSS = " col-12 col-md-12 col-lg-12 ", OnDevice = DeviceDisplay.Desktop 
+                    Column = "IsActive", CSS = " col-12 col-md-5 col-lg-4 ", OnDevice = DeviceDisplay.Desktop 
                 });
                 Fields.Add(new Field()
                 {
                     Title = "Intervall",
                     Typ = FieldTyp.DropDown,
                     Column = "Intervall",
-                    Items = new List<string>() { "täglich", "wöchentlich", "monatlich" },
-                    CSS = " col-12 col-md-12 col-lg-12 ",
+                    Items = new List<string>() { "Tag", "Woche", "Monat" },
+                    CSS = " col-12 col-md-7 col-lg-8 ",
                     OnDevice = DeviceDisplay.Desktop
                 });
 

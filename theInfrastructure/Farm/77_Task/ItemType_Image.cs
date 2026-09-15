@@ -10,6 +10,7 @@ namespace theInfrastructure
         {
             Name = "Image";
             Title = "Bilder";
+            Icon = Icon.Image;
             Typ = ItemTypeTyp.Image;
             this.Order = 7;
         }

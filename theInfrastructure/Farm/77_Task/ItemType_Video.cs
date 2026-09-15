@@ -11,6 +11,7 @@ namespace theInfrastructure
             Name = "Video";
             Title = "Video";
             Typ = ItemTypeTyp.Video;
+            Icon = Icon.Video;
             Description = "Ermöglicht das speichern von Videos in einer Library";
             this.Order = 9;
         }

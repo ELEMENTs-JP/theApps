@@ -10,6 +10,7 @@ namespace theInfrastructure
         {
             Name = "Appointment";
             Title = "Termin";
+            Icon = Icon.Calendar;
             Typ = ItemTypeTyp.Appointment;
             this.Order = 2;
         }

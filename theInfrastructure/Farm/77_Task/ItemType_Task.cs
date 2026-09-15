@@ -10,6 +10,7 @@ namespace theInfrastructure
         public ItemType_Task()
         {
             Name = "Task";
+            Icon = Icon.Task;
             this.InSubNavigation = false;
             this.Order = 1;
             Description = "Mit einer Aufgabe erfassen und verwalten Sie alle relevanten operativen Daten Ihres Projekts, wodurch Sie Informationsverluste vermeiden, den manuellen Abstimmungsaufwand im Team spürbar reduzieren und jederzeit eine verlässliche Datenbasis für fundierte unternehmerische Entscheidungen sowie effiziente Prozessabläufe schaffen.";

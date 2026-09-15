@@ -58,10 +58,37 @@
         {
             string info = rem.Title;
             msg.Publish("Info", BusAction.Info, info);
+
+            await UpdateReminder(rem);
         }
 
         // UI-Update anfordern, da der Callback vom Background-Timer aufgerufen wird
         await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task UpdateReminder(IDTO item)
+    {
+        if (item == null)
+            throw new Exception("null Item");
+
+        string Intervall = item["Intervall"].ToSecureString();
+        DateTime date = item["Date"].ToSecureDateTime();
+
+        if (Intervall == "Tag")
+        {
+            item["Date"] = date.AddDays(1).ToDateField();
+        }
+        if (Intervall == "Woche")
+        {
+            item["Date"] = date.AddDays(7).ToDateField();
+        }
+        if (Intervall == "Monat")
+        {
+            item["Date"] = date.AddMonths(1).ToDateField();
+        }
+
+        await sql.Update(item);
+
     }
 
     public void Dispose()

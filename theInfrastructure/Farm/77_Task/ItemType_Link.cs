@@ -10,6 +10,7 @@ namespace theInfrastructure
         {
             Name = "Link";
             Title = "Link";
+            Icon = Icon.Link;
             Typ = ItemTypeTyp.Link;
             this.InSubNavigation = false;
             this.Order = 4;

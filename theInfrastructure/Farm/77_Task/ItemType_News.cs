@@ -10,6 +10,7 @@ namespace theInfrastructure
         {
             Name = "News";
             Title = "Nachrichten";
+            Icon = Icon.News;
             Typ = ItemTypeTyp.Information;
             this.InSubNavigation = false;
             this.Order = 3;
