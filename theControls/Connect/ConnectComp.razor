@@ -137,7 +137,7 @@
         if (Context == null)
             return;
 
-         if (RelatedItem == null)
+        if (RelatedItem == null)
             return;
 
         if (SelectedItem == null)
@@ -152,8 +152,13 @@
         }
 
         // Assign 
-    
+
         await sql.Assign(this.RelatedItem, this.SelectedItem, this.Association);
+
+        if (OnConnected.HasDelegate)
+        {
+            await OnConnected.InvokeAsync(this.SelectedItem);    
+        }
 
         SelectedItem = null;
 
@@ -165,6 +170,9 @@
         await InvokeAsync(this.StateHasChanged);
 
     }
+
+    [Parameter]
+    public EventCallback<IDTO> OnConnected { get; set; }
 
     public async ValueTask DisposeAsync()
     {
