@@ -41,7 +41,7 @@
 
               
                     <AddArea ItemType="@ItemType" CSS="me-2"
-                             OnItemAdded="@( async e => {  })" />
+                             OnItemAdded="@( async e => { await Context.Search(); })" />
 
                 }
             </Related>

@@ -1,11 +1,15 @@
-﻿@inject IAppService apps
+﻿@using theControls.Reminder
+@inject IAppService apps
 @inject NavigationManager nm
 @inject IMessagingBusService msg
 
+<ReminderPixel />
+<div class="vr"></div>
+
 @foreach (IItemType it in ItemTypes.Where(se => se.ShowInTaskBarNavigation == true))
 {
-    <div class="pointer hover rounded-2 p-2 fw-bold align-items-center" 
-            @onclick="@( async e => {  await NavigateToItemType(it); })">
+    <div class="pointer hover rounded-2 p-2 fw-bold align-items-center"
+         @onclick="@( async e => { await NavigateToItemType(it); })">
 
         @if (it.Icon != Icon.NULL)
         {
@@ -20,11 +24,7 @@
     </div>
 }
 
-<div class="vr">
-</div>
-  <div class="pointer hover rounded-2 p-2 fw-bold align-items-center" 
-    <ReminderPixel />
-</div>
+
 
 @code {
 

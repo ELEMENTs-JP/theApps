@@ -4,7 +4,7 @@
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
 
-<div class="border rounded p-2 bg-surface">
+<div class="rounded p-1 px-3">
     <ToolTip Title="@( "Letzte Überprüfung:" + (lastExecution == DateTime.MinValue ? "Noch keine" : lastExecution.ToString("HH:mm:ss")) )">
         <SymbolIcon Symbol="Icon.Reminder" Size="24" />
     </ToolTip>

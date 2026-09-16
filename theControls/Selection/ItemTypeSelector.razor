@@ -1,15 +1,27 @@
 ﻿@using theControls.Essentials
-@if (Item != null)
+@inject NavigationManager nm
+
+@if (ItemType != null)
 {
-   
+
     <AssociationIcon Association="@Association" CSS="pe-2" />
+
+    @if (ItemType != null)
+    {
+        @if (!Helper.NotNavigateableItemTypes().Contains(ItemType.Name))
+        {
+            <div class="p-1 hover rounded-2 pointer me-2" @onclick="@( e => { nm.NavToLibrary(ItemType.Name, ItemType.Typ); })">
+                <SymbolIcon Symbol="Icon.Link" />
+            </div>
+        }
+    }
 
     <div class="btn-group" role="group">
 
         @foreach (IItemType it in Items.FromTo<IItemType>(0, 2))
         {
-            <div class="@( "btn btn-sm btn-compact " + ((it.Name == Item.Name) ? " btn-primary " : "") )"
-                 @onclick="@( async e => { Item = it; await ButtonClick(it); })">
+            <div class="@( "btn btn-sm btn-compact " + ((it.Name == ItemType.Name) ? " btn-primary " : "") )"
+                 @onclick="@( async e => { ItemType = it; await ButtonClick(it); })">
                 @it.ToString()
             </div>
         }
@@ -25,7 +37,7 @@
                     @foreach (IItemType it in Items.FromTo<IItemType>(3, Items.Count() + 1))
                     {
                         <div class="@( "dropdown-item" )"
-                             @onclick="@( async e => { Item = it; await ButtonClick(it); })">
+                             @onclick="@( async e => { ItemType = it; await ButtonClick(it); })">
                             @it.ToString()
                         </div>
                     }
@@ -40,7 +52,7 @@
 
 
     [Parameter]
-    public IItemType Item { get; set; }
+    public IItemType ItemType { get; set; }
 
     [Parameter]
     public List<IItemType> Items { get; set; } = new();
@@ -54,8 +66,8 @@
 
         if (Items.Count() >= 1)
         {
-            Item = Items.FirstOrDefault();
-            await ButtonClick(Item);
+            ItemType = Items.FirstOrDefault();
+            await ButtonClick(ItemType);
         }
     }
 

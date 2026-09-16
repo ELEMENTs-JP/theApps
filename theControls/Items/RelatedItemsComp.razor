@@ -48,14 +48,17 @@
         </Content>
         <Bottom>
 
-            @if (Helper.FileBoxVisibility(this.ItemType.Typ))
-            {
-
+            @if (this.ItemType.Typ == ItemTypeTyp.File)
+            { 
+                <FileUploadComp ItemType="@this.ItemType" 
+                    SizeMode="FileInputBox.FileInputSizeMode.Maximized" Height="128"
+                        OnFileUploaded="@( async e => { await OnCreate.InvokeAsync(e); })"
+                        RelatedItem="@RelatedItem" Association="@this.Association" />
             }
             else
             {
                 <AddFast ItemType="@ItemType" RelatedItem="@RelatedItem" Association="@this.Association" 
-                     OnItemAdded="@( e => {  })" OnRelatedItemAdded="@( e => {  })" />
+                OnItemAdded="@( e => {  })" OnRelatedItemAdded="@( e => {  })" />
             }
         </Bottom>
     </Frame>

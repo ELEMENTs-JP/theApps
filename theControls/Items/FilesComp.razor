@@ -29,7 +29,7 @@
                 </div>
             </Controls>
             <Search>
-                <LocalSearchComp OnSearch="@( e => { Matchcode = e.ToSecureString(); })"
+                <LocalSearchComp OnSearch="@( async e => { Matchcode = e.ToSecureString();await Context.Search(); })"
                                  ItemType="@this.ItemType" />
             </Search>
             <Related>
@@ -40,7 +40,8 @@
                     <div class="vr"></div>
 
                     <ClipboardCopyPaste ItemType="@this.ItemType" />
-                    <FileUploadComp ItemType="@this.ItemType" />
+                    <FileUploadComp ItemType="@this.ItemType" 
+                            OnFileUploaded="@( async e => { await Context.Search(); })" />
                 }
             </Related>
             <Content>
@@ -49,19 +50,14 @@
                 {
                     <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode" Items="@Context.Items"
                                OnSort="@( async e => { await Context.Search(); } )">
-                        <Empty>
-                            <QuickAdd ItemType="@this.ItemType" OnAdd="@( e => { })" />
-                        </Empty>
                     </DataTable>
-
-
                 }
                 else if (this.ItemType.Typ == ItemTypeTyp.File ||
                             this.ItemType.Typ == ItemTypeTyp.Video ||
                             this.ItemType.Typ == ItemTypeTyp.Image)
                 {
                     <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" 
-                        Items="@Context.Items" OnItemDelete="@( e => {  })" />
+                        Items="@Context.Items" OnItemDelete="@( async e => { await Context.Search(); })" />
                 }
 
             </Content>

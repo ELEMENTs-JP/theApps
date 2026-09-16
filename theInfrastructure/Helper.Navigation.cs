@@ -40,9 +40,14 @@ namespace theInfrastructure
 
             return false;
         }
+        public static List<string> NotNavigateableItemTypes()
+        {
+            List<string> notNavigateableItemTypes = new List<string>() { "Checklist", "Comment", "Principal", "User", "Permission" };
+            return notNavigateableItemTypes;
+        }
         public static List<IDTO> ValidateNavigateableItems(this List<IDTO> items)
         {
-            List<string> notNavigateableItemTypes = new List<string>() { "Comment", "Principal", "User", "Permission" };
+            var notNavigateableItemTypes = NotNavigateableItemTypes();
             return items.Where(item => !notNavigateableItemTypes.Contains(item.ItemType)).ToList();
         }
         public static bool ValidateVisibility(SecuredFeature feature, IItemType ItemType, IDTO User)

@@ -17,25 +17,15 @@ namespace theInfrastructure
         }
 
         // ItemTypes 
-        public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
-        {
-            List<IItemType> ItemTypes = new();
+        //public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)
+        //{
+        //    List<IItemType> ItemTypes = new();
 
 
-            if (ast == AssociationTyp.Children)
-            {
-                ItemTypes.Add(new ItemType_Checklist());
-            }
+           
 
-            if (ast == AssociationTyp.Default)
-            {
-                ItemTypes.Add(new ItemType_Comment());
-                ItemTypes.Add(new ItemType_Note());
-                ItemTypes.Add(new ItemType_File());
-            }
-
-            return ItemTypes;
-        }
+        //    return ItemTypes;
+        //}
 
         public override async Task<List<IField>> GetFields(string view = "")
         {

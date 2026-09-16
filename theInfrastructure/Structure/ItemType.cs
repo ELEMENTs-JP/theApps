@@ -64,6 +64,50 @@ namespace theInfrastructure
         {
             List<IItemType> ItemTypes = new();
 
+
+            if (ast == AssociationTyp.Parents)
+            {
+
+            }
+            if (ast == AssociationTyp.Parallels)
+            {
+
+            }
+            if (ast == AssociationTyp.Related)
+            {
+
+            }
+            if (ast == AssociationTyp.Children)
+            {
+                if (this.Name != "Task")
+                { 
+                    ItemTypes.Add(new ItemType_Task());
+                }
+                if (this.Name != "Checklist")
+                { 
+                    ItemTypes.Add(new ItemType_Checklist());
+                }
+            }
+
+            if (ast == AssociationTyp.Default)
+            {
+                if (this.Name != "Comment")
+                { 
+                    ItemTypes.Add(new ItemType_Comment());
+                }
+                if (this.Name != "Note")
+                {
+                    
+                    ItemTypes.Add(new ItemType_Note());
+                }
+                if (this.Name != "File")
+                {
+                    ItemTypes.Add(new ItemType_File());
+                }
+            }
+
+
+
             return ItemTypes;
         }
 
