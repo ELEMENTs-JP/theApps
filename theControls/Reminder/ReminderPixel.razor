@@ -5,9 +5,9 @@
 @inject IMessagingBusService msg
 
 <div class="border rounded p-2 bg-surface">
-    <small class="text-muted small">
-        Letzte Überprüfung: @(lastExecution == DateTime.MinValue ? "Noch keine" : lastExecution.ToString("HH:mm:ss"))
-    </small>
+    <ToolTip Title="@( "Letzte Überprüfung:" + (lastExecution == DateTime.MinValue ? "Noch keine" : lastExecution.ToString("HH:mm:ss")) )">
+        <SymbolIcon Symbol="Icon.Reminder" Size="24" />
+    </ToolTip>
 </div>
 
 @code {
