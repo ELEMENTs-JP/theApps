@@ -1,5 +1,4 @@
 ﻿@using theControls.Folder
-
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
 
@@ -49,6 +48,8 @@
                 <EditArea ItemType="@EditItemType" 
                     ID="@( ((Item != null) ? Item.GUID.ToString() : string.Empty) )" 
                     ItemDeleted="@( async e => { Item = null;  })" />
+
+                     <AssociatedItems Item="@Item" CSS="my-3" Association="@AssociationTyp.Association"  />
 
                 <RelatedItemsComp CSS="mt-3" ItemTypes="@( ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Children).Value ?? new List<IItemType>())"
                                   RelatedItem="@Item" Association="AssociationTyp.Children" />

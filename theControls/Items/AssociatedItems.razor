@@ -1,14 +1,4 @@
-﻿@*
- * ============================================================================
- * Copyright (c) 2026 the STRIDEs Path by Juergen Pott 
- * 
- * Licensed under the MIT License. 
- * See LICENSE file in the project root for full license information. 
- * ============================================================================
- *@
-
-
-@inject NavigationManager nm
+﻿@inject NavigationManager nm
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
 
@@ -24,9 +14,12 @@
             <SimpleSearchComp Items="@this.Items" OnSearch="@( async e => { await Search(e); })" />
         </Search>
         <Related>
-            <div class="d-flex flex-row align-items-center p-1">
-                <AssignComp Item="@this.Item" ButtonTitle="" />
-            </div>
+            @if (Association == AssociationTyp.Connection)
+            {
+                <div class="d-flex flex-row align-items-center p-1">
+                    <AssignComp Item="@this.Item" ButtonTitle="" OnConnected="@( async e => { await Search(); })" />
+                </div>
+            }
         </Related>
         <Content>
 
@@ -50,10 +43,10 @@
                     {
                         <div class="d-flex align-items-center hover px-1 border-bottom">
                             
-                            <div class="text-muted p-1">
+                            <div class="text-muted p-1 small">
                                 @Item.ID.ToSecureString()
                             </div>
-                            <a class="flex-fill p-1 px-2" href="@( $"{ Helper.GetItemUrl(Item) }" )">
+                            <a class="flex-fill fw-bold p-1 px-2" href="@( $"{ Helper.GetItemUrl(Item) }" )">
                                 @Item.Title.ToSecureString()
                             </a>
                             <div class="hover pointer rounded-2 p-1 px-2" @onclick="@( async e => { await RemoveItem(Item); })">
@@ -82,6 +75,8 @@
 
     bool isLoading { get; set; } = true;
 
+    [Parameter]
+    public AssociationTyp Association { get; set; } = AssociationTyp.Connection;
 
     [Parameter]
     public string CSS { get; set; } = string.Empty;
@@ -103,7 +98,6 @@
         await base.OnParametersSetAsync();
 
         await Search();
-   
     }
  
 
@@ -119,7 +113,7 @@
         query.MasterGUID = SQLiteService.GeneralMasterGUID;
         query.ItemType = "Search";
 
-        IQueryResult result = await sql.GetRelatedItems(Item, "", AssociationTyp.Connection);
+        IQueryResult result = await sql.GetRelatedItems(Item, "", Association);
         Items = result.Items.DistinctBy(se => se.GUID).ToList();
 
         if (!string.IsNullOrWhiteSpace(matchcode))

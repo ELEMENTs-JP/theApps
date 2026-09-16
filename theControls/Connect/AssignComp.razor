@@ -5,6 +5,7 @@
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
 @inject ISecurityService sec
+@inject ISearchService search
 
 @implements IAsyncDisposable
 
@@ -47,24 +48,6 @@
                 </div>
             </div>
 
-            <div class="d-flex">
-                <DropDown @ref="@ddl1" Items="@ItemTypes" ItemChanged="@( async e => { await ItemsByItemType(e.Title); })" />
-
-                @if (ItemTypeItems.Count >= 1)
-                {
-                    <div class="vr mx-1"></div>
-                    <DropDown @ref="@ddl2" Items="@ItemTypeItems" ItemChanged="@( e => { SelectedItem = e; })" />
-                }
-
-                @if (SelectedItem != null)
-                {
-                    <div class="vr mx-1"></div>
-                    <div class="btn btn-sm btn-ghost-secondary" @onclick="@( async e => { await AssignItem(); })">
-                        <SymbolIcon Symbol="Icon.Neu" />
-                    </div>
-                }
-            </div>
-
             <div class="d-flex justify-content-center">
                 <TextBox Type="FieldTyp.Search" Placeholder="nach Einträgen suchen"
                          ValueChanged="@( async e => { Matchcode = e; await Search(); })" />
@@ -73,8 +56,14 @@
             @foreach (IDTO item in Items)
             {
                 <div class="row g-0 hover pointer rounded-2 p-1 my-2" @onclick="@( async e => { SelectedItem = item; })">
-                    <div class="col-12 p-1">
-                        @item.Title.ToSecureString()
+                    <div class="col-1 p-1 text-muted small">
+                        @item.ID
+                    </div>
+                    <div class="col p-1 fw-bold px-2">
+                        @item.Title
+                    </div>
+                    <div class="col-2 p-1 small text-muted text-end">
+                        @item.ItemType
                     </div>
                 </div>
             }
@@ -86,12 +75,6 @@
 }
 
 @code {
-
-    List<IDTO> ItemTypes { get; set; } = new();
-    List<IDTO> ItemTypeItems { get; set; } = new();
-
-    private DropDown ddl1 { get; set; }
-    private DropDown ddl2 { get; set; }
 
     [Parameter]
     public IDTO Item { get; set; }
@@ -117,35 +100,15 @@
     {
         await base.OnParametersSetAsync();
 
-        // if (ItemType != null)
-        // {
-        //     Context = new QueryContext(sql, sec);
-        //     Context.ItemType = this.ItemType;
-        // }
-
-             await AllItemTypes();
     }
 
     private async Task Search()
     {
-
-        // if (string.IsNullOrEmpty(this.Matchcode))
-        // {
-        //     Context.Items.Clear();
-        //     return;
-        // }
-
-        IFilterParameter filter = new FilterParameter();
-        filter.Matchcode = this.Matchcode;
-        // Context.Filter = filter;
-
-        // Search
-        // await Context.Search();
+        this.Items = await search.Search(this.Matchcode);
     }
 
     private async Task OnOK()
     {
-
         if (Item == null)
             return;
 
@@ -160,8 +123,7 @@
             }
         }
 
-        // Assign
-
+        // Assign 
         await sql.Assign(this.Item, this.SelectedItem, this.Association);
 
         if (OnConnected.HasDelegate)
@@ -183,48 +145,6 @@
     [Parameter]
     public EventCallback<IDTO> OnConnected { get; set; }
 
-       private async Task AllItemTypes()
-    {
-        IQueryParameter query = new QueryParameter();
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
-        query.ItemType = "ItemType";
-
-        IQueryResult result = await sql.GetItems(query);
-        ItemTypes = result.Items;
-    }
-    private async Task ItemsByItemType(string itemType)
-    {
-        if (ddl2 != null)
-        {
-            ddl2.ClearSelectedItem();
-        }
-
-        IQueryParameter query = new QueryParameter();
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
-        query.ItemType = itemType;
-
-        IQueryResult result = await sql.GetItems(query);
-        ItemTypeItems = result.Items;
-    }
-
-    private async Task AssignItem()
-    {
-        if (Item == null)
-        {
-            // msg.Publish("Info", BusAction.Info, "Bitte wähle einen ItemType");
-            return;
-        }
-
-        if (SelectedItem == null)
-        {
-            msg.Publish("Info", BusAction.Info, "Bitte wähle einen Eintrag");
-            return;
-        }
-
-        await sql.Assign(Item, SelectedItem, AssociationTyp.Connection);
-
-        await Search();
-    }
 
     public async ValueTask DisposeAsync()
     {
@@ -240,3 +160,4 @@
         }
     }
 }
+
