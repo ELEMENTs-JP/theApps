@@ -1,0 +1,59 @@
+﻿@inject ISqlDatabaseService sql
+@inject ISearchService search
+
+
+<Frame>
+    <Header>
+        <ControlHeader PreTitle="Search" Title="the FINDer" PostTitle=""  />
+    </Header>
+    <Search>
+        <FinderSearchComp OnSearch="@( async e => { await Search(e); })" />
+    </Search>
+    <Content>
+
+        <div class="row g-0" style="height:36rem;">
+            <div class="col-3 px-2">
+                <FinderFilter />
+
+            </div>
+            <div class="col-6 px-2 border-start border-end overflow-y-auto h-100">
+                <div>
+                    @foreach (IDTO Item in Items)
+                    {
+                        <div class="d-flex p-2 hover rounded">
+                            <div class="px-2 small text-muted">
+                                @Item.ID
+                            </div>
+                            <div class="flex-fill fw-bold pointer">
+                                @Item.Title
+                            </div>
+                            <div class="px-2">
+                                @Item.ItemType
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="col-3 px-2">
+            </div>
+        </div>
+
+          
+
+    </Content>
+
+</Frame>
+
+@code {
+
+    List<IDTO> Items { get; set; } = new();
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task Search(string matchcode)
+    {
+        Items = await search.Search(matchcode);
+    }
+}

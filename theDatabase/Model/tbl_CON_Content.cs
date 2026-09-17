@@ -95,30 +95,6 @@ namespace theDatabase
             }
         }
 
-        //[NotMapped]
-        //public string this[string propertyName]
-        //{
-        //    get 
-        //    {
-        //        string searchPattern = propertyName ?? string.Empty;
-        //        ItemProperty prop = Properties.Find(p => p?.Property != null && p.Property.Contains(searchPattern, StringComparison.OrdinalIgnoreCase)) ?? ItemProperty.Empty(searchPattern);
-        //        return prop.Value;
-        //    }
-        //    set
-        //    {
-        //        // Wert setzen 
-        //        var existing = Properties.Find(p => p.Property.Equals(propertyName, StringComparison.OrdinalIgnoreCase));
-        //        if (existing != null)
-        //        {
-        //            existing.Value = value;
-        //        }
-        //        else
-        //        {
-        //            Properties.Add(new ItemProperty { Property = propertyName, Value = value });
-        //        }
-        //    }
-        //}
-
         [NotMapped]
         public string? RelationType { get; set; } = string.Empty; // IRelationDTO 
 

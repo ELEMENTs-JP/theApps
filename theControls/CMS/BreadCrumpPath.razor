@@ -100,73 +100,82 @@
     // Events
     private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        // Globaler Code bei jeder Navigation (z. B. Logging, Analytics)
-        string newUrl = e.Location;
-
-        UrlAnalysis analysis = UrlAnalysis.AnalyzeUrl(nm);
-        if (analysis.Segments.PrepareUriSegments().Count() >= 1)
+        try
         {
-            // Filterung u. Uri Escaping
-            var segments = analysis.Segments.PrepareUriSegments().ToList();
-            segments = segments.Select(s => Uri.UnescapeDataString(s)).ToList();
 
-            // 1. Versuch: Suche nach der Kombination aus App (i - 1) und ItemType (i)
-            if (segments.Count >= 2)
+            // Globaler Code bei jeder Navigation (z. B. Logging, Analytics)
+            string newUrl = e.Location;
+
+            UrlAnalysis analysis = UrlAnalysis.AnalyzeUrl(nm);
+            if (analysis.Segments.PrepareUriSegments().Count() >= 1)
             {
-                for (int i = 1; i < segments.Count; i++)
-                {
-                    string itemTypeCandidate = segments[i];
+                // Filterung u. Uri Escaping
+                var segments = analysis.Segments.PrepareUriSegments().ToList();
+                segments = segments.Select(s => Uri.UnescapeDataString(s)).ToList();
 
-                    IItemType? _it = await new Factory(sql).BuildItemType(itemTypeCandidate);
-                    if (_it != null)
+                // 1. Versuch: Suche nach der Kombination aus App (i - 1) und ItemType (i)
+                if (segments.Count >= 2)
+                {
+                    for (int i = 1; i < segments.Count; i++)
                     {
-                        IApp? _app = await app.AppByItemType(_it);
-                        if (_app != null)
+                        string itemTypeCandidate = segments[i];
+
+                        IItemType? _it = await new Factory(sql).BuildItemType(itemTypeCandidate);
+                        if (_it != null)
                         {
-                            // setzt ItemType und App
-                            await app.SetItemType(_it);
-                            msg.Publish("ItemType", BusAction.Refresh);
-                            // await InvokeAsync(StateHasChanged);
-                            return; // Pärchen erfolgreich gefunden -> Ende
+                            IApp? _app = await app.AppByItemType(_it);
+                            if (_app != null)
+                            {
+                                // setzt ItemType und App
+                                await app.SetItemType(_it);
+                                msg.Publish("ItemType", BusAction.Refresh);
+                                // await InvokeAsync(StateHasChanged);
+                                return; // Pärchen erfolgreich gefunden -> Ende
+                            }
                         }
                     }
                 }
-            }
 
-            // 2. Versuch (Fallback): Prüfen, ob ein Segment eine reine App ist (über die Factory)
-            foreach (string seg in segments.AsEnumerable().Reverse())
-            {
-                IApp? _app = await new Factory(sql).BuildApp(seg);
-                if (_app != null)
+                // 2. Versuch (Fallback): Prüfen, ob ein Segment eine reine App ist (über die Factory)
+                foreach (string seg in segments.AsEnumerable().Reverse())
                 {
-                    await app.SetApp(_app);
-                    msg.Publish("App", BusAction.Refresh);
-                    // await InvokeAsync(StateHasChanged);
-                    return;
-                }
-            }
-
-            // 3. Versuch: Prüfen ob die Segmente in Form von /.../Page/58439309-585904-75843/... vorliegen
-            foreach (string seg in segments)
-            {
-                Guid pageGUID = seg.ToSecureGUID();
-                if (pageGUID != Guid.Empty)
-                {
-                    IDTO? Page = app.AllPages.Find(se => se.GUID == pageGUID);
-                    if (Page != null)
+                    IApp? _app = await new Factory(sql).BuildApp(seg);
+                    if (_app != null)
                     {
-                        await app.SetPage(Page);
-                        msg.Publish("Page", BusAction.Refresh);
+                        await app.SetApp(_app);
+                        msg.Publish("App", BusAction.Refresh);
+                        // await InvokeAsync(StateHasChanged);
                         return;
                     }
                 }
+
+                // 3. Versuch: Prüfen ob die Segmente in Form von /.../Page/58439309-585904-75843/... vorliegen
+                foreach (string seg in segments)
+                {
+                    Guid pageGUID = seg.ToSecureGUID();
+                    if (pageGUID != Guid.Empty)
+                    {
+                        IDTO? Page = app.AllPages.Find(se => se.GUID == pageGUID);
+                        if (Page != null)
+                        {
+                            await app.SetPage(Page);
+                            msg.Publish("Page", BusAction.Refresh);
+                            return;
+                        }
+                    }
+                }
+
             }
 
-        }
+            // Setzt App, ItemType u. Page == null
+            await app.SetApp(null);
+            msg.Publish("App", BusAction.Refresh);
 
-        // Setzt App, ItemType u. Page == null
-        await app.SetApp(null);
-        msg.Publish("App", BusAction.Refresh);
+        }
+        catch (Exception ex)
+        {
+            throw;    
+        }
     }
 
     // Dipose

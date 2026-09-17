@@ -1,0 +1,80 @@
+﻿@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@inject NavigationManager nm
+@inject ISecurityService secService
+@inject IMessagingBusService msg
+@inject ISearchService search
+@implements IDisposable
+
+
+    <input id="@inputId"
+           type="text"
+           class="searchbox"
+           placeholder="Suchbegriff eingeben..."
+           value="@searchQuery"
+           @oninput="HandleInput"
+           autocomplete="off"
+           style="width:21rem;" />
+
+
+
+@code {
+
+    private string inputId = $"simple-search-input-{Guid.NewGuid():N}";
+    private string searchQuery = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> OnSearch { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageIncome;
+    }
+
+    private async void OnMessageIncome(AppMessage message)
+    {
+        if (message.Id == "Feature" && message.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // JSInterop: Fokus beim Laden direkt in die Textbox setzen 
+         
+                await JSRuntime.InvokeVoidAsync("setFocusById", inputId);
+                await InvokeAsync(StateHasChanged);
+       
+
+        }
+    }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        searchQuery = e.Value?.ToString() ?? string.Empty;
+
+        // msg.Publish("LocalSearch", BusAction.Search, searchQuery);
+
+        if (OnSearch.HasDelegate)
+        {
+            await OnSearch.InvokeAsync(searchQuery);
+        }
+    }
+
+    public void Dispose()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageIncome;
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+}

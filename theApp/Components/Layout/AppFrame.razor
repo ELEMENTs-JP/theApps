@@ -1,15 +1,19 @@
-﻿
+﻿@inherits LayoutComponentBase
 @inject ILocalizationService loc
 @inject ISecurityService sec
 @inject ISqlDatabaseService sql
-@inherits LayoutComponentBase
 @inject IJSRuntime js
 @inject IAppService app
+@inject NavigationManager nm
 
 <AppLayout>
     <Header>
         <div class="px-1"></div>
         <SearchComp />
+        <div class="px-5">
+            <div class="p-1 hover pointer rounded"
+                   @onclick="@( e => { nm.NavigateTo("/Finder"); } )" >FINDer</div>
+        </div>
         <AddArea ItemType="@ItemType" />
         <div class="mx-auto"></div>
         <SystemPopup />

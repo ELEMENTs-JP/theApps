@@ -42,7 +42,7 @@
     [Parameter]
     public string IT { get; set; } = string.Empty;
 
-    private IItemType ItemType { get; set; } = null;
+    private IItemType? ItemType { get; set; } = null;
 
     protected override async Task OnParametersSetAsync()
     {

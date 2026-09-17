@@ -1,0 +1,53 @@
+﻿@inject ILocalizationService loc
+
+@* --- FILTER DROP DOWN --- *@
+<div class="w-100 dropdown-center my-1">
+    <div class="@(" p-2 hover rounded-2 pointer align-items-center ")"
+         data-bs-toggle="dropdown">
+        <div class="d-flex">
+            <div class="px-1">
+                <SymbolIcon Symbol="Icon.Filter" />
+            </div>
+            <div class="flex-fill fw-bold px-1">
+                Filter
+            </div>
+        </div>
+        <div class="text-muted small ps-4 ms-1">
+            Filter wählen...
+        </div>
+    </div>
+
+    <div class="@( "dropdown-menu w-100")">
+
+        <div class="d-flex align-items-center border-bottom">
+            <div class="p-2">
+                <SymbolIcon Symbol="Icon.Filter"  />
+            </div>
+            <div class="flex-fill p-2 fw-bold">
+                Apps
+            </div>
+        </div>
+
+        @* --- App List --- *@
+        <div class="overflow-y-auto" style="max-height:40rem;">
+
+              @* Es geht um folgende TextBox *@
+            <div class="p-2" @onclick:stopPropagation="true">
+                <input type="text"
+                       class="form-control form-control-sm"
+                       placeholder="@loc.GetLabel("Suchen...", "find...")"
+                       @bind="searchTerm"
+                       @bind:event="oninput" />
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+
+    private string searchTerm = string.Empty;
+
+}
