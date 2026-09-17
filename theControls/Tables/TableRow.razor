@@ -31,21 +31,29 @@
             </td>
         }
 
-        <td class="text-truncate" title="@Item.ItemType" style="max-width:15rem;">
+        <td class="text-truncate position-relative" title="@Item.ItemType" style="max-width:15rem;">
             <div class="d-flex align-items-center gap-2">
 
-                <a class="fw-bold pointer text-truncate flex-grow-1"
+                <a class="fw-bold pointer text-truncate flex-grow-1 me-2"
                    href="@( "/Item/" + ItemType.Name + "/" + Item.GUID )">
                     @(Item.Title.ToSecureString())
                 </a>
-         
             
             </div>
+            
+            @if (Item.Metadata.CreatedBy != sec.User.GUID)
+            {
+                <ToolTip CSS="position-absolute top-50 end-0 translate-middle-y" Title="zugeordneter Datensatz">
+                    @* <span class="badge border border-light rounded-circle bg-secondary p-1"></span> *@
+                    <SymbolIcon Symbol="Icon.Connect" Color="#777777" />
+                </ToolTip>
+            }
+
         </td>
 
         @foreach (IField col in ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnDisplay.Table == true))
         {
-            <td class="@Helper.GetClassByDevice(col) align-items-center">
+            <td class="@Helper.GetClassByDevice(col) text-nowrap align-items-center">
                 <TableCell @key="@( Item.GUID + col.Column + col.ItemType  )" 
                     Value="@(Item[col.Column].ToSecureString())" Field="@col" Item="@Item" />
             </td>

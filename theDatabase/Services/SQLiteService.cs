@@ -535,9 +535,31 @@ namespace theDatabase
 
             try
             {
-                using (SQLiteContext ctx = GetContext())
+                await using (SQLiteContext ctx = GetContext())
                 {
                     await ctx.Database.ExecuteSqlAsync(fq);
+
+                    var dbitem = await (from c in ctx.tbl_CON_Content
+                                        where c.GUID == query.GUID
+                                        select c).FirstOrDefaultAsync();
+
+                    if (dbitem != null)
+                    {
+                        // Creator 
+                        dbitem.Metadata.CreatedAt = DateTime.Now;
+                        dbitem.Metadata.CreatedBy = query.UserGUID;
+                        dbitem.Metadata.Creator = query.UserName;
+
+                        // Editor 
+                        dbitem.Metadata.EditedAt = DateTime.Now;
+                        dbitem.Metadata.EditedBy = query.UserGUID;
+                        dbitem.Metadata.Editor = query.UserName;
+
+                        dbitem.Matchcode = query.Title;
+                    }
+
+                    // SAVE 
+                    await ctx.SaveChangesAsync();
                 }
 
                 // Item GUID 
@@ -606,7 +628,10 @@ namespace theDatabase
                 return result;
             }
 
-            FormattableString sql = Query.GetItems(query);
+            // Query 
+            FormattableString sql = query.IsPersonalizedQuery
+                ? Query.GetPersonalAssignedItems(query)
+                : Query.GetItems(query);
 
             try
             {
@@ -614,10 +639,12 @@ namespace theDatabase
                 {
                     var dbItems = await ctx.tbl_CON_Content
                         .FromSql(sql)
+                        .AsNoTracking()
                         .ToListAsync();
 
-                    result.Items = dbItems.Cast<IDTO>().ToList();
+                    result.Items = dbItems.OfType<IDTO>().ToList();
                 }
+
             }
             catch (Exception ex)
             {
@@ -660,9 +687,10 @@ namespace theDatabase
                 {
                     var dbItems = await ctx.tbl_CON_Content
                         .FromSql(sql)
+                              .AsNoTracking()
                         .ToListAsync();
 
-                    result.Items = dbItems.Cast<IDTO>().ToList();
+                    result.Items = dbItems.OfType<IDTO>().ToList();
                 }
             }
             catch (Exception ex)
@@ -842,30 +870,30 @@ namespace theDatabase
             try
             {
 
-                if (Typ == AssociationTyp.Children ||
-                   Typ == AssociationTyp.Parallels ||
-                   Typ == AssociationTyp.Related ||
-                   Typ == AssociationTyp.UserImage ||
-                   Typ == AssociationTyp.Default)
-                {
-                    info.Items = await GetChildren(dto, ItemType, Typ);
-                }
-                else if (Typ == AssociationTyp.Parents)
-                {
-                    info.Items = await GetParents(dto, ItemType, Typ);
-                }
-                else if (Typ == AssociationTyp.Association)
-                {
-                    info.Items = await GetAll(dto, ItemType, Typ);
-                }
-                else if (Typ == AssociationTyp.Connection)
-                {
-                    info.Items = await GetAllConnected(dto, ItemType, Typ);
-                }
-                else
-                {
-                    info.Items = await GetAll(dto, ItemType, Typ);
-                }
+                //if (Typ == AssociationTyp.Children ||
+                //   Typ == AssociationTyp.Parallels ||
+                //   Typ == AssociationTyp.Related ||
+                //   Typ == AssociationTyp.UserImage ||
+                //   Typ == AssociationTyp.Default)
+                //{
+                //    info.Items = await GetChildren(dto, ItemType, Typ);
+                //}
+                //else if (Typ == AssociationTyp.Parents)
+                //{
+                //    info.Items = await GetParents(dto, ItemType, Typ);
+                //}
+                //else if (Typ == AssociationTyp.Association)
+                //{
+                //    info.Items = await GetAll(dto, ItemType, Typ);
+                //}
+                //else if (Typ == AssociationTyp.Connection)
+                //{
+                //    info.Items = await GetAllConnected(dto, ItemType, Typ);
+                //}
+                //else
+                //{
+                //}
+                info.Items = await GetAll(dto, ItemType, Typ);
             }
             catch (Exception ex)
             {
@@ -877,7 +905,7 @@ namespace theDatabase
         }
 
         // Helper 
-        public async Task<List<IDTO>> GetChildren(IDTO dto, string ItemType, AssociationTyp typ)
+        private async Task<List<IDTO>> GetChildren(IDTO dto, string ItemType, AssociationTyp typ)
         {
             List<IDTO> resultList = new List<IDTO>();
 
@@ -917,7 +945,7 @@ namespace theDatabase
 
             return resultList;
         }
-        public async Task<List<IDTO>> GetParents(IDTO dto, string ItemType, AssociationTyp typ)
+        private async Task<List<IDTO>> GetParents(IDTO dto, string ItemType, AssociationTyp typ)
         {
             List<IDTO> resultList = new List<IDTO>();
             try
@@ -955,7 +983,7 @@ namespace theDatabase
             return resultList;
         }
 
-        public async Task<List<IDTO>> GetAll(IDTO dto, string ItemType, AssociationTyp typ)
+        private async Task<List<IDTO>> GetAll_obsolete(IDTO dto, string ItemType, AssociationTyp typ)
         {
             List<IDTO> resultList = new List<IDTO>();
 
@@ -1003,7 +1031,7 @@ namespace theDatabase
 
             return resultList.DistinctBy(se => se.GUID).ToList();
         }
-        public async Task<List<IDTO>> GetAllConnected(IDTO dto, string ItemType, AssociationTyp typ)
+        public async Task<List<IDTO>> GetAll(IDTO dto, string ItemType, AssociationTyp typ)
         {
             List<IDTO> resultList = new List<IDTO>();
 
@@ -1011,21 +1039,24 @@ namespace theDatabase
             {
                 using SQLiteContext ctx = GetContext();
 
-                var query = await (from content in ctx.tbl_CON_Content
+                bool ignoreRelationType = typ == AssociationTyp.NULL;
+                string relationTypeString = typ.ToString();
 
-                                   // Suche Relationen, wo Content das Parent ist und dto.GUID das Child
-                                   join pr in ctx.tbl_TEC_Relation.Where(se => se.RelationType == typ.ToString())
+                var query = await (from content in ctx.tbl_CON_Content.AsNoTracking()
+
+                                       // Parent-Suche (Content = Parent, dto = Child)
+                                   join pr in ctx.tbl_TEC_Relation.AsNoTracking().Where(se => ignoreRelationType || se.RelationType == relationTypeString)
                                      on new { Parent = content.GUID, Child = dto.GUID }
                                  equals new { Parent = pr.ParentGUID, Child = pr.ChildGUID } into parentRelations
                                    from pr in parentRelations.DefaultIfEmpty()
 
-                                       // Suche Relationen, wo Content das Child ist und dto.GUID das Parent
-                                   join cr in ctx.tbl_TEC_Relation.Where(se => se.RelationType == typ.ToString())
+                                       // Child-Suche (Content = Child, dto = Parent)
+                                   join cr in ctx.tbl_TEC_Relation.AsNoTracking().Where(se => ignoreRelationType || se.RelationType == relationTypeString)
                                      on new { Child = content.GUID, Parent = dto.GUID }
                                  equals new { Child = cr.ChildGUID, Parent = cr.ParentGUID } into childRelations
                                    from cr in childRelations.DefaultIfEmpty()
 
-                                       // Es dürfen nur Einträge geladen werden, die mindestens eine Treffer-Relation haben
+                                       // Filter: Mindestens eine RelationTreffer & ItemType-Prüfung
                                    where (pr != null || cr != null)
                                       && (string.IsNullOrEmpty(ItemType) || content.ItemType == ItemType)
 
@@ -1043,6 +1074,42 @@ namespace theDatabase
                         resultList.Add(dtoItem);
                     }
                 }
+
+
+                //using SQLiteContext ctx = GetContext();
+
+                //var query = await (from content in ctx.tbl_CON_Content
+
+                //                   // Suche Relationen, wo Content das Parent ist und dto.GUID das Child
+                //                   join pr in ctx.tbl_TEC_Relation.Where(se => se.RelationType == typ.ToString())
+                //                     on new { Parent = content.GUID, Child = dto.GUID }
+                //                 equals new { Parent = pr.ParentGUID, Child = pr.ChildGUID } into parentRelations
+                //                   from pr in parentRelations.DefaultIfEmpty()
+
+                //                       // Suche Relationen, wo Content das Child ist und dto.GUID das Parent
+                //                   join cr in ctx.tbl_TEC_Relation.Where(se => se.RelationType == typ.ToString())
+                //                     on new { Child = content.GUID, Parent = dto.GUID }
+                //                 equals new { Child = cr.ChildGUID, Parent = cr.ParentGUID } into childRelations
+                //                   from cr in childRelations.DefaultIfEmpty()
+
+                //                       // Es dürfen nur Einträge geladen werden, die mindestens eine Treffer-Relation haben
+                //                   where (pr != null || cr != null)
+                //                      && (string.IsNullOrEmpty(ItemType) || content.ItemType == ItemType)
+
+                //                   select new
+                //                   {
+                //                       Content = content,
+                //                       RelationType = pr != null ? pr.RelationType : cr.RelationType
+                //                   }).Distinct().ToListAsync();
+
+                //foreach (var item in query)
+                //{
+                //    if (item.Content is IDTO dtoItem)
+                //    {
+                //        dtoItem.RelationType = item.RelationType;
+                //        resultList.Add(dtoItem);
+                //    }
+                //}
             }
             catch (Exception ex)
             {

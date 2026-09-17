@@ -34,6 +34,7 @@ namespace theInfrastructure
         string ItemType { get; set; }
         Guid UserGUID { get; set; } 
         string UserName { get; set; } 
+        bool IsPersonalizedQuery { get; set; }
 
         // Validation 
         string Message { get; set; }
@@ -142,6 +143,7 @@ namespace theInfrastructure
         string? ID { get; set; }
         string Title { get; set; }
         string? Content { get; set; }
+     
     }
     public interface IMetadata
     {
@@ -173,6 +175,7 @@ namespace theInfrastructure
 
         string this[string propertyName] { get; set; }
         string? RelationType { get; set; }
+        Metadata Metadata { get; set; }
     }
     public interface IRelationDTO
     {

@@ -58,6 +58,7 @@ namespace theDatabase
             qp.UserName = secService.User.Title;
 
             await sqlService.Create(qp);
+
             return gid;
         }
 
@@ -76,15 +77,22 @@ namespace theDatabase
                 ItemType = ItemType.Name
             };
 
+            // Personalisierte Abfrage 
+            var userGuid = secService.User.GUID;
+            query.IsPersonalizedQuery = ItemType.IsPersonalizedItemType();
+            query.UserGUID = userGuid;
+
+            // Query 
             IQueryResult result = await sqlService.GetItems(query);
             var rawItems = result.Items ?? new List<IDTO>();
-            var userGuid = secService.User.GUID;
 
-            // 1. Schritt: Sicherheits- & Rechte-Filterung (IsPrivate)
+            // IsPrivate: Entfernen von Items die als Private markiert wurden und nur mir gehören 
             IEnumerable<IDTO> filteredItems = rawItems.Where(se =>
                 !se["IsPrivate"].ToSecureBool() ||
                 (se["IsPrivate"].ToSecureBool() && ((IMetadata)se).Metadata.CreatedBy == userGuid)
             );
+
+            // IsPersonal: Filterung auf Daten die nur von mir erstellt wurden oder mir zugewiesen wurden 
 
             // Matchcode 
             if (Filter != null)
@@ -161,34 +169,6 @@ namespace theDatabase
 
                 filteredItems = resultList;
             }
-
-            //// Gruppierung 
-            //this.Groups.Clear();
-            //if (this.Filter != null && this.Filter.GroupColumn != string.Empty)
-            //{
-            //    string groupColumn = this.Filter.GroupColumn;
-
-            //    // Distinct Groups ermitteln
-            //    this.Groups = filteredItems
-            //        .Select(se => se[groupColumn])
-            //        .Where(val => !string.IsNullOrWhiteSpace(val))
-            //        .Distinct()
-            //        .OrderBy(val => val)
-            //        .ToList();
-
-            //    // Beibehaltung der vorherigen Sortierung 
-            //    filteredItems = filteredItems
-            //        .GroupBy(se => se[groupColumn])
-            //        .SelectMany(g => g);
-            //}
-
-            // Gruppierung Alternative
-            //if (this.Filter != null && this.Filter.GroupColumn != string.Empty)
-            //{
-            //    // erzeugt potenziell neue Sortierung 
-            //    string groupColumn = this.Filter.GroupColumn;
-            //    filteredItems = filteredItems.OrderBy(se => se[groupColumn]);
-            //}
 
             // Sequenz in finale Liste 
             Items = filteredItems.ToList();

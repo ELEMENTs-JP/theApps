@@ -247,6 +247,7 @@ namespace theInfrastructure
         public string ItemType { get; set; } = string.Empty;
         public Guid UserGUID { get; set; } = Guid.Empty;
         public string UserName { get; set; } = string.Empty;
+        public bool IsPersonalizedQuery { get; set; } = false;
         public static IQueryParameter Default(string title)
         {
             IQueryParameter qp = new QueryParameter()

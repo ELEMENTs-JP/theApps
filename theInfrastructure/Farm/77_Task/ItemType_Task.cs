@@ -57,11 +57,11 @@ namespace theInfrastructure
             {
                 Title = "Owner", Description= "Legt den Eigentümer der Aufgabe fest.",
                 Typ = FieldTyp.Select,
-                Association = AssociationTyp.Children,
+                Association = AssociationTyp.Parents,
                 ItemType = "User",
                 Column = "Owner",
                 CSS = " col-12 col-md-4 col-lg-4 ",
-                OnDisplay = new FieldDisplay(true, true, false, false),
+                OnDisplay = new FieldDisplay(true, true, true, false),
 
             });
 

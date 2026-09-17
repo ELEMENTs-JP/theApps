@@ -13,7 +13,7 @@ namespace theDatabase
     public partial class Query
     {
         // CREATE 
-    
+
         public static FormattableString CreateQuery(IQueryParameter input, Metadata mtd)
         {
             // !!! ACHTUNG hier niemals eine Berücksichtigung von Meta oder Query... 
@@ -24,7 +24,7 @@ namespace theDatabase
 
             string matchcode = input.Title.ToSecureString() + " " + input.Content.ToSecureString();
             string properties = "[]";
-            
+
             return $@" INSERT INTO tbl_CON_Content ( [GUID], [MasterGUID], 
                                                      [ID], [Title], 
                                                      [Content], [Matchcode], 
@@ -47,7 +47,7 @@ namespace theDatabase
             object[] parameters = Array.Empty<object>();
 
             // Query 
-            string sql = "SELECT * FROM tbl_CON_Content WHERE ItemType = '"+ query.ItemType +"' ";
+            string sql = "SELECT * FROM tbl_CON_Content WHERE ItemType = '" + query.ItemType + "' ";
 
             // Matchcode 
             if (!string.IsNullOrEmpty(query.Matchcode))
@@ -58,6 +58,31 @@ namespace theDatabase
 
             // Query 
             return FormattableStringFactory.Create(sql, parameters);
+        }
+
+        public static FormattableString GetPersonalAssignedItems(IQueryParameter query)
+        {
+            string userGUID = query.UserGUID.ToString();
+
+            string sql = $"";
+
+            // SELECT 
+            sql += $" SELECT DISTINCT c.*, r.RelationType ";
+            sql += $"  FROM tbl_CON_Content c ";
+
+            // JOIN 
+            sql += $"   LEFT JOIN tbl_TEC_Relation r   ON  ( ";
+            sql += $"    (r.ChildGUID = c.GUID AND r.ParentGUID = '{userGUID}' COLLATE NOCASE) ";
+            sql += $"    OR ";
+            sql += $"    (r.ParentGUID = c.GUID AND r.ChildGUID = '{userGUID}' COLLATE NOCASE)   ) ";
+            
+            // WHERE 
+            sql += $"     WHERE c.ItemType = '{query.ItemType}' ";
+            sql += $"      AND(  r.ParentGUID IS NOT NULL ";
+            sql += $"       OR json_extract(c.Metadata, '$.CreatedBy') = '{userGUID}' COLLATE NOCASE   ) ";
+
+            // Query 
+            return FormattableStringFactory.Create(sql);
         }
 
         public static FormattableString Search(IQueryParameter query)
@@ -95,24 +120,6 @@ namespace theDatabase
 
             return FormattableStringFactory.Create(sql, parameters.ToArray());
         }
-        public static FormattableString SearchObsolete(IQueryParameter query)
-        {
-            // Parameter 
-            object[] parameters = Array.Empty<object>();
-
-            // Query 
-            string sql = "SELECT * FROM tbl_CON_Content  ";
-
-            // Matchcode 
-            if (!string.IsNullOrEmpty(query.Matchcode))
-            {
-                sql += " WHERE Matchcode LIKE {0} COLLATE NOCASE ";
-                parameters = new object[] { $"%{query.Matchcode}%" };
-            }
-
-            // Query 
-            return FormattableStringFactory.Create(sql, parameters);
-        }
 
         public static FormattableString GetItem(IQueryParameter query)
         {
@@ -131,7 +138,7 @@ namespace theDatabase
             return $@" DELETE FROM tbl_CON_Content WHERE GUID = {guid} COLLATE NOCASE";
         }
 
-       
-    
+
+
     }
 }
