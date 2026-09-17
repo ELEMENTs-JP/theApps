@@ -9,7 +9,7 @@
             <div id="@( "link_popup_" + ID )" data-bs-toggle="dropdown"
                  class="@(" d-flex p-1 align-items-center text-reset " + ButtonCssClass)">
                 <div id="@( "head_popup_" + ID )" class="rounded-2 hover pointer p-1">
-                    <SymbolIcon Symbol="Icon.Filter" />
+                    <SymbolIcon Symbol="Icon.Filter" Size="18" />
                 </div>
             </div>
 
@@ -26,7 +26,8 @@
                     {
                         @foreach (IField field in Fields)
                         {
-                            <small class="text-muted px-1 mt-2 fw-bold">@field.Title.ToSecureString()</small>
+
+                            <div class="small text-muted px-1 my-1 fw-bold">@field.Title.ToSecureString()</div>
 
                             @foreach (string val in search.ValuesByColumn(this.ItemType.Name, field.Column))
                             {

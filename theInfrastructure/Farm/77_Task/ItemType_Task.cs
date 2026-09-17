@@ -134,19 +134,7 @@ namespace theInfrastructure
         {
             await base.OnCreateItem(args);
 
-            //// Default Values 
-            //List<IField> fields = await GetFields();
-            //foreach (IField field in fields.Where(se => !string.IsNullOrEmpty(se.DefaultValue)))
-            //{
-            //    if (string.IsNullOrEmpty(args.Item[field.Column].ToSecureString()))
-            //    { 
-            //        args.Item[field.Column] = field.DefaultValue;
-            //    }
-            //}
-            
-            //// Update 
-            //await args.SqlService.Update(args.Item);
-            
+                 
             // RETURN 
             return args.Item;
         }

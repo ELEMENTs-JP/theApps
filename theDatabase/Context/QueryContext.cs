@@ -14,7 +14,7 @@ namespace theDatabase
         ISecurityService secService = null;
 
         // Query 
-        public IFilterParameter Filter { get; set; }
+        public IFilterParameter Filter { get; set; } = new FilterParameter();
 
         public IItemType ItemType { get; set; } = null;
         public IDTO RelatedItem { get; set; } = null;
@@ -36,6 +36,7 @@ namespace theDatabase
         public QueryContext(ISqlDatabaseService sql, ISecurityService sec, IItemType ItemType)
         {
             Init(sql, sec);
+
             this.ItemType = ItemType;
         }
         public void Init(ISqlDatabaseService sql, ISecurityService sec)

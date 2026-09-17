@@ -4,6 +4,7 @@
 @inject IMessagingBusService msg
 @inject ISecurityService sec
 @inject ISqlDatabaseService sql
+@inject ISearchService search
 @inject IAppService app
 @inject NavigationManager nm
 @inject INotificationService notify
@@ -412,6 +413,9 @@
 
         // Notification Service
         notify.NotifyChanged(Context.Item, NotificationType.Update, sec.User);
+
+        // Search UPdate 
+        await search.Init();
 
         return Context.Item;
     }

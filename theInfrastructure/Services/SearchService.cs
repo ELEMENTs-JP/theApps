@@ -141,6 +141,7 @@ namespace theInfrastructure
                     .Order()
                         .ToList();
         }
+        
         // Property Changed 
         private void AppService_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {

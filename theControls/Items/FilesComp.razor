@@ -29,7 +29,7 @@
                 </div>
             </Controls>
             <Search>
-                <LocalSearchComp OnSearch="@( async e => { Matchcode = e.ToSecureString();await Context.Search(); })"
+                <LocalSearchComp OnSearch="@( async e => { Context.Filter.Matchcode = e.ToSecureString(); await Context.Search(); })"
                                  ItemType="@this.ItemType" />
             </Search>
             <Related>
@@ -48,7 +48,7 @@
 
                 @if (this.ItemType.Typ == ItemTypeTyp.Audio)
                 {
-                    <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode" Items="@Context.Items"
+                    <DataTable ItemType="@this.ItemType" Matchcode="@Context.Filter.Matchcode" Items="@Context.Items"
                                OnSort="@( async e => { await Context.Search(); } )">
                     </DataTable>
                 }
@@ -56,7 +56,7 @@
                             this.ItemType.Typ == ItemTypeTyp.Video ||
                             this.ItemType.Typ == ItemTypeTyp.Image)
                 {
-                    <FileList ItemType="@ItemType" Matchcode="@this.Matchcode" 
+                    <FileList ItemType="@ItemType" Matchcode="@Context.Filter.Matchcode" 
                         Items="@Context.Items" OnItemDelete="@( async e => { await Context.Search(); })" />
                 }
 
@@ -88,7 +88,6 @@
     private string View { get; set; } = "Monat";
 
     private IQueryContext Context { get; set; }
-    private string Matchcode { get; set; } = string.Empty;
     private List<IField> Fields { get; set; } = new();
 
     private string dateColumn = string.Empty;

@@ -29,8 +29,8 @@
                 </div>
             </Controls>
             <Search>
-                <LocalSearchComp OnSearch="@( e => { Matchcode = e.ToSecureString(); })"
-                                 ItemType="@this.ItemType" />
+                <LocalSearchComp  ItemType="@this.ItemType" 
+                    OnSearch="@( async e => { Context.Filter.Matchcode = e.ToSecureString(); await Context.Search(); })" />
             </Search>
             <Related>
                 @if (this.ItemType.Name != "Trash")
@@ -46,7 +46,7 @@
                 }
             </Related>
             <Content>
-                <DataTable ItemType="@this.ItemType" Matchcode="@this.Matchcode" Items="@Context.Items"
+                <DataTable ItemType="@this.ItemType" Matchcode="@Context.Filter.Matchcode" Items="@Context.Items"
                             OnDelete="@( async e => { await ItemDelete(e); })"
                             OnDisconnect="@( async e => { await Context.Search(); })"
                            OnSort="@( async e => { await Context.Search(); } )">
@@ -84,7 +84,6 @@
     private string View { get; set; } = "Monat";
 
     private IQueryContext Context { get; set; }
-    private string Matchcode { get; set; } = string.Empty;
     private List<IField> Fields { get; set; } = new();
 
     private string dateColumn = string.Empty;
