@@ -43,7 +43,7 @@ Uploaded files are stored in a separate FILES directory. It makes sense to move 
 ## Drag & Drop Interfaces
 Different types of boards can be integrated into any app. These include more than just backlogs and Kanban boards.
 
-<img width="1341" height="870" alt="image" src="https://github.com/user-attachments/assets/2ed73e35-e9be-48dd-b4d8-8c88c65c769b" />
+<img width="1335" height="874" alt="image" src="https://github.com/user-attachments/assets/35e6dc77-c973-4a84-b23b-a76600c60dd6" />
 
 The following board types are currently in development
 - Backlog, Kanban, etc.
