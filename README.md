@@ -37,6 +37,9 @@ The interface for editing entries can be customized using code or the integrated
 
 <img width="1475" height="1236" alt="Task" src="https://github.com/user-attachments/assets/a02b1419-b95f-4347-b165-9694594b7c14" />
 
+## File Management
+Uploaded files are stored in a separate FILES directory. It makes sense to move this directory to a separate location.
+
 **External Libraries**
 
 We use the following external libraries:
