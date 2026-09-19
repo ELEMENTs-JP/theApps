@@ -6,7 +6,14 @@ The app is a business-oriented .NET Core 10 Blazor Server application (Windows b
 
 <img width="1408" height="890" alt="Taskliste" src="https://github.com/user-attachments/assets/398941b1-e20b-4dbc-b4d2-8f130d18f57a" />
 
-## Features
+## Key Features of This Application
+- Dynamic Application Builder
+- Drag-and-drop interfaces
+- Global, local, and linked search
+- Customizable item types
+- Numerous controls for user input
+
+## User Interfaces
 The app includes a wide range of features that are continuously being expanded and refined. The current version is a pre-alpha release.
 - Security (Login, Logoff, Register, Setup, Request new Password, etc.)
 - Search (global search, local search in tables)
