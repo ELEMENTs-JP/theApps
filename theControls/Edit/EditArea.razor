@@ -2,6 +2,7 @@
 @inject ISqlDatabaseService sql
 @inject ISecurityService sec
 @inject IAppService appService
+@inject ILocalizationService loc
 
 @implements IAsyncDisposable
 
@@ -85,7 +86,9 @@
             {
                 <div class="d-inline-flex align-items-center">
                   <div class="bg-danger rounded-circle me-2" style="width: 12px; height: 12px; border:1px solid #fff; flex-shrink: 0;"></div>
-                  <small class="text-muted small">Berechtigungen aktiv</small>
+                  <small class="text-muted small">
+                        @loc.GetLabel("Berechtigungen aktiv (Bearbeitung)", "Permissions active (Editing)")
+                  </small>
                 </div>
             }
 
@@ -109,7 +112,7 @@
     List<IField> Fields { get; set; } = new();
 
     private List<IDTO> RelatedItems { get; set; } = new();
-    bool hasUpdatePermission { get; set; } = false;
+    bool hasUpdatePermission { get; set; } = true;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -117,18 +120,19 @@
 
         if (ItemType == null)
             return;
-
-        // Field
+             
+        // Field 
         TitleField = new Factory(sql).BuildField(FieldTyp.Heading);
         Fields = await ItemType.GetFields();
         Fields = Fields.Where(se => se.OnDisplay.Edit == true).ToList();
 
-        // Context
+        // Context 
         Context = new QueryContext(sql, sec);
         Context.ItemType = ItemType;
         await Context.Load(ID);
 
-        // hasUpdatePermission = await sec.HasItemTypePermission(Context.ItemType, SecurityFunction.Update);
+        // Permission 
+        hasUpdatePermission = await sec.HasItemTypePermission(Context.ItemType, SecurityFunction.Update);
 
         await ValidateParents();
     }

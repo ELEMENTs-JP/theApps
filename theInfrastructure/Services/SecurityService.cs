@@ -133,7 +133,9 @@ namespace theInfrastructure
         public async Task<bool> HasItemTypePermission(IItemType itemType, SecurityFunction seFunc)
         {
             // Permission laden (ggf. zu ungenau)
-            List<IDTO> perms = this.Permissions.Where(se => se["Typ"] == "ItemType" && se["ItemType"] == itemType.Name).ToList();
+            List<IDTO> perms = this.Permissions.Where(se => 
+                        se["Typ"] == "ItemType" && 
+                        se["ItemType"] == itemType.Name).ToList();
 
             if (perms.Count() == 0)
                 return true;

@@ -20,12 +20,15 @@
         {
             <div class="row g-0 align-items-center bg-surface border-bottom p-2 my-2">
                 <div class="col p-2">
-                    <div class="fw-bold">Hilfe</div>
-                    <div class="text-muted">aktiviert / deaktiviert die Hilfe</div>
+                    <div class="fw-bold">
+                        @app.GetApp().Title
+                    </div>
+                    <div class="text-muted">@loc.GetLabel("aktiviert / deaktiviert", "active / inactive")</div>
                 </div>
                 <div class="col-auto p-2">
-                    <CheckBox Value="@sec.Configuration.Hilfe.ToSecureString()"
-                              TrueText="aktiviert" FalseText="deaktiviert"
+                    <CheckBox Value="@IsActive(app).Result.ToSecureString()"
+                              TrueText="@loc.GetLabel("aktiviert", "active")"
+                              FalseText="@loc.GetLabel("inaktiv", "inactive")"
                               ValueChanged="@(async e => { await CreateDeleteApp(app, e.ToSecureBool()); })" />
                 </div>
             </div>
@@ -48,36 +51,82 @@
 @code {
 
     List<ITemplateApp> Apps { get; set; } = new();
+    List<IDTO> AllDbApps { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
         Apps = TemplateAppFactory.GetAllTemplateApps();
+
+        await LoadAllDbApps();
     }
+    private async Task LoadAllDbApps()
+    {
+        IQueryParameter qp = QueryParameter.Default(".");
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = "App";
 
+        IQueryResult result = await sql.GetItems(qp);
+        AllDbApps = result.Items;
+    }
+    private async Task<bool> IsActive(ITemplateApp app)
+    {
+        if (app != null)
+        {
+            var _app = app.GetApp();
 
+            IDTO? activeApp = AllDbApps.Find(se =>
+                string.Equals(se.ID, _app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                string.Equals(se.Title, _app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                string.Equals(se.ID, _app.Title, StringComparison.InvariantCultureIgnoreCase) ||
+                string.Equals(se.Title, _app.Title, StringComparison.InvariantCultureIgnoreCase));
+
+            if (activeApp != null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     private async Task CreateDeleteApp(ITemplateApp app, bool value)
     {
         if (app != null)
         {
-            if (value)
+            var _app = app.GetApp();
+
+            bool isActive = await IsActive(app);
+            if (isActive == true)
             {
-                var _app = app.GetApp();
+                // löschen
+                if (value == false)
+                {
+                    IQueryParameter qp = QueryParameter.Default(_app.Title);
+                    qp.MasterGUID = sql.MasterGUID;
+                    qp.ItemType = "App";
 
-                IQueryParameter qp = QueryParameter.Default(_app.Title);
-                qp.MasterGUID = sql.MasterGUID;
-                qp.ItemType = "App";
-
-               IQueryResult result = await sql.GetItems(qp);
-
-                await sql.Create(qp);
+                    IQueryResult result = await sql.GetItems(qp);
+                    if (result.Items.Count == 1)
+                    {
+                        await sql.Delete(result.Items[0]);
+                    }
+                }
             }
             else
             {
-                
+                // erstellen
+                if (value == true)
+                {
+                    IQueryParameter qp = QueryParameter.Default(_app.Title);
+                    qp.MasterGUID = sql.MasterGUID;
+                    qp.ItemType = "App";
+
+                    await sql.Create(qp);
+                }
             }
         }
+
+        await LoadAllDbApps();
     }
 
     private async Task PushFeatureUpdate()
