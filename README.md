@@ -9,7 +9,8 @@ The app is a business-oriented .NET Core 10 Blazor Server application (Windows b
 ## Key Features of This Application
 - Dynamic Application Builder
 - Default Apps and ItemTypes
-- Drag-and-drop interfaces
+- Page Designer (using Drag Drop)
+- Drag-and-drop interfaces for business boards (eg. Kanban, Backlog, etc.)
 - Global, local, and linked search
 - Customizable item types
 - Numerous controls for user input
