@@ -6,8 +6,18 @@
 @inject ISqlDatabaseService sql
 
 
-<div class="@( drop + Zone ) DefaultDragDropZone @CSS" 
+<div class="@( drop + Zone ) DefaultDragDropZone position-relative @CSS" 
             data-zone="@Zone" style="min-height:3rem;">
+
+    @if (!string.IsNullOrEmpty(this.Title))
+    {
+        <div class="py-2"></div>
+          <div class="position-absolute top-0 start-0 px-3 py-2">
+              <div class="fw-bold small text-secondary">
+                  @this.Title
+              </div>
+          </div>
+    }
 
     @* --- Beachte: Empty == Default --- Direkt im Getter des Modell von tbl_CON_Content --- *@
     @foreach (IDTO entry in Entries.Where(se => se["Zone"].ToValueIfNullOrEmpty(Zone) == this.Zone)
@@ -31,6 +41,9 @@
 
     [Parameter]
     public string Zone { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
 
     [Parameter]
     public List<IDTO> Entries { get; set; } = new();
