@@ -1,7 +1,7 @@
 # theApp
 The app is a business-oriented .NET Core 10 Blazor Server application (Windows build) that is generally compatible with all browsers. However, private applications can also be developed. The app is designed as an app designer.
 
-<img width="1337" height="840" alt="image" src="https://github.com/user-attachments/assets/74c482aa-39bc-4e60-b777-0915a6e368d6" />
+<img width="1337" height="840" alt="image" src="docs/Taskliste.png" />
 
 ## Features
 The app includes a wide range of features that are continuously being expanded and refined. The current version is a pre-alpha release.
@@ -16,7 +16,7 @@ This is a single-client system. However, upon request as part of a project, a mu
 ## Item Editing
 The interface for editing entries can be customized using code or the integrated designer (UI) or developed from scratch (code).
 
-<img width="1600" height="1297" alt="image" src="https://github.com/user-attachments/assets/150f8905-da39-455a-a5b4-c5a09ce8f717" />
+<img width="1600" height="1297" alt="image" src="docs/Task.png" />
 
 **External Libraries**
 
