@@ -6,9 +6,12 @@
 @inject ISqlDatabaseService sql
 
 
-<div class="@( drop + Zone ) DefaultDragDropZone bg-surface border rounded px-2 py-1 my-2" data-zone="@Zone" style="min-height:3rem;">
+<div class="@( drop + Zone ) DefaultDragDropZone @CSS" 
+            data-zone="@Zone" style="min-height:3rem;">
 
-    @foreach (IDTO entry in Entries.Where(se => se["Zone"] == this.Zone).OrderBy(se => se["Sort"]))
+    @* --- Beachte: Empty == Default --- Direkt im Getter des Modell von tbl_CON_Content --- *@
+    @foreach (IDTO entry in Entries.Where(se => se["Zone"].ToValueIfNullOrEmpty(Zone) == this.Zone)
+                                    .OrderBy(se => se["Sort"].ToValueIfNullOrEmpty("1")))
     {
         if (ItemTemplate != null)
         {
@@ -31,6 +34,9 @@
 
     [Parameter]
     public List<IDTO> Entries { get; set; } = new();
+
+    [Parameter]
+    public string CSS { get; set; } = " bg-surface border rounded px-2 py-1 my-2 ";
 
     // Objects
     private Lazy<Task<IJSObjectReference>> module;

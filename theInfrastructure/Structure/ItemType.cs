@@ -144,6 +144,16 @@ namespace theInfrastructure
 
         public virtual async Task<IDTO> OnCreateItem(IItemEventArgs args)
         {
+            // Drag Drop Functionality 
+            if (string.IsNullOrEmpty(args.Item["Zone"].ToSecureString()))
+            { 
+                args.Item["Zone"] = "Default";
+                args.Item["Sort"] = "1";
+
+                // Update 
+                await args.SqlService.Update(args.Item);
+            }
+
             // Default Values 
             List<IField> fields = await GetFields();
             foreach (IField field in fields.Where(se => !string.IsNullOrEmpty(se.DefaultValue)))

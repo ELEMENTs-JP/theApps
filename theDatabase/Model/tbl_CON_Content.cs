@@ -67,7 +67,7 @@ namespace theDatabase
                     return prop.Value;
                 }
 
-                // 3. Fallback auf den vordefinierten Default-Wert (O(1) Nachschlagezeit)
+                // 3. Fallback auf den vordefinierten Default-Wert (O/1) Nachschlagezeit)
                 if (Helper.GetPropertyDefaultValues().TryGetValue(propertyName, out string defaultValue))
                 {
                     return defaultValue;

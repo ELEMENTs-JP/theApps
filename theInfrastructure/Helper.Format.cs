@@ -9,6 +9,16 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        public static string ToValueIfNullOrEmpty(this object? obj, string value)
+        {
+            if (obj == null)
+            {
+                return value;
+            }
+
+            string str = obj.ToSecureString();
+            return string.IsNullOrEmpty(str) ? value : str;
+        }
         public static bool IsEmpty(this string? value)
         {
             return string.IsNullOrEmpty(value);

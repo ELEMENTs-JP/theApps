@@ -2,13 +2,13 @@
 
 @inject ISqlDatabaseService sql
 
-<PageTitle>the App | Board</PageTitle>
+<PageTitle>the App | Board | @Typ</PageTitle>
 
 <div class="container-flex">
 
     @if (Board != null)
     {
-        <BoardComp Item="@Board" />
+        <BoardComp Item="@Board" Typ="@Typ" />
     }
 </div>
 
@@ -27,7 +27,7 @@
     {
         await base.OnParametersSetAsync();
 
-        // Query
+        // Query 
         IQueryParameter query = new QueryParameter();
         query.Matchcode = string.Empty;
         query.MasterGUID = sql.MasterGUID;
