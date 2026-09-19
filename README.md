@@ -1,6 +1,10 @@
 # theApp
 The app is a business-oriented .NET Core 10 Blazor Server application (Windows build) that is generally compatible with all browsers. However, private applications can also be developed. The app is designed as an app designer.
 
+![Lizenz](https://img.shields.io/badge/License-CRL-blue.svg)
+![.NET](https://img.shields.io/badge/.NET-512BD4?style=flat&logo=dotnet&logoColor=white)
+[![Status](https://img.shields.io/badge/Status-Draft-orange)](https://github.com/ELEMENTs-JP/theApps)
+
 > [!IMPORTANT]
 > The software is still in an early stage of development. We do not recommend using the software in production environments. For example, security features are not yet fully implemented.
 
