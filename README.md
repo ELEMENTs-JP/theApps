@@ -46,10 +46,10 @@ Installation and setup are relatively simple.
 - Link the website to the directory
 - Access the website
 - Run the setup
-- 
-**Note**
-  
-The system is not currently a fully-fledged business management system. It is an application builder that can create various applications based on specific data record types. The navigation shown in the screenshot is an example of the types of applications that can be designed.
+
+> [!NOTE]
+> The screenshots were taken from the development environment.
+> The people shown (e.g., avatar images) were generated using AI.
 
 **Contact**
 
