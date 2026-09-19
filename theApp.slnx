@@ -14,4 +14,7 @@
   <Folder Name="/09-Infrastructure/">
     <Project Path="theInfrastructure/theInfrastructure.csproj" Id="692f1133-742b-4eeb-b4bb-7b1375b0a8c8" />
   </Folder>
+  <Folder Name="/docs/">
+    <File Path="../../../Users/juerg/Desktop/Taskliste.png" />
+  </Folder>
 </Solution>
