@@ -38,21 +38,12 @@
                 {
                     <div class="small fw-bold text-secondary px-2 p-1 border-bottom mt-2">@group</div>
 
-
-                    @foreach (IDTO Item in Items.Where(se => se.ItemType == group))
+                    @foreach (IDTO dto in Items.Where(se => se.ItemType == group))
                     {
-                        <div class="d-flex align-items-center hover px-1 border-bottom">
-                            
-                            <div class="text-muted p-1 small">
-                                @Item.ID.ToSecureString()
-                            </div>
-                            <a class="flex-fill fw-bold p-1 px-2" href="@( $"{ Helper.GetItemUrl(Item) }" )">
-                                @Item.Title.ToSecureString()
-                            </a>
-                            <div class="hover pointer rounded-2 p-1 px-2" @onclick="@( async e => { await RemoveItem(Item); })">
-                                <SymbolIcon Symbol="Icon.Disconnect" CSS="small text-muted" />
-                            </div>
-                        </div>
+                            <ListItem @key="@dto.GUID"  Item="@dto" ExtendedView="true"
+                                RelatedItem="@this.Item"  IsRelated="@( (Item != null) )"
+                                ItemType="@( new Factory(sql).BuildItemType(dto.ItemType).Result )"
+                                OnDisconnect="@( async e => { await RemoveItem(dto);} )" />
                     }
                 }
             </div>

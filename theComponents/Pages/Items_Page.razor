@@ -1,4 +1,7 @@
 ﻿@page "/{Typ}/{IT}"
+@page "/{Typ}/{IT}/{View}"
+@page "/{Typ}/{IT}/{View}/{Date}"
+
 @inject ISqlDatabaseService sql
 
 <PageTitle>the App | Items</PageTitle>
@@ -13,7 +16,14 @@
         }
         else if (ItemType.Typ == ItemTypeTyp.Appointment)
         {
-            <CalendarComp ItemType="@ItemType" />
+            @if (string.IsNullOrEmpty(View))
+            {
+                <CalendarComp ItemType="@ItemType"  />
+            }
+            else
+            {
+                <CalendarComp ItemType="@ItemType" View="@View" Date="@Date" />
+            }
         }
         else if (ItemType.Typ == ItemTypeTyp.Folder)
         {
@@ -38,6 +48,12 @@
 
     [Parameter]
     public string Typ { get; set; } = string.Empty;
+
+    [Parameter]
+    public string View { get; set; } = "Monat";
+
+    [Parameter]
+    public string Date { get; set; } = "";
 
     [Parameter]
     public string IT { get; set; } = string.Empty;

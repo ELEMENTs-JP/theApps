@@ -78,8 +78,8 @@
                 }
                 else if (View == "Tag")
                 {
-                    <CalendarDayComp TItem="IDTO"
-                                     Items="@Context.Items"
+                    <CalendarDayComp TItem="IDTO" 
+                                     Items="@Context.Items" CurrentDate="@CurrentDate"
                                      DateSelector="@(item => item[dateColumn].ToSecureDateTime().Date)"
                                      StartSelector="@(item => item["Start"].ToSecureDateTime().TimeOfDay)"
                                      EndSelector="@(item => item["Ende"].ToSecureDateTime().TimeOfDay)"
@@ -133,9 +133,15 @@
     [Parameter]
     public IItemType ItemType { get; set; }
 
+    [Parameter]
+    public string View { get; set; } = "Monat";
+
+    [Parameter]
+    public string Date { get; set; } = "";
+    private DateTime CurrentDate { get; set; } = DateTime.Now.Date;
+
     private string Title { get; set; } = string.Empty;
     private bool IsSecure { get; set; } = false;
-    private string View { get; set; } = "Monat";
     private bool showWeekendSetting = true;
     private bool IsPersonalizedView { get; set; } = false;
 
@@ -155,6 +161,11 @@
 
         var setting = await Helper.GetSettingValue(sql, "ShowWeekend", ItemType.Name);
         showWeekendSetting = (setting == "true");
+
+        if (!string.IsNullOrEmpty(Date))
+        {
+            CurrentDate = Date.ToSecureDateTime().Date;
+        }
 
         if (ItemType != null)
         {

@@ -59,14 +59,23 @@
                          ValueChanged="@( async e => { Matchcode = e; await Search(); })" />
             </div>
 
-            @foreach (IDTO item in Context.Items)
+            @foreach (string it in Context.Items.Select(se => se.ItemType).Distinct())
             {
-                <div class="row g-0 hover pointer rounded-2 p-1 my-2" @onclick="@( async e => { SelectedItem = item; })">
-                    <div class="col-12 p-1">
-                        @item.Title.ToSecureString()
-                    </div>
+                <div class="border-bottom">
+                    <label class="form-label">@it</label>
                 </div>
+
+                @foreach (IDTO item in Context.Items.Where(se => se.ItemType == it))
+                {
+                    <div class="row g-0 hover pointer rounded-2 p-1 my-2" 
+                        @onclick="@( async e => { SelectedItem = item; })">
+                        <div class="col-12 p-1">
+                            @item.Title.ToSecureString()
+                        </div>
+                    </div>
+                }
             }
+            
 
       
 

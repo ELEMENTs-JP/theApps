@@ -323,7 +323,8 @@ namespace theInfrastructure
             if (typ == RelevantPropertyType.Date)
             {
                 // 1. Prio = Generell die Frage nach einem Datum 
-                IField? dateField = fields.Where(se => se.Typ == FieldTyp.Date && (se.Column == "Date" || se.Column == "Datum")).FirstOrDefault();
+                IField? dateField = fields.Find(se => se.Typ == FieldTyp.Date 
+                        && (se.Column == "Date" || se.Column == "Datum" || se.Column == "DueTo"));
                 if (dateField != null)
                 {
                     prop = dateField.Column;

@@ -2,76 +2,145 @@
 
 @if (ItemType != null)
 {
-    <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-1 hover align-items-center drag list-item">
+   
+        <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-1 hover align-items-center drag list-item">
 
-        @if (IsSortable)
-        {
-            <div class="col-auto grab">
-                <SymbolIcon Symbol="Icon.Grib" CSS="" Style="cursor:move; margin-top:-3px;" Color="#999" />
-            </div>
-        }
-
-        @if (ShowID)
-        {
-            <div class="col-auto px-1 text-muted" title="@Item.GUID">@(Item.ID.ToSecureString())</div>
-        }
-
-        @if (ItemType.Typ == ItemTypeTyp.Checklist)
-        {
-            @if (Item != null)
+            @if (IsSortable)
             {
-                <div class="col-auto ps-2">
-                    <CheckBox Value="@Item["IsChecked"]" Style="" IsSwitch="false"
-                              ValueChanged="@( async e => {  Item["IsChecked"] = e; await base.Update(); } )" />
+                <div class="col-auto grab">
+                    <SymbolIcon Symbol="Icon.Grib" CSS="" Style="cursor:move; margin-top:-3px;" Color="#999" />
                 </div>
             }
-        }
 
-        @if (ItemType.Typ == ItemTypeTyp.Comment)
-        {
-            <div class="col px-2 fw-bold text-truncate text-nowrap" title="@Item.ItemType">
-                @(Item.Title.ToSecureString())
-            </div>
-        }
-        else
-        {
-            <div class="col px-2 py-1 hover pointer rounded-2 fw-bold pointer text-truncate text-nowrap @CheckStrikeOut()" title="@Item.ItemType"
-                 @onclick="@( e => { nm.NavToItem(ItemType.Name, Item.GUID); })">
-                @(Item.Title.ToSecureString())
-            </div>
-        }
-
-        
-        @*       @foreach (IField col in Context.ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR))
-        {
-            <div class="@Helper.GetClassByDevice(col) align-items-center">
-                @Item[col.Column].ToSecureString())
-            </div>
-        } *@
-
-        @if (IsRelated)
-        {
-            <div class="col-auto p-05" title="@( Item["Sort"].ToSecureString() )">
-
-                <AssociationIcon Association="@( Item.RelationType.ToEnumOrDefault<AssociationTyp>())" />
-            </div>
-
-            if (ItemType.Typ == ItemTypeTyp.Comment)
+            @if (ShowID)
             {
-                <div class="col-auto p-05">
-                    <SymbolIcon Symbol="Icon.Delete" OnClick="@( async e => { await Delete(); })"
-                                CSS="pointer hover rounded" Style="color:var(--tblr-red); margin-top:-3px" />
+                <div class="col-auto px-1 text-muted" title="@Item.GUID">
+                       <ToolTip Title="ID des Datensatzes">
+                    @(Item.ID.ToSecureString())
+                </ToolTip>
+                    
+                    </div>
+            }
+
+            @if (ItemType.Typ == ItemTypeTyp.Checklist)
+            {
+                @if (Item != null)
+                {
+                    <div class="col-auto ps-2">
+                        <CheckBox Value="@Item["IsChecked"]" Style="" IsSwitch="false"
+                                  ValueChanged="@( async e => {  Item["IsChecked"] = e; await base.Update(); } )" />
+                    </div>
+                }
+            }
+
+
+        @if (ExtendedView == true && !string.IsNullOrEmpty(DateColumn))
+        {
+            <div class="col-auto px-1 border-start border-end text-center pointer" 
+                @onclick="@( e => { nm.NavigateTo($"/Calendar/Appointment/Tag/{Item[DateColumn].ToSecureDateTime().ToShortDateString()}"); })">
+                <ToolTip Title="zum Kalender">
+                    <div class="d-flex flex-column p-1 text-center">
+                        <div class="p-05 border-bottom text-center">
+                            @( Item[DateColumn].ToSecureDateTime().ToString("dd") )
+                        </div>
+                        <div class="p-05 text-center">
+                            @( Item[DateColumn].ToSecureDateTime().ToString("MMM") )
+                        </div>
+                    </div>
+                </ToolTip>
+            </div>    
+        }
+
+
+
+
+            @if (ItemType.Typ == ItemTypeTyp.Comment)
+            {
+                <div class="col px-2 fw-bold text-truncate text-nowrap" title="@Item.ItemType">
+                    @(Item.Title.ToSecureString())
                 </div>
             }
             else
             {
-                <div class="col-auto p-05">
-                    <SymbolIcon Symbol="Icon.Disconnect" CSS="pointer hover"
-                                OnClick="@( async  e => { await Disconnect(); })" />
+                <div class="col px-2 py-1 hover pointer rounded-2 fw-bold pointer text-truncate text-nowrap @CheckStrikeOut()" title="@Item.ItemType"
+                     @onclick="@( e => { nm.NavToItem(ItemType.Name, Item.GUID); })">
+                    @(Item.Title.ToSecureString())
+
+                @if (ExtendedView)
+                {
+                    <div class="small text-muted">
+                        @( Item.Description() ) 
+                    </div>    
+                }
+
                 </div>
             }
+        
+
+    
+        @if (ExtendedView)
+        {
+            <div class="col-auto p-1 text-muted small">
+                <ToolTip Title="ItemType">
+                    @Item.ItemType
+                </ToolTip>
+            </div>
+        <div class="col-auto p-1">
+              <div class="hover pointer rounded p-05 text-muted" 
+                data-bs-toggle="collapse" data-bs-target="@("#" + collapseID)" 
+                aria-expanded="false" aria-controls="@collapseID">
+            <SymbolIcon Symbol="Icon.Next" />
+            </div>
+        </div>    
         }
-    </div>
+
+
+            @if (IsRelated)
+            {
+                <div class="col-auto p-05" title="@( Item["Sort"].ToSecureString() )">
+
+                    <AssociationIcon Association="@( Item.RelationType.ToEnumOrDefault<AssociationTyp>())" />
+                </div>
+
+                if (ItemType.Typ == ItemTypeTyp.Comment)
+                {
+                    <div class="col-auto p-05">
+                        <SymbolIcon Symbol="Icon.Delete" OnClick="@( async e => { await Delete(); })"
+                                    CSS="pointer hover rounded" Style="color:var(--tblr-red); margin-top:-3px" />
+                    </div>
+                }
+                else
+                {
+                    <div class="col-auto p-05">
+                        <SymbolIcon Symbol="Icon.Disconnect" CSS="pointer hover rounded p-05"
+                                    OnClick="@( async  e => { await Disconnect(); })" />
+                    </div>
+                }
+            }
+     
+        
+        
+            @if (ExtendedView)
+        {
+        <div id="@collapseID" class="col-12 p-1 mt-1 border-top collapse">
+            <div class="d-inline-flex">
+
+                    @foreach (IField col in ItemType.GetFields().Result.Where(f => f.Typ != FieldTyp.HR && f.OnDisplay.Related == true))
+                    {
+                        <div class="d-flex flex-column me-4">
+                            <div class="small text-muted">@col.Title</div>
+                            <div class="small fw-bold">@Item[col.Column].ToSecureString()</div>
+                        </div>
+                    } 
+
+            </div>
+        </div>    
+        }
+        </div>
+
+
+
+  
 
 }
 
@@ -83,6 +152,13 @@
     [Parameter]
     public bool ShowID { get; set; } = true;
 
+    [Parameter]
+    public bool ExtendedView { get; set; } = false;
+
+    private string collapseID { get; set; } = string.Empty;
+
+    private string DateColumn { get; set; } = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -90,6 +166,12 @@
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
+
+        if(Item != null)
+        {
+            collapseID = "collapse_item_" + Item.GUID;
+            DateColumn = await ItemType.GetRelevantPropertyName(RelevantPropertyType.Date);
+        }
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

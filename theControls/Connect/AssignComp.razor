@@ -53,8 +53,14 @@
                          ValueChanged="@( async e => { Matchcode = e; await Search(); })" />
             </div>
 
-            @foreach (IDTO item in Items)
+              @foreach (string it in Items.Select(se => se.ItemType).Distinct())
             {
+                <div class="border-bottom fw-bold small text-secondary mt-2">
+                    @it
+                </div>
+
+                @foreach (IDTO item in Items.Where(se => se.ItemType == it))
+                {
                 <div class="row g-0 hover pointer rounded-2 p-1 my-2" @onclick="@( async e => { SelectedItem = item; })">
                     <div class="col-1 p-1 text-muted small">
                         @item.ID
@@ -66,7 +72,10 @@
                         @item.ItemType
                     </div>
                 </div>
+                }
             }
+
+    
 
       
 

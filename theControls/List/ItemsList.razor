@@ -23,6 +23,7 @@
                            Items="@Context.Items">
             <ItemTemplate Context="item">
                 <ListItem @key="@item.GUID" ItemType="@ItemType" Item="@item" RelatedItem="@RelatedItem" 
+                            ExtendedView="@ExtendedView"
                           OnConnect="@( async e => { await OnConnect.InvokeAsync(e); })"
                           OnDelete="@( async e => { await OnDelete.InvokeAsync(e); })"
                           OnUpdate="@( async e => { await OnUpdate.InvokeAsync(e); })"
@@ -46,6 +47,8 @@
     [Parameter]
     public string Title { get; set; } = string.Empty;
 
+    [Parameter]
+    public bool ExtendedView { get; set; } = false;
 
     // Events
     protected override async Task OnInitializedAsync()

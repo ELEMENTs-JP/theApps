@@ -84,6 +84,7 @@ namespace theInfrastructure
                 Column = "DueTo",
                 Description = "Legt den Termin der erwarteten oder notwendigen Fertigstellung fest",
                 CSS = " col-12 col-md-4 col-lg-4 ",
+                OnDisplay = new FieldDisplay(true, true, true, true),
                 OnDevice = DeviceDisplay.Desktop
             });
 
