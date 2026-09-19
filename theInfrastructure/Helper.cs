@@ -393,6 +393,11 @@ namespace theInfrastructure
             {
                 Items = Helper.DefaultColors();
             }
+            else if (field.Typ == FieldTyp.BoardTyp)
+            {
+                Items.Add(new DTO() { ID = "Backlog", Title = "Backlog" });
+                Items.Add(new DTO() { ID = "Kanban", Title = "Kanban" });
+            }
             else if (field.Typ == FieldTyp.FieldTyp)
             {
                 Items.Add(new DTO() { ID = "Text", Title = "Text" });
@@ -415,7 +420,7 @@ namespace theInfrastructure
             }
             else if (field.Typ == FieldTyp.ItemTypeTyp)
             {
-                Items.Add(new DTO() { ID = ItemTypeTyp.Item.ToString(), Title = ItemTypeTyp.Item.ToString()});
+                Items.Add(new DTO() { ID = ItemTypeTyp.Item.ToString(), Title = ItemTypeTyp.Item.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.Appointment.ToString(), Title = ItemTypeTyp.Appointment.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.Hierarchy.ToString(), Title = ItemTypeTyp.Hierarchy.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.File.ToString(), Title = ItemTypeTyp.File.ToString() });

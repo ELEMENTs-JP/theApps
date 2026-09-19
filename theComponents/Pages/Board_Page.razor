@@ -1,0 +1,40 @@
+﻿@page "/Board/{Typ}/{ID}"
+
+@inject ISqlDatabaseService sql
+
+<PageTitle>the App | Board</PageTitle>
+
+<div class="container-flex">
+
+    @if (Board != null)
+    {
+        <BoardComp Item="@Board" />
+    }
+</div>
+
+
+@code {
+
+    [Parameter]
+    public string ID { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Typ { get; set; } = string.Empty;
+
+    private IDTO? Board { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        // Query
+        IQueryParameter query = new QueryParameter();
+        query.Matchcode = string.Empty;
+        query.MasterGUID = sql.MasterGUID;
+        query.ItemType = "Board";
+        query.GUID = ID.ToSecureGUID();
+        IQueryResult result = await sql.GetItem(query);
+        Board = result.Items.FirstOrDefault();
+    }
+
+}

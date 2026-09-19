@@ -50,12 +50,6 @@
 
 @code {
 
-    // [Parameter]
-    // public IItemType? PotentialItemType { get; set; }
-
-    // [Parameter]
-    // public IApp? PotentialApp { get; set; }
-
     // Events
     protected override async Task OnInitializedAsync()
     {
@@ -92,6 +86,10 @@
             await InvokeAsync(StateHasChanged);
         }
         if (msg.Id == "Page" && msg.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+        if (msg.Id == "Board" && msg.Action == BusAction.Refresh)
         {
             await InvokeAsync(StateHasChanged);
         }
@@ -165,6 +163,25 @@
                     }
                 }
 
+                // 4. Versuch: Prüfen ob es sich um ein Board handelt /.../Board/Typ des Boards/58439309-585904-75843/...
+                bool boardExists = segments.Any(x => x == "Board");
+                if (boardExists == true)
+                {
+                    foreach (string seg in segments)
+                    {
+                        Guid boardGUID = seg.ToSecureGUID();
+                        if (boardGUID != Guid.Empty)
+                        {
+                            IDTO? Board = app.AllBoards.Find(se => se.GUID == boardGUID);
+                            if (Board != null)
+                            {
+                                await app.SetBoard(Board);
+                                msg.Publish("Board", BusAction.Refresh);
+                                return;
+                            }
+                        }
+                    }
+                }
             }
 
             // Setzt App, ItemType u. Page == null

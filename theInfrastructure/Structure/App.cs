@@ -17,6 +17,7 @@ namespace theInfrastructure
         Task<List<IItemType>> GetItemTypes(
             AssociationTyp ast = AssociationTyp.Association);
         Task<List<IDTO>> GetPages(AssociationTyp ast = AssociationTyp.Association);
+        Task<List<IDTO>> GetBoards(AssociationTyp ast = AssociationTyp.Association);
 
     }
     public class BaseApp : IApp
@@ -44,6 +45,20 @@ namespace theInfrastructure
             List<IDTO> Pages = new();
 
             return Pages;
+        }
+
+        public virtual async Task<List<IDTO>> GetBoards(AssociationTyp ast = AssociationTyp.Association)
+        {
+            List<IDTO> Pages = new();
+
+            return Pages;
+        }
+
+        public virtual async Task<List<IDTO>> GetBoards()
+        {
+            List<IDTO> Boards = new();
+
+            return Boards;
         }
 
         public override string ToString()

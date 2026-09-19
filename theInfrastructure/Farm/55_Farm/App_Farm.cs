@@ -21,6 +21,7 @@ namespace theInfrastructure
             ItemTypes.Add(new ItemType_ItemType());
             ItemTypes.Add(new ItemType_Field());
             ItemTypes.Add(new ItemType_Page());
+            ItemTypes.Add(new ItemType_Board());
             ItemTypes.Add(new ItemType_Slot());
             ItemTypes.Add(new ItemType_Control());
 

@@ -133,6 +133,24 @@
             </div>
         }
 
+
+        @if (CurrentBoards.Count() >= 1)
+        {
+            <div class="border-top my-3"></div>
+            <div class="text-muted small fw-bold ps-2">Boards</div>
+            <div class="row g-0">
+                @foreach (IDTO _board in CurrentBoards)
+                {
+                    <div class="col-12 p-1">
+                        <div class="rounded-2 hover pointer p-1 px-2 fw-bold @( GetBoardSelection(_board) )"
+                             @onclick="@( async e => { await OnBoard(_board); })">
+                            @_board.Title
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
     }
 
 
@@ -142,6 +160,7 @@
 
     private List<IItemType> CurrentItemTypes { get; set; } = new();
     private List<IDTO> CurrentPages { get; set; } = new();
+    private List<IDTO> CurrentBoards { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -157,18 +176,20 @@
             {
                 CurrentItemTypes.Clear();
                 CurrentPages.Clear();
+                CurrentBoards.Clear();
 
                 if (app.App != null)
                 {
                     CurrentItemTypes = await app.App.GetItemTypes(AssociationTyp.Children);
                     CurrentPages = await app.App.GetPages(AssociationTyp.Children);
+                    CurrentBoards = await app.App.GetBoards(AssociationTyp.Children);
                 }
 
                 await InvokeAsync(StateHasChanged);
             }
         }
 
-           if (message.Id == "ItemType" && message.Action == BusAction.Refresh)
+        if (message.Id == "ItemType" && message.Action == BusAction.Refresh)
         {
             await InvokeAsync(StateHasChanged);
         }
@@ -215,7 +236,19 @@
 
         await Task.CompletedTask;
     }
-    
+    private async Task OnBoard(IDTO board)
+    {
+        string boardTyp = board["Typ"].ToSecureString();
+        await app.SetBoard(board);
+        nm.NavigateTo($"/Board/{boardTyp}/{board.GUID}", false);
+
+        // Refresh
+        msg.Publish(new AppMessage("Board", BusAction.Refresh));
+
+        await Task.CompletedTask;
+        
+    }
+
     // Layout 
     private string GetAppSelection(IApp _app)
     {
@@ -247,7 +280,17 @@
 
         return string.Empty;
     }
-  
+    private string GetBoardSelection(IDTO dto)
+    {
+        if (app.Board == null)
+            return string.Empty;
+
+        if (app.Board.Title == dto.Title)
+            return " selected ";
+
+        return string.Empty;
+    }
+
     // Dispose 
     public async ValueTask DisposeAsync()
     {

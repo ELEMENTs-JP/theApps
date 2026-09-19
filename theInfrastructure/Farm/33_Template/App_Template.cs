@@ -59,6 +59,20 @@ namespace theInfrastructure
             IQueryResult result = await sqlService.GetRelatedItems(Item, "Page", ast);
             return result.Items;
         }
+
+        public override async Task<List<IDTO>> GetBoards(AssociationTyp ast = AssociationTyp.Children)
+        {
+            // Query 
+            IQueryParameter query = new QueryParameter();
+            query.Matchcode = string.Empty;
+            query.MasterGUID = sqlService.MasterGUID;
+            query.ItemType = "Board";
+
+            // Fields 
+            IQueryResult result = await sqlService.GetRelatedItems(Item, "Board", ast);
+            return result.Items;
+        }
+
     }
 
 }

@@ -1,0 +1,317 @@
+﻿
+@inject IJSRuntime JS
+@inject ISqlDatabaseService sql
+@inject ISecurityService sec
+@inject IMessagingBusService msg
+@implements IAsyncDisposable
+
+@if (Item != null)
+{
+    <Frame Border="true" >
+        <Header>
+            <ControlHeader PreTitle="Board" Title="@Item.Title" PostTitle="@Item.Content" />
+        </Header>
+        <Related>
+            <div class="hstack gap-3">
+                <ModalForm Title="Einstellungen" 
+                        OnOKClicked="@( async e => {  await sql.Update(Item); })">
+                    <ChildContent>
+                        <div class="row">
+                            <div class="col-12 px-2">
+                                <TextBox Label="Titel" Value="@Item.Title"
+                                         ValueChanged="@(e =>  { Item.Title = e; })" />
+                                <div class="border-bottom my-3"></div>
+                                <TextBox Label="Beschreibung" Value="@Item.Content"
+                                         ValueChanged="@(e =>  { Item.Content = e; })" />
+                                <div class="border-bottom my-3"></div>
+                            </div>
+                        </div>
+                    </ChildContent>
+                </ModalForm>
+
+                <DragDropDesigner Entries="@Rows" Definitions="@LayoutDefinitions"
+                                  DefinitionsTitle="Spalten hinzufügen..." EntriesTitle="Layout"
+                                  Zone="Layout" DragEnd="@( async e => { Rows = e;  })"
+                                  ItemAdded="@( async e => {  await AddLayoutRow(e); })">
+                    <Icon>
+                        <SymbolIcon Symbol="@Icon.Layout" />
+                    </Icon>
+                </DragDropDesigner>
+
+                <DragDropDesigner Title="Steuerelemente"
+                                  Entries="@Controls" Definitions="@ControlDefinitions"
+                                  Zone="Controls" HasBackdrop="false" ReAssignZones="true"
+                                  DragEnd="@( async e => { Controls = e; await UpdateControls(e);  })"
+                                  ItemAdded="@( async e => {  await AddControl(e); })">
+                    <Icon>
+                        <SymbolIcon Symbol="@Icon.Controls" />
+                    </Icon>
+                </DragDropDesigner>
+            </div>
+        </Related>
+        <Content>
+
+            <div data-zone="Page" class="bg-surface rounded-2 p-2 py-3">
+                @foreach (IDTO row in Rows)
+                {
+                    <LayoutRow @key="@( "olr-" + row.GUID.ToSecureString())" 
+                               Item="@row" Controls="@Controls"
+                               DragEnd="@( async e => { await UpdateControls(e); } )">
+
+                    </LayoutRow>
+                }
+            </div>
+
+        </Content>
+    </Frame>
+
+}
+
+@code {
+
+    [Parameter]
+    public IDTO Item { get; set; } // Page
+
+    [Parameter]
+    public List<IDTO> Rows { get; set; } = new();
+    List<IDTO> LayoutDefinitions { get; set; } = new();
+
+    [Parameter]
+    public List<IDTO> Controls { get; set; } = new();
+    List<IDTO> ControlDefinitions { get; set; } = new();
+
+    // CTR
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        // Layouts
+        LayoutDefinitions.Add(new DTO()
+        {
+            Title = "12",
+            ["Typ"] = "12",
+            ["Zone"] = "Layout",
+            ["Sort"] = "1",
+        });
+        LayoutDefinitions.Add(new DTO()
+        {
+            Title = "66",
+            ["Typ"] = "66",
+            ["Zone"] = "Layout",
+            ["Sort"] = "1",
+        });
+        LayoutDefinitions.Add(new DTO()
+        {
+            Title = "444",
+            ["Typ"] = "444",
+            ["Zone"] = "Layout",
+            ["Sort"] = "1",
+        });
+        LayoutDefinitions.Add(new DTO()
+        {
+            Title = "363",
+            ["Typ"] = "363",
+            ["Zone"] = "Layout",
+            ["Sort"] = "1",
+        });
+        LayoutDefinitions.Add(new DTO()
+        {
+            Title = "57",
+            ["Typ"] = "57",
+            ["Zone"] = "Layout",
+            ["Sort"] = "1",
+        });
+        LayoutDefinitions.Add(new DTO()
+        {
+            Title = "75",
+            ["Typ"] = "75",
+            ["Zone"] = "Layout",
+            ["Sort"] = "1",
+        });
+
+
+        // Controls
+        Builder build = new Builder(sql);
+        foreach (ComponentDefinition comp in build.Definitions)
+        {
+            ControlDefinitions.Add(new DTO() 
+            { 
+                Title = comp.Name, 
+                ["Namespace"] = comp.Namespace,
+                ["ClassName"] = comp.ClassName,
+                ["CSS"] = comp.CSS,
+                ["ItemType"] = comp.ItemType?.Name ?? string.Empty,
+                ["Zone"] = "Controls",
+                ["Sort"] = "1",
+            });
+        }
+
+        msg.OnMessage += OnMessageDone;
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        // Reload Rows
+        await LoadRows();
+        await LoadControls();
+    }
+
+    public async void OnMessageDone(AppMessage msg)
+    {
+        if (msg.Id == "Item" && msg.Action == BusAction.Refresh)
+        {
+            await LoadControls();
+            // Update
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    // Layout 
+    public async Task AddLayoutRow(IDTO dde)
+    {
+        // Parameter
+        IQueryParameter qp = new QueryParameter();
+        qp.MasterGUID = sql.MasterGUID;
+        qp.GUID = Guid.NewGuid();
+        qp.Title = dde.Title;
+        qp.ItemType = "Slot";
+        qp.UserGUID = sec.User.GUID;
+        qp.UserName = sec.User.Title;
+
+        // Create
+        IQueryResult resultNew = await sql.Create(qp);
+
+        // Load
+        resultNew = await sql.GetItem(qp);
+
+        // Item
+        IDTO? row = resultNew.Items.FirstOrDefault();
+        if (row == null)
+            return;
+
+        // Set Properties
+        row["Sort"] = dde["Sort"].ToSecureString();
+        row["Typ"] = dde["Typ"].ToSecureString();
+        row["Zone"] = dde["Zone"].ToSecureString();
+
+        // Update
+        await sql.Update(row);
+
+        // Zuordnung
+        await sql.Assign(Item, row, AssociationTyp.Children);
+
+        // Reload Rows 
+        await LoadRows();
+    }
+    public async Task LoadRows()
+    {
+        Rows.Clear();
+
+        // Parameter
+        IQueryParameter qp = new QueryParameter();
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = "Slot";
+
+        // Create
+        IQueryResult resultRows = await sql.GetRelatedItems(Item, "Slot", AssociationTyp.Children);
+        Rows = resultRows.Items;
+    }
+
+    // Controls
+    public async Task AddControl(IDTO dde)
+    {
+        // Parameter
+        IQueryParameter qp = new QueryParameter();
+        qp.MasterGUID = sql.MasterGUID;
+        qp.GUID = Guid.NewGuid();
+        qp.Title = dde.Title;
+        qp.ItemType = "Control";
+        qp.UserGUID = sec.User.GUID;
+        qp.UserName = sec.User.Title;
+
+        // Update DragDrop 
+        dde.ID = qp.GUID.ToSecureString();
+
+        // Create
+        IQueryResult resultNew = await sql.Create(qp);
+
+        // Load
+        resultNew = await sql.GetItem(qp);
+
+        // Item
+        IDTO? ctl = resultNew.Items.FirstOrDefault();
+        if (ctl == null)
+            return;
+
+        // Set Properties
+        ctl["Namespace"] = dde["Namespace"].ToSecureString();
+        ctl["Klasse"] = dde["ClassName"].ToSecureString();
+        ctl["Sort"] = dde["Sort"].ToSecureString();
+        ctl["Zone"] = dde["Zone"].ToSecureString();
+        ctl["CSS"] = dde["CSS"].ToSecureString();
+        ctl["ItemType"] = dde["ItemType"].ToSecureString();
+
+        // Update 
+        await sql.Update(ctl);
+
+        // Zuordnung
+        await sql.Assign(Item, ctl, AssociationTyp.Children);
+
+        await LoadControls();
+
+    }
+    public async Task UpdateControls(List<IDTO> ctls)
+    {
+        // Check Loading 
+        if (Controls.Count() == 0)
+        {
+            await LoadControls();    
+        }
+
+        foreach (var ctl in ctls)
+        {
+            IDTO? dto = Controls.Where(se => se.GUID == ctl.GUID).FirstOrDefault();
+            if (dto == null)
+                continue;
+
+            dto["Zone"] = ctl["Zone"];
+            dto["Sort"] = ctl["Sort"].ToSecureString();
+
+            await sql.Update(dto);
+        }
+
+        // Reload Controls 
+        await LoadControls();
+
+        // Update 
+        await InvokeAsync(StateHasChanged);
+    }
+    public async Task LoadControls()
+    {
+        Controls.Clear();
+
+        // Parameter
+        IQueryParameter qp = new QueryParameter();
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = "Control";
+
+        // Create
+        IQueryResult resultRows = await sql.GetRelatedItems(Item, "Control", AssociationTyp.Children);
+        Controls = resultRows.Items;
+    }
+
+    
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageDone;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+
+}

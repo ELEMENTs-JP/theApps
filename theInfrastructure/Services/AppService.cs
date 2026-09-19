@@ -28,6 +28,7 @@ namespace theInfrastructure
         } 
         public List<IApp> AllApps { get; set; } = new();
         public List<IDTO> AllPages { get; set; } = new();
+        public List<IDTO> AllBoards { get; set; } = new();
         private IItemType _it = null;
         public IItemType ItemType
         {
@@ -41,6 +42,14 @@ namespace theInfrastructure
             get { return _page; }
             set { _page = value; OnPropertyChanged(); }
         }
+
+        private IDTO _board = null;
+        public IDTO Board
+        {
+            get { return _board; }
+            set { _board = value; OnPropertyChanged(); }
+        }
+
 
         private IDTO _item = null;
         public IDTO Item
@@ -101,6 +110,11 @@ namespace theInfrastructure
             qp.ItemType = "Page";
             result = await SqlService.GetItems(qp);
             AllPages = result.Items;
+
+            // Boards 
+            qp.ItemType = "Board";
+            result = await SqlService.GetItems(qp);
+            AllBoards = result.Items;
         }
         public async Task SetApp(IApp? _app)
         {
@@ -116,11 +130,13 @@ namespace theInfrastructure
             this.Item = null;
             this.ItemType = null;
             this.Page = null;
+            this.Board = null;
             await Task.CompletedTask;
         }
         public async Task SetItemType(IItemType it)
         {
             this.Page = null;
+            this.Board = null;
 
             // ItemType 
             this.ItemType = it;
@@ -129,9 +145,22 @@ namespace theInfrastructure
         }
         public async Task SetPage(IDTO page)
         {
-            this.Page = page;
             this.ItemType = null;
+            this.Board = null;
+
+            // Page 
+            this.Page = page;
+
             await AppByPage(page);
+        }
+        public async Task SetBoard(IDTO board)
+        {
+            this.Page = null;
+            this.ItemType = null;
+
+            // Board 
+            this.Board = board;
+            await AppByBoard(board);
         }
         public async Task SetPage(Guid GUID)
         {
@@ -151,6 +180,27 @@ namespace theInfrastructure
                 foreach (IDTO _page in _pages)
                 {
                     if (page.GUID == _page.GUID)
+                    {
+                        App = _app;
+                        return _app;
+                    }
+                }
+            }
+
+            return null;
+        }
+        public async Task<IApp?> AppByBoard(IDTO? board)
+        {
+            if (board == null || AllApps == null || !AllApps.Any())
+                return null;
+
+            // 1.) App by ItemType 
+            foreach (IApp _app in AllApps)
+            {
+                List<IDTO> _boards = await _app.GetBoards();
+                foreach (IDTO _board in _boards)
+                {
+                    if (board.GUID == _board.GUID)
                     {
                         App = _app;
                         return _app;

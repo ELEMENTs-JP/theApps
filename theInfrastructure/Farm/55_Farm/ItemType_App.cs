@@ -21,6 +21,7 @@ namespace theInfrastructure
                 // ItemTypes 
                 ItemTypes.Add(new ItemType_ItemType());
                 ItemTypes.Add(new ItemType_Page());
+                ItemTypes.Add(new ItemType_Board());
             }
 
             return ItemTypes;
