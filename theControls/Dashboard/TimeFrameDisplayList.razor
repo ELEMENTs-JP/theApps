@@ -1,0 +1,53 @@
+﻿@inject IAppService app
+@inject ILocalizationService loc
+@inject NavigationManager nm
+@inject ISqlDatabaseService sql
+
+<div class="border rounded-2 bg-surface p-2 @CSS">
+    <div class="border-bottom py-1 text-secondary">
+        <strong>@loc.GetLabel("TimeFrames", "TimeFrames")</strong>
+    </div>
+    <div class="py-1 overflow-y-auto" style="max-height:15rem;">
+        
+        @foreach (IDTO item in Items)
+        {
+            <div class="d-flex gap-1 p-1 hover">
+                <div class="flex-fill fw-bold hover pointer rounded-2"
+                     @onclick="@( e => { nm.NavToItem(item.ItemType, item.GUID); })">
+                    @item.Title.ToString()
+                </div>
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+@code {
+
+    List<IDTO> Items { get; set; } = new();
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await Init();
+    }
+
+    private async Task Init()
+    {
+        Items.Clear();
+
+        IQueryParameter qp = QueryParameter.Default(".");
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = "TimeFrame";
+
+        IQueryResult result = await sql.GetItems(qp);
+        Items = result.Items;
+    }
+
+}

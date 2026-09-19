@@ -3,6 +3,13 @@
 
 @inject NavigationManager nm
 
+@if (!string.IsNullOrEmpty(this.Title))
+{
+    <div class="h3 py-1 text-secondary d-flex">
+        @Title
+    </div>
+}
+
 @if (Context != null && ItemType != null)
 {
     @if (Context.ItemType != null && Context.ItemType.GetFields().Result != null)
@@ -35,6 +42,9 @@
 
     [Parameter]
     public bool ShowID { get; set; } = true;
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
 
 
     // Events

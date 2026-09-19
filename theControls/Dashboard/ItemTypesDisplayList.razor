@@ -34,6 +34,9 @@
     {
         await base.OnParametersSetAsync();
 
+        if (app.App == null)
+            return;
+
         ItemTypes = await app.App.GetItemTypes(AssociationTyp.Children);
     }
 

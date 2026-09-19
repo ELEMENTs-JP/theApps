@@ -11,11 +11,11 @@
         </div>
         <div class="col-6 p-2 rounded-2">
             <h1 class="display-6 fw-bold">@Now.Year.ToString()</h1>
-            <h1 class="display-3">
+            <h1 class="display-6 my-2">
                 W @Now.WeekOfYear().ToSecureString()
             </h1>
             <h3 class="h3">
-                @Now.ToString("dddd, d. MMMM", new System.Globalization.CultureInfo("de-DE"))
+                @Now.ToString("ddd, d. MMM", new System.Globalization.CultureInfo("de-DE"))
             </h3>
         </div>
         <div class="col-3 p-2" >

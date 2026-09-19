@@ -1,21 +1,19 @@
-﻿@* --- HEADER --- *@
+﻿@inject ISqlDatabaseService sql
+
+@* --- HEADER --- *@
 <div class="row g-0">
     <div class="col-4 p-2">
         <WeekSelector />
     </div>
     <div class="col-4 p-2">
-        <div class="bg-surface rounded-2 p-3" style="">
-            <h1>Objective</h1>
-            <ItemsList ItemType="@( new ItemType_Task())" IsSortable="false" ShowID="false" />
-            <h1>KeyResult</h1>
-            <ItemsList ItemType="@( new ItemType_Task())" IsSortable="false" ShowID="false" />
-            <h1>CheckIn</h1>
-            <ItemsList ItemType="@( new ItemType_Task())" IsSortable="false" ShowID="false" />
+        <div class="rounded-2 p-2 bg-surface">
+        <ItemsList Title="Objective" ItemType="@( new Factory(sql).BuildItemType("Objective").Result)" IsSortable="false" ShowID="false" />
+        <ItemsList Title="Key Results" ItemType="@( new Factory(sql).BuildItemType("KeyResult").Result)" IsSortable="false" ShowID="false" />
+        <ItemsList Title="Check Ins" ItemType="@( new Factory(sql).BuildItemType("CheckIn").Result)" IsSortable="false" ShowID="false" />
         </div>
     </div>
     <div class="col-4 p-2">
-        <div class="glass rounded-2 p-3" style="">
-        </div>
+        <TimeFrameDisplayList />
     </div>
 </div>
 
@@ -23,30 +21,32 @@
 <div class="row g-0">
 
     <div class="col-6 p-2">
-        <div class="bg-surface rounded-2 p-3" style="">
-            <h1 class="h1 ">Prioritäten A</h1>
+
+        @*     <h1 class="h1 ">Prioritäten A</h1>
             <ItemsList ItemType="@( new ItemType_Task())" IsSortable="false" ShowID="false" />
             <h1 class="h1 ">Prioritäten B</h1>
             <ItemsList ItemType="@( new ItemType_Task())" IsSortable="false" ShowID="false" />
             <h1 class="h1 ">Prioritäten C</h1>
-            <ItemsList ItemType="@( new ItemType_Task())" IsSortable="false" ShowID="false" />
-        </div>
+            <ItemsList ItemType="@( new ItemType_Task())" IsSortable="false" ShowID="false" />*@ 
+     
     </div>
     <div class="col-6 p-2">
-        <div class="bg-surface rounded-2 p-3" style="">
-            <h1>News</h1>
+
+        @*        <h1>News</h1>
             <ItemsList ItemType="@( new ItemType_News())" IsSortable="false" ShowID="false" />
             <h1>Notizen</h1>
             <ItemsList ItemType="@( new ItemType_Note())" IsSortable="false" ShowID="false" />
             <h1>Dateien</h1>
-            <ItemsList ItemType="@( new ItemType_File())" IsSortable="false" ShowID="false" />
-        </div>
+            <ItemsList ItemType="@( new ItemType_File())" IsSortable="false" ShowID="false" />*@ 
+       
     </div>
 </div>
 
 @* --- Priorities,etc. --- *@
 <div class="row g-0">
 
+
+    @* 
     <div class="col-2 p-2">
         <div class="bg-surface rounded-2 p-3" style="">
             <h1>Montag</h1>
@@ -86,6 +86,9 @@
    
         </div>
     </div>
+
+*@
+
 </div>
 
 @* --- HEADER --- *@
