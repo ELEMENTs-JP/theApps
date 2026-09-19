@@ -29,6 +29,9 @@ The app includes a wide range of features that are continuously being expanded a
 ## Single-Client vs. Multi-Client System
 This is a single-client system. However, upon request as part of a project, a multi-client system with multiple databases can be developed.
 
+## Database
+The application uses an SQLite database that is automatically created during setup. A separate database server is not required. This helps reduce costs.
+
 ## Item Editing
 The interface for editing entries can be customized using code or the integrated designer (UI) or developed from scratch (code).
 
