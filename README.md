@@ -8,6 +8,7 @@ The app is a business-oriented .NET Core 10 Blazor Server application (Windows b
 
 ## Key Features of This Application
 - Dynamic Application Builder
+- Default Apps
 - Drag-and-drop interfaces
 - Global, local, and linked search
 - Customizable item types
