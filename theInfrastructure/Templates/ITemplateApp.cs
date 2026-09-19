@@ -11,6 +11,7 @@ namespace theInfrastructure
     public interface ITemplateApp
     {
         AppInfo GetApp();
+        List<ItemTypeInfo> GetItemTypes();
     }
 
     public class TemplateApp : ITemplateApp
@@ -27,24 +28,28 @@ namespace theInfrastructure
         public virtual List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
-            types.Add(new ItemTypeInfo("Template", "Template Item"));
+
+            //types.Add(new ItemTypeInfo("Template", "Template Item"));
+
             return types;
         }
         public virtual List<ItemTypeConnection> GetItemTypeConnections()
         {
             List<ItemTypeConnection> connections = new List<ItemTypeConnection>();
-            connections.Add(new ItemTypeConnection("Template", "Template"));
+
+            //connections.Add(new ItemTypeConnection("Template", "Template"));
+
             return connections;
         }
         public virtual List<FieldInfo> GetFields(string ItemType)
         {
             List<FieldInfo> fields = new List<FieldInfo>();
 
-            if (ItemType == "Template")
-            {
-                fields.Add(new FieldInfo("Template", "string"));
-                fields.Add(new FieldInfo("Template", "string"));
-            }
+            //if (ItemType == "Template")
+            //{
+            //    fields.Add(new FieldInfo("Template", "string"));
+            //    fields.Add(new FieldInfo("Template", "string"));
+            //}
 
             return fields;
         }

@@ -476,33 +476,42 @@
     // ...
     private string onValueBinding()
     {
-        if (Binding == ValueBindingTyp.Property)
+        try
         {
-            string val = Context.Item[Field.Column].ToSecureString();
-
-            if (Field.Typ == FieldTyp.Date)
+            if (Binding == ValueBindingTyp.Property)
             {
-                val = val.ToDateField();
+                string val = Context.Item[Field.Column].ToSecureString();
+
+                if (Field.Typ == FieldTyp.Date)
+                {
+                    val = val.ToDateField();
+                }
+                else if (Field.Typ == FieldTyp.Time)
+                {
+
+                }
+                else if (Field.Typ == FieldTyp.DateTime)
+                {
+
+                }
+
+                return val;
             }
-            else if (Field.Typ == FieldTyp.Time)
+            else if (Binding == ValueBindingTyp.Description)
             {
-
+                return Context.Item.Content.ToSecureString();
             }
-            else if (Field.Typ == FieldTyp.DateTime)
+            else
             {
-
+                return Context.Item.Title.ToSecureString();
             }
-
-            return val;
         }
-        else if (Binding == ValueBindingTyp.Description)
+        catch (Exception ex)
         {
-            return Context.Item.Content.ToSecureString();
+            Console.WriteLine(ex.Message);
         }
-        else
-        {
-            return Context.Item.Title.ToSecureString();
-        }
+
+        return string.Empty;
     }
     private void onValueChanged(string value, string id = "")
     {

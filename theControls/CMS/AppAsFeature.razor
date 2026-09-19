@@ -29,7 +29,7 @@
                     <div class="text-muted">@loc.GetLabel("aktiviert / deaktiviert", "active / inactive")</div>
                 </div>
                 <div class="col-auto p-2">
-                    <CheckBox Value="@IsActive(app).Result.ToSecureString()"
+                    <CheckBox Value="@( (IsActive(app).Result != null ? "true" : "false") )"
                               TrueText="@loc.GetLabel("aktiviert", "active")"
                               FalseText="@loc.GetLabel("inaktiv", "inactive")"
                               ValueChanged="@(async e => { await CreateDeleteApp(app, e.ToSecureBool()); })" />
@@ -44,13 +44,6 @@
 
 
 
-
-
-
-
-
-
-
 @code {
 
     List<ITemplateApp> Apps { get; set; } = new();
@@ -62,9 +55,9 @@
 
         Apps = TemplateAppFactory.GetAllTemplateApps();
 
-        await LoadAllDbApps();
+        await Init();
     }
-    private async Task LoadAllDbApps()
+    private async Task Init()
     {
         IQueryParameter qp = QueryParameter.Default(".");
         qp.MasterGUID = sql.MasterGUID;
@@ -73,7 +66,7 @@
         IQueryResult result = await sql.GetItems(qp);
         AllDbApps = result.Items;
     }
-    private async Task<bool> IsActive(ITemplateApp app)
+    private async Task<IDTO> IsActive(ITemplateApp app)
     {
         if (app != null)
         {
@@ -87,19 +80,21 @@
 
             if (activeApp != null)
             {
-                return true;
+                return activeApp;
             }
         }
-        return false;
+        return null;
     }
     private async Task CreateDeleteApp(ITemplateApp app, bool value)
     {
         if (app != null)
         {
-            var _app = app.GetApp();
+            await Init();
 
-            bool isActive = await IsActive(app);
-            if (isActive == true)
+            AppInfo _app = app.GetApp();
+
+            IDTO? isActive = await IsActive(app);
+            if (isActive != null)
             {
                 // löschen
                 if (value == false)
@@ -109,9 +104,20 @@
                     qp.ItemType = "App";
 
                     IQueryResult result = await sql.GetItems(qp);
-                    if (result.Items.Count == 1)
+
+                    IDTO? activeApp = result.Items.Find(se =>
+                        string.Equals(se.ID, _app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.Title, _app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.ID, _app.Title, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.Title, _app.Title, StringComparison.InvariantCultureIgnoreCase));
+
+                    if (activeApp != null)
                     {
-                        await sql.Delete(result.Items[0]);
+                        // App
+                        await sql.Delete(activeApp);
+
+                        // ItemTypes
+                        await DeleteAllItemTypesByApp(app);
                     }
                 }
             }
@@ -124,14 +130,85 @@
                     qp.MasterGUID = sql.MasterGUID;
                     qp.ItemType = "App";
 
-                    await sql.Create(qp);
+                    IQueryResult result = await sql.GetItems(qp);
+
+                    IDTO? activeApp = result.Items.Find(se =>
+                        string.Equals(se.ID, _app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.Title, _app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.ID, _app.Title, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.Title, _app.Title, StringComparison.InvariantCultureIgnoreCase));
+
+                    // App existiert nicht
+                    if (activeApp == null)
+                    {
+                        qp = QueryParameter.Default(_app.Title);
+                        qp.MasterGUID = sql.MasterGUID;
+                        qp.ItemType = "App";
+
+                        // App
+                        await sql.Create(qp);
+
+                        // ItemTypes
+                        await CreateItemTypesByApp(app);
+                    }
                 }
             }
         }
 
-        await LoadAllDbApps();
+        await Init();
     }
 
+    private async Task DeleteAllItemTypesByApp(ITemplateApp app)
+    {
+        List<ItemTypeInfo> itemtypes = app.GetItemTypes();
+
+        foreach (ItemTypeInfo info in itemtypes)
+        {
+            IQueryParameter qp = QueryParameter.Default(".");
+            qp.MasterGUID = sql.MasterGUID;
+            qp.ItemType = "ItemType";
+
+            IQueryResult result = await sql.GetItems(qp);
+
+            foreach (IDTO it in result.Items.Where(se => se.Title == info.Name))
+            {
+                await sql.Delete(it);
+            }
+        }
+    }
+    private async Task CreateItemTypesByApp(ITemplateApp app)
+    {
+        await Init();
+
+        IDTO? activeApp = AllDbApps.Find(se =>
+            string.Equals(se.ID, app.GetApp().Name, StringComparison.InvariantCultureIgnoreCase) ||
+             string.Equals(se.Title, app.GetApp().Name, StringComparison.InvariantCultureIgnoreCase) ||
+              string.Equals(se.ID, app.GetApp().Title, StringComparison.InvariantCultureIgnoreCase) ||
+               string.Equals(se.Title, app.GetApp().Title, StringComparison.InvariantCultureIgnoreCase));
+
+        if (activeApp != null)
+        {
+            List<IDTO> dbItemTypes = sql.GetRelatedItems(activeApp, "ItemType", AssociationTyp.NULL).Result.Items;
+            List<ItemTypeInfo> itemtypes = app.GetItemTypes();
+
+            foreach (ItemTypeInfo info in itemtypes)
+            {
+                IDTO? activeItemType = dbItemTypes.Find(se =>
+                        string.Equals(se.ID, info.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.Title, info.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                            string.Equals(se.ID, info.Title, StringComparison.InvariantCultureIgnoreCase) ||
+                            string.Equals(se.Title, info.Title, StringComparison.InvariantCultureIgnoreCase));
+
+                if (activeItemType == null)
+                {
+                    IQueryParameter qp = QueryParameter.Default(info.Name);
+                    qp.MasterGUID = sql.MasterGUID;
+                    qp.ItemType = "ItemType";
+                    IQueryResult result = await sql.Create(qp);
+                }
+            }
+        }
+    }
     private async Task PushFeatureUpdate()
     {
         msg.Publish(new AppMessage("Feature", BusAction.Refresh));

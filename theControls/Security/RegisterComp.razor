@@ -13,11 +13,11 @@
             <form action="/api/auth/register" method="post">
                 <AntiforgeryToken />
                 <div class="mb-3">
-                    <label>Benutzername</label>
+                    <label class="form-label">Mail</label>
                     <input id="input_txt_username" type="text" name="username" class="form-control" />
                 </div>
                 <div class="mb-3">
-                    <label>Passwort</label>
+                    <label class="form-label">Passwort</label>
                     <input type="password" name="password" class="form-control" />
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Registrierung</button>

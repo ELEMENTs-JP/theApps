@@ -3,26 +3,34 @@
 @using theControls.Layout
 @inject NavigationManager nm
 @inject ISqlDatabaseService sql
-
+@inject ISecurityService sec
 
 <div class="container mt-5">
     <div class="card mx-auto" style="max-width: 400px;">
         <div class="card-body">
-       
+
             <h2 class="h2 text-center fw-bold">Neues Passwort anfragen</h2>
             <div class="hr-text">Geschäftsaccount</div>
 
-                <div class="mb-3">
-                    <TextBox Label="E-Mail" ValueChanged="@( e => { UserName = e; })" />
-                </div>
-                <button type="button" class="btn btn-primary w-100"
-                        @onclick="RequestNewPassword" >Neues Passwort anfragen</button>
-        
-            @if (!string.IsNullOrEmpty(Token))
+            <div class="mb-3">
+                <TextBox Label="E-Mail" ValueChanged="@( e => { UserName = e; })" />
+            </div>
+            <button type="button" class="btn btn-primary w-100"
+                    @onclick="RequestNewPassword">
+                Neues Passwort anfragen
+            </button>
+
+            @* temporary development feature *@
+            @if (!sec.Mail.IsValid())
             {
-                <div class="py-3 text-center">
-                    <a href="/Security/SetNewPwd/@Token" class="">@Token</a>
-                </div>
+                @* temporary development feature *@
+                @if (!string.IsNullOrEmpty(Token))
+                {
+                    @* temporary development feature *@
+                    <div class="py-3 text-center">
+                        <a href="/Security/SetNewPwd/@Token" class="">@Token</a>
+                    </div>
+                }
             }
 
             @if (nm.Uri.Contains("error"))
@@ -39,6 +47,13 @@
 
     private string UserName { get; set; }
     private string Token { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+
+    }
 
     public async Task RequestNewPassword()
     {
@@ -58,13 +73,34 @@
         if (user == null)
             return;
 
-        // Set Token 
+        // Set Token
         Token = Guid.NewGuid().ToSecureString();
         user["RequestToken"] = Token;
-        
+
         // Update 
         await sql.Update(user);
 
+        if (sec.Mail.IsValid())
+        {
+            string mail = user["Mail"].ToSecureString();
+            string topic = "Ein neues Passwort wurde angefordert";
+            string msg = "Ein neues Passwort wurde angefordert. Bitte nutzen Sie folgendes Token: " + Token;
+
+            string link = GeneratePasswordResetLink(Token);
+            string code = Token;
+
+            await Helper.SendSmtpMailKitAsync(mail, topic, msg, EMailType.RequestNewPassword, sec.Mail, link:link, code:code);
+        }
+
         await Task.CompletedTask;
+    }
+
+    private string GeneratePasswordResetLink(string token)
+    {
+        string escapedToken = Uri.EscapeDataString(token);
+        string relativePath = $"Security/SetNewPwd/{escapedToken}";
+        string absoluteLink = nm.ToAbsoluteUri(relativePath).ToString();
+
+        return absoluteLink;
     }
 }

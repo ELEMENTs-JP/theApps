@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Mail;
-using System.Net.Mime;
+//using System.Net.Mail;
+//using System.Net.Mime;
 using System.Text;
 
 using MailKit.Net.Smtp;
@@ -22,6 +22,25 @@ namespace theInfrastructure
         public string Password { get; set; } = string.Empty;
         public string UrlToDeactivateMailReceiving { get; set; } = string.Empty;
 
+        public bool IsValid()
+        {
+            if (IsEMailActive == false)
+                return false;
+
+            if (string.IsNullOrEmpty(Server))
+                return false;
+
+            if (string.IsNullOrEmpty(Port))
+                return false;
+
+            if (string.IsNullOrEmpty(User))
+                return false;
+
+            if (string.IsNullOrEmpty(Password))
+                return false;
+
+            return true;
+        }
 
         public void Save()
         {
@@ -60,119 +79,6 @@ namespace theInfrastructure
   
     public static partial class Helper
     {
-
-        public static async Task SendSmtpMailAsync(string to, string topic, string message, EMailType mailtype,
-                SMTPConfiguration config, string filename = "", string from = "", string template = "mail",
-                    string link = "", string code = "", string inlineTitle = "",
-                        List<MailFileAttachment> attachments = null, Guid userGUID = default)
-        {
-            // Validierung
-            if (config == null || string.IsNullOrWhiteSpace(to) || !to.Contains("@"))
-                return;
-
-            if (string.IsNullOrEmpty(config.Server) || string.IsNullOrEmpty(config.Port) || !int.TryParse(config.Port, out int port))
-                return;
-
-            // Mail-Inhalt generieren
-            string innerHTML = GetHtmlByMailType(topic, message, mailtype, link, code);
-            string fullHTML = GetEmptyHtmlMailTemplate(innerHTML, topic, config, userGUID);
-
-            using var msg = new MailMessage();
-            try
-            {
-                msg.From = new MailAddress(from, "the App Tools", Encoding.UTF8);
-                msg.To.Add(to);
-                msg.IsBodyHtml = true;
-
-                // --- Umlaut-Fixing: Explizites UTF-8 Encoding setzen ---
-                msg.SubjectEncoding = Encoding.UTF8;
-                msg.BodyEncoding = Encoding.UTF8;
-                msg.HeadersEncoding = Encoding.UTF8;
-
-                msg.Subject = !string.IsNullOrEmpty(topic) ? topic : "Mail";
-                msg.Body = fullHTML;
-
-                // 1. Datei-Anhang (Pfad)
-                if (!string.IsNullOrEmpty(filename) && File.Exists(filename))
-                {
-                    var data = new Attachment(filename, MediaTypeNames.Application.Octet);
-                    var disposition = data.ContentDisposition;
-                    disposition.CreationDate = File.GetCreationTime(filename);
-                    disposition.ModificationDate = File.GetLastWriteTime(filename);
-                    disposition.ReadDate = File.GetLastAccessTime(filename);
-                    msg.Attachments.Add(data);
-                }
-
-                // 2. Automatischer Widerruf-Anhang bei bestimmten E-Mail-Typen
-                if (mailtype == EMailType.InvoiceMail || mailtype == EMailType.OrderMail)
-                {
-                    string wdrlink = "./files/Widerrufserklaerung.docx";
-                    if (File.Exists(wdrlink))
-                    {
-                        var wdl = new Attachment(wdrlink, MediaTypeNames.Application.Octet);
-                        var disposition = wdl.ContentDisposition;
-                        disposition.CreationDate = File.GetCreationTime(wdrlink);
-                        disposition.ModificationDate = File.GetLastWriteTime(wdrlink);
-                        disposition.ReadDate = File.GetLastAccessTime(wdrlink);
-                        msg.Attachments.Add(wdl);
-                    }
-                }
-
-                // 3. Dynamische In-Memory Anhänge
-                if (attachments != null && attachments.Count > 0)
-                {
-                    foreach (var file in attachments)
-                    {
-                        if (file?.Array == null)
-                            continue;
-
-                        var contentType = new System.Net.Mime.ContentType(file.ContentType);
-                        var contentStream = new MemoryStream(file.Array);
-                        var fa = new Attachment(contentStream, contentType);
-
-                        var disposition = fa.ContentDisposition;
-                        disposition.FileName = file.FileName;
-                        disposition.CreationDate = DateTime.Now;
-                        disposition.ModificationDate = DateTime.Now;
-                        disposition.ReadDate = DateTime.Now;
-
-                        msg.Attachments.Add(fa);
-                    }
-                }
-
-                // Versand-Logik
-                await ExecuteSendAsync(config, port, msg);
-            }
-            catch (Exception ex)
-            {
-                // Fehlerbehandlung / Logging
-            }
-        }
-
-        private static async Task ExecuteSendAsync(SMTPConfiguration config, int port, MailMessage msg)
-        {
-            try
-            {
-                using var client = CreateSmtpClient(config, port);
-                await client.SendMailAsync(msg);
-            }
-            catch
-            {
-                int fallbackPort = (port == 587) ? 465 : 587;
-                using var fallbackClient = CreateSmtpClient(config, fallbackPort);
-                await fallbackClient.SendMailAsync(msg);
-            }
-        }
-
-        private static System.Net.Mail.SmtpClient CreateSmtpClient(SMTPConfiguration config, int port)
-        {
-            return new System.Net.Mail.SmtpClient(config.Server, port)
-            {
-                Credentials = new NetworkCredential(config.User, config.Password),
-                EnableSsl = config.SSL
-            };
-        }
-
         public static string GetHtmlByMailType(string header, string message, EMailType mailType, string link = "", string code = "")
         {
             string html = string.Empty;
@@ -215,7 +121,8 @@ namespace theInfrastructure
             {
                 html += "<div style='padding:15px;'>";
                 html += "<div style='text-align: center;'><h2 style='text-align: center;'>Neues Passwort setzen</h2></div>";
-                html += "<div style='padding-top:15px; padding-bottom:15px; text-align: center;'><a href='" + link + "'>Link zum Setzen eines Passwortes</a></div>";
+                html += $"<div style='padding-top:15px; padding-bottom:15px; text-align: center;'><a href='{link}'>Link zum Setzen eines Passwortes</a></div>";
+                html += $"<div style='padding-top:15px; padding-bottom:15px; text-align: center;'>Alternativ: {link}</div>";
                 html += "<div style='padding:15px; text-align: center;'>" + message + "</div>";
                 html += "</div>";
             }
@@ -302,151 +209,84 @@ namespace theInfrastructure
         {
             try
             {
-                string htmlFrame = string.Empty;
+                var sb = new System.Text.StringBuilder();
 
                 // HEAD 
-                htmlFrame += "<!DOCTYPE html>";
-                htmlFrame += "<html>";
-                htmlFrame += "<head>";
-                htmlFrame += "<meta charset='utf-8' />";
-
-                htmlFrame += "<title></title>";
-
-                // STYLE 
-                htmlFrame += "<style>";
-
-                htmlFrame += "html, body ";
-                htmlFrame += " { ";
-                htmlFrame += " font-family: Verdana, Arial, Helvetica, sans-serif !important; ";
-                htmlFrame += " background-color: #eee !important; ";
-                htmlFrame += " text-align:left; ";
-                htmlFrame += " } ";
-
-                htmlFrame += " table, tr, td, th { ";
-                htmlFrame += " padding:2px!important; ";
-                htmlFrame += " padding-left: 5px!important; ";
-                htmlFrame += " padding-right: 5px!important; ";
-                htmlFrame += " } ";
-
-                htmlFrame += " .text-primary { color: #1c75ca; } ";
-                htmlFrame += " .colorBlue { color: #1c75ca; } ";
-                htmlFrame += " .colorDeep { color: #333; } ";
-                htmlFrame += " .colorDark { color: #555; } ";
-                htmlFrame += " .colorGrey { color: #aaa; } ";
-                htmlFrame += " .colorMuted { color: #bbb; } ";
-
-                htmlFrame += " </style> ";
-                htmlFrame += " </head> ";
+                sb.Append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+                sb.Append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+                sb.Append("<head>");
+                sb.Append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+                sb.Append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />");
+                sb.Append("<title></title>");
+                sb.Append("</head>");
 
                 // BODY 
-                htmlFrame += "<body class='colorDark' ";
-                htmlFrame += " style='overflow:hidden; " +
-                                " margin:0; " +
-                                " padding:0; " +
-                                " -webkit-text-size-adjust:none; " +
-                                " -ms-text-size-adjust:none; ' ";
-                htmlFrame += " topmargin='0' " +
-                                " marginwidth='0' " +
-                                " marginheight='0' " +
-                                " leftmargin='0' " +
-                                " bgcolor='#f9f9f9'> ";
+                sb.Append("<body style=\"margin:0; padding:0; background-color:#eee; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;\">");
 
-                // FRAME 
-                htmlFrame += "<table style='overflow:hidden;' class='colorDark' width='100%' cellspacing='0' cellpadding='0' border='0'>";
-                htmlFrame += "<tr>";
-                htmlFrame += "<td align='center' style='overflow: hidden;'>";
+                // MAIN OUTER CONTAINER (Verhindert Rand-Probleme & steuert Hintrgrund)
+                sb.Append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" bgcolor=\"#eee\" style=\"background-color:#eee;\">");
+                sb.Append("<tr>");
+                sb.Append("<td align=\"center\" style=\"padding:25px 15px;\">"); // Padding ersetzt margin
 
+                // INNER CONTENT BOX
+                sb.Append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"565\" bgcolor=\"#ffffff\" style=\"background-color:#ffffff; border:1px solid #ddd; border-radius:10px; width:565px;\">");
+                sb.Append("<tr>");
+                sb.Append("<td align=\"left\" valign=\"top\" style=\"padding:10px; font-family:Verdana, Arial, sans-serif; font-size:14px; color:#555555;\">");
 
-                // table -> INNER HTML -> CONTENT Rahmen 
-                htmlFrame += "<table class='colorDark' ";
-                htmlFrame += " style=' " +
-                            " border:1px solid #ddd; " +
-                            " border-radius: 0.65rem; " +
-                            " overflow:hidden; " +
-                            " '";
-                htmlFrame += " bgcolor='#ffffff' width='565' cellspacing='0' cellpadding='0' border='0'> ";
+                sb.Append(innerHTML);
 
- 
-                htmlFrame += "<tr>";
-                htmlFrame += "<td class='colorDark' ";
-                htmlFrame += " style='height:760px;  overflow:hidden;  vertical-align:top;  text-align:left;  padding:0.5rem;'>";
+                sb.Append("</td>");
+                sb.Append("</tr>");
+                sb.Append("</table>");
 
-                htmlFrame += innerHTML;
-
-                htmlFrame += "</td>";
-                htmlFrame += "</tr>";
-
-
-                htmlFrame += "</table>";
-
-
-
-                if (userGUID != Guid.Empty)
+                // UN订阅 / ABBESTELLEN
+                if (userGUID != Guid.Empty && !string.IsNullOrEmpty(mailConfig.UrlToDeactivateMailReceiving))
                 {
-                    // Empty 
-                    if (!string.IsNullOrEmpty(mailConfig.UrlToDeactivateMailReceiving))
-                    {
-                        // Table 
-                        htmlFrame += "<table style='overflow:hidden;' width='575' cellspacing='0' cellpadding='0' border='0'>";
-                        htmlFrame += "<tr>";
-                        htmlFrame += "<td class='colorMuted' style='font-size:11px; padding:2rem;'>";
-                        htmlFrame += "<span>Wenn Sie Nachrichten nicht mehr erhalten möchten, können Sie diese </span>";
-
-                        htmlFrame += "<span style='padding:5px;'><a style='font-weight:bold;' " +
-                                    " href = '" + mailConfig.UrlToDeactivateMailReceiving + "/" + userGUID + "'> hier abbestellen</a>.</span>";
-
-                        htmlFrame += "</td>";
-                        htmlFrame += "</tr>";
-                        htmlFrame += "</table>";
-                    }
+                    sb.Append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"565\" style=\"width:565px;\">");
+                    sb.Append("<tr>");
+                    sb.Append("<td align=\"left\" style=\"padding:20px; font-family:Verdana, Arial, sans-serif; font-size:11px; color:#bbbbbb;\">");
+                    sb.Append("<span>Wenn Sie Nachrichten nicht mehr erhalten möchten, können Sie diese </span>");
+                    sb.Append("<a href=\"").Append(mailConfig.UrlToDeactivateMailReceiving).Append("/").Append(userGUID).Append("\" style=\"color:#bbbbbb; font-weight:bold; text-decoration:underline;\">hier abbestellen</a>.");
+                    sb.Append("</td>");
+                    sb.Append("</tr>");
+                    sb.Append("</table>");
                 }
 
-                // Hinweise per Mail  
-                htmlFrame += "<table style='overflow:hidden;' width='575' cellspacing='0' cellpadding='0' border='0'>";
-                htmlFrame += "<tr>";
-                htmlFrame += "<td style=' padding:2rem; '>";
-                htmlFrame += "<p class='colorGrey'>";
-                htmlFrame += "<small>";
-                htmlFrame += "<strong>Hinweis: </strong>";
-                htmlFrame += "<span> Wir sind bemueht, Ihnen ausschliesslich E-Mails zu senden </span>";
-                htmlFrame += "<span> die dem Schutze Ihrer Sicherheit dienen bzw.vertraglich oder technisch notwendig sind. </span>";
-                htmlFrame += "<span> Falls Sie mit einer unserer E-Mails nicht einverstanden sind, </span>";
-                htmlFrame += "<span> wenden Sie sich bitte an <a class='colorGrey' href = 'mailto:info@...?subject=Deactivate-Mail'>...</a> </span>";
-                htmlFrame += "<span> Bitte haben Sie Verstaendnis, dass wir aus verschiedenen teschnichen Gruenden </span>";
-                htmlFrame += "<span> oder Gruenden die Ihrer Internetsicherheit dienen, </span>";
-                htmlFrame += "<span> den Versand aller oder bestimmter E-Mails nicht einstellen koennen. </span>";
-                htmlFrame += "</small>";
-                htmlFrame += "</p>";
-                htmlFrame += "</td>";
-                htmlFrame += "</tr>";
-                htmlFrame += "</table>";
+                // HINWEISE
+                sb.Append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"565\" style=\"width:565px;\">");
+                sb.Append("<tr>");
+                sb.Append("<td align=\"left\" style=\"padding:0 20px 20px 20px; font-family:Verdana, Arial, sans-serif; font-size:11px; color:#aaaaaa; line-height:1.4;\">");
+                sb.Append("<strong>Hinweis: </strong>");
+                sb.Append("Wir sind bemüht, Ihnen ausschließlich E-Mails zu senden, die dem Schutz Ihrer Sicherheit dienen bzw. vertraglich oder technisch notwendig sind. ");
+                sb.Append("Falls Sie mit einer unserer E-Mails nicht einverstanden sind, wenden Sie sich bitte an ");
+                sb.Append("<a href=\"mailto:info@...?subject=Deactivate-Mail\" style=\"color:#aaaaaa; text-decoration:underline;\">info@...</a>. ");
+                sb.Append("Bitte haben Sie Verständnis, dass wir aus verschiedenen technischen Gründen oder Gründen, die Ihrer Internetsicherheit dienen, ");
+                sb.Append("den Versand aller oder bestimmter E-Mails nicht einstellen können.");
+                sb.Append("</td>");
+                sb.Append("</tr>");
+                sb.Append("</table>");
 
+                // FOOTER / GRUSSFORMEL
+                sb.Append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"565\" style=\"width:565px;\">");
+                sb.Append("<tr>");
+                sb.Append("<td align=\"left\" style=\"padding:0 20px 20px 20px; font-family:Verdana, Arial, sans-serif; font-size:11px; color:#bbbbbb; line-height:1.4;\">");
+                sb.Append("<strong style=\"color:#555555;\">Mit freundlichen Grüßen</strong><br />");
+                sb.Append("<div>...</div>");
+                sb.Append("<div>...</div>");
+                sb.Append("<div>...</div>");
+                sb.Append("<div>Mail: <a href=\"mailto:info@...?subject=Info\" style=\"color:#bbbbbb; text-decoration:underline;\">info@...</a></div>");
+                sb.Append("</td>");
+                sb.Append("</tr>");
+                sb.Append("</table>");
 
+                // CLOSING TAGS
+                sb.Append("</td>");
+                sb.Append("</tr>");
+                sb.Append("</table>");
+                sb.Append("</body>");
+                sb.Append("</html>");
 
-                // Table 
-                htmlFrame += "<table style='overflow:hidden;' width='575' cellspacing='0' cellpadding='0' border='0'>";
-                htmlFrame += "<tr>";
-                htmlFrame += "<td class='colorMuted' style='font-size:11px; padding:2rem;'>";
-                htmlFrame += "<strong>Mit freundlichen Gruessen</strong>";
-                htmlFrame += "<div>...</div>";
-                htmlFrame += "<div>...</div>";
-                htmlFrame += "<div>...</div>";
-                htmlFrame += "<div>Mail: <a href = 'mailto:info@...?subject=Info'> info@...</a></div>";
-                htmlFrame += "</td>";
-                htmlFrame += "</tr>";
-                htmlFrame += "</table>";
-
-                // Frame 
-                htmlFrame += "</td>";
-                htmlFrame += "</tr>";
-                htmlFrame += "</table>";
-
-                // Body 
-                htmlFrame += "</body>";
-                htmlFrame += "</html>";
-
-
-                return htmlFrame;
+                return sb.ToString();
 
             }
             catch (Exception ex)
@@ -463,7 +303,7 @@ namespace theInfrastructure
     {
         // Mailkit 
         public static async Task SendSmtpMailKitAsync(string to, string topic, string message, EMailType mailtype,
-                    SMTPConfiguration config, string filename = "", string from = "", string template = "mail",
+                    SMTPConfiguration config, string filename = "",  string template = "mail",
                         string link = "", string code = "", string inlineTitle = "",
                             List<MailFileAttachment> attachments = null, Guid userGUID = default)
         {
@@ -471,8 +311,11 @@ namespace theInfrastructure
             if (config == null || !config.IsEMailActive || string.IsNullOrWhiteSpace(to) || !to.Contains("@"))
                 return;
 
-            if (string.IsNullOrEmpty(config.Server) || string.IsNullOrEmpty(config.Port) || !int.TryParse(config.Port, out int port))
+            if (config.IsValid() == false)
                 return;
+
+            // Sender 
+            string from = config.User;
 
             // Mail-Inhalt generieren
             string innerHTML = GetHtmlByMailType(topic, message, mailtype, link, code);
@@ -533,7 +376,7 @@ namespace theInfrastructure
                 email.Body = builder.ToMessageBody();
 
                 // Versand-Logik via MailKit
-                await ExecuteSendAsync(config, port, email);
+                await ExecuteSendAsync(config, email);
             }
             catch (Exception ex)
             {
@@ -541,16 +384,16 @@ namespace theInfrastructure
             }
         }
 
-        private static async Task ExecuteSendAsync(SMTPConfiguration config, int port, MimeMessage message)
+        private static async Task ExecuteSendAsync(SMTPConfiguration config, MimeMessage message)
         {
             try
             {
-                await SendWithPortAsync(config, port, message);
+                await SendWithPortAsync(config, config.Port.ToSecureInt(), message);
             }
             catch
             {
                 // Fallback-Port versuchen (z. B. 465 statt 587 oder umgekehrt)
-                int fallbackPort = (port == 587) ? 465 : 587;
+                int fallbackPort = (config.Port.ToSecureInt() == 587) ? 465 : 587;
                 await SendWithPortAsync(config, fallbackPort, message);
             }
         }
@@ -565,7 +408,7 @@ namespace theInfrastructure
             {
                 socketOptions = SecureSocketOptions.None;
             }
-            else if (port == 465)
+            else if (config.Port.ToSecureInt() == 465)
             {
                 socketOptions = SecureSocketOptions.SslOnConnect;
             }
@@ -575,7 +418,7 @@ namespace theInfrastructure
             }
 
             // Verbindung aufbauen
-            await client.ConnectAsync(config.Server, port, socketOptions);
+            await client.ConnectAsync(config.Server, config.Port.ToSecureInt(), socketOptions);
 
             // Authentifizieren (falls Anmeldedaten vorhanden sind)
             if (!string.IsNullOrEmpty(config.User) && !string.IsNullOrEmpty(config.Password))

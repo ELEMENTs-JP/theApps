@@ -18,35 +18,47 @@
                 <h3 class="h3 w-100">Funktionalität</h3>
             </div>
 
-            <CheckBox Label="E-Mail aktiv" 
-                     Value="@sec.Mail.IsEMailActive.ToSecureString()"
-                     ValueChanged="@(e => { sec.Mail.IsEMailActive = e.ToSecureBool();
-                             sec.Mail.Save(); })" />
+            <CheckBox Label="E-Mail aktiv"
+                      Value="@sec.Mail.IsEMailActive.ToSecureString()"
+                      ValueChanged="@(e =>
+                                  {
+                                      sec.Mail.IsEMailActive = e.ToSecureBool();
+                                      sec.Mail.Save();
+                                  })" />
 
             <div class="my-3"></div>
 
-            <CheckBox Label="SSL" 
-                     Value="@sec.Mail.SSL.ToSecureString()"
-                     ValueChanged="@(e => { sec.Mail.SSL = e.ToSecureBool();
-                             sec.Mail.Save();  })" />
+            <CheckBox Label="SSL"
+                      Value="@sec.Mail.SSL.ToSecureString()"
+                      ValueChanged="@(e =>
+                                  {
+                                      sec.Mail.SSL = e.ToSecureBool();
+                                      sec.Mail.Save();
+                                  })" />
         </div>
         <div class="col-12 col-md-12 col-lg-4 p-2">
 
-              <div class="border-bottom pb-2 mb-2">
+            <div class="border-bottom pb-2 mb-2">
                 <h3 class="h3 w-100">Server</h3>
             </div>
 
             <TextBox Label="Server" Type="FieldTyp.Text"
                      Value="@sec.Mail.Server.ToSecureString()"
-                     ValueChanged="@(e => { sec.Mail.Server = e.ToSecureString();
-                     sec.Mail.Save();  })" />
+                     ValueChanged="@(e =>
+                                 {
+                                     sec.Mail.Server = e.ToSecureString();
+                                     sec.Mail.Save();
+                                 })" />
 
             <div class="my-3"></div>
 
             <TextBox Label="Port" Type="FieldTyp.Text"
                      Value="@sec.Mail.Port.ToSecureString()"
-                     ValueChanged="@(e => { sec.Mail.Port = e.ToSecureString();
-                     sec.Mail.Save(); })" />
+                     ValueChanged="@(e =>
+                                 {
+                                     sec.Mail.Port = e.ToSecureString();
+                                     sec.Mail.Save();
+                                 })" />
 
          
         </div>
@@ -57,21 +69,50 @@
 
             <TextBox Label="User" Type="FieldTyp.Text"
                      Value="@sec.Mail.User.ToSecureString()"
-                     ValueChanged="@(e => { sec.Mail.User = e.ToSecureString();
-                                     sec.Mail.Save(); })" />
+                     ValueChanged="@(e =>
+                                 {
+                                     sec.Mail.User = e.ToSecureString();
+                                     sec.Mail.Save();
+                                 })" />
 
             <div class="my-3"></div>
 
-            <TextBox Label="Password" Type="FieldTyp.Text"
+            <TextBox Label="Password" Type="FieldTyp.Password"
                      Value="@sec.Mail.Password.ToSecureString()"
-                     ValueChanged="@(e => {  sec.Mail.Password = e.ToSecureString();
-                                     sec.Mail.Save(); })" />
+                     ValueChanged="@(e =>
+                                 {
+                                     sec.Mail.Password = e.ToSecureString();
+                                     sec.Mail.Save();
+                                 })" />
 
         </div>
-    
+
+        @if (sec.Mail.IsValid())
+        {
+            <div class="col-12 p-2">
+                <div class="d-inline-flex">
+                    <button type="button" class="btn btn-sm btn-primary"
+                            @onclick="SendTestMail">
+                        Test E-Mail senden...
+                    </button>
+                </div>
+            </div>
+        }
     </div>
 </div>
 
 @code {
 
+    private async void SendTestMail()
+    {
+        // Configuration 
+        if (sec.Mail.IsValid())
+        {
+            // Mail
+            string mail = "info@theSTRIDEsPath.com";
+            string topic = "Testmail";
+            string msg = "Testmail";
+            await Helper.SendSmtpMailKitAsync(mail, topic, msg, EMailType.NULL, sec.Mail);
+        }
+    }
 }
