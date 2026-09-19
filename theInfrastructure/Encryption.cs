@@ -7,6 +7,9 @@ namespace theInfrastructure
 {
     public class Encryption
     {
+        // TODO: Make password and salt secure !!! 
+        // this is an uncomplete solution, but it is a start to make it more secure. 
+        // yes, we know this is unsecure, but we need to find a better solution. 
         static string Password = "UseOrInjectSecurePassword123!hereAndFindaBetterSolution";
         static string Salt = "UseOrInjectSecureHash321#alsoHereAndFindaBetterSolution";
 
