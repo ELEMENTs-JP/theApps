@@ -1,0 +1,40 @@
+﻿@inject IAppService app
+@inject ILocalizationService loc
+@inject NavigationManager nm
+
+<div class="border rounded-2 bg-surface p-2 @CSS">
+    <div class="border-bottom py-1">
+        <strong>@loc.GetLabel("Anwendungen", "Apps")</strong>
+    </div>
+    <div class="py-1 overflow-y-auto" style="max-height:15rem;">
+        
+        @foreach (IApp _app in Apps)
+        {
+            <div class="d-flex gap-1 p-1 hover">
+                <div class="flex-fill fw-bold hover pointer rounded-2"
+                     @onclick="@( e => { nm.NavToApp(_app.Name); })">
+                    @_app.ToString()
+                </div>
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+@code {
+
+    List<IApp> Apps { get; set; } = new();
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Apps = app.AllApps.Where(se => se.IsActive == true && se.IsNavigation == true).ToList();
+    }
+
+}

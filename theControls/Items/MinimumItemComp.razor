@@ -1,0 +1,33 @@
+﻿@inject ISqlDatabaseService sql
+
+@if (Item != null && ItemType != null)
+{
+    <div class="border rounded-2 p-2 px-3 bg-surface">
+        <div class="small text-muted">@Item.ItemType</div>
+        <h1 class="h1">@Item.Title</h1>
+        @if (!string.IsNullOrEmpty(Item.Description()))
+        {
+            <div class="small text-muted">@Item.Description()</div>
+        }
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+    private IItemType ItemType { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (Item != null)
+        {
+            ItemType = await new Factory(sql).BuildItemType(Item.ItemType);
+        }
+    }
+
+}

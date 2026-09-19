@@ -42,6 +42,13 @@ namespace theInfrastructure
             set { _page = value; OnPropertyChanged(); }
         }
 
+        private IDTO _item = null;
+        public IDTO Item
+        {
+            get { return _item; }
+            set { _item = value; OnPropertyChanged(); }
+        }
+
         // CTR 
         public AppService()
         {
@@ -106,16 +113,17 @@ namespace theInfrastructure
                 App = AllApps.FirstOrDefault(se => se.Name == _app.Name);
             }
 
+            this.Item = null;
             this.ItemType = null;
             this.Page = null;
             await Task.CompletedTask;
         }
         public async Task SetItemType(IItemType it)
         {
+            this.Page = null;
+
             // ItemType 
             this.ItemType = it;
-
-            this.Page = null;
 
             await AppByItemType(it);
         }

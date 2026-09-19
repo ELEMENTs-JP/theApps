@@ -14,9 +14,9 @@
 
 @if (ItemType != null)
 {
-    <div class="@FrameCSS pointer @app.Configuration.GetRoundedCSS() overflow-hidden bg-surface text-secondary position-relative mx-2"
+    <div class="@CSS pointer @app.Configuration.GetRoundedCSS() overflow-hidden bg-surface text-secondary position-relative mx-2"
          style="@( (SizeMode == FileInputSizeMode.Maximized 
-                        ? " border: 2px dashed #999 !important; " 
+                        ? " border: 2px dashed #777 !important; " 
                         : " border: 1px dashed #555 !important; " ) + " " + InternalStyle )">
 
         @if (isLoading)
@@ -31,11 +31,14 @@
         }
         else
         {
-            <div class="position-relative" style="@( $"min-width:{Width}px; min-height:{Height}px;" )">
-                <div class="p-2 position-absolute top-50 start-50 translate-middle" >
-                    <SymbolIcon Symbol="Icon.File" Width="@Width" Height="@Height" 
-                                Style="@( (SizeMode == FileInputSizeMode.Maximized ? " margin-top:5rem; " : " margin-top:0px; " ) )"
-                        CSS="@( (SizeMode == FileInputSizeMode.Maximized ? "  " : " " ) )" />
+            <div class="position-relative" style="@($"min-width:{Width}px; min-height:{Height}px;")">
+                <div class="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center">
+                    <SymbolIcon Symbol="Icon.File" Height="@Height" Width="@Width" Style="" />
+
+                    @if (SizeMode == FileInputSizeMode.Maximized)
+                    {
+                        <span class="small text-muted">Dateien hier ablegen...</span>    
+                    }
                 </div>
             </div>
         }
@@ -73,7 +76,7 @@
     public FileInputSizeMode SizeMode { get; set; } = FileInputSizeMode.Fixed;
 
     [Parameter]
-    public string FrameCSS { get; set; } = "";
+    public string CSS { get; set; } = "";
 
     [Parameter]
     public string ControlCSS { get; set; } = "form-control";
@@ -93,10 +96,10 @@
     private string InternalStyle { get; set; } = " width:36px !important; height:28px !important; ";
 
     [Parameter]
-    public int Width { get; set; } = 24;
+    public int Width { get; set; } = 12;
 
     [Parameter]
-    public int Height { get; set; } = 24;
+    public int Height { get; set; } = 12;
 
 
     protected override async Task OnInitializedAsync()

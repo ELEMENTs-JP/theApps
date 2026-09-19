@@ -80,6 +80,7 @@ namespace theInfrastructure
         List<IDTO> AllPages { get; set; }
         IItemType ItemType { get; set; }
         IDTO Page { get; set; }
+        IDTO Item { get; set; }
         Task SetApp(IApp? app);
         Task SetItemType(IItemType it);
         Task SetPage(IDTO page);
@@ -87,7 +88,7 @@ namespace theInfrastructure
         Task<IApp?> AppByItemType(IItemType? it);
         Task<IApp?> AppByPage(IDTO? page);
         LayoutConfiguration Configuration { get; set; }
-
+        event PropertyChangedEventHandler PropertyChanged;
 
     }
     public interface ISqlDatabaseService
@@ -176,6 +177,7 @@ namespace theInfrastructure
         string this[string propertyName] { get; set; }
         string? RelationType { get; set; }
         Metadata Metadata { get; set; }
+        string Description();
     }
     public interface IRelationDTO
     {

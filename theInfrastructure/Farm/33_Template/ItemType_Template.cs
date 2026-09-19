@@ -19,6 +19,7 @@ namespace theInfrastructure
             this.InSubNavigation = dto["InSubNavigation"].ToSecureBool();
             this.Typ = dto["ItemTypeTyp"].ToSecureString().ToEnumOrDefault<ItemTypeTyp>(ItemTypeTyp.Item);
             this.Description = dto["Description"].ToSecureString();
+            this.AppItemType = dto["AppItemType"].ToSecureBool();
 
             this.Order = dto["Order"].ToSecureInt();
         }

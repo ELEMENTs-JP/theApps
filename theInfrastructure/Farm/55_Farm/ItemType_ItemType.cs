@@ -40,9 +40,19 @@ namespace theInfrastructure
                 Description = "Legt die Gruppe des ItemTyp fest.",
                 Typ = FieldTyp.Text,
                 Column = "Group",
-                CSS = " col-3 "
+                CSS = " col-6 "
+            });
+            Fields.Add(new Field()
+            {
+                Title = "Typ",
+                Description = "Legt den Typ des ItemType fest.",
+                Typ = FieldTyp.ItemTypeTyp,
+                Column = "ItemTypeTyp",
+                CSS = " col-6 "
             });
 
+
+            Fields.Add(new Field() { Title = "Navigation", Typ = FieldTyp.HR });
             Fields.Add(new Field()
             {
                 Title = "Order",
@@ -50,27 +60,26 @@ namespace theInfrastructure
                 Typ = FieldTyp.Integer,
                 DefaultValue = "1",
                 Column = "Order",
-                CSS = " col-3 "
+                CSS = " col-4 "
             });
-            
-
             Fields.Add(new Field()
             {
                 Title = "Sub Navigation",
                 Description = "Legt fest ob dieser ItemType in der Subnavigation angezeigt wird.",
                 Typ = FieldTyp.CheckBox,
                 Column = "InSubNavigation",
-                CSS = " col-3 "
+                CSS = " col-4 "
             });
-
+            // AppItemType 
             Fields.Add(new Field()
             {
-                Title = "Typ",
-                Description = "Legt den Typ des ItemType fest.",
-                Typ = FieldTyp.ItemTypeTyp,
-                Column = "ItemTypeTyp",
-                CSS = " col-3 "
+                Title = "App ItemType",
+                Description = "Legt den App relevanten ItemType fest.",
+                Typ = FieldTyp.CheckBox,
+                Column = "AppItemType",
+                CSS = " col-4 "
             });
+
 
             Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });
             Fields.Add(new Field() { Title = "Description", Typ = FieldTyp.TextArea, Column = "Description", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });

@@ -48,10 +48,13 @@
         </Content>
         <Bottom>
 
-            @if (this.ItemType.Typ == ItemTypeTyp.File)
+            @if (this.ItemType.Typ == ItemTypeTyp.File ||
+                    this.ItemType.Typ == ItemTypeTyp.Audio ||
+                    this.ItemType.Typ == ItemTypeTyp.Image ||
+                    this.ItemType.Typ == ItemTypeTyp.Video)
             { 
-                <FileUploadComp ItemType="@this.ItemType" 
-                    SizeMode="FileInputBox.FileInputSizeMode.Maximized" Height="128"
+                <FileUploadComp ItemType="@this.ItemType" CSS="py-4"
+                    SizeMode="FileInputBox.FileInputSizeMode.Maximized" Height="48" Width="48"
                         OnFileUploaded="@( async e => { await OnCreate.InvokeAsync(e); })"
                         RelatedItem="@RelatedItem" Association="@this.Association" />
             }

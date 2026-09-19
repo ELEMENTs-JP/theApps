@@ -10,11 +10,14 @@
     @if (ItemType != null)
     {
         <FileInputBox ItemType="@ItemType" OnFileUploaded="OnFileUpload" 
-                  SizeMode="@SizeMode" Width="@Width" Height="@Height" />
+                  SizeMode="@SizeMode" Width="@Width" Height="@Height" CSS="@CSS" />
     }
 }
 
 @code {
+
+    [Parameter]
+    public string CSS { get; set; } = "";
 
     [Parameter]
     public IItemType ItemType { get; set; }

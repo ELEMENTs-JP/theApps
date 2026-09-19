@@ -98,6 +98,22 @@ namespace theDatabase
         [NotMapped]
         public string? RelationType { get; set; } = string.Empty; // IRelationDTO 
 
-
+        public string Description()
+        {
+            string description = this["Description"].ToSecureString();
+            if (string.IsNullOrEmpty(description))
+            {
+                description = this["Content"].ToSecureString();
+            }
+            if (string.IsNullOrEmpty(description))
+            {
+                description = this["Beschreibung"].ToSecureString();
+            }
+            if (string.IsNullOrEmpty(description))
+            {
+                description = this.Content.ToSecureString();
+            }
+            return description;
+        }
     }
 }

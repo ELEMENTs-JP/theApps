@@ -48,5 +48,19 @@ namespace theInfrastructure
                 }
             }
         }
+
+        public string Description()
+        {
+            string description = this["Description"].ToSecureString();
+            if (string.IsNullOrEmpty(description))
+            {
+                description = this["Content"].ToSecureString();
+            }
+            if (string.IsNullOrEmpty(description))
+            {
+                description = this.Content.ToSecureString();
+            }
+            return description;
+        }
     }
 }

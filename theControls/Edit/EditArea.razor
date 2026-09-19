@@ -83,7 +83,10 @@
 
             @if (hasUpdatePermission == false)
             {
-                <small class="text-muted small">Eingeschränkte Berechtigungen</small>    
+                <div class="d-inline-flex align-items-center">
+                  <div class="bg-danger rounded-circle me-2" style="width: 12px; height: 12px; border:1px solid #fff; flex-shrink: 0;"></div>
+                  <small class="text-muted small">Berechtigungen aktiv</small>
+                </div>
             }
 
         </Bottom>

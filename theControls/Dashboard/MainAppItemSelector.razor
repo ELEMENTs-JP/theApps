@@ -1,0 +1,123 @@
+﻿@inject IAppService app
+@inject ISqlDatabaseService sql
+@inject NavigationManager nm
+
+@if (App != null && ItemType != null)
+{
+
+    @if (app.Item == null)
+    {
+        @* --- App DROP DOWN --- *@
+        <div class="w-100 dropdown-center my-1">
+            <div class="@(" p-2 hover rounded-2 pointer align-items-center ")"
+            data-bs-toggle="dropdown">
+                <div class="d-flex">
+                    <div class="px-1">
+                        <SymbolIcon Symbol="Icon.Apps" />
+                    </div>
+                    <div class="flex-fill fw-bold px-1">
+                        @ItemType.Name
+                    </div>
+                </div>
+                <div class="text-muted small ps-4 ms-1">
+                    @ItemType.Name wählen...
+                </div>
+            </div>
+
+            <div class="@( "dropdown-menu w-100")">
+
+                <div class="d-flex align-items-center border-bottom">
+                    <div class="p-2">
+                        <SymbolIcon Symbol="Icon.Apps" />
+                    </div>
+                    <div class="flex-fill p-2 fw-bold">
+                        @ItemType.Name
+                    </div>
+                </div>
+
+                @* --- App List --- *@
+                <div class="overflow-y-auto" style="max-height:40rem;">
+                    @foreach (IDTO item in Items)
+                    {
+                        <div class="d-flex rounded-2 hover pointer p-1 px-2" 
+                             @onclick="@( async e => { await SetMainItem(item); })">
+                            <div class=" p-1 px-2 fw-bold flex-fill">
+                                @item.Title
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+
+        <div class="small fw-bold text-muted p-1 px-2">
+            @ItemType.Name
+        </div>
+
+        <div class="d-flex p-1 selected mx-2 align-items-center" 
+                style="border-left:3px solid #fff;">
+            <div class="p-1 px-2 fw-bold flex-fill hover pointer rounded-2"
+                 @onclick="@( e => { nm.NavigateTo($"/Main/{app.Item.ItemType}"); })">
+                @app.Item.Title
+            </div>
+            <div class="rounded-2 hover pointer p-1 px-2 small text-muted" 
+                 @onclick="ClearMainItem">
+                <SymbolIcon Symbol="Icon.Delete" />
+            </div>
+        </div>
+    }
+
+}
+
+@code {
+
+    [Parameter]
+    public IApp App { get; set; }
+
+    private IItemType? ItemType { get; set; }
+
+    private List<IDTO> Items { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (App == null)
+            return;
+
+        List<IItemType> its = await App.GetItemTypes(AssociationTyp.Children);
+        ItemType = its.FirstOrDefault(se => se.AppItemType == true);
+
+        if (ItemType != null)
+        {
+            IQueryParameter qp = QueryParameter.Default(string.Empty);
+            qp.MasterGUID = sql.MasterGUID;
+            qp.ItemType = ItemType.Name;
+            IQueryResult result = await sql.GetItems(qp);
+            Items = result.Items;
+        }
+    }
+
+    private async Task SetMainItem(IDTO item)
+    {
+        app.Item = item;
+        nm.NavigateTo($"/Main/{item.ItemType}");
+    }
+    private async Task ClearMainItem()
+    {
+        app.Item = null;
+        if (App != null)
+        {
+            nm.NavToApp(App.Name);
+        }
+    }
+
+}

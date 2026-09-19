@@ -1,0 +1,68 @@
+﻿@page "/Main/{ItemType}"
+@using System.ComponentModel
+
+@inject ISqlDatabaseService sql
+@inject IAppService apps
+@implements IAsyncDisposable
+
+<PageTitle>the App | Main Item</PageTitle>
+
+@if (apps.App != null && apps.Item != null)
+{
+    <div class="container-flex">
+
+        <ControlHeader PreTitle="Item" Title="@apps.Item.Title" PostTitle="@apps.Item.ItemType" Border="true" />
+
+        <div class="row g-0">
+            <div class="col-7 p-2">
+                <MinimumItemComp Item="@apps.Item" />
+            </div>
+            <div class="col-5 p-2">
+
+            </div>
+        </div>
+
+    </div>
+}
+else
+{
+<div class="container p-5">
+    <h1 class="h1">Bitte wählen Sie einen Haupteintrag.</h1>
+</div>    
+}
+
+
+@code {
+
+    [Parameter]
+    public string ItemType { get; set; } = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        apps.PropertyChanged += AppService_PropertyChanged;
+    }
+
+    // Property Changed
+    private void AppService_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "Item")
+        {
+            this.StateHasChanged();
+        }
+    }
+
+    // Dispose
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            apps.PropertyChanged -= AppService_PropertyChanged;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+}

@@ -19,10 +19,11 @@ namespace theInfrastructure
         bool IsNavigation { get; set; }
         bool InSubNavigation { get; set; }
         bool ShowInTaskBarNavigation { get; set; }
+        bool AppItemType { get; set; }
         int Order { get; set; }
 
         // ItemType 
-        public Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association);
+        Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association);
 
         // Events 
         Task<IDTO> OnCreateItem(IItemEventArgs args);
@@ -37,8 +38,11 @@ namespace theInfrastructure
 
 
         // Fields 
-        public Task<List<IField>> GetFields(string view = "");
-        public Task<string> GetRelevantPropertyName(RelevantPropertyType typ = RelevantPropertyType.Date);
+        Task<List<IField>> GetFields(string view = "");
+        Task<string> GetRelevantPropertyName(RelevantPropertyType typ = RelevantPropertyType.Date);
+
+
+        
     }
     public class  BaseItemType : IItemType
     {
@@ -50,6 +54,7 @@ namespace theInfrastructure
         public bool IsNavigation { get; set; } = true; // In Hauptnavigation anzeigen 
         public bool InSubNavigation { get; set; } = false; // In untergeordneter Navigation anzeigen 
         public bool ShowInTaskBarNavigation { get; set; } = true; // In der Taskbar unten rechts anzeigen 
+        public bool AppItemType { get; set; } = false; // Definiert den HauptitemType der App für die Dashboard Selektion 
         public int Order { get; set; } = 0;
         
         public ItemTypeTyp Typ { get; set; } = ItemTypeTyp.Item;
@@ -382,6 +387,7 @@ namespace theInfrastructure
         {
             return ((string.IsNullOrEmpty(Title)) ? Name : Title);
         }
+
     }
 
 
