@@ -10,7 +10,7 @@ namespace theInfrastructure
     {
         private static readonly HashSet<string> PersonalizedItemTypes = new(StringComparer.Ordinal)
         {
-            "Task", "Note"
+            "Task", "Note", "Appointment", "Reminder"
         };
 
 

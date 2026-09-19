@@ -62,10 +62,8 @@
 
     @if (Bottom.HasContent())
     {
-        <div id="@( ID + "bottom")" class="row g-0 px-1 @BottomBorderCSS">
-            <div class="col-12 p-2">
-                @Bottom
-            </div>
+        <div id="@( ID + "bottom")" class="d-flex justify-content-between p-2 @BottomBorderCSS">
+            @Bottom
         </div>
     }
 

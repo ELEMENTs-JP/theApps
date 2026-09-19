@@ -5,6 +5,7 @@
 @inject IMessagingBusService msg
 @inject ISearchService search
 @inject INotificationService notify
+@inject ILocalizationService loc
 
 @inject NavigationManager nm
 
@@ -57,6 +58,17 @@
             </Content>
             <Bottom>
                 <AddFast ItemType="@ItemType" OnItemAdded="@( async e => { await Context.Search(); })" />
+
+                @if (IsPersonalizedView)
+                {
+                    <div class="d-inline-flex align-items-center">
+                        <div class="bg-secondary rounded-circle me-2" style="width: 8px; height: 8px; border:1px solid #fff; flex-shrink: 0;"></div>
+                        <small class="text-muted small me-2">
+                            @loc.GetLabel("Personalisierte Ansicht", "Personalized View")
+                            </small>
+                    </div>
+                }
+
             </Bottom>
         </Frame>
     }
@@ -82,6 +94,7 @@
     private string Title { get; set; } = string.Empty;
     private bool IsSecure { get; set; } = false;
     private string View { get; set; } = "Monat";
+    private bool IsPersonalizedView { get; set; } = false;
 
     private IQueryContext Context { get; set; }
     private List<IField> Fields { get; set; } = new();
@@ -90,6 +103,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (ItemType == null)
+            return;
+
         dateColumn = await ItemType.GetRelevantPropertyName(RelevantPropertyType.Date);
 
         if (Context == null)
@@ -104,8 +120,13 @@
         if (ItemType == null)
             return;
 
+        // Personalisierte Ansicht 
+        IsPersonalizedView = ItemType.IsPersonalizedItemType();
+
+        // Felder 
         Fields = await ItemType.GetFields();
 
+        // ItemType 
         Context.ItemType = ItemType;
 
         await Context.Search();
@@ -128,38 +149,38 @@
     }
 
     // Helper
-    private async Task CreateRedirect()
-    {
-        IQueryParameter qp = QueryParameter.Default("neuer Termin");
-        qp.ItemType = "Appointment";
-        qp.MasterGUID = sql.MasterGUID;
+    // private async Task CreateRedirect()
+    // {
+    //     IQueryParameter qp = QueryParameter.Default("neuer Termin");
+    //     qp.ItemType = "Appointment";
+    //     qp.MasterGUID = sql.MasterGUID;
 
-        await sql.Create(qp);
+    //     await sql.Create(qp);
 
-        IQueryResult result = await sql.GetItem(qp);
-        IDTO newItem = result.Items.FirstOrDefault();
-        if (newItem != null)
-        {
-            nm.NavToItem(qp.ItemType, qp.GUID);
+    //     IQueryResult result = await sql.GetItem(qp);
+    //     IDTO newItem = result.Items.FirstOrDefault();
+    //     if (newItem != null)
+    //     {
+    //         nm.NavToItem(qp.ItemType, qp.GUID);
 
-            if (sec.Configuration.EventHandler == true)
-            {
-                // Event
-                IItemEventArgs args = new ItemEventArgs(newItem, null, sql, sec, app);
+    //         if (sec.Configuration.EventHandler == true)
+    //         {
+    //             // Event
+    //             IItemEventArgs args = new ItemEventArgs(newItem, null, sql, sec, app);
 
-                // Create Event
-                IItemType it = await new Factory(sql).BuildItemType(qp.ItemType);
-                newItem = await it.OnCreateItem(args);
-            }
+    //             // Create Event
+    //             IItemType it = await new Factory(sql).BuildItemType(qp.ItemType);
+    //             newItem = await it.OnCreateItem(args);
+    //         }
 
-            // Message
-            AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
-            msg.Publish(am);
+    //         // Message
+    //         AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
+    //         msg.Publish(am);
 
-            // Search
-            await search.Init();
-        }
-    }
+    //         // Search
+    //         await search.Init();
+    //     }
+    // }
     private async Task ItemDelete(IDTO dto)
     {
         try
