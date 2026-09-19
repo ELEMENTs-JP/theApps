@@ -3,13 +3,12 @@
 @inject ISecurityService sec
 @inject IMessagingBusService msg
 @inject ISqlDatabaseService sql
-
+@inject IAppService appService
 
 
 <div class="border-bottom pb-2 mb-2">
-    <h1 class="h1 w-100">Features</h1>
+    <h1 class="h1 w-100">Integrated Apps</h1>
 </div>
-
 
 @if (loc.Configuration != null)
 {
@@ -85,6 +84,7 @@
         }
         return null;
     }
+
     private async Task CreateDeleteApp(ITemplateApp app, bool value)
     {
         if (app != null)
@@ -145,19 +145,35 @@
                         qp.MasterGUID = sql.MasterGUID;
                         qp.ItemType = "App";
 
-                        // App
+                        // App 
                         await sql.Create(qp);
 
-                        // ItemTypes
-                        await CreateItemTypesByApp(app);
+                        IQueryResult appResult = await sql.GetItem(qp);
+                        IDTO newApp = appResult.Items.FirstOrDefault();
+                        if (newApp != null)
+                        {
+                            // App aktiv schalten 
+                            newApp["IsActive"] = "true";
+
+                            // aktualisieren 
+                            await sql.Update(newApp);
+
+                            // ItemTypes 
+                            await CreateItemTypesByApp(app);
+                        }
+
                     }
                 }
             }
+
+            // Apps 
+            appService.Init();
+
+            msg.Publish(new AppMessage("AppList", BusAction.Refresh));
         }
 
         await Init();
     }
-
     private async Task DeleteAllItemTypesByApp(ITemplateApp app)
     {
         List<ItemTypeInfo> itemtypes = app.GetItemTypes();
@@ -205,10 +221,21 @@
                     qp.MasterGUID = sql.MasterGUID;
                     qp.ItemType = "ItemType";
                     IQueryResult result = await sql.Create(qp);
+
+                    result = await sql.GetItem(qp);
+                    IDTO newItemType = result.Items.FirstOrDefault();
+                    if (newItemType != null)
+                    {
+                        await sql.Assign(activeApp, newItemType, AssociationTyp.Children);    
+                    }
                 }
             }
         }
+        
+
     }
+    
+    
     private async Task PushFeatureUpdate()
     {
         msg.Publish(new AppMessage("Feature", BusAction.Refresh));

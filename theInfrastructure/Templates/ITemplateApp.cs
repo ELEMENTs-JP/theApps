@@ -78,8 +78,24 @@ namespace theInfrastructure
             {
                 new TApp_BusinessModeler(),
                 new TApp_Strategyzer(),
+                new TApp_BusinessDEVELOPer(),
+                
+                new TApp_OKR(),
+                new TApp_RISKler(),
+                new TApp_BUDGETer(),
+
+                new TApp_PRODUCT(),
                 new TApp_Worker(),
                 new TApp_Marketing(),
+                new TApp_CUSTOMer(),
+                
+                new TApp_SUPPORTer(),
+                new TApp_TESTer(),
+                
+                new TApp_Wiki(),
+                new TApp_DOCSTer(),
+                new TApp_PEOPLE(),
+                new TApp_TIMEr(),
             };
         }
     }

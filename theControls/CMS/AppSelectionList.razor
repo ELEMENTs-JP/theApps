@@ -1,7 +1,7 @@
-﻿
-
-@inject IAppService app
+﻿@inject IAppService app
 @inject ISecurityService sec
+@inject IMessagingBusService msg
+@implements IAsyncDisposable
 
 @foreach (string group in app.AllApps.Where(se => se.IsNavigation == true && se.IsActive == true).Select(se => se.Group).Distinct())
 {
@@ -28,6 +28,21 @@
 
     [Parameter]
     public EventCallback<IApp> OnAppSelected { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessage;
+    }
+
+    public async void OnMessage(AppMessage message)
+    {
+        if (message.Id == "AppList" && message.Action == BusAction.Refresh)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
 
     private string GetSelection(IApp _app)
     {
@@ -58,5 +73,20 @@
             return " selected ";
 
         return string.Empty;
+    }
+
+
+
+    // Dispose
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessage;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
     }
 }

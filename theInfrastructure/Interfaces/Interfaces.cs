@@ -89,6 +89,7 @@ namespace theInfrastructure
         Task<IApp?> AppByPage(IDTO? page);
         LayoutConfiguration Configuration { get; set; }
         event PropertyChangedEventHandler PropertyChanged;
+        void Init();
 
     }
     public interface ISqlDatabaseService

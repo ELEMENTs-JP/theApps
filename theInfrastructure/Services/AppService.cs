@@ -66,7 +66,7 @@ namespace theInfrastructure
             this.PropertyChanged += AppService_PropertyChanged;
         }
 
-        private async void Init()
+        public async void Init()
         {
             if (Configuration == null)
             {
