@@ -1,6 +1,9 @@
 # theApp
 The app is a business-oriented .NET Core 10 Blazor Server application (Windows build) that is generally compatible with all browsers. However, private applications can also be developed. The app is designed as an app designer.
 
+> [!IMPORTANT]
+> The software is still in an early development phase. We do not recommend using the software in production environments.
+
 <img width="1408" height="890" alt="Taskliste" src="https://github.com/user-attachments/assets/398941b1-e20b-4dbc-b4d2-8f130d18f57a" />
 
 ## Features
