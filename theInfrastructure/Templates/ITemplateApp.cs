@@ -73,6 +73,7 @@ namespace theInfrastructure
             {
                 new TApp_BusinessModeler(),
                 new TApp_Strategyzer(),
+                new TApp_Worker(),
                 new TApp_Marketing(),
             };
         }

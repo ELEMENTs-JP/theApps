@@ -4,8 +4,6 @@
 @inject IMessagingBusService msg
 @inject ISqlDatabaseService sql
 
-
-
 <div class="border-bottom pb-2 mb-2">
     <h1 class="h1 w-100">SMTP Einstellungen</h1>
 </div>
@@ -14,8 +12,13 @@
 
     <div class="row g-0 p-2">
 
-        <div class="col-12 col-md-4 col-lg-4 p-2">
-            <CheckBox Label="IsEMailActive" 
+        <div class="col-12 col-md-12 col-lg-4 p-2">
+
+            <div class="border-bottom pb-2 mb-2">
+                <h3 class="h3 w-100">Funktionalität</h3>
+            </div>
+
+            <CheckBox Label="E-Mail aktiv" 
                      Value="@sec.Mail.IsEMailActive.ToSecureString()"
                      ValueChanged="@(e => { sec.Mail.IsEMailActive = e.ToSecureBool();
                              sec.Mail.Save(); })" />
@@ -27,7 +30,11 @@
                      ValueChanged="@(e => { sec.Mail.SSL = e.ToSecureBool();
                              sec.Mail.Save();  })" />
         </div>
-         <div class="col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-12 col-md-12 col-lg-4 p-2">
+
+              <div class="border-bottom pb-2 mb-2">
+                <h3 class="h3 w-100">Server</h3>
+            </div>
 
             <TextBox Label="Server" Type="FieldTyp.Text"
                      Value="@sec.Mail.Server.ToSecureString()"
@@ -43,10 +50,10 @@
 
          
         </div>
-
-
-        <div class="col-12 col-md-4 col-lg-4 p-2">
-
+        <div class="col-12 col-md-12 col-lg-4 p-2">
+            <div class="border-bottom pb-2 mb-2">
+                <h3 class="h3 w-100">Zugang</h3>
+            </div>
 
             <TextBox Label="User" Type="FieldTyp.Text"
                      Value="@sec.Mail.User.ToSecureString()"
@@ -61,6 +68,7 @@
                                      sec.Mail.Save(); })" />
 
         </div>
+    
     </div>
 </div>
 

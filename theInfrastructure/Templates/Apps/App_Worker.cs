@@ -6,22 +6,25 @@ namespace theInfrastructure
 {
 
 
-    public class TApp_Marketing : TemplateApp, ITemplateApp
+    public class TApp_Worker : TemplateApp, ITemplateApp
     {
-        public TApp_Marketing()
+        public TApp_Worker()
         {
             
         }
 
         public override AppInfo GetApp()
         {
-            return new AppInfo("Marketing", "the MARKETING");
+            return new AppInfo("Worker", "the WORKer");
         }
         public override List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
             
-            types.Add(new ItemTypeInfo("Kampagne", "Kampagne"));
+            types.Add(new ItemTypeInfo("Project", "Project"));
+            types.Add(new ItemTypeInfo("Meilenstein", "Meilenstein"));
+            types.Add(new ItemTypeInfo("Package", "Package"));
+            types.Add(new ItemTypeInfo("Phase", "Phase"));
 
             return types;
         }
