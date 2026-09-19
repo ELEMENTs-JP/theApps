@@ -21,6 +21,23 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        public static void ReplaceByItem(this List<IDTO> items, IDTO updatedItem)
+        {
+            // Null-Checks & Überprüfung auf leere GUID
+            if (items == null || updatedItem == null || updatedItem.GUID == Guid.Empty)
+            {
+                return;
+            }
+
+            // Exakte Suche über GUID
+            int index = items.FindIndex(x => x != null && x.GUID == updatedItem.GUID);
+
+            if (index != -1)
+            {
+                items[index] = updatedItem;
+                return;
+            }
+        }
         public static DateTime RoundUpToNext15Minutes(this DateTime dt)
         {
             int delta = 15 - (dt.Minute % 15);

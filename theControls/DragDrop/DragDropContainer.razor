@@ -136,6 +136,9 @@
 
                 // Update 
                 await sql.Update(entry);
+
+                // Event 
+                await ItemDragEnd.InvokeAsync(entry);
             }
         }
 
@@ -143,11 +146,15 @@
 
         await InvokeAsync(StateHasChanged);
 
-        // Event
+        // Event 
         await DragEnd.InvokeAsync(Entries);
+        
     }
 
     [Parameter]
     public EventCallback<List<IDTO>> DragEnd { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> ItemDragEnd { get; set; }
 
 }

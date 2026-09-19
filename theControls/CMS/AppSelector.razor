@@ -183,6 +183,7 @@
                     CurrentItemTypes = await app.App.GetItemTypes(AssociationTyp.Children);
                     CurrentPages = await app.App.GetPages(AssociationTyp.Children);
                     CurrentBoards = await app.App.GetBoards(AssociationTyp.Children);
+                    CurrentBoards = CurrentBoards.Where(se => se["IsActive"].ToSecureBool() == true).ToList();
                 }
 
                 await InvokeAsync(StateHasChanged);

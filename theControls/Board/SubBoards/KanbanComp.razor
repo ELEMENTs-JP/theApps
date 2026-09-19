@@ -9,7 +9,7 @@
     <div class="row g-0">
         <div class="col-3 p-2">
             <DragDropContainer Zone="InPlanung" Title="in Planung" Entries="@Items" CSS="border rounded-2 p-2" 
-                DragEnd="@( async e => { await Init();  })" >
+                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })" >
                 <ItemTemplate Context="entry">
 
                     <ListItem @key="@entry.GUID" Item="@entry" 
@@ -21,7 +21,7 @@
         </div>
         <div class="col-3 p-2">
             <DragDropContainer Zone="InBearbeitung" Title="in Bearbeitung" Entries="@Items" CSS="border rounded-2 p-2 "
-                               DragEnd="@( async e => { await Init();  })">
+                               ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
                 <ItemTemplate Context="entry">
 
                     <ListItem @key="@entry.GUID" Item="@entry" IsSortable="true" CSS="border rounded-2 p-1 m-2"
@@ -32,7 +32,7 @@
         </div>
         <div class="col-3 p-2">
             <DragDropContainer Zone="Zurückgestellt" Title="zurückgestellt" Entries="@Items" CSS=" border rounded-2 p-2"
-                               DragEnd="@( async e => { await Init();  })">
+                               ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
                 <ItemTemplate Context="entry">
 
                     <ListItem @key="@entry.GUID" Item="@entry" IsSortable="true" CSS="border rounded-2 p-1 m-2"
@@ -43,7 +43,7 @@
         </div>
         <div class="col-3 p-2">
             <DragDropContainer Zone="Abgeschlossen" Title="abgeschlossen" Entries="@Items" CSS="border rounded-2 p-2 "
-                               DragEnd="@( async e => { await Init();  })">
+                               ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
                 <ItemTemplate Context="entry">
 
                     <ListItem @key="@entry.GUID" Item="@entry" IsSortable="true" CSS="border rounded-2 p-1 m-2"
@@ -56,7 +56,7 @@
 
     <div class="p-2">
         <DragDropContainer Zone="Default" Title="Backlog" Entries="@Items" CSS="bg-background border rounded-2 p-2 "
-                           DragEnd="@( async e => { await Init();  })">
+                           ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
             <ItemTemplate Context="entry">
 
                 <ListItem @key="@entry.GUID" Item="@entry" IsSortable="true" CSS="border rounded-2 p-1 m-2"
