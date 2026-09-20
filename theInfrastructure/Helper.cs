@@ -426,6 +426,8 @@ namespace theInfrastructure
                 Items.Add(new DTO() { ID = "Risiko Matrix", Title = "Risiko Matrix" });
                 Items.Add(new DTO() { ID = "Change Management", Title = "Change Management" });
                 Items.Add(new DTO() { ID = "Brand Positioning", Title = "Brand Positioning" });
+                Items.Add(new DTO() { ID = "Priorization", Title = "Priorization" });
+                
             }
             else if (field.Typ == FieldTyp.FieldTyp)
             {

@@ -10,21 +10,23 @@
     <table class="w-100 border-0 p-0 m-0">
         <tr>
             <td class="border-0 p-0 m-0 text-center" style="width:1.5rem;"></td>
-            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>niedrige Qualität</strong></td>
-            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>hohe Qualität</strong></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>niedrige Aufwand</strong></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>hoher Aufwand</strong></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:1.5rem;"></td>
         </tr>
         <tr>
             <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
                 style="height:18rem;">
-                <strong>hoher Preis</strong>
+                <strong>hohes Risiko</strong>
             </td>
             <td class="border-0 p-2 m-0" style="height:18rem;">
                
-                <DragCanvas TItem="IDTO" CanvasId="nQhP" GroupName="BrandPositioning" CSS="bg-surface-secondary"
-                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "nQhP").ToList() )"
+                <DragCanvas TItem="IDTO" CanvasId="AVOID" GroupName="Priorization" 
+                    CSS="bg-red" Height="320"
+                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "AVOID").ToList() )"
                             OnItemDropped="HandleItemDropped">
                     <ItemTemplate>
-                        <div class="d-flex rounded p-2 bg-yellow" style="width: 180px;">
+                        <div class="d-flex rounded p-2 bg-surface" style="width: 180px;">
                             <div class="pe-1">
                                 <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
                             </div>
@@ -36,11 +38,12 @@
             </td>
             <td class="border-0 p-2 m-0" style="height:18rem;">
              
-                <DragCanvas TItem="IDTO" CanvasId="hQhP" GroupName="BrandPositioning" CSS="bg-surface-secondary"
-                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "hQhP").ToList() )"
+                <DragCanvas TItem="IDTO" CanvasId="INVESTIGATE" GroupName="Priorization"
+                    CSS="bg-blue" Height="320"
+                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "INVESTIGATE").ToList() )"
                             OnItemDropped="HandleItemDropped">
                     <ItemTemplate>
-                        <div class="d-flex rounded p-2 bg-green" style="width: 180px;">
+                        <div class="d-flex rounded p-2 bg-surface" style="width: 180px;">
                               <div class="pe-1">
                                 <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
                             </div>
@@ -50,19 +53,24 @@
                 </DragCanvas>
 
             </td>
+            <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
+                style="height:18rem;">
+                <strong>hohe Kosten</strong>
+            </td>
         </tr>
         <tr>
             <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
                 style="height:18rem;">
-                <strong>niedriger Preis</strong>
+                <strong>niedriges Risiko</strong>
             </td>
             <td class="border-0 p-2 m-0" style="height:18rem;">
              
-                <DragCanvas TItem="IDTO" CanvasId="nQlP" GroupName="BrandPositioning" CSS="bg-surface-secondary"
-                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "nQlP").ToList() )"
+                <DragCanvas TItem="IDTO" CanvasId="CONSIDER" GroupName="Priorization"
+                    CSS="bg-orange" Height="320"
+                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "CONSIDER").ToList() )"
                             OnItemDropped="HandleItemDropped">
                     <ItemTemplate>
-                        <div class="d-flex rounded p-2 bg-red" style="width: 180px;">
+                        <div class="d-flex rounded p-2 bg-surface" style="width: 180px;">
                               <div class="pe-1">
                                 <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
                             </div>
@@ -74,11 +82,12 @@
             </td>
             <td class="border-0 p-2 m-0" style="height:18rem;">
                
-                <DragCanvas TItem="IDTO" CanvasId="hQlP" GroupName="BrandPositioning" CSS="bg-surface-secondary"
-                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "hQlP").ToList() )"
+                <DragCanvas TItem="IDTO" CanvasId="PRIORIZE" GroupName="Priorization"
+                        CSS="bg-green" Height="320"
+                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "PRIORIZE").ToList() )"
                     OnItemDropped="HandleItemDropped">
             <ItemTemplate>
-                <div class="d-flex rounded p-2 bg-orange" style="width: 180px;">
+                <div class="d-flex rounded p-2 bg-surface" style="width: 180px;">
                       <div class="pe-1">
                                 <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
                             </div>
@@ -88,12 +97,22 @@
         </DragCanvas>
 
             </td>
+            <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
+                style="height:18rem;">
+                <strong>niedrige Kosten</strong>
+            </td>
+        </tr>
+        <tr>
+            <td class="border-0 p-0 m-0 text-center" style="width:1.5rem;"></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>wenig Nutzen</strong></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>hoher Nutzen</strong></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:1.5rem;"></td>
         </tr>
     </table>
 
     <div class="p-2" style="height:11rem;">
 
-        <DragCanvas TItem="IDTO" CanvasId="Default" GroupName="BrandPositioning"
+        <DragCanvas TItem="IDTO" CanvasId="Default" GroupName="Priorization" Height="250"
                     Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "Default").ToList() )"
                     OnItemDropped="HandleItemDropped">
             <ItemTemplate>
