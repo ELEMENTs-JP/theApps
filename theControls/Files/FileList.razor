@@ -7,7 +7,8 @@
             <div class="row g-0">
 
                 <div class="@( (ItemType.Typ == ItemTypeTyp.Video) ? " col-3 p-3" : " col-2 p-3 " ) ">
-                    <FileUploadComp ItemType="@ItemType"
+                <FileUploadComp ItemType="@ItemType" 
+                        OnFileUploaded="@( async e => { await OnFileUploaded.InvokeAsync(e); })"
                                     SizeMode="FileInputBox.FileInputSizeMode.Maximized" Width="96" Height="156" />
                 </div>
 
@@ -49,6 +50,9 @@
 
     [Parameter]
     public EventCallback<IDTO> OnItemDelete { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnFileUploaded { get; set; }
 
     private async Task DeleteItem(IDTO Item)
     {

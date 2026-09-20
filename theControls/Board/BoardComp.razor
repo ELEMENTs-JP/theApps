@@ -24,6 +24,10 @@
             {
                 <KanbanComp Item="@Item" />
             }
+            else if (Typ == "Bmc")
+            {
+                <BmcComp Item="@Item" />    
+            }
 
         </Content>
     </Frame>
@@ -43,7 +47,7 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
+        
         msg.OnMessage += OnMessageDone;
     }
     protected override async Task OnParametersSetAsync()

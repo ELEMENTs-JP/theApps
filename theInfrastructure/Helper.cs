@@ -414,6 +414,7 @@ namespace theInfrastructure
             {
                 Items.Add(new DTO() { ID = "Backlog", Title = "Backlog" });
                 Items.Add(new DTO() { ID = "Kanban", Title = "Kanban" });
+                Items.Add(new DTO() { ID = "Bmc", Title = "Bmc" });
             }
             else if (field.Typ == FieldTyp.FieldTyp)
             {

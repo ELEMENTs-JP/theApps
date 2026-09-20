@@ -57,6 +57,7 @@
                             this.ItemType.Typ == ItemTypeTyp.Image)
                 {
                     <FileList ItemType="@ItemType" Matchcode="@Context.Filter.Matchcode" 
+                              OnFileUploaded="@( async e => { await Context.Search(); })"
                         Items="@Context.Items" OnItemDelete="@( async e => { await Context.Search(); })" />
                 }
 
