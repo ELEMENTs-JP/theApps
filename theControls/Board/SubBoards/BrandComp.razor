@@ -1,0 +1,238 @@
+﻿@inject IJSRuntime JS
+@inject ISqlDatabaseService sql
+@inject ISecurityService sec
+@inject IMessagingBusService msg
+@implements IAsyncDisposable
+
+@if (Item != null)
+{
+
+    <table class="w-100 border-0 p-0 m-0">
+        <tr>
+            <td class="border-0 p-0 m-0 text-center" style="width:1.5rem;"></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>niedrige Qualität</strong></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>hohe Qualität</strong></td>
+        </tr>
+        <tr>
+            <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
+                style="height:18rem;">
+                <strong>hoher Preis</strong>
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+               
+                <DragCanvas TItem="IDTO" CanvasId="nQhP" GroupName="BrandPositioning" CSS="bg-surface-secondary"
+                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "nQhP").ToList() )"
+                            OnItemDropped="HandleItemDropped">
+                    <ItemTemplate>
+                        <div class="d-flex rounded p-2 bg-yellow" style="width: 180px;">
+                            <div class="pe-1">
+                                <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
+                            </div>
+                            <div class="fw-bold flex-fill" style="font-size: 0.8rem;">@context.Data.Title</div>
+                        </div>
+                    </ItemTemplate>
+                </DragCanvas>
+
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+             
+                <DragCanvas TItem="IDTO" CanvasId="hQhP" GroupName="BrandPositioning" CSS="bg-surface-secondary"
+                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "hQhP").ToList() )"
+                            OnItemDropped="HandleItemDropped">
+                    <ItemTemplate>
+                        <div class="d-flex rounded p-2 bg-green" style="width: 180px;">
+                              <div class="pe-1">
+                                <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
+                            </div>
+                            <div class="fw-bold flex-fill" style="font-size: 0.8rem;">@context.Data.Title</div>
+                        </div>
+                    </ItemTemplate>
+                </DragCanvas>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
+                style="height:18rem;">
+                <strong>niedriger Preis</strong>
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+             
+                <DragCanvas TItem="IDTO" CanvasId="nQlP" GroupName="BrandPositioning" CSS="bg-surface-secondary"
+                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "nQlP").ToList() )"
+                            OnItemDropped="HandleItemDropped">
+                    <ItemTemplate>
+                        <div class="d-flex rounded p-2 bg-red" style="width: 180px;">
+                              <div class="pe-1">
+                                <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
+                            </div>
+                            <div class="fw-bold flex-fill" style="font-size: 0.8rem;">@context.Data.Title</div>
+                        </div>
+                    </ItemTemplate>
+                </DragCanvas>
+
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+               
+                <DragCanvas TItem="IDTO" CanvasId="hQlP" GroupName="BrandPositioning" CSS="bg-surface-secondary"
+                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "hQlP").ToList() )"
+                    OnItemDropped="HandleItemDropped">
+            <ItemTemplate>
+                <div class="d-flex rounded p-2 bg-orange" style="width: 180px;">
+                      <div class="pe-1">
+                                <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
+                            </div>
+                    <div class="fw-bold flex-fill" style="font-size: 0.8rem;">@context.Data.Title</div>
+                </div>
+            </ItemTemplate>
+        </DragCanvas>
+
+            </td>
+        </tr>
+    </table>
+
+    <div class="p-2" style="height:11rem;">
+
+        <DragCanvas TItem="IDTO" CanvasId="Default" GroupName="BrandPositioning"
+                    Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "Default").ToList() )"
+                    OnItemDropped="HandleItemDropped">
+            <ItemTemplate>
+                <div class="d-flex border rounded p-2 bg-surface" style="width: 180px;">
+                      <div class="pe-1">
+                                <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
+                            </div>
+                    <div class="fw-bold flex-fill" style="font-size: 0.8rem;">@context.Data.Title</div>
+                </div>
+            </ItemTemplate>
+        </DragCanvas>
+
+    </div>
+
+}
+
+@code {
+
+    [Parameter]
+    public IDTO Item { get; set; } // Board
+
+    private List<IDTO> Items { get; set; } = new();
+    private List<DragCanvas<IDTO>.Item<IDTO>> Entries = new();
+
+    private string ZoneParameter { get; set; } = string.Empty;
+    private string SortParameter { get; set; } = string.Empty;
+
+    // CTR
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageDone;
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (Item != null)
+        {
+            ZoneParameter = $"Zone-Board-{this.GetType().Name}-" + Item.GUID;
+            SortParameter = $"Sort-Board-{this.GetType().Name}-" + Item.GUID;
+        }
+
+        await Init();
+    }
+
+    private async Task Init()
+    {
+        // Items
+        Items.Clear();
+
+        // Item
+        if (Item == null)
+            return;
+
+        // ItemType
+        string ItemType = Item["ItemType"].ToSecureString();
+        if (string.IsNullOrEmpty(ItemType))
+            return;
+
+        // Query
+        IQueryParameter qp = QueryParameter.Default(".");
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = ItemType;
+
+        // Run
+        IQueryResult result = await sql.GetItems(qp);
+        Items = result.Items;
+
+        Entries.Clear();
+        foreach (IDTO item in Items)
+        {
+            DragCanvas<IDTO>.Item<IDTO> dto = new();
+
+            dto.Guid = item.GUID;
+            dto.Data = item;
+            dto.Left = item["Left"].ToSecureDouble();
+            dto.Top = item["Top"].ToSecureDouble();
+
+            string zone = item[ZoneParameter].ToSecureString();
+            if (string.IsNullOrEmpty(zone))
+            {
+                item[ZoneParameter] = "Default";
+            }
+
+            Entries.Add(dto);
+        }
+    }
+
+    private async Task HandleItemDropped(DragCanvas<IDTO>.DropResult<IDTO> result)
+    {
+        if (!Guid.TryParse(result.Guid, out Guid itemGuid))
+            return;
+
+        // Element aus allen Listen suchen
+        var item = Entries.FirstOrDefault(i => i.Guid == itemGuid);
+
+        if (item == null)
+            return;
+
+        // Aus bestehenden Listen entfernen
+        Entries.Remove(item);
+
+        // Neue Koordinaten zuweisen
+        item.Left = result.Left;
+        item.Top = result.Top;
+
+        item.Data["Left"] = result.Left.ToSecureString();
+        item.Data["Top"] = result.Top.ToSecureString();
+        item.Data[ZoneParameter] = result.TargetCanvasId;
+
+        await sql.Update(item.Data);
+
+        // In die Zielliste einfügen
+        Entries.Add(item);
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async void OnMessageDone(AppMessage msg)
+    {
+        if (msg.Id == "Item" && msg.Action == BusAction.Refresh)
+        {
+            // Update
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageDone;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+
+}

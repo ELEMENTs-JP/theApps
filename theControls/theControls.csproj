@@ -15,7 +15,7 @@
     <PackageReference Include="HugeRTE.Blazor" Version="1.0.0" />
     <PackageReference Include="theSTRIDEsPath.theCalendar" Version="0.26.256.1832" />
     <PackageReference Include="theSTRIDEsPath.theCharts" Version="0.26.255.1335" />
-    <PackageReference Include="theSTRIDEsPath.theInteractDragDrop" Version="0.26.263.1454" />
+    <PackageReference Include="theSTRIDEsPath.theInteractDragDrop" Version="0.26.263.1544" />
   </ItemGroup>
 
   <ItemGroup>

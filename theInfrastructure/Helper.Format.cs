@@ -533,6 +533,37 @@ namespace theInfrastructure
                 return DateTime.Now;
             }
         }
+        public static double ToSecureDouble(this object value, double defaultIfNullOrEmpty = 0.0, double defaultIfZero = 0.0)
+        {
+            try
+            {
+                if (value == null)
+                {
+                    return defaultIfNullOrEmpty;
+                }
+
+                string text = value.ToString()?.Trim();
+
+                if (string.IsNullOrEmpty(text))
+                {
+                    return defaultIfNullOrEmpty;
+                }
+
+                // Komma durch Punkt ersetzen für kulturunabhängiges Parsing (z. B. "12,34" -> "12.34")
+                text = text.Replace(',', '.');
+
+                if (double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out double result))
+                {
+                    return result == 0.0 ? defaultIfZero : result;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("FAIL : ToSecureDouble : " + ex.Message);
+            }
+
+            return defaultIfNullOrEmpty;
+        }
         public static decimal ToSecureDecimal(this object text, decimal defaultIfNullOrEmpty = 0m, decimal defaultIfZero = 0m)
         {
             try
