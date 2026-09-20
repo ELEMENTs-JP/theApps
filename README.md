@@ -6,7 +6,7 @@ The app is a business-oriented .NET Core 10 Blazor Server application (Windows b
 [![Status](https://img.shields.io/badge/Status-Draft-orange)](https://github.com/ELEMENTs-JP/theApps)
 
 
-[![Documentation](https://img.shields.io/badge/Dokumentation-GitHub%20Wiki-blue?style=for-the-badge&logo=github)]([[https://github.com/BENUTZER/REPOSITORY/wiki](https://github.com/ELEMENTs-JP/theApps/wiki/Apps)](https://github.com/ELEMENTs-JP/theApps/wiki/Apps))
+[![Documentation](https://img.shields.io/badge/Dokumentation-GitHub%20Wiki-blue?style=for-the-badge&logo=github)](https://github.com/ELEMENTs-JP/theApps/wiki)
 
 
 > [!IMPORTANT]
