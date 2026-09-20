@@ -8,10 +8,11 @@
 
 @if (Item != null)
 {
-    <Frame Border="true" >
+  
+        <Frame Border="true" ContentCSS=" p-2 overflow-x-auto " ContentStyle="min-width:0; max-width:100%;">
         <Header>
-            <ControlHeader PreTitle="Board" Title="@Item.Title" 
-                    PostTitle="@Item.ItemType"  Description="@Item.Description()"  />
+            <ControlHeader PreTitle="@Item.ItemType" Title="@Item.Title" 
+                    PostTitle="@Typ"  Description="@Item.Description()"  />
         </Header>
     
         <Content>
@@ -24,13 +25,26 @@
             {
                 <KanbanComp Item="@Item" />
             }
-            else if (Typ == "Bmc")
+            else if (Typ == "Business Model Canvas")
             {
                 <BmcComp Item="@Item" />    
+            }
+            else if (Typ == "Balanced Scorecard")
+            {
+                <BscComp Item="@Item" />
+            }
+            else if (Typ == "Moscow Priorisierung")
+            {
+                <MoscowComp Item="@Item"/>    
+            }
+            else if (Typ == "Idea Funnel")
+            {
+                <IdeaFunnelComp Item="@Item" />
             }
 
         </Content>
     </Frame>
+  
 
 }
 

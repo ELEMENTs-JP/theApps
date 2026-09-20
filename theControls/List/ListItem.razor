@@ -15,10 +15,7 @@
         @if (ShowID)
         {
             <div class="col-auto px-1 text-muted" title="@Item.GUID">
-                <ToolTip Title="ID des Datensatzes">
-                    @(Item.ID.ToSecureString())
-                </ToolTip>
-
+                @(Item.ID.ToSecureString())
             </div>
         }
 

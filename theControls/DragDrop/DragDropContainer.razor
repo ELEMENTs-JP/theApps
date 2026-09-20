@@ -6,22 +6,25 @@
 @inject ISqlDatabaseService sql
 
 
-<div class="@( drop + Zone ) DefaultDragDropZone position-relative @CSS" 
-            data-zone="@Zone" style="min-height:3rem;">
+<div class="@( drop + Zone ) DefaultDragDropZone position-relative @CSS"
+     data-zone="@Zone" style="min-height:5rem;">
 
     @if (!string.IsNullOrEmpty(this.Title))
     {
         <div class="py-2"></div>
-          <div class="position-absolute top-0 start-0 px-3 py-2">
-              <div class="fw-bold small text-secondary">
-                  @this.Title
-              </div>
-          </div>
+        <div class="position-absolute top-0 start-0 px-3 py-2">
+            <div class="fw-bold small text-secondary">
+                @this.Title
+            </div>
+        </div>
     }
 
-    @* --- Beachte: Empty == Default --- Direkt im Getter des Modell von tbl_CON_Content --- *@
-    @foreach (IDTO entry in Entries.Where(se => se["Zone"].ToValueIfNullOrEmpty(Zone) == this.Zone)
-                                    .OrderBy(se => se["Sort"].ToValueIfNullOrEmpty("1")))
+    @* --- Beachte: Empty == Default --- Direkt im Getter des Modell von tbl_CON_Content --- 
+        .ToValueIfNullOrEmpty(Zone)
+        .ToValueIfNullOrEmpty("1")
+    *@
+    @foreach (IDTO entry in Entries.Where(se => se[ZoneProperty].ToSecureString() == this.Zone)
+                                    .OrderBy(se => se[SortProperty].ToSecureInt()))
     {
         if (ItemTemplate != null)
         {
@@ -46,6 +49,18 @@
     public string Title { get; set; } = string.Empty;
 
     [Parameter]
+    public string ZoneProperty { get; set; } = "Zone";
+
+    [Parameter]
+    public string SortProperty { get; set; } = "Sort";
+
+    /// <summary>
+    /// Wird benötigt um im Mehrnutzungsszenarion die initiale Container zu definieren 
+    /// </summary>
+    [Parameter]
+    public bool IsDefaultZone { get; set; } = false;
+
+    [Parameter]
     public List<IDTO> Entries { get; set; } = new();
 
     [Parameter]
@@ -62,6 +77,12 @@
 
         Init();
 
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await PrepareItems();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -81,6 +102,35 @@
         }
     }
 
+    // Methods
+    private async Task PrepareItems()
+    {
+        if (Entries == null)
+            return;
+
+        if (IsDefaultZone)
+        {
+            foreach (IDTO item in Entries)
+            {
+                // set Zone 
+                string zone = item[ZoneProperty].ToSecureString();
+                if (string.IsNullOrEmpty(zone))
+                {
+                    item[ZoneProperty] = Zone;
+                }
+
+                // set Order 
+                string sort = item[SortProperty].ToSecureString();
+                if (string.IsNullOrEmpty(sort))
+                {
+                    item[SortProperty] = "1";
+                }
+
+                // Update 
+                await sql.Update(item);
+            }
+        }
+    }
 
     // Helper
     public void Init()
@@ -109,7 +159,7 @@
             {
                 var refMethod = await module.Value;
                 await refMethod.InvokeVoidAsync("assignMultipleSortableJS",
-                    (drop+Zone), "drag", objRef);
+                    (drop + Zone), "drag", objRef);
             }
         }
         catch (Exception ex)
@@ -131,24 +181,24 @@
 
             if (entry != null)
             {
-                entry["Sort"] = sort;
-                entry["Zone"] = zone;
+                entry[SortProperty] = sort;
+                entry[ZoneProperty] = zone;
 
-                // Update 
+                // Update
                 await sql.Update(entry);
 
-                // Event 
+                // Event
                 await ItemDragEnd.InvokeAsync(entry);
             }
         }
 
-        Entries = Entries.OrderBy(e => e["Sort"].ToSecureInt()).ToList();
+        Entries = Entries.OrderBy(e => e[SortProperty].ToSecureInt()).ToList();
 
         await InvokeAsync(StateHasChanged);
 
-        // Event 
+        // Event
         await DragEnd.InvokeAsync(Entries);
-        
+
     }
 
     [Parameter]

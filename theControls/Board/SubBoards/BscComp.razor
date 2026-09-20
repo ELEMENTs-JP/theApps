@@ -7,8 +7,8 @@
 @if (Item != null)
 {
     <div class="row g-0">
-        <div class="col-3 p-2">
-            <DragDropContainer Zone="InPlanung" Title="in Planung" Entries="@Items" CSS="border rounded-2 p-2" 
+        <div class="col-6 p-2">
+            <DragDropContainer Zone="Financial" Title="Financial" Entries="@Items" CSS="border rounded-2 p-2" 
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                 ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })" >
@@ -21,8 +21,8 @@
                 </ItemTemplate>
             </DragDropContainer>
         </div>
-        <div class="col-3 p-2">
-            <DragDropContainer Zone="InBearbeitung" Title="in Bearbeitung" Entries="@Items" CSS="border rounded-2 p-2 "
+        <div class="col-6 p-2">
+            <DragDropContainer Zone="Learning" Title="Learning & Growth" Entries="@Items" CSS="border rounded-2 p-2 "
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -34,8 +34,8 @@
                 </ItemTemplate>
             </DragDropContainer>
         </div>
-        <div class="col-3 p-2">
-            <DragDropContainer Zone="Zurückgestellt" Title="zurückgestellt" Entries="@Items" CSS=" border rounded-2 p-2"
+        <div class="col-6 p-2">
+            <DragDropContainer Zone="Customer" Title="Customer" Entries="@Items" CSS=" border rounded-2 p-2"
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -47,8 +47,8 @@
                 </ItemTemplate>
             </DragDropContainer>
         </div>
-        <div class="col-3 p-2">
-            <DragDropContainer Zone="Abgeschlossen" Title="abgeschlossen" Entries="@Items" CSS="border rounded-2 p-2 "
+        <div class="col-6 p-2">
+            <DragDropContainer Zone="Process" Title="internal Process" Entries="@Items" CSS="border rounded-2 p-2 "
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -86,7 +86,7 @@
 
     private List<IDTO> Items { get; set; } = new();
 
-        private string ZoneParameter { get; set; } = string.Empty;
+    private string ZoneParameter { get; set; } = string.Empty;
     private string SortParameter { get; set; } = string.Empty;
 
     // CTR
@@ -102,8 +102,8 @@
 
         if (Item != null)
         {
-            ZoneParameter = "Zone-Board-Kanban-" + Item.GUID;
-            SortParameter = "Sort-Board-Kanban-" + Item.GUID;
+            ZoneParameter = "Zone-Board-BSC-" + Item.GUID;
+            SortParameter = "Sort-Board-BSC-" + Item.GUID;
         }
 
         await Init();

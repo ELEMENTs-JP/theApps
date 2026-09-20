@@ -5,7 +5,7 @@
 @implements IAsyncDisposable
 
 <div id="@( ID + "frame")" class="@( " bg-surface " + CSS + "   " + GetCssClass() + " " + app.Configuration.GetRoundedCSS() )" 
-            style="@( " " + app.Configuration.GetAkzentStyle() + " " )">
+            style="@( " " + Style + " " + app.Configuration.GetAkzentStyle() + " " )">
 
     <div id="@( ID + "header")" class="d-flex flex-row @HeadBorderCSS align-items-center">
 
@@ -53,10 +53,8 @@
 
     @if (Content.HasContent())
     {
-        <div id="@( ID + "content")" class="row g-0 px-1">
-            <div class="col-12 @ContentCSS" style="@ContentStyle">
-                @Content
-            </div>
+        <div id="@( ID + "content")" class="@ContentCSS" style="@ContentStyle">
+            @Content
         </div>
     }
 
@@ -84,6 +82,9 @@
 
     [Parameter]
     public string CSS { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Style { get; set; } = string.Empty;
 
     [Parameter]
     public string ContentCSS { get; set; } = " p-2 ";

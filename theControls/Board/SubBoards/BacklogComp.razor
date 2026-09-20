@@ -7,7 +7,9 @@
 @if (Item != null)
 {
 
-    <DragDropContainer Zone="Default" Entries="@Items" CSS=" ">
+    <DragDropContainer Zone="Default" Entries="@Items" CSS=" " IsDefaultZone="true"
+                       ZoneProperty="@( $"{ZoneParameter}" )"
+                       SortProperty="@( $"{SortParameter}" )">
         <ItemTemplate Context="entry">
 
             <ListItem @key="@entry.GUID" Item="@entry" IsSortable="true"
@@ -24,6 +26,8 @@
     public IDTO Item { get; set; } // Board
 
     private List<IDTO> Items { get; set; } = new();
+    private string ZoneParameter { get; set; } = string.Empty;
+    private string SortParameter { get; set; } = string.Empty;
 
     // CTR
     protected override async Task OnInitializedAsync()
@@ -35,6 +39,12 @@
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
+
+        if (Item != null)
+        {
+            ZoneParameter = "Zone-Board-Backlog-" + Item.GUID;
+            SortParameter = "Sort-Board-Backlog-" + Item.GUID;
+        }
 
         await Init();
     }
@@ -61,6 +71,9 @@
         // Run
         IQueryResult result = await sql.GetItems(qp);
         Items = result.Items;
+
+    
+
     }
 
     public async void OnMessageDone(AppMessage msg)

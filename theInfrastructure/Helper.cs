@@ -414,7 +414,10 @@ namespace theInfrastructure
             {
                 Items.Add(new DTO() { ID = "Backlog", Title = "Backlog" });
                 Items.Add(new DTO() { ID = "Kanban", Title = "Kanban" });
-                Items.Add(new DTO() { ID = "Bmc", Title = "Bmc" });
+                Items.Add(new DTO() { ID = "Business Model Canvas", Title = "Business Model Canvas" });
+                Items.Add(new DTO() { ID = "Balanced Scorecard", Title = "Balanced Scorecard" });
+                Items.Add(new DTO() { ID = "Moscow Board", Title = "Moscow Priorisierung" });
+                Items.Add(new DTO() { ID = "Idea Funnel", Title = "Idea Funnel" });
             }
             else if (field.Typ == FieldTyp.FieldTyp)
             {
