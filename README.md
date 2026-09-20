@@ -5,6 +5,10 @@ The app is a business-oriented .NET Core 10 Blazor Server application (Windows b
 ![.NET](https://img.shields.io/badge/.NET-512BD4?style=flat&logo=dotnet&logoColor=white)
 [![Status](https://img.shields.io/badge/Status-Draft-orange)](https://github.com/ELEMENTs-JP/theApps)
 
+
+[![Documentation](https://img.shields.io/badge/Dokumentation-GitHub%20Wiki-blue?style=for-the-badge&logo=github)](https://github.com/ELEMENTs-JP/theApps/wiki)
+
+
 > [!IMPORTANT]
 > The software is still in an early stage of development. We do not recommend using the software in production environments. For example, security features are not yet fully implemented.
 
@@ -62,6 +66,11 @@ The following board types are currently in development
 - Product Cost-Value Matrix
 - etc.
 
+<img width="1712" height="1080" alt="image" src="https://github.com/user-attachments/assets/856e97a3-9035-4641-a6f2-b2057457df98" />
+
+<img width="1658" height="951" alt="image" src="https://github.com/user-attachments/assets/81603c1c-044d-4651-84ea-4f7280a3e3bc" />
+
+
 **External Libraries**
 
 We use the following external libraries:
@@ -87,6 +96,9 @@ Installation and setup are relatively simple.
 - Link the website to the directory
 - Access the website
 - Run the setup
+
+<img width="1177" alt="image" src="https://github.com/user-attachments/assets/04cf384d-65cd-4187-b6e2-1f13ef3ca7b9" />
+
 
 > [!NOTE]
 > The screenshots were taken from the development environment.
