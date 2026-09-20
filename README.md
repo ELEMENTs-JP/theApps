@@ -90,6 +90,9 @@ Installation and setup are relatively simple.
 - Access the website
 - Run the setup
 
+<img width="1177" alt="image" src="https://github.com/user-attachments/assets/04cf384d-65cd-4187-b6e2-1f13ef3ca7b9" />
+
+
 > [!NOTE]
 > The screenshots were taken from the development environment.
 > The people shown (e.g., avatar images) were generated using AI.
