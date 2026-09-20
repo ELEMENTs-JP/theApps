@@ -89,43 +89,7 @@ namespace theInfrastructure
             )
             .ToList();
         }
-        public async Task<List<IDTO>> SearchObsolete(string matchcode)
-        {
-            string searchInput = matchcode?.Trim() ?? string.Empty;
-
-            if (string.IsNullOrEmpty(searchInput))
-            {
-                return new List<IDTO>();
-            }
-
-            return Store.Where(se =>
-                !string.IsNullOrEmpty(se.Matchcode) &&
-                (
-                    se.Matchcode.Contains(searchInput, StringComparison.OrdinalIgnoreCase) ||
-                    se.Matchcode.MatchesPropertySearch(searchInput)
-                )
-            )
-            .OrderBy(se =>
-                // 1. & 2. Vorschlag: StartsWith (Präfix) bevorzugen vor Contains (Infix)
-                se.Matchcode.StartsWith(searchInput, StringComparison.OrdinalIgnoreCase) ? 0 : 1
-            )
-            .ThenBy(se =>
-            // 3. Vorschlag: Position des Treffers (je kleiner der Index, desto weiter vorne)
-            {
-                int index = se.Matchcode.IndexOf(searchInput, StringComparison.OrdinalIgnoreCase);
-                return index < 0 ? int.MaxValue : index;
-            }
-            )
-            .ThenBy(se =>
-                // 4. Vorschlag: String-Länge (kürzere Matchcodes sind relevanter/exakter)
-                se.Matchcode.Length
-            )
-            .ThenBy(se =>
-                // Reiner Alphabetischer Fallback
-                se.Matchcode
-            )
-            .ToList();
-        }
+    
         public int CountByItemType(string itemtype)
         {
             int count = Store.Where(se => se.ItemType.ToLowerInvariant() == itemtype.ToLowerInvariant()).Count();

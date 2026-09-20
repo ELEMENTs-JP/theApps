@@ -46,6 +46,11 @@ namespace theInfrastructure
                 ItemTypes.Add(itemtype);
             }
 
+            if (ItemTypes.Count == 0)
+            {
+                ItemTypes = await base.GetItemTypes(ast);
+            }
+
             return ItemTypes;
         }
         public override async Task<List<IField>> GetFields(string view = "")

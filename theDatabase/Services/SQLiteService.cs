@@ -677,7 +677,7 @@ namespace theDatabase
             // Excluded ItemTypes 
             query.ItemTypeExcludes = new List<string>() { 
                 "Principal", "User", "Permission", 
-                "App", "ItemType", "Field", "Slot" };
+                "App", "ItemType", "Field", "Slot", "Board" };
 
             FormattableString sql = Query.Search(query);
 

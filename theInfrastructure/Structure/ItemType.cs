@@ -80,27 +80,8 @@ namespace theInfrastructure
             }
             if (ast == AssociationTyp.Related)
             {
-               
 
-                if (this.Name != "Task")
-                {
-                    ItemTypes.Add(new ItemType_Task());
-                }
-                if (this.Name != "Checklist")
-                {
-                    ItemTypes.Add(new ItemType_Checklist());
-                }
-                if (this.Name != "Appointment")
-                {
-                    ItemTypes.Add(new ItemType_Appointment());
-                }
-                if (this.Name != "Link")
-                {
-                    ItemTypes.Add(new ItemType_Link());
-                }
-            }
-            if (ast == AssociationTyp.Children)
-            {
+
 
                 if (this.Name != "File")
                 {
@@ -118,6 +99,27 @@ namespace theInfrastructure
                 {
                     ItemTypes.Add(new ItemType_Image());
                 }
+
+            }
+            if (ast == AssociationTyp.Children)
+            {
+                if (this.Name != "Task")
+                {
+                    ItemTypes.Add(new ItemType_Task());
+                }
+                if (this.Name != "Checklist")
+                {
+                    ItemTypes.Add(new ItemType_Checklist());
+                }
+                if (this.Name != "Appointment")
+                {
+                    ItemTypes.Add(new ItemType_Appointment());
+                }
+                if (this.Name != "Link")
+                {
+                    ItemTypes.Add(new ItemType_Link());
+                }
+
             }
 
             if (ast == AssociationTyp.Default)
