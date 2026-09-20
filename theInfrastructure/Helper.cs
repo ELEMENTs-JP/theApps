@@ -418,6 +418,10 @@ namespace theInfrastructure
                 Items.Add(new DTO() { ID = "Balanced Scorecard", Title = "Balanced Scorecard" });
                 Items.Add(new DTO() { ID = "Moscow Board", Title = "Moscow Priorisierung" });
                 Items.Add(new DTO() { ID = "Idea Funnel", Title = "Idea Funnel" });
+                Items.Add(new DTO() { ID = "Bug Tracking", Title = "Bug Tracking" });
+                Items.Add(new DTO() { ID = "Incident Tracking", Title = "Incident Tracking" });
+                Items.Add(new DTO() { ID = "Task Priorities", Title = "Task Priorities" });
+                Items.Add(new DTO() { ID = "Task Status", Title = "Task Status" });
             }
             else if (field.Typ == FieldTyp.FieldTyp)
             {

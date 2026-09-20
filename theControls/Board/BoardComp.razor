@@ -41,7 +41,22 @@
             {
                 <IdeaFunnelComp Item="@Item" />
             }
-
+            else if (Typ == "Bug Tracking")
+            {
+                <BugTrackingComp Item="@Item" />
+            }
+            else if (Typ == "Incident Tracking")
+            {
+                <IncidentComp Item="@Item" />
+            }
+            else if (Typ == "Task Priorities")
+            {
+                <TaskPriorityComp Item="@Item" />
+            }
+            else if (Typ == "Task Status")
+            {
+                <TaskStatusComp Item="@Item" />
+            }
         </Content>
     </Frame>
   
