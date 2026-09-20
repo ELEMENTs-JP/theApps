@@ -5,6 +5,10 @@ The app is a business-oriented .NET Core 10 Blazor Server application (Windows b
 ![.NET](https://img.shields.io/badge/.NET-512BD4?style=flat&logo=dotnet&logoColor=white)
 [![Status](https://img.shields.io/badge/Status-Draft-orange)](https://github.com/ELEMENTs-JP/theApps)
 
+
+[![Documentation](https://img.shields.io/badge/Dokumentation-GitHub%20Wiki-blue?style=for-the-badge&logo=github)]([https://github.com/BENUTZER/REPOSITORY/wiki](https://github.com/ELEMENTs-JP/theApps/wiki/Apps))
+
+
 > [!IMPORTANT]
 > The software is still in an early stage of development. We do not recommend using the software in production environments. For example, security features are not yet fully implemented.
 
