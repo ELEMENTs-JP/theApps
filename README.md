@@ -62,6 +62,8 @@ The following board types are currently in development
 - Product Cost-Value Matrix
 - etc.
 
+<img width="1712" height="1080" alt="image" src="https://github.com/user-attachments/assets/856e97a3-9035-4641-a6f2-b2057457df98" />
+
 **External Libraries**
 
 We use the following external libraries:
