@@ -71,7 +71,10 @@
     box-shadow: #ccc; /* Das hellblaue Leuchten */
 }
 
-
+.text-vertikal {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+}
 
 .form-check {
     /*display: block;

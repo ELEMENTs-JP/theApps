@@ -422,6 +422,8 @@ namespace theInfrastructure
                 Items.Add(new DTO() { ID = "Incident Tracking", Title = "Incident Tracking" });
                 Items.Add(new DTO() { ID = "Task Priorities", Title = "Task Priorities" });
                 Items.Add(new DTO() { ID = "Task Status", Title = "Task Status" });
+                Items.Add(new DTO() { ID = "Ansoff Matrix", Title = "Ansoff Matrix" });
+                Items.Add(new DTO() { ID = "Risiko Matrix", Title = "Risiko Matrix" });
             }
             else if (field.Typ == FieldTyp.FieldTyp)
             {

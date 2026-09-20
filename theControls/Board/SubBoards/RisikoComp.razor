@@ -1,0 +1,276 @@
+﻿@inject IJSRuntime JS
+@inject ISqlDatabaseService sql
+@inject ISecurityService sec
+@inject IMessagingBusService msg
+@implements IAsyncDisposable
+
+@if (Item != null)
+{
+
+    <table class="w-100 border-0 p-0 m-1">
+        <tr>
+            <td class="border-0 p-0 m-0 text-vertikal" style="width:1rem;">
+                
+            </td>
+            <td class="border-0 p-0 m-0 text-center" style="width:1rem;"></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:99%;" colspan="3">
+                <strong>Auswirkung des Risikos</strong></td>
+        </tr>
+        <tr>
+            <td class="border-0 p-0 m-0 text-vertikal text-center" style="width:1rem;" rowspan="4">
+                <strong>Wahrscheinlichkeit des Eintritts</strong>
+            </td>
+            <td class="border-0 p-0 m-0 text-center" style="width:1rem;"></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:33%;"><strong>keine bis niedrig</strong></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:33%;"><strong>normal bis mittel</strong></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:33%;"><strong>hoch bis sehr hoch</strong></td>
+        </tr>
+        <tr>
+            <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center" 
+                        style="height:18rem;">
+                <strong>wahrscheinlich</strong>
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+                <DragDropContainer Zone="ORANGE-7" Title="" Entries="@Items" 
+                                        CSS="border rounded-2 p-2 h-100 bg-orange "
+                                   ZoneProperty="@( $"{ZoneParameter}" )"
+                                   SortProperty="@( $"{SortParameter}" )"
+                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
+                    <ItemTemplate Context="entry">
+
+                        <ListItem @key="@entry.GUID" Item="@entry"
+                                  IsSortable="true" CSS="border bg-surface rounded-2 p-1 m-2"
+                                  ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
+
+                    </ItemTemplate>
+                </DragDropContainer>
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+                <DragDropContainer Zone="Orange-6" Title="" Entries="@Items"
+                                   CSS="border rounded-2 p-2 h-100 bg-orange"
+                                   ZoneProperty="@( $"{ZoneParameter}" )"
+                                   SortProperty="@( $"{SortParameter}" )"
+                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
+                    <ItemTemplate Context="entry">
+
+                        <ListItem @key="@entry.GUID" Item="@entry"
+                                  IsSortable="true" CSS="border bg-surface  rounded-2 p-1 m-2"
+                                  ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
+
+                    </ItemTemplate>
+                </DragDropContainer>
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+                <DragDropContainer Zone="RED" Title="" Entries="@Items" 
+                                CSS="border rounded-2 p-2 h-100 bg-red"
+                                   ZoneProperty="@( $"{ZoneParameter}" )"
+                                   SortProperty="@( $"{SortParameter}" )"
+                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
+                    <ItemTemplate Context="entry">
+
+                        <ListItem @key="@entry.GUID" Item="@entry"
+                                  IsSortable="true" CSS="border  bg-surface rounded-2 p-1 m-2"
+                                  ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
+
+                    </ItemTemplate>
+                </DragDropContainer>
+            </td>
+        </tr>
+        <tr>
+            <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center" 
+                    style="height:18rem;">
+                <strong>möglich</strong>
+                </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+                <DragDropContainer Zone="YELLOW-2" Title="" Entries="@Items" 
+                                    CSS="border rounded-2 p-2 h-100 bg-yellow"
+                                   ZoneProperty="@( $"{ZoneParameter}" )"
+                                   SortProperty="@( $"{SortParameter}" )"
+                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
+                    <ItemTemplate Context="entry">
+
+                        <ListItem @key="@entry.GUID" Item="@entry"
+                                  IsSortable="true" CSS="border bg-surface  rounded-2 p-1 m-2"
+                                  ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
+
+                    </ItemTemplate>
+                </DragDropContainer>
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+                <DragDropContainer Zone="ORANGE-4" Title="" Entries="@Items"
+                                   CSS="border rounded-2 p-2 h-100 bg-orange "
+                                   ZoneProperty="@( $"{ZoneParameter}" )"
+                                   SortProperty="@( $"{SortParameter}" )"
+                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
+                    <ItemTemplate Context="entry">
+
+                        <ListItem @key="@entry.GUID" Item="@entry"
+                                  IsSortable="true" CSS="border bg-surface  rounded-2 p-1 m-2"
+                                  ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
+
+                    </ItemTemplate>
+                </DragDropContainer>
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+                <DragDropContainer Zone="ORANGE-3" Title="" Entries="@Items" 
+                                    CSS="border rounded-2 p-2 h-100 bg-orange "
+                                   ZoneProperty="@( $"{ZoneParameter}" )"
+                                   SortProperty="@( $"{SortParameter}" )"
+                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
+                    <ItemTemplate Context="entry">
+
+                        <ListItem @key="@entry.GUID" Item="@entry"
+                                  IsSortable="true" CSS="border bg-surface  rounded-2 p-1 m-2"
+                                  ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
+
+                    </ItemTemplate>
+                </DragDropContainer>
+            </td>
+        </tr>
+        <tr>
+            <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
+                style="height:18rem;">
+                <strong>unwahrscheinlich</strong>
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+                <DragDropContainer Zone="GREEN" Title="" Entries="@Items"
+                                   CSS="border rounded-2 p-2 h-100 bg-green"
+                                   ZoneProperty="@( $"{ZoneParameter}" )"
+                                   SortProperty="@( $"{SortParameter}" )"
+                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
+                    <ItemTemplate Context="entry">
+
+                        <ListItem @key="@entry.GUID" Item="@entry"
+                                  IsSortable="true" CSS="border bg-surface  rounded-2 p-1 m-2"
+                                  ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
+
+                    </ItemTemplate>
+                </DragDropContainer>
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+                <DragDropContainer Zone="YELLOW-1" Title="" Entries="@Items"
+                                   CSS="border rounded-2 p-2 h-100 bg-yellow "
+                                   ZoneProperty="@( $"{ZoneParameter}" )"
+                                   SortProperty="@( $"{SortParameter}" )"
+                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
+                    <ItemTemplate Context="entry">
+
+                        <ListItem @key="@entry.GUID" Item="@entry"
+                                  IsSortable="true" CSS="border bg-surface  rounded-2 p-1 m-2"
+                                  ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
+
+                    </ItemTemplate>
+                </DragDropContainer>
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+                <DragDropContainer Zone="ORANGE-2" Title="" Entries="@Items"
+                                   CSS="border rounded-2 p-2 h-100 bg-orange "
+                                   ZoneProperty="@( $"{ZoneParameter}" )"
+                                   SortProperty="@( $"{SortParameter}" )"
+                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
+                    <ItemTemplate Context="entry">
+
+                        <ListItem @key="@entry.GUID" Item="@entry"
+                                  IsSortable="true" CSS="border  bg-surface rounded-2 p-1 m-2"
+                                  ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
+
+                    </ItemTemplate>
+                </DragDropContainer>
+            </td>
+        </tr>
+    </table>
+
+    <div class="p-2" style="height:11rem;">
+        <DragDropContainer Zone="Default" Title="Backlog" Entries="@Items" 
+                            CSS="bg-background border rounded-2 p-2 h-100 "
+                           ZoneProperty="@( $"{ZoneParameter}" )"
+                           SortProperty="@( $"{SortParameter}" )"
+                           IsDefaultZone="true"
+                           ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
+            <ItemTemplate Context="entry">
+
+                <ListItem @key="@entry.GUID" Item="@entry" IsSortable="true" CSS="border rounded-2 p-1 m-2"
+                          ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
+
+            </ItemTemplate>
+        </DragDropContainer>
+    </div>
+
+}
+
+@code {
+
+    [Parameter]
+    public IDTO Item { get; set; } // Board
+
+    private List<IDTO> Items { get; set; } = new();
+
+    private string ZoneParameter { get; set; } = string.Empty;
+    private string SortParameter { get; set; } = string.Empty;
+
+    // CTR
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageDone;
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (Item != null)
+        {
+            ZoneParameter = $"Zone-Board-{this.GetType().Name}-" + Item.GUID;
+            SortParameter = $"Sort-Board-{this.GetType().Name}-" + Item.GUID;
+        }
+
+        await Init();
+    }
+
+    private async Task Init()
+    {
+        // Items
+        Items.Clear();
+
+        // Item
+        if (Item == null)
+            return;
+
+        // ItemType
+        string ItemType = Item["ItemType"].ToSecureString();
+        if (string.IsNullOrEmpty(ItemType))
+            return;
+
+        // Query
+        IQueryParameter qp = QueryParameter.Default(".");
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = ItemType;
+
+        // Run
+        IQueryResult result = await sql.GetItems(qp);
+        Items = result.Items;
+    }
+
+    public async void OnMessageDone(AppMessage msg)
+    {
+        if (msg.Id == "Item" && msg.Action == BusAction.Refresh)
+        {
+            // Update
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageDone;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+
+}

@@ -57,6 +57,14 @@
             {
                 <TaskStatusComp Item="@Item" />
             }
+            else if (Typ == "Ansoff Matrix")
+            {
+                <AnsoffComp Item="@Item" />
+            }
+            else if (Typ == "Risiko Matrix")
+            {
+                <RisikoComp Item="@Item" />
+            }
         </Content>
     </Frame>
   
