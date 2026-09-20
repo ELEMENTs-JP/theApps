@@ -64,6 +64,9 @@ The following board types are currently in development
 
 <img width="1712" height="1080" alt="image" src="https://github.com/user-attachments/assets/856e97a3-9035-4641-a6f2-b2057457df98" />
 
+<img width="1658" height="951" alt="image" src="https://github.com/user-attachments/assets/81603c1c-044d-4651-84ea-4f7280a3e3bc" />
+
+
 **External Libraries**
 
 We use the following external libraries:
