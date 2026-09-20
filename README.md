@@ -40,6 +40,28 @@ The interface for editing entries can be customized using code or the integrated
 ## File Management
 Uploaded files are stored in a separate FILES directory. It makes sense to move this directory to a separate location.
 
+The following file libraries are currently in development
+- Video
+- Audio (incl. player)
+- Images (incl. preview)
+- documents
+- files (simple files)
+
+<img width="1338" height="872" alt="image" src="https://github.com/user-attachments/assets/fbe65f56-408d-413e-b8ea-1297baba5cca" />
+
+
+## Drag & Drop Interfaces
+Different types of boards can be integrated into any app. These include more than just backlogs and Kanban boards.
+
+<img width="1335" height="874" alt="image" src="https://github.com/user-attachments/assets/35e6dc77-c973-4a84-b23b-a76600c60dd6" />
+
+The following board types are currently in development
+- Backlog, Kanban, etc.
+- Business Model Canvas
+- Ansoff Strategy Matrix
+- Product Cost-Value Matrix
+- etc.
+
 **External Libraries**
 
 We use the following external libraries:
