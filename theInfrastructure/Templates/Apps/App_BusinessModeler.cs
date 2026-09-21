@@ -22,18 +22,7 @@ namespace theInfrastructure
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
             
             types.Add(new ItemTypeInfo("BusinessModel", "Business Model"));
-            types.Add(new ItemTypeInfo("ValueProposition", "Value Proposition"));
-            
-            types.Add(new ItemTypeInfo("KeyActivities", "Key Activities"));
-            types.Add(new ItemTypeInfo("KeyPartner", "Key Partners"));
-            types.Add(new ItemTypeInfo("KeyRessources", "Key Resources"));
-            
-            types.Add(new ItemTypeInfo("CustomerRelationships", "Customer Relationships"));
-            types.Add(new ItemTypeInfo("Channels", "Channels"));
-            types.Add(new ItemTypeInfo("CustomerSegments", "Customer Segments"));
-            
-            types.Add(new ItemTypeInfo("CostStructure", "Cost Structure"));
-            types.Add(new ItemTypeInfo("RevenueStreams", "Revenue Streams"));
+            types.Add(new ItemTypeInfo("Element", "Element"));
             
             return types;
         }
@@ -41,18 +30,7 @@ namespace theInfrastructure
         {
             List<ItemTypeConnection> cons = new List<ItemTypeConnection>();
 
-            cons.Add(new ItemTypeConnection("BusinessModel", "ValueProposition")); // Parent -> Child 
-            
-            cons.Add(new ItemTypeConnection("BusinessModel", "KeyActivities")); // Parent -> Child 
-            cons.Add(new ItemTypeConnection("BusinessModel", "KeyPartner")); // Parent -> Child 
-            cons.Add(new ItemTypeConnection("BusinessModel", "KeyRessources")); // Parent -> Child 
-
-            cons.Add(new ItemTypeConnection("BusinessModel", "CustomerRelationships")); // Parent -> Child 
-            cons.Add(new ItemTypeConnection("BusinessModel", "Channels")); // Parent -> Child 
-            cons.Add(new ItemTypeConnection("BusinessModel", "CustomerSegments")); // Parent -> Child 
-
-            cons.Add(new ItemTypeConnection("BusinessModel", "CostStructure")); // Parent -> Child 
-            cons.Add(new ItemTypeConnection("BusinessModel", "RevenueStreams")); // Parent -> Child 
+            cons.Add(new ItemTypeConnection("BusinessModel", "Element")); // Parent -> Child 
 
             return cons;
         }

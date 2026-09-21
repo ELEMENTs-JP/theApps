@@ -22,6 +22,8 @@ namespace theInfrastructure
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
             
             types.Add(new ItemTypeInfo("Risk", "Risk"));
+            types.Add(new ItemTypeInfo("Calculation", "Calculation"));
+            types.Add(new ItemTypeInfo("Scenario", "Scenario"));
 
             return types;
         }

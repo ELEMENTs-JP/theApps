@@ -22,6 +22,9 @@ namespace theInfrastructure
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
             
             types.Add(new ItemTypeInfo("Handbook", "Handbook"));
+            types.Add(new ItemTypeInfo("Article", "Article"));
+            types.Add(new ItemTypeInfo("Glossar", "Glossar"));
+            types.Add(new ItemTypeInfo("Paragraph", "Paragraph"));
 
             return types;
         }

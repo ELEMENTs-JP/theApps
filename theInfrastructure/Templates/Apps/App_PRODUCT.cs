@@ -23,6 +23,14 @@ namespace theInfrastructure
             
             types.Add(new ItemTypeInfo("Product", "Product"));
             types.Add(new ItemTypeInfo("Feature", "Feature"));
+            types.Add(new ItemTypeInfo("JTBD", "JTBD"));
+            types.Add(new ItemTypeInfo("Persona", "Persona"));
+            types.Add(new ItemTypeInfo("Story", "Story"));
+            types.Add(new ItemTypeInfo("Release", "Release"));
+            types.Add(new ItemTypeInfo("Focus Group", "Focus Group"));
+            types.Add(new ItemTypeInfo("Idea", "Idea"));
+            types.Add(new ItemTypeInfo("Version", "Version"));
+            types.Add(new ItemTypeInfo("Edition", "Edition"));
 
             return types;
         }

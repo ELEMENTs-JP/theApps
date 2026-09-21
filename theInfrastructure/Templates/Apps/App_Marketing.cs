@@ -21,7 +21,12 @@ namespace theInfrastructure
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
             
-            types.Add(new ItemTypeInfo("Kampagne", "Kampagne"));
+            types.Add(new ItemTypeInfo("Brand", "Brand"));
+            types.Add(new ItemTypeInfo("Claim", "Claim"));
+            types.Add(new ItemTypeInfo("Campagin", "Campagin"));
+            types.Add(new ItemTypeInfo("Target Group", "Target Group"));
+            types.Add(new ItemTypeInfo("Competitor", "Competitor"));
+            types.Add(new ItemTypeInfo("Alternative", "Alternative"));
 
             return types;
         }

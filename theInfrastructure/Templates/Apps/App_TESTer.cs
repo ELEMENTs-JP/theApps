@@ -21,8 +21,13 @@ namespace theInfrastructure
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
             
+            types.Add(new ItemTypeInfo("Test Concept", "Test Concept"));
+            types.Add(new ItemTypeInfo("Test Data", "Test Data"));
+            types.Add(new ItemTypeInfo("Test Environment", "Test Environment"));
             types.Add(new ItemTypeInfo("Test Case", "Test Case"));
+            types.Add(new ItemTypeInfo("Test Step", "Test Step"));
             types.Add(new ItemTypeInfo("Test Run", "Test Run"));
+            types.Add(new ItemTypeInfo("Test Result", "Test Result"));
 
             return types;
         }

@@ -21,8 +21,9 @@ namespace theInfrastructure
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
             
-            types.Add(new ItemTypeInfo("FileSet", "FileSet"));
-
+            types.Add(new ItemTypeInfo("DocumentSet", "DocumentSet"));
+            types.Add(new ItemTypeInfo("Document", "Document"));
+            
             return types;
         }
         public override List<ItemTypeConnection> GetItemTypeConnections()

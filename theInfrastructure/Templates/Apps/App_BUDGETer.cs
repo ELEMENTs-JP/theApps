@@ -22,6 +22,8 @@ namespace theInfrastructure
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
             
             types.Add(new ItemTypeInfo("Budget", "Budget"));
+            types.Add(new ItemTypeInfo("Approval", "Approval"));
+            types.Add(new ItemTypeInfo("CashFlow", "CashFlow"));
 
             return types;
         }

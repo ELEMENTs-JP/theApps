@@ -22,6 +22,8 @@ namespace theInfrastructure
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
             
             types.Add(new ItemTypeInfo("Employee", "Employee"));
+            types.Add(new ItemTypeInfo("Level", "Level"));
+            types.Add(new ItemTypeInfo("Instance", "Instance"));
 
             return types;
         }

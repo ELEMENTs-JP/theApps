@@ -21,7 +21,15 @@ namespace theInfrastructure
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
             
-            types.Add(new ItemTypeInfo("Incident", "Incident"));
+            types.Add(new ItemTypeInfo("Issue", "Issue"));
+            types.Add(new ItemTypeInfo("Account", "Account"));
+            types.Add(new ItemTypeInfo("Piece", "Piece"));
+            types.Add(new ItemTypeInfo("Configuration", "Configuration"));
+            types.Add(new ItemTypeInfo("Known Error", "Known Error"));
+            types.Add(new ItemTypeInfo("Workaround", "Workaround"));
+            //types.Add(new ItemTypeInfo("Incident", "Incident"));
+            //types.Add(new ItemTypeInfo("Problem", "Problem"));
+            //types.Add(new ItemTypeInfo("Change", "Change"));
 
             return types;
         }

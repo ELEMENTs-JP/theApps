@@ -22,6 +22,8 @@ namespace theInfrastructure
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
             
             types.Add(new ItemTypeInfo("Project", "Project"));
+            types.Add(new ItemTypeInfo("Deliverable", "Deliverable"));
+            types.Add(new ItemTypeInfo("Stakeholder", "Stakeholder"));
             types.Add(new ItemTypeInfo("Meilenstein", "Meilenstein"));
             types.Add(new ItemTypeInfo("Package", "Package"));
             types.Add(new ItemTypeInfo("Phase", "Phase"));
