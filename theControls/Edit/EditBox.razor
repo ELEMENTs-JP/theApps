@@ -312,6 +312,9 @@
     {
         await base.OnParametersSetAsync();
 
+        if(Field == null)
+            return;
+
         Title = Field.Title;
         Description = Field.Description;
 

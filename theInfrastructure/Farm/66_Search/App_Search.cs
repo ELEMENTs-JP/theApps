@@ -5,9 +5,9 @@ using System.Text;
 namespace theInfrastructure
 {
     // App 
-    public class App_System : BaseApp, IApp
+    public class App_Search : BaseApp, IApp
     {
-        public App_System()
+        public App_Search()
         { 
             Name = "System";
             IsNavigation = false;
@@ -19,16 +19,9 @@ namespace theInfrastructure
             List<IItemType> ItemTypes = new();
 
             // ItemTypes 
-            ItemTypes.Add(new ItemType_Setting());
+            ItemTypes.Add(new ItemType_Query());
+            ItemTypes.Add(new ItemType_SearchFilter());
             
-            ItemTypes.Add(new ItemType_Trash());
-            ItemTypes.Add(new ItemType_Archive());
-
-            ItemTypes.Add(new ItemType_Folder());
-            ItemTypes.Add(new ItemType_Tag());
-            ItemTypes.Add(new ItemType_Label());
-
-            ItemTypes.Add(new ItemType_Insight());
 
             return ItemTypes;
         }

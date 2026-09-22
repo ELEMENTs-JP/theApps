@@ -25,6 +25,7 @@ namespace theInfrastructure
         Task Remove(IDTO dto);
         Task Clear();
         List<string> ValuesByColumn(string column);
+        List<IField> Fields { get; }
     }
    
 }

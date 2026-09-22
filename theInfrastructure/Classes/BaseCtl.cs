@@ -31,6 +31,9 @@ namespace theInfrastructure
         [Inject]
         public IJSRuntime JS { get; set; } = default!;
 
+        [Inject]
+        public NavigationManager nm { get; set; } = default!;
+
         // Events 
         protected override async Task OnInitializedAsync()
         {

@@ -21,6 +21,20 @@ namespace theDatabase
         public IDTO Item { get; set; } = null;
         public List<string> Groups { get; set; } = new List<string>();
 
+        public List<IField> Fields
+        {
+            get
+            {
+                if (this.ItemType != null)
+                {
+                    // Task.Run schützt vor Sync-Context-Deadlocks, falls .Result erzwingen werden muss
+                    return Task.Run(() => this.ItemType.GetFields()).GetAwaiter().GetResult() ?? new();
+                }
+
+                return new();
+            }
+        }
+
         // Result 
         public List<IDTO> Items { get; set; } = new List<IDTO>();
 
@@ -38,6 +52,13 @@ namespace theDatabase
             Init(sql, sec);
 
             this.ItemType = ItemType;
+        }
+        public QueryContext(ISqlDatabaseService sql, ISecurityService sec, IItemType ItemType, IDTO Item)
+        {
+            Init(sql, sec);
+
+            this.ItemType = ItemType;
+            this.Item = Item;
         }
         public void Init(ISqlDatabaseService sql, ISecurityService sec)
         {

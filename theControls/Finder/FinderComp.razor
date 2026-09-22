@@ -1,7 +1,6 @@
-﻿@inject ISqlDatabaseService sql
-@inject ISearchService search
+﻿@inherits BaseCtl
 
-@if (Item != null)
+@if (Item != null && Context != null && Context.Item != null)
 {
 
     <Frame>
@@ -9,27 +8,35 @@
             <ControlHeader PreTitle="Search" Title="FINDits" PostTitle="@Item.Title" />
         </Header>
         <Search>
-            <FinderSearchComp OnSearch="@( async e => { await Search(e); })" />
+            <FinderSearchComp OnSearch="@( async e => {  await Search(e); })" />
         </Search>
         <Content>
 
             <div class="row g-0" style="height:36rem;">
                 <div class="col-3 px-2">
-                    <FinderFilter />
+
+                    <EditBox Context="@Context" Border="false"
+                        Field="@( Context.Fields.Find(se => se.Column == "Matchcode"))" />
+                    <EditBox Context="@Context" Border="false"
+                        Field="@( Context.Fields.Find(se => se.Typ == FieldTyp.ItemTypeList))" />
+
+                    <FinderFilter Context="@Context" />
 
                 </div>
                 <div class="col-6 px-2 border-start border-end overflow-y-auto h-100">
                     <div>
                         @foreach (IDTO Item in Items)
                         {
-                            <div class="d-flex p-2 hover rounded">
-                                <div class="px-2 small text-muted">
+                            <div class="d-flex p-1 hover rounded" >
+                                <div class="p-1 small text-muted">
                                     @Item.ID
                                 </div>
-                                <div class="flex-fill fw-bold pointer">
+                                <div class="py-1 px-2 flex-fill fw-bold hover rounded pointer" 
+                                @onclick="@( e => { nm.NavToItem(Item.ItemType, Item.GUID);  })">
                                     @Item.Title
                                 </div>
-                                <div class="px-2">
+                                <div class="py-1 px-2 hover pointer rounded" 
+                                    @onclick="@( e => { nm.NavToLibrary(Item.ItemType);  })">
                                     @Item.ItemType
                                 </div>
                             </div>
@@ -54,16 +61,51 @@
     [Parameter]
     public IDTO Item { get; set; }
 
+    IQueryContext Context { get; set; }
 
     List<IDTO> Items { get; set; } = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
+
+        Context = new QueryContext(sql, sec, new ItemType_Query(), Item);
+
+        await Init();
+    }
+
+    private async Task Init()
+    {
+        if (Context == null)
+            return;
+
+        IQueryParameter qp = QueryParameter.Default(".");
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = Context.Item["ItemType"].ToSecureString();
+        qp.Matchcode = Context.Item["Matchcode"].ToSecureString();
+
+        IQueryResult result = await sql.GetItems(qp);
+        this.Items = result.Items;
     }
 
     private async Task Search(string matchcode)
     {
-        Items = await search.Search(matchcode);
+        if (Context == null)
+            return;
+
+        Context.Item["Matchcode"] = matchcode.ToSecureString(); 
+        await Context.Update(Context.Item);
+
+        IQueryParameter qp = QueryParameter.Default(".");
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = Context.Item["ItemType"].ToSecureString();
+        qp.Matchcode = Context.Item["Matchcode"].ToSecureString();
+        
+        IQueryResult result = await sql.GetItems(qp);
+        this.Items = result.Items;
     }
 }
