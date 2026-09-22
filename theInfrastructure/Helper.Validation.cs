@@ -8,6 +8,22 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        // Einmalig beim Start initialisiert – 0 Allokationen zur Laufzeit
+        public static readonly HashSet<FieldTyp> AllowedFieldTypes = new()
+        {
+            FieldTyp.Text
+        };
+
+        public static bool IsAllowedFieldTyp(string rawType)
+        {
+            return Enum.TryParse<FieldTyp>(rawType, true, out var parsed)
+                   && AllowedFieldTypes.Contains(parsed);
+        }
+
+
+ 
+
+
         private static readonly HashSet<string> PersonalizedItemTypes = new(StringComparer.Ordinal)
         {
             "Task", "Note", "Appointment", "Reminder"

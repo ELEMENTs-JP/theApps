@@ -78,17 +78,7 @@ namespace theInfrastructure
 
             return (IItemType)Activator.CreateInstance(type)!;
         }
-        public List<IItemType> InjectItemTypes(IApp app)
-        {
-            List<IItemType> itemTypes = new();
 
-            if (app.GetType() == typeof(App_Template))
-            {
-
-            }
-
-            return itemTypes;
-        }
 
         // Fields 
         public IField BuildField(FieldTyp fieldTyp)
@@ -118,16 +108,6 @@ namespace theInfrastructure
 
             return null;
         }
-        public List<IField> InjectFields(IItemType itemType)
-        {
-            List<IField> fields = new();
 
-            if (itemType.GetType() == typeof(ItemType_Template))
-            {
-
-            }
-
-            return fields;
-        }
     }
 }

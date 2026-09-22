@@ -6,7 +6,7 @@
 
         <div class="align-items-center pointer hover rounded-1 px-2 mx-1" data-bs-toggle="dropdown">
             <small class="text-muted d-inline-flex">
-                <SymbolIcon Symbol="Icon.Connect" CSS="me-2" Style=" "/>@Items.Count
+                <SymbolIcon Symbol="Icon.Connect" CSS="me-2" Style=" " />@Items.Count
             </small>
         </div>
 
@@ -14,14 +14,22 @@
 
             <div class="p-2 mb-2 fw-bold border-bottom text-secondary">Verbundene Einträge</div>
 
-            @foreach (IDTO item in Items.ValidateNavigateableItems())
-            {
-                <div class="dropdown-item d-flex align-items-center px-2"
-                     @onclick="@(() => nm.NavToItem(item.ItemType, item.GUID))">
-                    <div class="flex-grow-1 text-truncate pe-3">@item.Title</div>
-                    <div class="text-muted small">@item.ItemType</div>
-                </div>
-            }
+            <div class="px-1">
+                @foreach (IDTO item in Items.ValidateNavigateableItems())
+                {
+                    <div class="rounded hover pointer d-flex align-items-center px-2 py-1">
+                        <div class="flex-grow-1 text-truncate pe-3"
+                             @onclick="@(() => nm.NavToItem(item.ItemType, item.GUID))">
+                            @item.Title
+                        </div>
+
+                        <div class="text-muted small hover pointer rounded p-1"
+                             @onclick="@(() => nm.NavigateTo($"/Items/{item.ItemType}"))">
+                            @item.ItemType
+                        </div>
+                    </div>
+                }
+            </div>
 
             @if (Items.Count != Items.ValidateNavigateableItems().Count)
             {

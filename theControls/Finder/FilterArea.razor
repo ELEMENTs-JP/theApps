@@ -1,12 +1,13 @@
 ﻿@inherits BaseCtl
 
 
-    @foreach (IDTO prop in PropertyList.Where(se => se["Typ"].ToSecureString() != string.Empty))
-    {
-        <div class="border-bottom my-2"></div>
-        <EditBox Context="@Context" Field="@( GetField(prop))" Border="false" />
-    }
 
+@foreach (IDTO prop in PropertyList.Where(se =>
+    Helper.IsAllowedFieldTyp(se["Typ"].ToSecureString()) == true))
+{
+    <div class="border-bottom my-2"></div>
+    <EditBox Context="@Context" Field="@(GetField(prop))" Border="false" />
+}
 
 
 @code {
