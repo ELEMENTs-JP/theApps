@@ -10,13 +10,14 @@ namespace theInfrastructure
     {
         public TApp_CUSTOMer()
         {
-            
+            ID = "CRM";
+            Name = "CUSTOMer";
+            Title = "the CUSTOMer";
+            Group = "Operational";
         }
 
-        public override AppInfo GetApp()
-        {
-            return new AppInfo("CUSTOMer", "the CUSTOMer");
-        }
+
+  
         public override List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();

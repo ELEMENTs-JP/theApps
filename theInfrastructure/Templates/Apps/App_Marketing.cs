@@ -10,13 +10,13 @@ namespace theInfrastructure
     {
         public TApp_Marketing()
         {
-            
+            ID = "MARKETING";
+            Name = "Marketing";
+            Title = "the MARKETING";
+            Group = "Operational";
         }
 
-        public override AppInfo GetApp()
-        {
-            return new AppInfo("Marketing", "the MARKETING");
-        }
+    
         public override List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();

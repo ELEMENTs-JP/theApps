@@ -22,6 +22,8 @@
 
                     <FinderFilter Context="@Context" />
 
+                    <FilterArea Context="@Context" />
+
                 </div>
                 <div class="col-6 px-2 border-start border-end overflow-y-auto h-100">
                     <div>
@@ -50,7 +52,21 @@
           
 
         </Content>
+        <Bottom>
+            <div class="row g-0">
+                <div class="col-auto">
 
+                </div>
+                <div class="col">
+
+                </div>
+                <div class="col-auto">
+                    <div class="btn btn-sm" @onclick="@( e => { nm.NavigateTo( "/Items/Query"); } )">
+                        Suchanfragen verwalten...
+                    </div>
+                </div>
+            </div>
+        </Bottom>
     </Frame>
 
 }
@@ -81,6 +97,9 @@
     private async Task Init()
     {
         if (Context == null)
+            return;
+
+        if (Context.Item == null)
             return;
 
         IQueryParameter qp = QueryParameter.Default(".");

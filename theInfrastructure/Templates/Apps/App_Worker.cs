@@ -10,13 +10,13 @@ namespace theInfrastructure
     {
         public TApp_Worker()
         {
-            
+            ID = "WORK";
+            Name = "WORKer";
+            Title = "the WORKer";
+            Group = "Operational";
         }
 
-        public override AppInfo GetApp()
-        {
-            return new AppInfo("Worker", "the WORKer");
-        }
+   
         public override List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();

@@ -115,5 +115,28 @@ namespace theDatabase
             }
             return description;
         }
+
+        // Helper 
+        public async Task<List<IDTO>> GetRelatedItems(ISqlDatabaseService sql, 
+                string ItemType, AssociationTyp typ = AssociationTyp.Children)
+        {
+            IDTO parent = this as IDTO;
+            IQueryResult result = await sql.GetRelatedItems(parent, ItemType, typ);
+            return result.Items;
+        }
+        public void Assign(ISqlDatabaseService sql, 
+                IDTO dtoToAssign, AssociationTyp typ = AssociationTyp.Children)
+        {
+            IDTO parent = this as IDTO;
+
+            sql.Assign(parent, dtoToAssign, typ);
+        }
+        public async Task Remove(ISqlDatabaseService sql, 
+            IDTO dtoToRemove)
+        {
+            IDTO parent = this as IDTO;
+            await sql.Remove(parent, dtoToRemove);
+        }
+
     }
 }

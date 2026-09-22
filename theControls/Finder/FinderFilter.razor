@@ -43,23 +43,31 @@
 
             <div class="px-2">
 
-            @foreach (IField field in Fields)
-            {
-                <div class="d-flex p-1 hover pointer rounded-2 align-items-center">
-                    <div class="flex-fill p-1">
-                        @field.Title
+                @foreach (IField field in Fields)
+                {
+                    <div class="d-flex p-1 hover pointer rounded-2 align-items-center">
+                        <div class="flex-fill p-1">
+                            @field.Title
+                        </div>
+                        <div class="p-1 px-2 text-muted">
+                            @field.Typ.ToSecureString()
+                        </div>
+                        @if (ValidateExists(field) == false)
+                        {
+                            <div class="p-1 px-2 hover rounded pointer"
+                                 @onclick="@( async e => { await Assign(field); })">
+                                <SymbolIcon Symbol="Icon.Connect" Color="green" />
+                            </div>
+                        }
+                        @if (ValidateExists(field) == true)
+                        {
+                            <div class="p-1 px-2 hover rounded pointer"
+                                 @onclick="@( async e => { await Remove(field); })">
+                                <SymbolIcon Symbol="Icon.Disconnect" Color="red" />
+                            </div>
+                        }
                     </div>
-                    <div class="p-1 px-2 text-muted">
-                        @field.Typ.ToSecureString()
-                    </div>
-                    <div class="p-1 px-2 hover rounded pointer" @onclick="@( async e => { await Assign(field); })">
-                        <SymbolIcon Symbol="Icon.Connect" />
-                    </div>
-                    <div class="p-1 px-2 hover rounded pointer" @onclick="@( async e => { await Remove(field); })">
-                        <SymbolIcon Symbol="Icon.Disconnect" />
-                    </div>
-                </div>
-            }
+                }
             </div>
 
         </div>
@@ -73,6 +81,8 @@
     private string searchTerm = string.Empty;
 
     List<IField> Fields { get; set; } = new();
+
+    List<IDTO> PropertyList { get; set; } = new();
 
 
     [Parameter]
@@ -91,7 +101,11 @@
                 IItemType itemType = await new Factory(sql).BuildItemType(it);
                 if (itemType != null)
                 {
+                    // Fields fürs hinzufügen
                     Fields = await itemType.GetFields();
+
+                    // hinzugefügte Felder für die Filterung
+                    PropertyList = await item.GetRelatedItems(sql, "SearchFilter");
                 }
             }
         }
@@ -105,15 +119,43 @@
         qp.MasterGUID = sql.MasterGUID;
         qp.ItemType = "SearchFilter";
 
+        // Create 
         IQueryResult result = await sql.Create(qp);
+
+        // get 
+        result = await sql.GetItem(qp);
         IDTO filter = result.Items.FirstOrDefault();
 
-        await sql.Assign(Query, filter, AssociationTyp.Children);
+        filter["Column"] = field.Column;
+        filter["Typ"] = field.Typ.ToSecureString();
+
+        // Update 
+        await sql.Update(filter);
+
+        // Assign 
+        Query.Assign(sql, filter);
+
+        // hinzugefügte Felder für die Filterung
+        PropertyList = await Query.GetRelatedItems(sql, "SearchFilter");
 
     }
     private async Task Remove(IField field)
     {
-   
+        IDTO exists = PropertyList.Find(se => se["Column"] == field.Column);
+        
+        if (exists != null)
+        {
+            await Context.Item.Remove(sql, exists);
+
+            // hinzugefügte Felder für die Filterung
+            PropertyList = await Context.Item.GetRelatedItems(sql, "SearchFilter");
+        }
+    }
+
+    private bool ValidateExists(IField field)
+    {
+        IDTO exists = PropertyList.Find(se => se["Column"] == field.Column);
+        return (exists != null ? true : false);
     }
 
 }

@@ -93,17 +93,27 @@ namespace theInfrastructure
         // Fields 
         public IField BuildField(FieldTyp fieldTyp)
         {
-            foreach (FieldTyp field in Enum.GetValues(typeof(FieldTyp)))
+            string typName = fieldTyp.ToString();
+
+            return new Field
             {
-                if (field == fieldTyp)
+                Title = typName,
+                Typ = fieldTyp,
+                Column = typName,
+                CSS = "col"
+            };
+        }
+        public IField BuildField(string fieldTyp)
+        {
+            if (Enum.TryParse<FieldTyp>(fieldTyp, out var field))
+            {
+                return new Field
                 {
-                    IField f = new Field();
-                    f.Title = field.ToString();
-                    f.Typ = field;
-                    f.Column = field.ToString();
-                    f.CSS = "col";
-                    return f;
-                }
+                    Title = fieldTyp,
+                    Typ = field,
+                    Column = fieldTyp,
+                    CSS = "col"
+                };
             }
 
             return null;

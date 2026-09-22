@@ -10,13 +10,13 @@ namespace theInfrastructure
     {
         public TApp_OKR()
         {
-            
+            ID = "OKR";
+            Name = "OKR";
+            Title = "the OKR";
+            Group = "Tactical";
         }
 
-        public override AppInfo GetApp()
-        {
-            return new AppInfo("OKR", "the OKR");
-        }
+     
         public override List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();

@@ -183,6 +183,12 @@ namespace theInfrastructure
         string? RelationType { get; set; }
         Metadata Metadata { get; set; }
         string Description();
+
+        // Helper 
+        Task<List<IDTO>> GetRelatedItems(ISqlDatabaseService sql,
+              string ItemType, AssociationTyp typ = AssociationTyp.Children);
+        void Assign(ISqlDatabaseService sql, IDTO dtoToAssign, AssociationTyp typ = AssociationTyp.Children);
+        Task Remove(ISqlDatabaseService sql, IDTO dtoToRemove);
     }
     public interface IRelationDTO
     {

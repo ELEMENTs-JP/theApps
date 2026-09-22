@@ -18,22 +18,30 @@
             <span class="text-muted">Mit der Aktivierung eines App Templates muss die App und deren ItemTypes <a href="/Items/App">hier</a> noch konfiguriert werden.</span>
         </div>
 
-        @foreach (ITemplateApp app in Apps)
+        @foreach (string group in Apps.Select(se => se.Group).Distinct())
         {
-            <div class="row g-0 align-items-center bg-surface border-bottom p-2 my-2">
-                <div class="col p-2">
-                    <div class="fw-bold">
-                        @app.GetApp().Title
-                    </div>
-                    <div class="text-muted">@loc.GetLabel("aktiviert / deaktiviert", "active / inactive")</div>
-                </div>
-                <div class="col-auto p-2">
-                    <CheckBox Value="@( (IsActive(app).Result != null ? "true" : "false") )"
-                              TrueText="@loc.GetLabel("aktiviert", "active")"
-                              FalseText="@loc.GetLabel("inaktiv", "inactive")"
-                              ValueChanged="@(async e => { await CreateDeleteApp(app, e.ToSecureBool()); })" />
-                </div>
+
+            <div class="fw-bold text-secondary px-2 pt-3 pb-1">
+                @group
             </div>
+
+            @foreach (ITemplateApp app in Apps.Where(se => se.Group == group))
+            {
+                <div class="row g-0 align-items-center bg-surface border-bottom p-1 my-1">
+                    <div class="col p-1">
+                        <div class="fw-bold">
+                            @app.Title
+                        </div>
+                        <div class="text-muted">@loc.GetLabel("aktiviert / deaktiviert", "active / inactive")</div>
+                    </div>
+                    <div class="col-auto p-1">
+                        <CheckBox Value="@( (IsActive(app).Result != null ? "true" : "false") )"
+                                  TrueText="@loc.GetLabel("aktiviert", "active")"
+                                  FalseText="@loc.GetLabel("inaktiv", "inactive")"
+                                  ValueChanged="@(async e => { await CreateDeleteApp(app, e.ToSecureBool()); })" />
+                    </div>
+                </div>
+            }
         }
 
 
@@ -69,13 +77,11 @@
     {
         if (app != null)
         {
-            var _app = app.GetApp();
-
             IDTO? activeApp = AllDbApps.Find(se =>
-                string.Equals(se.ID, _app.Name, StringComparison.InvariantCultureIgnoreCase) ||
-                string.Equals(se.Title, _app.Name, StringComparison.InvariantCultureIgnoreCase) ||
-                string.Equals(se.ID, _app.Title, StringComparison.InvariantCultureIgnoreCase) ||
-                string.Equals(se.Title, _app.Title, StringComparison.InvariantCultureIgnoreCase));
+                string.Equals(se.ID, app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                string.Equals(se.Title, app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                string.Equals(se.ID, app.Title, StringComparison.InvariantCultureIgnoreCase) ||
+                string.Equals(se.Title, app.Title, StringComparison.InvariantCultureIgnoreCase));
 
             if (activeApp != null)
             {
@@ -91,25 +97,23 @@
         {
             await Init();
 
-            AppInfo _app = app.GetApp();
-
             IDTO? isActive = await IsActive(app);
             if (isActive != null)
             {
                 // löschen
                 if (value == false)
                 {
-                    IQueryParameter qp = QueryParameter.Default(_app.Title);
+                    IQueryParameter qp = QueryParameter.Default(app.Title);
                     qp.MasterGUID = sql.MasterGUID;
                     qp.ItemType = "App";
 
                     IQueryResult result = await sql.GetItems(qp);
 
                     IDTO? activeApp = result.Items.Find(se =>
-                        string.Equals(se.ID, _app.Name, StringComparison.InvariantCultureIgnoreCase) ||
-                        string.Equals(se.Title, _app.Name, StringComparison.InvariantCultureIgnoreCase) ||
-                        string.Equals(se.ID, _app.Title, StringComparison.InvariantCultureIgnoreCase) ||
-                        string.Equals(se.Title, _app.Title, StringComparison.InvariantCultureIgnoreCase));
+                        string.Equals(se.ID, app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.Title, app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.ID, app.Title, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.Title, app.Title, StringComparison.InvariantCultureIgnoreCase));
 
                     if (activeApp != null)
                     {
@@ -126,39 +130,40 @@
                 // erstellen
                 if (value == true)
                 {
-                    IQueryParameter qp = QueryParameter.Default(_app.Title);
+                    IQueryParameter qp = QueryParameter.Default(app.Title);
                     qp.MasterGUID = sql.MasterGUID;
                     qp.ItemType = "App";
 
                     IQueryResult result = await sql.GetItems(qp);
 
                     IDTO? activeApp = result.Items.Find(se =>
-                        string.Equals(se.ID, _app.Name, StringComparison.InvariantCultureIgnoreCase) ||
-                        string.Equals(se.Title, _app.Name, StringComparison.InvariantCultureIgnoreCase) ||
-                        string.Equals(se.ID, _app.Title, StringComparison.InvariantCultureIgnoreCase) ||
-                        string.Equals(se.Title, _app.Title, StringComparison.InvariantCultureIgnoreCase));
+                        string.Equals(se.ID, app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.Title, app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.ID, app.Title, StringComparison.InvariantCultureIgnoreCase) ||
+                        string.Equals(se.Title, app.Title, StringComparison.InvariantCultureIgnoreCase));
 
                     // App existiert nicht
                     if (activeApp == null)
                     {
-                        qp = QueryParameter.Default(_app.Title);
+                        qp = QueryParameter.Default(app.Title);
                         qp.MasterGUID = sql.MasterGUID;
                         qp.ItemType = "App";
 
-                        // App 
+                        // App
                         await sql.Create(qp);
 
                         IQueryResult appResult = await sql.GetItem(qp);
                         IDTO newApp = appResult.Items.FirstOrDefault();
                         if (newApp != null)
                         {
-                            // App aktiv schalten 
+                            // App aktiv schalten
                             newApp["IsActive"] = "true";
+                            newApp["Group"] = app.Group;
 
-                            // aktualisieren 
+                            // aktualisieren
                             await sql.Update(newApp);
 
-                            // ItemTypes 
+                            // ItemTypes
                             await CreateItemTypesByApp(app);
                         }
 
@@ -166,7 +171,7 @@
                 }
             }
 
-            // Apps 
+            // Apps
             appService.Init();
 
             msg.Publish(new AppMessage("AppList", BusAction.Refresh));
@@ -197,10 +202,10 @@
         await Init();
 
         IDTO? activeApp = AllDbApps.Find(se =>
-            string.Equals(se.ID, app.GetApp().Name, StringComparison.InvariantCultureIgnoreCase) ||
-             string.Equals(se.Title, app.GetApp().Name, StringComparison.InvariantCultureIgnoreCase) ||
-              string.Equals(se.ID, app.GetApp().Title, StringComparison.InvariantCultureIgnoreCase) ||
-               string.Equals(se.Title, app.GetApp().Title, StringComparison.InvariantCultureIgnoreCase));
+            string.Equals(se.ID, app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+             string.Equals(se.Title, app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+              string.Equals(se.ID, app.Title, StringComparison.InvariantCultureIgnoreCase) ||
+               string.Equals(se.Title, app.Title, StringComparison.InvariantCultureIgnoreCase));
 
         if (activeApp != null)
         {
@@ -226,15 +231,15 @@
                     IDTO newItemType = result.Items.FirstOrDefault();
                     if (newItemType != null)
                     {
-                        await sql.Assign(activeApp, newItemType, AssociationTyp.Children);    
+                        await sql.Assign(activeApp, newItemType, AssociationTyp.Children);
                     }
                 }
             }
         }
-        
 
+        
     }
-    
+
     
     private async Task PushFeatureUpdate()
     {

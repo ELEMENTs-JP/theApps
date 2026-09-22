@@ -26,7 +26,7 @@ namespace theInfrastructure
 
             if (ast == AssociationTyp.Children)
             {
-                // ItemTypes.Add(new ItemType_Tag());
+                ItemTypes.Add(new ItemType_SearchFilter());
             }
 
             return ItemTypes;

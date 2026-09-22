@@ -4,27 +4,31 @@ using System.Text;
 
 namespace theInfrastructure
 {
-    public record AppInfo(string Name, string Title);
+
     public record ItemTypeInfo(string Name, string Title);
     public record FieldInfo(string Name, string Typ);
     public record ItemTypeConnection(string Parent, string Child);
     public interface ITemplateApp
     {
-        AppInfo GetApp();
+        string ID { get; set; }
+        string Name { get; set; }
+        string Title { get; set; }
+        string Group { get; set; }
         List<ItemTypeInfo> GetItemTypes();
     }
 
     public class TemplateApp : ITemplateApp
     {
+        public string ID { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Group { get; set; } = string.Empty;
         public TemplateApp()
         {
             // Constructor implementation
         }
 
-        public virtual AppInfo GetApp()
-        {
-            return new AppInfo("Template", "Template App");
-        }
+
         public virtual List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
@@ -57,21 +61,7 @@ namespace theInfrastructure
 
     public static class TemplateAppFactory
     {
-        public static TemplateApp CreateTemplateApp(TemplateAppType appType)
-        {
-            switch (appType)
-            {
-                case TemplateAppType.BusinessModeler:
-                    { 
-                        return new TApp_BusinessModeler();
-                    }
-                
-                default:
-                    { 
-                        throw new ArgumentException($"Unknown app type: {appType}");
-                    }
-            }
-        }
+ 
         public static List<ITemplateApp> GetAllTemplateApps()
         {
             return new List<ITemplateApp>

@@ -10,13 +10,13 @@ namespace theInfrastructure
     {
         public TApp_Strategyzer()
         {
-            
+            ID = "STRATEGY";
+            Name = "STRATEGYzer";
+            Title = "the STRATEGYzer";
+            Group = "Strategy";
         }
 
-        public override AppInfo GetApp()
-        {
-            return new AppInfo("STRATEGYzer", "the STRATEGYzer");
-        }
+  
         public override List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();

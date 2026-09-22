@@ -62,5 +62,21 @@ namespace theInfrastructure
             }
             return description;
         }
+
+        public async Task<List<IDTO>> GetRelatedItems(ISqlDatabaseService sql,
+              string ItemType, AssociationTyp typ = AssociationTyp.Children)
+        {
+            return new List<IDTO>();
+        }
+        public void Assign(ISqlDatabaseService sql,
+                IDTO dtoToAssign, AssociationTyp typ = AssociationTyp.Children)
+        {
+            
+        }
+        public async Task Remove(ISqlDatabaseService sql,
+            IDTO dtoToRemove)
+        {
+            
+        }
     }
 }

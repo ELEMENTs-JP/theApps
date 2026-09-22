@@ -10,13 +10,13 @@ namespace theInfrastructure
     {
         public TApp_Wiki()
         {
-            
+            ID = "WIKI";
+            Name = "WIKI";
+            Title = "the WIKI";
+            Group = "Support";
         }
 
-        public override AppInfo GetApp()
-        {
-            return new AppInfo("Wiki", "the WIKI");
-        }
+    
         public override List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();

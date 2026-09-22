@@ -10,13 +10,13 @@ namespace theInfrastructure
     {
         public TApp_RISKler()
         {
-            
+            ID = "RISK";
+            Name = "RISKler";
+            Title = "the RISKler";
+            Group = "Tactical";
         }
 
-        public override AppInfo GetApp()
-        {
-            return new AppInfo("RISKler", "the RISKler");
-        }
+     
         public override List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();

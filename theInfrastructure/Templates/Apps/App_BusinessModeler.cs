@@ -10,13 +10,13 @@ namespace theInfrastructure
     {
         public TApp_BusinessModeler()
         {
-            
+            ID = "BusinessMODEL";
+            Name = "BusinessMODELer";
+            Title = "the Business MODELer";
+            Group = "Strategy";
         }
 
-        public override AppInfo GetApp()
-        {
-            return new AppInfo("BusinessMODELer", "the Business MODELer");
-        }
+   
         public override List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();

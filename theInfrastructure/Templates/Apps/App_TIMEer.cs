@@ -10,13 +10,13 @@ namespace theInfrastructure
     {
         public TApp_TIMEr()
         {
-            
+            ID = "TIME";
+            Name = "TIMEr";
+            Title = "the TIMEr";
+            Group = "Cross";
         }
 
-        public override AppInfo GetApp()
-        {
-            return new AppInfo("TIMEr", "the TIMEr");
-        }
+     
         public override List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();

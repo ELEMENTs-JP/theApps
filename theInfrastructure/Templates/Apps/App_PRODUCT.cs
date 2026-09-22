@@ -10,13 +10,13 @@ namespace theInfrastructure
     {
         public TApp_PRODUCT()
         {
-            
+            ID = "PRODUCT";
+            Name = "PRODUCT";
+            Title = "the PRODUCTler";
+            Group = "Operational";
         }
 
-        public override AppInfo GetApp()
-        {
-            return new AppInfo("PRODUCT", "the PRODUCT");
-        }
+       
         public override List<ItemTypeInfo> GetItemTypes()
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
