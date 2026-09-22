@@ -25,7 +25,7 @@
                 @if (isDropdownOpen)
                 {
                     <div class="border-bottom text-muted p-2">
-                        Suche nach: "@searchQuery"
+                        Suche nach: <strong class="text-body">@searchQuery</strong>
                     </div>
 
                     <div class="overflow-y-auto p-2" style="max-height:36rem;">
@@ -57,6 +57,21 @@
                             </div>
                         }
                     </div>
+
+                    @if (IsUserFiltered)
+                    {
+                        <div class="row g-0 text-muted py-1 px-2 border-top">
+                            <div class="col-auto">
+                            Suchergebnis wurde auf Nutzerebene gefiltert
+                            </div>
+                            <div class="col">
+
+                            </div>
+                            <div class="col-auto">
+                                @( "Einträge: " + Items.Count() )
+                            </div>
+                        </div>
+                    }
                 }
             </div>
         </div>
@@ -68,6 +83,7 @@
     private string searchQuery = string.Empty;
     private bool isDropdownOpen = false;
     private int selectedIndex = -1;
+    private bool IsUserFiltered = false;
 
     List<IDTO> Items { get; set; } = new();
 
@@ -107,6 +123,8 @@
 
     private async Task HandleInput(ChangeEventArgs e)
     {
+        IsUserFiltered = false;
+
         searchQuery = e.Value?.ToString() ?? string.Empty;
         selectedIndex = -1;
 
@@ -119,6 +137,16 @@
         {
             isDropdownOpen = true;
             Items = await search.Search(searchQuery);
+
+
+            // User Filterung
+            if (secService.User != null)
+            {
+                IsUserFiltered = true;
+                Items = Items.Where(item =>
+                                    !Helper.PersonalizedItemTypes.Contains(item.ItemType) || item.Metadata.CreatedBy == secService.User.GUID
+                                ).ToList();
+            }
         }
 
         if (OnSearchInput.HasDelegate)
@@ -173,7 +201,7 @@
         }
         catch (Exception ex)
         {
-            
+
         }
         try
         {
@@ -184,6 +212,6 @@
         {
 
         }
-      
+
     }
 }

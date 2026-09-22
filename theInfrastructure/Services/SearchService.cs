@@ -43,6 +43,7 @@ namespace theInfrastructure
             // Individuall Apps 
             IQueryParameter qp = new QueryParameter();
             qp.MasterGUID = SqlService.MasterGUID;
+ 
 
             IQueryResult result = await SqlService.Search(qp);
             Store = result.Items;

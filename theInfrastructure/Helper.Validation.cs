@@ -8,6 +8,12 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        
+        //public static readonly HashSet<string> PersonalizedItemTypes = new()
+        //{
+        //    "Task", "Note"
+        //};
+
         // Einmalig beim Start initialisiert – 0 Allokationen zur Laufzeit
         public static readonly HashSet<FieldTyp> AllowedFieldTypes = new()
         {
@@ -24,7 +30,7 @@ namespace theInfrastructure
  
 
 
-        private static readonly HashSet<string> PersonalizedItemTypes = new(StringComparer.Ordinal)
+        public static readonly HashSet<string> PersonalizedItemTypes = new(StringComparer.Ordinal)
         {
             "Task", "Note", "Appointment", "Reminder"
         };

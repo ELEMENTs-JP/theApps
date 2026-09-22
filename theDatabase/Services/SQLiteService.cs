@@ -677,7 +677,7 @@ namespace theDatabase
             // Excluded ItemTypes 
             query.ItemTypeExcludes = new List<string>() { 
                 "Principal", "User", "Permission", 
-                "App", "ItemType", "Field", "Slot", "Board" };
+                "App", "ItemType", "Field", "Slot", "Board", "Query", "SearchFilter" };
 
             FormattableString sql = Query.Search(query);
 
@@ -698,6 +698,8 @@ namespace theDatabase
                 result.Status = "FAIL";
                 result.Message = ex.Message;
             }
+
+     
 
             return result;
         }

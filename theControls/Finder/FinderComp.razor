@@ -1,4 +1,5 @@
 ﻿@inherits BaseCtl
+@implements IDisposable
 
 @if (Item != null && Context != null && Context.Item != null)
 {
@@ -84,6 +85,8 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageIncome;
     }
     protected override async Task OnParametersSetAsync()
     {
@@ -94,6 +97,15 @@
         await Init();
     }
 
+    private async void OnMessageIncome(AppMessage message)
+    {
+        if (message.Id == "EditBox" && message.Action == BusAction.Refresh)
+        {
+            await Query();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
     private async Task Init()
     {
         if (Context == null)
@@ -102,13 +114,7 @@
         if (Context.Item == null)
             return;
 
-        IQueryParameter qp = QueryParameter.Default(".");
-        qp.MasterGUID = sql.MasterGUID;
-        qp.ItemType = Context.Item["ItemType"].ToSecureString();
-        qp.Matchcode = Context.Item["Matchcode"].ToSecureString();
-
-        IQueryResult result = await sql.GetItems(qp);
-        this.Items = result.Items;
+        await Query();
     }
 
     private async Task Search(string matchcode)
@@ -116,15 +122,52 @@
         if (Context == null)
             return;
 
+        if (Context.Item == null)
+            return;
+
+        // Query 
         Context.Item["Matchcode"] = matchcode.ToSecureString(); 
         await Context.Update(Context.Item);
 
+        await Query();
+
+    }
+
+    private async Task Query()
+    {
         IQueryParameter qp = QueryParameter.Default(".");
         qp.MasterGUID = sql.MasterGUID;
         qp.ItemType = Context.Item["ItemType"].ToSecureString();
         qp.Matchcode = Context.Item["Matchcode"].ToSecureString();
-        
+
         IQueryResult result = await sql.GetItems(qp);
         this.Items = result.Items;
+
+        // Filter
+        List<IDTO> multipleFilter = await Context.Item.GetRelatedItems(sql, "SearchFilter");
+
+        foreach (IDTO filter in multipleFilter)
+        {
+            string column = filter["Column"].ToSecureString();
+            string typ = filter["Typ"].ToSecureString();
+            string value = Context.Item[column].ToSecureString();
+
+            if (typ == "Text")
+            {
+                this.Items = this.Items.Where(se => se[column].ToSecureString() == value).ToList();
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageIncome;
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
 }
