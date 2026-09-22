@@ -9,6 +9,126 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        private static readonly string[] Phrases = new string[]
+        {
+            "ein neues System entwickeln",
+            "eine moderne Anwendung erstellen",
+            "einen detaillierten Bericht erstellen",
+            "eine sichere Plattform entwickeln",
+            "komplexe Daten analysieren",
+            "Geschäftsprozesse effizient optimieren",
+            "die Kundenzufriedenheit deutlich verbessern",
+            "technische Probleme schnell lösen",
+            "wichtige Anforderungen klar definieren",
+            "neue Funktionen erfolgreich implementieren",
+
+            "eine zuverlässige Infrastruktur aufbauen",
+            "sensible Daten sicher schützen",
+            "wichtige Informationen zentral speichern",
+            "große Datenmengen effizient verarbeiten",
+            "bestehende Systeme regelmäßig warten",
+            "veraltete Software vollständig ersetzen",
+            "eine flexible Architektur entwickeln",
+            "kritische Systeme zuverlässig überwachen",
+            "technische Schnittstellen sauber integrieren",
+            "externe Dienste sicher anbinden",
+
+            "neue Benutzer erfolgreich registrieren",
+            "Benutzer eindeutig identifizieren",
+            "Benutzer sicher authentifizieren",
+            "Zugriffsrechte gezielt verwalten",
+            "vertrauliche Informationen verschlüsselt übertragen",
+            "wichtige Dateien regelmäßig sichern",
+            "beschädigte Daten vollständig wiederherstellen",
+            "verdächtige Aktivitäten automatisch erkennen",
+            "potenzielle Sicherheitsrisiken früh erkennen",
+            "strenge Sicherheitsrichtlinien konsequent durchsetzen",
+
+            "ein neues Projekt planen",
+            "wichtige Projektziele gemeinsam definieren",
+            "verfügbare Ressourcen sinnvoll verteilen",
+            "wichtige Aufgaben rechtzeitig erledigen",
+            "den aktuellen Projektstatus regelmäßig prüfen",
+            "kritische Abhängigkeiten früh erkennen",
+            "technische Herausforderungen gemeinsam lösen",
+            "interne Teams effizient koordinieren",
+            "klare Projektmeilensteine festlegen",
+            "erfolgreiche Projekte nachhaltig umsetzen",
+
+            "neue Geschäftsprozesse entwickeln",
+            "bestehende Abläufe deutlich verbessern",
+            "unnötige Arbeitsschritte konsequent reduzieren",
+            "manuelle Aufgaben weitgehend automatisieren",
+            "interne Prozesse sinnvoll vereinfachen",
+            "wichtige Informationen zentral verwalten",
+            "digitale Dokumente strukturiert organisieren",
+            "gemeinsame Ressourcen effizient nutzen",
+            "standardisierte Abläufe erfolgreich etablieren",
+            "operative Kosten nachhaltig reduzieren",
+
+            "neue Geschäftsmöglichkeiten identifizieren",
+            "interessante Marktchancen früh erkennen",
+            "aktuelle Markttrends regelmäßig analysieren",
+            "strategische Entscheidungen fundiert treffen",
+            "langfristige Geschäftsziele gemeinsam entwickeln",
+            "nachhaltiges Unternehmenswachstum gezielt fördern",
+            "neue Märkte erfolgreich erschließen",
+            "bestehende Kundenbeziehungen langfristig stärken",
+            "wichtige Geschäftspartner zuverlässig unterstützen",
+            "neue Produkte erfolgreich vermarkten",
+
+            "detaillierte Anforderungen dokumentieren",
+            "technische Spezifikationen vollständig erfassen",
+            "wichtige Änderungen sorgfältig dokumentieren",
+            "aktuelle Projektdaten regelmäßig aktualisieren",
+            "relevante Kennzahlen kontinuierlich überwachen",
+            "geschäftliche Ergebnisse objektiv bewerten",
+            "finanzielle Entwicklungen frühzeitig analysieren",
+            "zukünftige Umsätze realistisch prognostizieren",
+            "verfügbare Budgets sorgfältig planen",
+            "finanzielle Ressourcen optimal einsetzen",
+
+            "automatisierte Prozesse zuverlässig ausführen",
+            "regelmäßige Aufgaben automatisch erledigen",
+            "komplexe Arbeitsabläufe digitalisieren",
+            "wiederkehrende Tätigkeiten effizient automatisieren",
+            "interne Benachrichtigungen automatisch versenden",
+            "wichtige Berichte automatisch erstellen",
+            "neue Daten regelmäßig importieren",
+            "aktuelle Daten automatisch synchronisieren",
+            "verschiedene Systeme miteinander verbinden",
+            "digitale Arbeitsabläufe zentral steuern",
+
+            "technischen Support professionell anbieten",
+            "Kundenanfragen schnell bearbeiten",
+            "komplexe Kundenprobleme gezielt lösen",
+            "wichtige Rückmeldungen systematisch erfassen",
+            "die Servicequalität kontinuierlich verbessern",
+            "Antwortzeiten deutlich verkürzen",
+            "Kundenbedürfnisse besser verstehen",
+            "Nutzerverhalten detailliert analysieren",
+            "wertvolles Kundenfeedback regelmäßig sammeln",
+            "kundenorientierte Lösungen gemeinsam entwickeln",
+
+            "innovative Technologien erfolgreich einsetzen",
+            "moderne Lösungen gezielt entwickeln",
+            "neue Standards konsequent einführen",
+            "technologische Entwicklungen aufmerksam beobachten",
+            "digitale Möglichkeiten umfassend nutzen",
+            "neue Wettbewerbsvorteile gezielt schaffen",
+            "digitale Kompetenzen kontinuierlich erweitern",
+            "technologische Risiken frühzeitig bewerten",
+            "langfristige Strategien erfolgreich umsetzen",
+            "digitale Transformation nachhaltig vorantreiben"
+        };
+
+        public static IEnumerable<string> RandomPhrases(int count = 10)
+        {
+            return Phrases
+                .OrderBy(_ => Random.Shared.Next())
+                .Take(count);
+        }
+
         public static string ToValueIfNullOrEmpty(this object? obj, string value)
         {
             if (obj == null)
@@ -98,7 +218,7 @@ namespace theInfrastructure
         {
             List<IDTO> Items = new();
 
-        
+
             Items.Add(new DTO() { ID = "#00000000", Title = "transparent" });
             Items.Add(new DTO() { ID = "#ffffff", Title = "weiß" });
             Items.Add(new DTO() { ID = "#a1a5ab", Title = "hellgrau" });
@@ -502,7 +622,7 @@ namespace theInfrastructure
         }
         public static DateTime ToSecureDateTime(this object text)
         {
-           
+
             try
             {
                 if (text == null)

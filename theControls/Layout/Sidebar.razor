@@ -2,30 +2,38 @@
 @inject NavigationManager nm
 
 <div class="d-flex flex-column">
-    <div class="header p-2 align-items-center bg-surface text-center">
-        <div class="h1 hover pointer rounded-2 p-1 px-2 text-center" style="margin-top:-8px;"
+    <div class="position-relative header p-2 px-5 text-nowrap align-items-center bg-surface text-center">
+        <div class="h1 hover pointer rounded-2 p-1 text-center" style="margin-top:-8px;"
              @onclick="@( e => { nm.NavigateTo("/", false); })">
             @AppTitle
         </div>
+
+        <div class="position-absolute top-50 end-0 translate-middle-y toggler pe-3"
+             data-bs-toggle="collapse"
+             data-bs-target="#app_navigation"
+             aria-expanded="false"
+             aria-controls="app_navigation">
+            <SymbolIcon Symbol="Icon.Menu" />
+        </div>
+   
     </div>
 
     @if (Profile.HasContent())
     {
-        <div class=" border-bottom align-items-center " 
+        <div class="profile border-bottom align-items-center " 
              style="height: var(--tsp-user-profile-height)">
             @Profile
         </div>
     }
 
-    <div class="scrollable flex-fill">
+    <div id="app_navigation" class="scrollable flex-fill">
         <nav class="flex-column">
             @Navigation
         </nav>
     </div>
 
-    <div class="form-check form-switch no-focus togglerPos">
-        <input class="form-check-input toggler" type="checkbox" />
-    </div>
+
+
     <div class="footer">
     </div>
 </div>

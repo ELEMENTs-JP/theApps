@@ -25,6 +25,9 @@
     [Parameter]
     public string CSS { get; set; } = string.Empty;
 
+    [Parameter]
+    public string Title { get; set; }
+
     public int Number { get; set; } = 0;
 
     protected override async Task OnInitializedAsync()

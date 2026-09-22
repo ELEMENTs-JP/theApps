@@ -8,31 +8,33 @@
 .footer {
    display:none;
 }
-
+.profile {
+    display:none;
+}
 .scrollable {
-    display: none;
+ 
+    height: calc(100vh - var(--tsp-header-height) - var(--tsp-user-profile-height) - var(--tsp-footer-height));
+    overflow-y: auto;
 }
 
-.togglerPos {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-}
+
 .toggler {
-    
+  
 }
 
-.form-check:has(.toggler:checked) + .scrollable {
+/*.form-check:has(.toggler:checked) + .scrollable {
     display: block !important;
-}
+}*/
 
 @media (min-width: 992px) {
     .toggler {
         display: none;
     }
-
-    .scrollable {
+    .profile {
         display: block;
+    }
+    .scrollable {
+   
         
         height: calc(100vh - var(--tsp-header-height) - var(--tsp-user-profile-height) - var(--tsp-footer-height));
         overflow-y: auto;

@@ -1,21 +1,36 @@
-﻿@page "/Finder"
+﻿@page "/FINDits/{ID}"
 @using theControls.Finder
+@inject ISqlDatabaseService sql
 
-
-<PageTitle>the FINDer | the App Plattform</PageTitle>
+<PageTitle>FINDits | the App Plattform</PageTitle>
 
 
 <div class="container-flex">
 
-    <FinderComp />
+    <FinderComp Item="@Item" />
 
 </div>
 
 
-
 @code {
 
+    [Parameter]
+    public string ID { get; set; }
 
-   
+    private IDTO Item { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        IQueryParameter qp = QueryParameter.Default(".");
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = "Query";
+        qp.GUID = ID.ToSecureGUID();
+
+        IQueryResult result = await sql.GetItem(qp);
+        Item = result.Items.FirstOrDefault();
+
+    }
 
 }

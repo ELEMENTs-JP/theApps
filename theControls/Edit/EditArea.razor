@@ -1,4 +1,5 @@
-﻿@using theControls.List
+﻿@using theControls.Chart
+@using theControls.List
 @inject ISqlDatabaseService sql
 @inject ISecurityService sec
 @inject IAppService appService
@@ -7,7 +8,7 @@
 @implements IAsyncDisposable
 
 
-@if (ItemType != null && !string.IsNullOrEmpty(ID))
+@if (ItemType != null && !string.IsNullOrEmpty(ID) && Context != null && Context.Item != null)
 {
     <Frame Border="true" CSS="pt-2">
         <Icon>
@@ -62,6 +63,9 @@
             }
         </Related>
         <Content>
+            
+            <ProgressRangeKPI Item="@Context.Item" ItemType="@ItemType" />
+
             <div class="row g-0">
                 @foreach (IField field in Fields)
                 {

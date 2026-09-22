@@ -1,0 +1,123 @@
+﻿@if (isVisible)
+{
+    <ProgressRange Start="@Start" StartTitle="@StartColumn" 
+                    Ende="@Ende" EndeTitle="@EndeColumn" 
+                    CSS="flex-fill px-2 pb-2 border-bottom" 
+                    Title="Zeitlicher Fortschritt" />
+}
+
+@code {
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    private DateTime Start { get; set; }
+    private DateTime Ende { get; set; }
+    private bool isVisible;
+    private string StartColumn { get; set; }
+    private string EndeColumn { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (ItemType == null || Item == null)
+        {
+            isVisible = false;
+            return;
+        }
+
+        List<IField> fields = await ItemType.GetFields();
+
+        if (fields == null || !fields.Any())
+        {
+            isVisible = false;
+            return;
+        }
+
+        // 1. Startdatum ermitteln
+        IField startField = fields.FirstOrDefault(se =>
+            se.Column != null &&
+            se.Column.ToString().Contains("Start", StringComparison.OrdinalIgnoreCase) &&
+            se.Typ == FieldTyp.Date);
+
+        if (startField != null)
+        {
+            Start = Item[startField.Column].ToSecureDateTime();
+            StartColumn = startField.Title;
+        }
+        else if (Item.Metadata != null && Item.Metadata.CreatedAt != DateTime.MinValue)
+        {
+            Start = Item.Metadata.CreatedAt;
+            StartColumn = "Erstellt am";
+        }
+
+        // 2. Enddatum ermitteln (Priorität: "End" -> "DueTo")
+        IField endField = fields.FirstOrDefault(se =>
+            se.Column != null &&
+            se.Column.ToString().Contains("End", StringComparison.OrdinalIgnoreCase) &&
+            se.Typ == FieldTyp.Date);
+
+        if (endField != null)
+        {
+            Ende = Item[endField.Column].ToSecureDateTime();
+            EndeColumn = endField.Title;
+        }
+        else
+        {
+            IField dueToField = fields.FirstOrDefault(se =>
+                se.Column != null &&
+                se.Column.ToString().Equals("DueTo", StringComparison.OrdinalIgnoreCase) &&
+                se.Typ == FieldTyp.Date);
+
+            if (dueToField != null)
+            {
+                Ende = Item[dueToField.Column].ToSecureDateTime();
+                EndeColumn = dueToField.Title;
+            }
+        }
+
+        // Prüfen, ob mindestens ein relevantes Datumsfeld (Start, End oder DueTo) im ItemType existiert
+        bool hasAnyDateField = startField != null || endField != null ||
+                               fields.Any(se => se.Column != null &&
+                                                se.Column.ToString().Equals("DueTo", StringComparison.OrdinalIgnoreCase) &&
+                                                se.Typ == FieldTyp.Date);
+
+        if (!hasAnyDateField)
+        {
+            isVisible = false;
+            return;
+        }
+
+        // 3. Validierung und Fallback auf Jahresanfang / Jahresende
+        ValidateAndSanitizeDates();
+
+        isVisible = true;
+    }
+
+    private void ValidateAndSanitizeDates()
+    {
+        var now = DateTime.Now;
+
+        // Prüfen auf ungültige/unbesetzte Werte oder zeitliche Inkonsistency (Ende vor Start)
+        if (Start == DateTime.MinValue || Start == DateTime.MaxValue)
+        {
+            Start = new DateTime(now.Year, 1, 1, 0, 0, 0);
+        }
+
+        if (Ende == DateTime.MinValue || Ende == DateTime.MaxValue || Ende <= Start)
+        {
+            Ende = new DateTime(now.Year, 12, 31, 23, 59, 59);
+        }
+
+        // Falls Start nach der Anpassung immer noch >= Ende ist
+        if (Start >= Ende)
+        {
+            Start = new DateTime(now.Year, 1, 1, 0, 0, 0);
+            Ende = new DateTime(now.Year, 12, 31, 23, 59, 59);
+        }
+    }
+}

@@ -1,0 +1,79 @@
+﻿<div class="row align-items-center @CSS" title="@Title">
+    
+    @if (!string.IsNullOrEmpty(StartTitle))
+    {
+        
+    <div class="col-auto small text-muted fw-bold">
+       @StartTitle
+    </div>
+    }
+    <div class="col-auto small text-muted">
+        @(Start.HasValue ? Start.Value.ToString("dd.MM.yyyy") : "-")
+    </div>
+    <div class="col">
+        <ProgressBar Value="@ProgressPercentage.ToSecureString()" />
+    </div>
+    <div class="col-auto small text-muted">
+        @(Ende.HasValue ? Ende.Value.ToString("dd.MM.yyyy") : "-")
+    </div>
+    @if (!string.IsNullOrEmpty(EndeTitle))
+    {
+
+        <div class="col-auto small text-muted fw-bold">
+            @EndeTitle
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public DateTime? Start { get; set; }
+
+    [Parameter]
+    public DateTime? Ende { get; set; }
+
+    [Parameter]
+    public string CSS { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string StartTitle { get; set; }
+    [Parameter]
+    public string EndeTitle { get; set; }
+
+    private int ProgressPercentage
+    {
+        get
+        {
+            if (!Start.HasValue || !Ende.HasValue)
+            {
+                return 0;
+            }
+
+            if (Ende.Value <= Start.Value)
+            {
+                return 0;
+            }
+
+            var now = DateTime.Now;
+
+            if (now <= Start.Value)
+            {
+                return 0;
+            }
+
+            if (now >= Ende.Value)
+            {
+                return 100;
+            }
+
+            var totalTicks = (Ende.Value - Start.Value).Ticks;
+            var elapsedTicks = (now - Start.Value).Ticks;
+            var percentage = (double)elapsedTicks / totalTicks * 100;
+
+            return (int)Math.Round(percentage);
+        }
+    }
+}

@@ -26,6 +26,7 @@
                 <TabsItem ID="@( ID + "5")" Title="Sicherheit" Layout="TabsLayout.Buttons" />
                 <TabsItem ID="@( ID + "6")" Title="Apps" Layout="TabsLayout.Buttons" />
                 <TabsItem ID="@( ID + "7")" Title="SMTP" Layout="TabsLayout.Buttons" />
+                <TabsItem ID="@( ID + "8")" Title="Testdaten" Layout="TabsLayout.Buttons" />
             </HeaderContent>
             <ChildContent>
                 <TabsPanel ID="@( ID + "1")" IsActive="true">
@@ -222,6 +223,10 @@
 
                 <TabsPanel ID="@( ID + "7")">
                     <SmtpConfig />
+                </TabsPanel>
+
+                <TabsPanel ID="@( ID + "8")">
+                    <CreateTestData />
                 </TabsPanel>
             </ChildContent>
         </TabsFrame>

@@ -1,0 +1,49 @@
+﻿@using theInfrastructure
+@inherits BaseCtl
+
+<div class="border-bottom">
+    <h1 class="h1">Testedaten erzeugen</h1>
+</div>
+
+<div class="row g-0 align-items-center">
+    <div class="col p-2">
+        <strong>Testdaten erzeugen</strong>
+    </div>
+    <div class="col-auto p-2">
+        <div class="btn btn-primary" @onclick="CreatetheData">
+            erstellen...
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private async Task CreatetheData()
+    {
+        IQueryParameter qp = QueryParameter.Default(".");
+        qp.MasterGUID = sql.MasterGUID;
+
+        // Apps 
+        List<IApp> allApps = appService.AllApps.Where(se => se.IsNavigation == true && se.IsActive == true).ToList();
+        foreach (IApp app in allApps)
+        {
+            List<IItemType> itemtypes = await app.GetItemTypes(AssociationTyp.Children);
+            foreach (IItemType it in itemtypes)
+            {
+                // ItemType 
+                qp.ItemType = it.Name;
+
+                foreach (string word in Helper.RandomPhrases(10))
+                {
+                    qp.GUID = Guid.NewGuid();
+                    qp.Title = word;
+                    await sql.Create(qp);
+                }
+            }
+        }
+
+        msg.Publish("Info", BusAction.Info, "Testdaten wurden erstellt");
+
+    }
+
+}

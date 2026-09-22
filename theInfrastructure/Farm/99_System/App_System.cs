@@ -20,12 +20,17 @@ namespace theInfrastructure
 
             // ItemTypes 
             ItemTypes.Add(new ItemType_Setting());
+            
+            ItemTypes.Add(new ItemType_Query());
+            
             ItemTypes.Add(new ItemType_Trash());
             ItemTypes.Add(new ItemType_Archive());
 
             ItemTypes.Add(new ItemType_Folder());
             ItemTypes.Add(new ItemType_Tag());
             ItemTypes.Add(new ItemType_Label());
+
+            ItemTypes.Add(new ItemType_Insight());
 
             return ItemTypes;
         }

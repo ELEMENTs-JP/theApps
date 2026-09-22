@@ -2,8 +2,8 @@
 
 
 <div id="@( "ch-frame-" + ID )" 
-class="@app.Configuration.GetGlassClass()  d-flex p-1 rounded-2  @( ((Border) ? " border-bottom " : "")  )">
-    <div class="p-1">
+class="@app.Configuration.GetGlassClass()  row g-0 p-1 rounded-2  @( ((Border) ? " border-bottom " : "")  )">
+    <div class="col-auto p-1">
         @if (!string.IsNullOrEmpty(PreTitle))
         {
             <div class="page-pretitle">
@@ -42,9 +42,9 @@ class="@app.Configuration.GetGlassClass()  d-flex p-1 rounded-2  @( ((Border) ? 
             </div>
         }
     </div>
-    <div class="flex-fill p-1">
+    <div class="col p-1">
     </div>
-    <div class="text-end p-1">
+    <div class="col-auto text-end p-1">
         @if (!string.IsNullOrEmpty(PreRelated))
         {
             <div class="page-pretitle">
