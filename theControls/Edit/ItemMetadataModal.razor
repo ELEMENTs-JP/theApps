@@ -9,7 +9,7 @@
         </Icon>
         <ChildContent>
 
-               <div class="row g-0 p-1 border-bottom">
+               <div class="row g-0 p-1 border-bottom border-3">
                     <div class="col-5 p-1 text-muted fw-bold">Item</div>
                     <div class="col-7 p-1 fw-bold">Value</div>
                 </div>
@@ -36,7 +36,7 @@
             {
                 var properties = Item.Metadata.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-                    <div class="row g-0 p-1 border-bottom mt-5">
+                <div class="row g-0 p-1 border-bottom border-3 mt-5">
                     <div class="col-5 p-1 text-muted fw-bold">
                         Meta
                     </div>
@@ -45,22 +45,26 @@
                     </div>
                 </div>
                 @foreach (var prop in properties)
-                    {
-                        var rawValue = prop.GetValue(Item.Metadata);
-                        var displayValue = rawValue?.ToString() ?? "-";
+                {
+                    // Auslesen des DisplayName-Attributes mit Fallback auf prop.Name
+                    var displayNameAttr = prop.GetCustomAttribute<DisplayNameAttribute>();
+                    var displayName = displayNameAttr?.DisplayName ?? prop.Name;
 
-                        <div class="row g-0 p-1 border-bottom">
-                            <div class="col-5 p-1 text-muted text-truncate" title="@prop.Name">
-                                @prop.Name
-                            </div>
-                            <div class="col-7 p-1 fw-bold text-truncate" style="min-width: 0;" title="@displayValue">
-                                @displayValue
-                            </div>
+                    var rawValue = prop.GetValue(Item.Metadata);
+                    var displayValue = rawValue?.ToString() ?? "-";
+
+                    <div class="row g-0 p-1 border-bottom">
+                        <div class="col-5 p-1 text-muted text-truncate" title="@displayName">
+                            @displayName
                         </div>
-                    }
+                        <div class="col-7 p-1 text-truncate" style="min-width: 0;" title="@displayValue">
+                            @displayValue
+                        </div>
+                    </div>
+                }
             }
 
-              <div class="row g-0 p-1 border-bottom mt-5">
+              <div class="row g-0 p-1 border-bottom border-3 mt-5">
                     <div class="col-5 p-1 text-muted fw-bold">
                         Property
                     </div>
@@ -74,7 +78,7 @@
                     <div class="col-5 p-1 pe-5 text-muted text-truncate" title="@property.Property">
                         @property.Property
                     </div>
-                    <div class="col-7 p-1 fw-bold text-truncate" style="min-width: 0;" title="@property.Value">
+                    <div class="col-7 p-1 text-truncate" style="min-width: 0;" title="@property.Value">
                         @property.Value
                     </div>
                 </div>

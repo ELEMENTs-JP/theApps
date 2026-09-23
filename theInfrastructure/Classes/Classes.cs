@@ -211,11 +211,22 @@ namespace theInfrastructure
     }
     public class Metadata
     {
+        [DisplayName("Erstellt am")]
         public DateTime CreatedAt { get; set; } = DateTime.Now.Date;
+        
+        [DisplayName("Bearbeitet am")]
         public DateTime EditedAt { get; set; } = DateTime.Now.Date;
+
+        [DisplayName("Erstellt von")]
         public Guid CreatedBy { get; set; } = Guid.Empty;
+
+        [DisplayName("Bearbeitet von")]
         public Guid EditedBy { get; set; } = Guid.Empty;
+
+        [DisplayName("Ersteller")]
         public string Creator { get; set; } = string.Empty;
+
+        [DisplayName("Bearbeiter")]
         public string Editor { get; set; } = string.Empty;
 
     }
