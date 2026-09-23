@@ -1,0 +1,98 @@
+﻿@using System.Reflection
+@if (Item != null)
+{
+    <ModalForm @key="@(new Guid().ToSecureString())" Title="Metadaten"
+               ShowTitleInButton="false" Value=""
+               OnOKClicked="@( async e => {  } )">
+        <Icon>
+            <SymbolIcon Symbol="Icon.Config" CSS="" />
+        </Icon>
+        <ChildContent>
+
+               <div class="row g-0 p-1 border-bottom">
+                    <div class="col-5 p-1 text-muted fw-bold">Item</div>
+                    <div class="col-7 p-1 fw-bold">Value</div>
+                </div>
+
+                   <div class="row g-0 p-1 border-bottom">
+                    <div class="col-5 p-1 text-muted">GUID</div>
+                    <div class="col-7 p-1 fw-bold">@Item.GUID.ToSecureString()</div>
+                </div>
+                <div class="row g-0 p-1 border-bottom">
+                    <div class="col-5 p-1 text-muted">ID</div>
+                    <div class="col-7 p-1 fw-bold">@Item.ID</div>
+                </div>
+                <div class="row g-0 p-1 border-bottom">
+                    <div class="col-5 p-1 text-muted">Title</div>
+                    <div class="col-7 p-1 fw-bold">@Item.Title</div>
+                </div>
+                <div class="row g-0 p-1 border-bottom">
+                    <div class="col-5 p-1 text-muted">Content</div>
+                    <div class="col-7 p-1 fw-bold">@Item.Content</div>
+                </div>
+
+
+            @if (Item != null)
+            {
+                var properties = Item.Metadata.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+                    <div class="row g-0 p-1 border-bottom mt-5">
+                    <div class="col-5 p-1 text-muted fw-bold">
+                        Meta
+                    </div>
+                    <div class="col-7 p-1 fw-bold">
+                        Value
+                    </div>
+                </div>
+                @foreach (var prop in properties)
+                    {
+                        var rawValue = prop.GetValue(Item.Metadata);
+                        var displayValue = rawValue?.ToString() ?? "-";
+
+                        <div class="row g-0 p-1 border-bottom">
+                            <div class="col-5 p-1 text-muted text-truncate" title="@prop.Name">
+                                @prop.Name
+                            </div>
+                            <div class="col-7 p-1 fw-bold text-truncate" style="min-width: 0;" title="@displayValue">
+                                @displayValue
+                            </div>
+                        </div>
+                    }
+            }
+
+              <div class="row g-0 p-1 border-bottom mt-5">
+                    <div class="col-5 p-1 text-muted fw-bold">
+                        Property
+                    </div>
+                    <div class="col-7 p-1 fw-bold">
+                        Value
+                    </div>
+                </div>
+            @foreach (ItemProperty property in Item.Properties)
+            {
+               <div class="row g-0 p-1 border-bottom">
+                    <div class="col-5 p-1 pe-5 text-muted text-truncate" title="@property.Property">
+                        @property.Property
+                    </div>
+                    <div class="col-7 p-1 fw-bold text-truncate" style="min-width: 0;" title="@property.Value">
+                        @property.Value
+                    </div>
+                </div>
+            }
+            
+        </ChildContent>
+        <FooterContent>
+
+        </FooterContent>
+    </ModalForm>
+}
+
+
+
+
+@code {
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+}

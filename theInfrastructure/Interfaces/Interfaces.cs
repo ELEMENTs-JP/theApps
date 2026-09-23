@@ -179,6 +179,7 @@ namespace theInfrastructure
 
         string? Matchcode { get; set; }
 
+        List<ItemProperty> Properties { get; set; }
         string this[string propertyName] { get; set; }
         string? RelationType { get; set; }
         Metadata Metadata { get; set; }
