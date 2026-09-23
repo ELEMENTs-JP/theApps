@@ -6,7 +6,7 @@ namespace theInfrastructure
 {
 
     public record ItemTypeInfo(string Name, string Title);
-    public record FieldInfo(string Name, string Typ);
+    public record FieldInfo(string Name, FieldTyp Typ);
     public record ItemTypeConnection(string Parent, string Child);
     public interface ITemplateApp
     {
@@ -15,6 +15,7 @@ namespace theInfrastructure
         string Title { get; set; }
         string Group { get; set; }
         List<ItemTypeInfo> GetItemTypes();
+        List<FieldInfo> GetFields(string ItemType);
     }
 
     public class TemplateApp : ITemplateApp

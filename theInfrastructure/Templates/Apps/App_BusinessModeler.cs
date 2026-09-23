@@ -30,18 +30,18 @@ namespace theInfrastructure
         {
             List<ItemTypeConnection> cons = new List<ItemTypeConnection>();
 
-            cons.Add(new ItemTypeConnection("BusinessModel", "Element")); // Parent -> Child 
-
+            // cons.Add(new ItemTypeConnection("BusinessModel", "Element")); // Parent -> Child 
             return cons;
         }
         public override List<FieldInfo> GetFields(string ItemType)
         {
             List<FieldInfo> fields = new List<FieldInfo>();
 
-            if (ItemType == "Template")
+            if (ItemType == "BusinessModel")
             {
-                fields.Add(new FieldInfo("Template", "string"));
-                fields.Add(new FieldInfo("Template", "string"));
+                fields.Add(new FieldInfo("Priority", FieldTyp.Priority));
+                fields.Add(new FieldInfo("Fortschritt", FieldTyp.Progress));
+                fields.Add(new FieldInfo("Status", FieldTyp.Status));
             }
 
             return fields;

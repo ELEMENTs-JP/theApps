@@ -222,25 +222,70 @@
 
                 if (activeItemType == null)
                 {
+                    // Define 
                     IQueryParameter qp = QueryParameter.Default(info.Name);
                     qp.MasterGUID = sql.MasterGUID;
                     qp.ItemType = "ItemType";
+
+                    // Create 
                     IQueryResult result = await sql.Create(qp);
 
+                    // Load 
                     result = await sql.GetItem(qp);
                     IDTO newItemType = result.Items.FirstOrDefault();
                     if (newItemType != null)
                     {
                         await sql.Assign(activeApp, newItemType, AssociationTyp.Children);
+
+                        // Create Fields
+                        await CreateFieldsByItemType(app, newItemType, info);
                     }
                 }
             }
         }
 
-        
+
+    }
+    private async Task CreateFieldsByItemType(ITemplateApp app, IDTO dtoItemType, ItemTypeInfo itemType)
+    {
+
+
+        List<FieldInfo> fieldInfos = app.GetFields(itemType.Name);
+        foreach (FieldInfo fi in fieldInfos)
+        {
+            // Define
+            IQueryParameter qp = QueryParameter.Default(itemType.Name);
+            qp.MasterGUID = sql.MasterGUID;
+            qp.ItemType = "Field";
+
+            IQueryResult result = await sql.GetItems(qp);
+            IDTO field = result.Items.Find(se => se.Title == fi.Name && se["Typ"].ToSecureString() == fi.Typ.ToSecureString());
+            if (field == null)
+            {
+                // Create 
+                qp.Title = fi.Name;
+                result = await sql.Create(qp);
+
+                // Load 
+                result = await sql.GetItem(qp);
+                field = result.Items.FirstOrDefault();
+                if (field != null)
+                {
+                    // set 
+                    field["Typ"] = fi.Typ.ToSecureString();
+
+                    // Update 
+                    await sql.Update(field);
+                }
+            }
+            if (field != null)
+            {
+                // Assign
+                await sql.Assign(dtoItemType, field, AssociationTyp.Children);
+            }
+        }
     }
 
-    
     private async Task PushFeatureUpdate()
     {
         msg.Publish(new AppMessage("Feature", BusAction.Refresh));

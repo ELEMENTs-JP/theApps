@@ -16,14 +16,18 @@
             <div class="row g-0" style="height:36rem;">
                 <div class="col-3 px-2">
 
+                    <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)"
+                     Field="@TitleField" Binding="ValueBindingTyp.Title"
+                     Context="@Context" Border="false"  />
+
                     <EditBox Context="@Context" Border="false"
                         Field="@( Context.Fields.Find(se => se.Column == "Matchcode"))" />
                     <EditBox Context="@Context" Border="false"
                         Field="@( Context.Fields.Find(se => se.Typ == FieldTyp.ItemTypeList))" />
 
-                    <FinderFilter Context="@Context" />
+                    <FinderFilter Context="@Context" OnFilterChanged="@( e => {  })" />
 
-                    <FilterArea Context="@Context" />
+                    <FilterArea Context="@Context" OnFilterChanged="@( e => {  })"  />
 
                 </div>
                 <div class="col-6 px-2 border-start border-end overflow-y-auto h-100">
@@ -75,6 +79,8 @@
 
 @code {
 
+    IField TitleField { get; set; }
+
     [Parameter]
     public IDTO Item { get; set; }
 
@@ -92,6 +98,9 @@
     {
         await base.OnParametersSetAsync();
 
+        // Field 
+        TitleField = new Factory(sql).BuildField(FieldTyp.Heading);
+
         Context = new QueryContext(sql, sec, new ItemType_Query(), Item);
 
         await Init();
@@ -101,7 +110,8 @@
     {
         if (message.Id == "EditBox" && message.Action == BusAction.Refresh)
         {
-            await Query();
+            // Search
+            Items= await Helper.Query(sql, Context.Item, Items);
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -114,7 +124,8 @@
         if (Context.Item == null)
             return;
 
-        await Query();
+        // Search
+        Items = await Helper.Query(sql, Context.Item, Items);
     }
 
     private async Task Search(string matchcode)
@@ -129,35 +140,12 @@
         Context.Item["Matchcode"] = matchcode.ToSecureString(); 
         await Context.Update(Context.Item);
 
-        await Query();
+        // Search 
+        Items = await Helper.Query(sql, Context.Item, Items);
 
     }
 
-    private async Task Query()
-    {
-        IQueryParameter qp = QueryParameter.Default(".");
-        qp.MasterGUID = sql.MasterGUID;
-        qp.ItemType = Context.Item["ItemType"].ToSecureString();
-        qp.Matchcode = Context.Item["Matchcode"].ToSecureString();
-
-        IQueryResult result = await sql.GetItems(qp);
-        this.Items = result.Items;
-
-        // Filter
-        List<IDTO> multipleFilter = await Context.Item.GetRelatedItems(sql, "SearchFilter");
-
-        foreach (IDTO filter in multipleFilter)
-        {
-            string column = filter["Column"].ToSecureString();
-            string typ = filter["Typ"].ToSecureString();
-            string value = Context.Item[column].ToSecureString();
-
-            if (typ == "Text")
-            {
-                this.Items = this.Items.Where(se => se[column].ToSecureString() == value).ToList();
-            }
-        }
-    }
+ 
 
     public void Dispose()
     {
