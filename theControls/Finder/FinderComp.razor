@@ -18,16 +18,18 @@
 
                     <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)"
                      Field="@TitleField" Binding="ValueBindingTyp.Title"
-                     Context="@Context" Border="false"  />
+                     Context="@Context" Border="false" ItemSaved="@( async e => {  await Init(); } )"  />
 
                     <EditBox Context="@Context" Border="false"
-                        Field="@( Context.Fields.Find(se => se.Column == "Matchcode"))" />
+                        Field="@( Context.Fields.Find(se => se.Column == "Matchcode"))"
+                         ItemSaved="@( async e => {  await Init(); } )"  />
                     <EditBox Context="@Context" Border="false"
+                         ItemSaved="@( async e => {  await Init(); } )"  
                         Field="@( Context.Fields.Find(se => se.Typ == FieldTyp.ItemTypeList))" />
 
-                    <FinderFilter Context="@Context" OnFilterChanged="@( e => {  })" />
+                    <FinderFilter Context="@Context" OnFilterChanged="@( async e => { await Init(); })" />
 
-                    <FilterArea Context="@Context" OnFilterChanged="@( e => {  })"  />
+                    <FilterArea Context="@Context" OnFilterChanged="@(async e => { await Init(); })"  />
 
                 </div>
                 <div class="col-6 px-2 border-start border-end overflow-y-auto h-100">
@@ -128,7 +130,7 @@
         Items = await Helper.Query(sql, Context.Item, Items);
     }
 
-    private async Task Search(string matchcode)
+    private async Task Search(string matchcode = "")
     {
         if (Context == null)
             return;
