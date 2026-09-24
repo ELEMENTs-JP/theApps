@@ -1,57 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+using System.Linq;
 
 namespace theInfrastructure
 {
     public class Builder
     {
-        public List<ComponentDefinition> Definitions { get; set; } = new();
-        ISqlDatabaseService sqlService;
-        public Builder(ISqlDatabaseService sql) 
-        {
-            sqlService = sql;
+        // Statisches HashSet, das exakt einmal beim Laden der Klasse im Speicher liegt
+   
 
-            Init();
+
+
+        private readonly ISqlDatabaseService _sqlService;
+
+        public Builder(ISqlDatabaseService sql)
+        {
+            _sqlService = sql;
         }
 
-        private async void Init()
+        public ComponentDefinition? GetDefinition(string name)
         {
-            Definitions = new();
-            Definitions.Add(new ComponentDefinition() { Name = "Test UI", Namespace = "theInfrastructure", ClassName = "SimpleUICtl", CSS = " col-12 my-2" });
+            return Helper.ControlDefinitions.FirstOrDefault(se => se.Name == name);
         }
-        public ComponentDefinition GetDefinition(string Name)
-        {
-            ComponentDefinition? def = Definitions.Where(se => se.Name == Name).FirstOrDefault();
-            if (def == null)
-                return null;
 
-            return def;
-        }
         public List<IDynamicComponent> GetComponents()
         {
-            List<IDynamicComponent> comps = new List<IDynamicComponent>();
-            
-            foreach (var def in Definitions)
+            List<IDynamicComponent> comps = new List<IDynamicComponent>(Helper.ControlDefinitions.Count);
+
+            foreach (var def in Helper.ControlDefinitions)
             {
                 comps.Add(BuildComponent(def));
             }
 
             return comps;
         }
+
         public IDynamicComponent BuildComponent(ComponentDefinition comp)
         {
-            DynamicRazorComponent toBuildComponent = new DynamicRazorComponent(comp);
-            return toBuildComponent;
+            return new DynamicRazorComponent(comp);
         }
-        public IDynamicComponent BuildComponent(string Namespace, string ClassName)
+
+        public IDynamicComponent BuildComponent(string nameSpace, string className)
         {
-            ComponentDefinition comp = new ComponentDefinition();
-            comp.Namespace = Namespace;
-            comp.ClassName = ClassName;
-            DynamicRazorComponent toBuildComponent = new DynamicRazorComponent(comp);
-            return toBuildComponent;
+            ComponentDefinition comp = new ComponentDefinition
+            {
+                Namespace = nameSpace,
+                ClassName = className
+            };
+            return new DynamicRazorComponent(comp);
         }
     }
 }

@@ -571,11 +571,11 @@
                 Field = null;
             }
 
-            if (Context != null)
-            {
-                ((IDisposable)Context).Dispose();
-                Context = null;
-            }
+            // if (Context != null)
+            // {
+            //     ((IDisposable)Context).Dispose();
+            //     Context = null;
+            // }
 
             msg.OnMessage -= OnMessageRun;
         }

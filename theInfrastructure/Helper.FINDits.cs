@@ -8,6 +8,11 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+ 
+
+
+
+
         // Einmalig beim Start initialisiert – 0 Allokationen zur Laufzeit
         public static readonly HashSet<FieldTyp> AllowedFINDitsFieldTypes = new()
         {

@@ -1,0 +1,43 @@
+﻿@using Microsoft.JSInterop
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+<div class="border bg-primary rounded-2 p-2">
+    <h1 class="display-6">
+        @(string.IsNullOrEmpty(CurrentTime) ? "--:--:--" : CurrentTime)
+    </h1>
+</div>
+
+@code {
+    private string CurrentTime { get; set; } = string.Empty;
+    private DotNetObjectReference<TimeComp>? objRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            objRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("startClock", objRef);
+        }
+    }
+
+    [JSInvokable]
+    public void UpdateTimeFromClient(string clientTime)
+    {
+        CurrentTime = clientTime;
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("stopClock");
+        }
+        catch (JSDisconnectedException)
+        {
+            // Abfangen, falls der Client die Verbindung trennt bevor getrennt wird
+        }
+        objRef?.Dispose();
+    }
+}

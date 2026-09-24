@@ -5,6 +5,51 @@
     --tblr-dark-mode-border-color-translucent: #99999933 !important;
     --tblr-border-color: #99999933 !important;
     --tblr-bg-surface-secondary: #12151855;
+    /* --- Tabler Base Colors --- */
+    --tblr-blue: #066fd1;
+    --tblr-azure: #4299e1;
+    --tblr-indigo: #4263eb;
+    --tblr-purple: #ae3ec9;
+    --tblr-pink: #d6336c;
+    --tblr-red: #d63939;
+    --tblr-orange: #f76707;
+    --tblr-yellow: #f59f00;
+    --tblr-lime: #74b816;
+    --tblr-green: #2fb344;
+    --tblr-teal: #0ca678;
+    --tblr-cyan: #17a2b8;
+    /* --- Tabler Light Colors (-lt) --- */
+    --tblr-blue-lt: #f0f6fc;
+    --tblr-azure-lt: #ecf5fc;
+    --tblr-indigo-lt: #eceffe;
+    --tblr-purple-lt: #f7ebfa;
+    --tblr-pink-lt: #fbebf0;
+    --tblr-red-lt: #fbebeb;
+    --tblr-orange-lt: #fef0e6;
+    --tblr-yellow-lt: #fef5e6;
+    --tblr-lime-lt: #f1f8e8;
+    --tblr-green-lt: #ea stroke-2f3;
+    --tblr-teal-lt: #e7f6f2;
+    --tblr-cyan-lt: #e8f6f8;
+    /* --- Tabler Gray Scale --- */
+    --tblr-gray-50: #f8fafc;
+    --tblr-gray-100: #f1f5f9;
+    --tblr-gray-200: #e2e8f0;
+    --tblr-gray-300: #cbd5e1;
+    --tblr-gray-400: #94a3b8;
+    --tblr-gray-500: #64748b;
+    --tblr-gray-600: #475569;
+    --tblr-gray-700: #334155;
+    --tblr-gray-800: #1e293b;
+    --tblr-gray-900: #0f172a;
+    --tblr-gray-950: #020617;
+    /* --- Tabler Contextual / Theme Colors --- */
+    --tblr-primary: #066fd1;
+    --tblr-secondary: #64748b;
+    --tblr-success: #2fb344;
+    --tblr-info: #4299e1;
+    --tblr-warning: #f59f00;
+    --tblr-danger: #d63939;
 }
 
 

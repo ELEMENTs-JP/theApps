@@ -7,26 +7,51 @@
 {
     @* Change *@
     <div @key="@Item.GUID" id="@Item.GUID" 
-    class="drag row g-0 mt-2 rounded bg-surface">
+    class="drag row g-0 border rounded mx-1 my-2 rounded bg-surface align-items-center">
 
-        <div class="col-auto ms-auto me-auto grab hover rounded-2 px-2 text-muted"
-        style="cursor:move;">
-            ...
+        <div class="col-auto me-auto p-1 px-2 fw-bold text-muted">
+            @Item.Title
+        </div>
+
+        <div class="col-auto ms-auto me-auto grab p-1 text-muted" >
+            <div class="hover rounded py-05 px-3" style="cursor:move;">
+                ...
+            </div>
         </div>
 
 
         @if (Item != null)
         {
-            <div class="col-auto hover rounded-2">
+             <div class="col-auto ms-auto p-1">
+                
+
+                  <ModalForm @key="@(new Guid().ToSecureString())" Title="Einstellungen"
+                           ShowTitleInButton="false" Value=""
+                           OnOKClicked="@( async e => {  } )">
+                    <Icon>
+                        <SymbolIcon Symbol="Icon.Config" CSS="" />
+                    </Icon>
+                    <ChildContent>
+            
+                    </ChildContent>
+                    <FooterContent>
+
+                    </FooterContent>
+                </ModalForm>
+
+
+            </div>
+
+            <div class="col-auto p-1">
                 <SymbolIcon Symbol="Icon.Delete"
                 OnClick="@( async e => { await DeletItem(); })"
-                CSS="pointer rounded-2 p-05" />
+                CSS="pointer hover rounded p-05" />
             </div>
         }
 
         @if (Component != null)
         {
-            <div class="col-12">
+            <div class="col-12 border-top p-2">
                 <DynamicComponent Type="@(Component.ComponentType)" Parameters="@(Component.Parameters)" />
             </div>
         }

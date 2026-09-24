@@ -58,8 +58,17 @@ namespace theInfrastructure
                     }
             }
         }
+
         public static string ColorByPriority(string Prio)
         {
+            if (!string.IsNullOrEmpty(Prio))
+            {
+                if (Prio.IsNumeric() == false)
+                {
+                    Prio = DefaultPriorities().Find(se => se.Title == Prio).ID;
+                }
+            }
+
             switch (Prio)
             {
                 case "5":

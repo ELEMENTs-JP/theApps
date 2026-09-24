@@ -13,6 +13,7 @@ namespace theInfrastructure
         public string CSS { get; set; } = "col-12 my-2";
         public Dictionary<string, object> ParameterList = null;
         public IItemType ItemType { get; set; } = null;
+        public string Group { get; set; } = "Group"; // Gruppe für die Gruppierung des Typs des Controls 
     }
 
     // Interface 

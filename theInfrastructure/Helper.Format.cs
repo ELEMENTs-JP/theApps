@@ -9,6 +9,13 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        public static bool IsNumeric(this string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return false;
+
+            return int.TryParse(text.AsSpan(), NumberStyles.Integer, CultureInfo.InvariantCulture, out _);
+        }
         private static readonly string[] Phrases = new string[]
         {
             "ein neues System entwickeln",

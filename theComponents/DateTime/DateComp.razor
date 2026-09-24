@@ -1,0 +1,13 @@
+﻿
+<div class="border bg-primary rounded-2 p-2">
+    <h1 class="display-6">
+        @now.ToShortDateString()
+    </h1>
+</div>
+
+
+@code {
+
+    private DateTime now { get; set; } = DateTime.Now.Date;
+
+}

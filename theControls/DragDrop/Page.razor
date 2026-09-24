@@ -132,7 +132,7 @@
 
         // Controls
         Builder build = new Builder(sql);
-        foreach (ComponentDefinition comp in build.Definitions)
+        foreach (ComponentDefinition comp in Helper.ControlDefinitions)
         {
             ControlDefinitions.Add(new DTO() 
             { 
@@ -143,6 +143,7 @@
                 ["ItemType"] = comp.ItemType?.Name ?? string.Empty,
                 ["Zone"] = "Controls",
                 ["Sort"] = "1",
+                ["Group"] = comp.Group,
             });
         }
 
@@ -215,7 +216,7 @@
 
         // Create
         IQueryResult resultRows = await sql.GetRelatedItems(Item, "Slot", AssociationTyp.Children);
-        Rows = resultRows.Items;
+        Rows = resultRows.Items.OrderBy(se => se["Sort"].ToSecureInt()).ToList();
     }
 
     // Controls

@@ -467,7 +467,7 @@ namespace theInfrastructure
                 qp.MasterGUID = sql.MasterGUID;
                 qp.ItemType = "User";
                 IQueryResult result = await sql.GetItems(qp);
-                Items = result.Items;
+                Items = result.Items.OrderBy(se => se.Title).ToList();
             }
             else if (field.Typ == FieldTyp.ItemTypeList)
             {
@@ -475,7 +475,7 @@ namespace theInfrastructure
                 qp.MasterGUID = sql.MasterGUID;
                 qp.ItemType = "ItemType";
                 IQueryResult result = await sql.GetItems(qp);
-                Items = result.Items;
+                Items = result.Items.OrderBy(se => se.Title).ToList();
             }
             else if (field.Typ == FieldTyp.AppList)
             {
@@ -483,7 +483,7 @@ namespace theInfrastructure
                 qp.MasterGUID = sql.MasterGUID;
                 qp.ItemType = "App";
                 IQueryResult result = await sql.GetItems(qp);
-                Items = result.Items;
+                Items = result.Items.OrderBy(se => se.Title).ToList();
             }
             else if (field.Typ == FieldTyp.FunctionList)
             {
