@@ -7,7 +7,7 @@
 
 @if (!string.IsNullOrEmpty(this.Message))
 {
-    <div class="@( " border rounded-2 bg-surface " + FrameCSS )"
+    <div class="@( " border rounded-2 " + bgColor + " " + FrameCSS )"
          style="min-width:21rem !important;" role="alert">
 
         <div class="row g-0  w-100 progress-bg p-2 pt-3">
@@ -53,6 +53,8 @@
 
     [Parameter]
     public string FrameCSS { get; set; } = "";
+
+    private string bgColor { get; set; } = " bg-surface ";
 
 
     [Parameter]
@@ -114,10 +116,18 @@
     }
     private async void OnMessageIncome(AppMessage msg)
     {
+        bgColor = " bg-surface ";
+
         if (msg.Action == BusAction.Info)
         {
+
             Title = "Information";
             Message = msg.Payload.ToSecureString();
+
+            if (msg.Id == "Reminder")
+            {
+                bgColor = " bg-primary ";
+            }
 
             await InvokeAsync(StateHasChanged);
             await HideInfoAfterDelay();

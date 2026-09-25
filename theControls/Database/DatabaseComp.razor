@@ -46,6 +46,42 @@
     </div>
 
 
+    @if (sql.DatabaseExists == true)
+    {
+
+        <h2 class="h2">Backup Management</h2>
+        <div class="row g-0">
+            <div class="col-6">
+
+                <div class="d-flex align-items-center bg-surface p-2">
+                <strong class="flex-fill">Backup erstellen</strong>
+                <button class="btn btn-sm btn-success m-2" @onclick="BackupDatabase">Backup erstellen</button>
+            </div>
+
+
+
+            </div>
+
+            <div class="col-6">
+                <div class="p-2">
+
+                    @foreach (FileInfo file in DbFiles)
+                    {
+                        <div class="d-flex align-items-center border-bottom p-1">
+                            <div class="flex-fill p-1">
+                                @file.Name
+                            </div>
+                            <div class="p-1 text-end">
+                                @file.Length.ToMB()
+                            </div>
+                        </div>    
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+
 
     @if (sql.DatabaseExists == true)
     {
@@ -75,21 +111,15 @@
             </div>
         </div>
 
-        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
-            <div class="col p-2">
-                Backup erstellen
+  
+        <h2 class="h2 text-danger">Danger Zone</h2>
+        <div class="row align-items-center bg-surface border border-red rounded-2 p-2 my-2">
+            <div class="col p-2 text-danger fw-bold">
+                <strong>Datenbank löschen</strong>
+                <div>Wenn Sie die Datenbank löschen, können Sie genau diese nicht wieder herstellen.</div>
             </div>
             <div class="col-auto p-2">
-                <button class="btn btn-sm btn-success m-3" @onclick="BackupDatabase">Backup erstellen</button>
-            </div>
-        </div>
-
-        <div class="row align-items-center bg-surface border rounded-2 p-2 my-2">
-            <div class="col p-2">
-                Datenbank löschen
-            </div>
-            <div class="col-auto p-2">
-                <button class="btn btn-sm btn-warning m-3" @onclick="DeleteDatabase">löschen</button>
+                <button class="btn btn-sm btn-danger m-3" @onclick="DeleteDatabase">löschen</button>
             </div>
         </div>
     }
@@ -113,10 +143,23 @@
     string Info = string.Empty;
     string DBFileSize = string.Empty;
 
+    List<FileInfo> DbFiles { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         await DatabaseSize();
+        await LoadFiles();
+    }
+
+    private async Task LoadFiles()
+    {
+        string filePath = Path.Combine(env.ContentRootPath, "Database", "Backup");
+
+        if (Directory.Exists(filePath))
+        {
+            DbFiles = new DirectoryInfo(filePath).GetFiles("*.db").ToList();
+        }
     }
 
     private async Task DatabaseSize()

@@ -8,6 +8,11 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        public static string ToMB(this long bytes)
+        {
+            double megabytes = bytes / 1024.0 / 1024.0;
+            return $"{megabytes:F2} MB";
+        }
         public static string IdentifyFileTypeWithByteArray(byte[] sourceFileBytes)
         {
             if (sourceFileBytes == null || sourceFileBytes.Length < 4)

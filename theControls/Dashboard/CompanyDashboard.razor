@@ -2,18 +2,15 @@
 
 @* --- HEADER --- *@
 <div class="row g-0">
-    <div class="col-4 p-2">
+    <div class="col-6 p-2">
         <WeekSelector />
     </div>
-    <div class="col-4 p-2">
+    <div class="col-6 p-2">
         <div class="rounded-2 p-2 bg-surface">
         <ItemsList Title="Objective" ItemType="@( new Factory(sql).BuildItemType("Objective").Result)" IsSortable="false" ShowID="false" />
         <ItemsList Title="Key Results" ItemType="@( new Factory(sql).BuildItemType("KeyResult").Result)" IsSortable="false" ShowID="false" />
         <ItemsList Title="Check Ins" ItemType="@( new Factory(sql).BuildItemType("CheckIn").Result)" IsSortable="false" ShowID="false" />
         </div>
-    </div>
-    <div class="col-4 p-2">
-        <TimeFrameDisplayList />
     </div>
 </div>
 

@@ -37,6 +37,32 @@ namespace theInfrastructure
                 CSS = " col-12 my-2",
                 Group = "Date & Time"
             },
+            new ComponentDefinition
+            {
+                Name = "DateTime",
+                Namespace = "theComponents",
+                ClassName = "DateTimeComp",
+                CSS = " col-12 my-2",
+                Group = "Date & Time"
+            },
+
+               // Date 
+            new ComponentDefinition
+            {
+                Name = "Apps",
+                Namespace = "theComponents",
+                ClassName = "AppsDisplayList",
+                CSS = " col-12 my-2",
+                Group = "Date & Time"
+            },
+               new ComponentDefinition
+            {
+                Name = "ItemTypes",
+                Namespace = "theComponents",
+                ClassName = "ItemTypesDisplayList",
+                CSS = " col-12 my-2",
+                Group = "Date & Time"
+            },
         };
 
 

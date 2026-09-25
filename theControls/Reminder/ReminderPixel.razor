@@ -48,16 +48,16 @@
         // inkl. Heute (nicht beendet)
         reminders = reminders.Where(se => se["Stop"].ToSecureDateTime().Date >= DateTime.Now.Date).ToList();
 
-        // nur heutige Reminder
-        reminders = reminders.Where(se => se["Date"].ToSecureDateTime().Date == DateTime.Now.Date).ToList();
+        // Tag (älter als Heute) nur heutige Reminder
+        reminders = reminders.Where(se => se["Date"].ToSecureDateTime().Date <= DateTime.Now.Date).ToList();
 
-        // Uhrzeit 
+        // Uhrzeit (älter als jetzt)
         reminders = reminders.Where(se => se["Time"].ToSecureDateTime().TrimToMinute() <= DateTime.Now.TrimToMinute()).ToList();
 
         foreach (IDTO rem in reminders)
         {
-            string info = rem.Title;
-            msg.Publish("Info", BusAction.Info, info);
+            string info = rem.Title + " " + rem.Content;
+            msg.Publish("Reminder", BusAction.Info, info);
 
             await UpdateReminder(rem);
         }
