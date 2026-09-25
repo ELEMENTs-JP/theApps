@@ -46,14 +46,14 @@ namespace theInfrastructure
                 Group = "Date & Time"
             },
 
-               // Date 
+            // Apps & ItemTypes
             new ComponentDefinition
             {
                 Name = "Apps",
                 Namespace = "theComponents",
                 ClassName = "AppsDisplayList",
                 CSS = " col-12 my-2",
-                Group = "Date & Time"
+                Group = "Apps & ItemTypes"
             },
                new ComponentDefinition
             {
@@ -61,7 +61,17 @@ namespace theInfrastructure
                 Namespace = "theComponents",
                 ClassName = "ItemTypesDisplayList",
                 CSS = " col-12 my-2",
-                Group = "Date & Time"
+                Group = "Apps & ItemTypes"
+            },
+
+            // Apps 
+            new ComponentDefinition
+            {
+                Name = "Priority Chart",
+                Namespace = "theComponents",
+                ClassName = "PriorityChart",
+                CSS = " col-12 my-2",
+                Group = "Charts"
             },
         };
 

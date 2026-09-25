@@ -20,9 +20,29 @@
 
 
 
+/* ... */
+
+.sortable-chosen {
+    border: 1px solid #555;
+    background: #999;
+}
+
+.sortable-fallback,
+.sortable-drag {
+    opacity: 1 !important;
+}
+
+.sortable-ghost {
+    opacity: 0.5;
+}
 
 
+.zone-hover {
+    border: 1px dashed #aaaaaa33;
+    border-radius: 0.25rem;
+}
 
+/* ... */
 
 
 

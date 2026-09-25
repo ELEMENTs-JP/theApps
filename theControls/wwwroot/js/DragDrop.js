@@ -57,8 +57,11 @@ function assignSortableJS(containerElement, dragabbleClass, helper)
                 put: true
             },
 
+            forceFallback: true,
+
             chosenClass: "sortable-chosen",
-            ghostClass: 'bg-dragdrop',
+            ghostClass: "sortable-ghost",
+            dragClass: "sortable-drag",
 
             sort: true,  // sorting inside list
             delay: 0, // time in milliseconds to define when the sorting should start
@@ -68,21 +71,27 @@ function assignSortableJS(containerElement, dragabbleClass, helper)
             store: null,  // @see Store
             handle: ".grab",  // Drag handle selector within list items
             draggable: "." + dragabbleClass,  // Specifies which items inside the element should be draggable
-            setData: function (dataTransfer, dragEl)
-            {
+            setData: function(dataTransfer, dragEl) {
                 dataTransfer.setData('Text', dragEl.textContent); // `dataTransfer` object of HTML5 DragEvent
             },
 
             onMove(evt) {
+                evt.to.classList.add('zone-hover');
 
-             
+            },
+
+            onStart(evt) {
+                let allZones = document.querySelectorAll('.DefaultDragDropZone');
+                allZones.forEach(se => se.classList.add('zone-hover'));
+
             },
 
 
             // Element dragging ended 
-            // onEnd: function (evt) {
             async onEnd(evt) {
 
+                let allZones = document.querySelectorAll('.DefaultDragDropZone');
+                allZones.forEach(se => se.classList.remove('zone-hover'));
 
                 try {
 

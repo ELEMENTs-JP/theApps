@@ -1,0 +1,53 @@
+﻿@using theCharts
+@using theCharts.Charts
+@inherits BaseCtl
+
+
+<ChartComp Configuration="@chart_pie" />
+
+
+@code {
+
+    eConfiguration chart_pie = new eConfiguration(EChartTyp.pie, size: eSize.M, mode: eChartMode.Chart);
+    List<IDTO> Items { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await LoadPriorities(chart_pie);
+    }
+
+    private async Task LoadPriorities(eConfiguration config)
+    {
+        eSeries s = new eSeries();
+        s.Name = "Prioritäten";
+        s.Color = "#34A853";
+
+        IQueryParameter qp = QueryParameter.Default(".");
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = "Task";
+
+        IQueryResult result = await sql.GetItems(qp);
+        Items = result.Items;
+
+        int i = 1;
+        foreach (IDTO priority in Priority.DefaultPriorities())
+        {
+            int count = Items.Where(se => se["Prio"].ToString() == priority.Title).Count();
+            s.Data.Add(new eDataItem()  { 
+                            Name = priority.Title, 
+                            Value = count, 
+                            Color = Priority.ColorByPriority(priority.Title) });
+            i++;
+        }
+
+        config.Series.Add(s);
+    }
+
+}

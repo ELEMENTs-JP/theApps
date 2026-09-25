@@ -221,13 +221,21 @@ namespace theInfrastructure
             return true;
         }
 
+        public enum DefaultColor
+        {
+            transparent, weiss, hellgrau, grau, dunkelgrau, schwarz, violett, rot, orange, gelb, grün, blau, marine
+        }
+        public static string ColorByDefaultColor(DefaultColor color)
+        {
+            return DefaultColors().Find(se => se.Title == color.ToString()).ID;
+        }
         public static List<IDTO> DefaultColors()
         {
             List<IDTO> Items = new();
 
 
             Items.Add(new DTO() { ID = "#00000000", Title = "transparent" });
-            Items.Add(new DTO() { ID = "#ffffff", Title = "weiß" });
+            Items.Add(new DTO() { ID = "#ffffff", Title = "weiss" });
             Items.Add(new DTO() { ID = "#a1a5ab", Title = "hellgrau" });
             Items.Add(new DTO() { ID = "#626976", Title = "grau" });
             Items.Add(new DTO() { ID = "#444a55", Title = "dunkelgrau" });

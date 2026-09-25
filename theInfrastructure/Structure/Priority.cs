@@ -73,35 +73,35 @@ namespace theInfrastructure
             {
                 case "5":
                     {
-                        return "var(--tblr-red)";
+                        return Helper.ColorByDefaultColor(Helper.DefaultColor.rot);
                     }
                 case "3":
                     {
-                        return "var(--tblr-orange)";
+                        return Helper.ColorByDefaultColor(Helper.DefaultColor.orange);
                     }
                 case "1":
                     {
-                        return "var(--tblr-yellow)";
+                        return Helper.ColorByDefaultColor(Helper.DefaultColor.gelb);
                     }
                 case "0":
                     {
-                        return "var(--tblr-blue)";
+                        return Helper.ColorByDefaultColor(Helper.DefaultColor.marine);
                     }
                 case "-1":
                     {
-                        return "var(--tblr-green)";
+                        return Helper.ColorByDefaultColor(Helper.DefaultColor.grün);
                     }
                 case "-3":
                     {
-                        return "var(--tblr-purple)";
+                        return Helper.ColorByDefaultColor(Helper.DefaultColor.violett);
                     }
                 case "-5":
                     {
-                        return "var(--tblr-gray-500)";
+                        return Helper.ColorByDefaultColor(Helper.DefaultColor.grau);
                     }
                 default:
                     {
-                        return "#fff";
+                        return Helper.ColorByDefaultColor(Helper.DefaultColor.weiss);
                     }
             }
         }
