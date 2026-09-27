@@ -1,0 +1,59 @@
+﻿@inherits BaseCtl
+
+<ControlHeader PreTitle="" Title="Home" PostTitle="Dein Geschäft, deine Basis, dein Weg" Border="true" />
+<div class="my-2"></div>
+<div class="row g-0">
+    <div class="col-4 py-2 border-start border-3 border-primary">
+        <div class="text-secondary text-uppercase small px-2">Dein Business</div>
+        <h3 class="h3 fw-bold px-2">Vision</h3>
+        <EditBox Context="@Context" Field="@fVision" TextTruncate="false"
+            Border="false" ShowLabel="false" FrameCSS="py-1" IsEditable="@IsEditable" />
+    </div>
+    <div class="col-4 py-2 border-start border-3 border-primary">
+        <div class="text-secondary text-uppercase small px-2">Die nächsten Jahre</div>
+        <h3 class="h3 fw-bold px-2">Mission</h3>
+        <EditBox Context="@Context" Field="@fMission" TextTruncate="false"
+            Border="false" ShowLabel="false" FrameCSS="py-1" IsEditable="@IsEditable" />
+    </div>
+    <div class="col-4 py-2 border-start border-3 border-primary">
+        <div class="text-secondary text-uppercase small px-2">Die Strategie</div>
+        <h3 class="h3 fw-bold px-2">Strategy</h3>
+        <EditBox Context="@Context" Field="@fStrategy" TextTruncate="false"
+            Border="false" ShowLabel="false" FrameCSS="py-1" IsEditable="@IsEditable" />
+    </div>
+</div>
+@code {
+
+    IField fVision { get; set; }
+    IField fMission { get; set; }
+    IField fStrategy { get; set; }
+
+    IQueryContext Context { get; set; }
+    private bool IsEditable { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (sec.Principal == null)
+            return;
+
+        IItemType pItemType = await new Factory(sql).BuildItemType(sec.Principal.ItemType);
+
+        if (pItemType == null)
+            return;
+
+        // Context 
+        Context = new QueryContext(sql, sec, pItemType, sec.Principal);
+
+        // Fields 
+        IsEditable = sec.User["IsAdmin"].ToSecureBool();
+        FieldTyp typ = ((sec.User["IsAdmin"].ToSecureBool()) ? FieldTyp.TextArea : FieldTyp.TextBlock);
+
+        fVision = new Factory(sql).BuildField(typ, "Vision", "Die Vision");
+        fMission = new Factory(sql).BuildField(typ, "Mission", "Die Mission");
+        fStrategy = new Factory(sql).BuildField(typ, "Strategy", "Die Strategie");
+
+    }
+
+}

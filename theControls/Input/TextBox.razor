@@ -3,7 +3,8 @@
 @inject IJSRuntime js
 @using System.Globalization
 
-@if (!string.IsNullOrEmpty(this.Label))
+
+@if (!string.IsNullOrEmpty(this.Label) && ShowLabel == true)
 {
     <label class="form-label text-secondary no-select" for="@Id">@Label</label>
 }
@@ -124,6 +125,9 @@
 
     [Parameter]
     public string Placeholder { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool ShowLabel { get; set; } = true;
 
     [Parameter]
     public string? Step { get; set; }

@@ -1,4 +1,4 @@
-﻿@if (!string.IsNullOrEmpty(this.Label))
+﻿@if (!string.IsNullOrEmpty(this.Label) && ShowLabel == true)
 {
     <label class="form-label text-secondary" for="@ID">@Label</label>
 }
@@ -15,7 +15,7 @@
               disabled="@(!IsEditable)"
               @oninput="HandleInput"></textarea>
 
-    @if (Overlay != null)
+    @if (Overlay != null && IsEditable == true)
     {
         <div class="overlay position-absolute top-0 end-0 mt-2 me-2">
             @Overlay
@@ -48,6 +48,9 @@
 
     [Parameter]
     public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool ShowLabel { get; set; } = true;
 
     [Parameter]
     public string Description { get; set; } = string.Empty;

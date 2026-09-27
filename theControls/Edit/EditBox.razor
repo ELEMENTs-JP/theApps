@@ -13,7 +13,7 @@
 
 @if (Field != null && Context != null && Context.Item != null)
 {
-    <div class="@( ((Border == true) ? "border " : "")) rounded-2 p-1 px-2 position-relative @CheckCondition(Context.Item) @CssClass">
+    <div class="@( ((Border == true) ? "border " : "")) rounded-2 @FrameCSS position-relative @CheckCondition(Context.Item) @CssClass">
 
         @if (Field.Typ == FieldTyp.TextArea)
         {
@@ -23,7 +23,7 @@
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass"
                       Style="@ControlStyle"
-                      Rows="@Rows"
+                      Rows="@Rows" ShowLabel="false" 
                       IsEditable="@IsEditable">
                 <Overlay>
                     <div class="hover pointer rounded-2 p-1 me-1" @onclick="Save">
@@ -204,13 +204,13 @@
             {
                 <TextBlock @key="@( "TextBlock-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
                            Label="@Title" Description="@Description" Value="@Value" Format="@Field.Formatierung"
-                           Extension="@Field.Extension"
+                           Extension="@Field.Extension" TextTruncate="@TextTruncate"
                            IsEditable="@IsEditable" />
             }
             else
             {
                 <TextBox @key="@( "TextBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-                         Label="@Title" Description="@Description" Value="@Value"
+                     Label="@Title" Description="@Description" Value="@Value" ShowLabel="false"
                          ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
                          Type="@Field.Typ"
                          Placeholder="@Field.Placeholder"
@@ -272,10 +272,16 @@
     public string CssClass { get; set; } = "  ";
 
     [Parameter]
+    public string FrameCSS { get; set; } = "  p-1 px-2  ";
+
+    [Parameter]
     public string ControlStyle { get; set; } = " ";
 
     [Parameter]
     public bool Border { get; set; } = true;
+
+    [Parameter]
+    public bool TextTruncate { get; set; } = true;
 
     [Parameter]
     public bool ShowLabel { get; set; } = false;

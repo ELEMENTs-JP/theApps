@@ -81,15 +81,21 @@ namespace theInfrastructure
 
 
         // Fields 
-        public IField BuildField(FieldTyp fieldTyp)
+        public IField BuildField(FieldTyp fieldTyp, string column = "", string title = "")
         {
-            string typName = fieldTyp.ToString();
-
+            if (string.IsNullOrEmpty(column))
+            {
+                column = fieldTyp.ToString();
+            }
+            if (string.IsNullOrEmpty(title))
+            {
+                title = fieldTyp.ToString();
+            }
             return new Field
             {
-                Title = typName,
+                Title = title,
                 Typ = fieldTyp,
-                Column = typName,
+                Column = column,
                 CSS = "col"
             };
         }

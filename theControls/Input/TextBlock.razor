@@ -18,7 +18,7 @@
     }
 
     <div id="@Id" name="@InputName" data-value="@Value" title="@Value.ToFormat(Format)"
-         class=" text-truncate pe-5 @CssClass @( ((IsEditable) ? " editbox " : " viewbox no-select ") )">
+         class="@( ((TextTruncate) ? " text-truncate pe-5 " : " " ) )   @CssClass @( ((IsEditable) ? " editbox " : " viewbox no-select ") )">
         @Value.ToFormat(Format)
     </div>
     
@@ -99,6 +99,9 @@
 
     [Parameter]
     public bool FocusOnInit { get; set; } = false;
+
+    [Parameter]
+    public bool TextTruncate { get; set; } = true;
 
     [Parameter]
     public FieldTyp Type { get; set; } = FieldTyp.Text;

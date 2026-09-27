@@ -64,7 +64,7 @@ namespace theInfrastructure
                 Group = "Apps & ItemTypes"
             },
 
-            // Apps 
+            // Charts 
             new ComponentDefinition
             {
                 Name = "Priority Chart",
@@ -72,6 +72,16 @@ namespace theInfrastructure
                 ClassName = "PriorityChart",
                 CSS = " col-12 my-2",
                 Group = "Charts"
+            },
+
+            // STRATEGYzer 
+              new ComponentDefinition
+            {
+                Name = "Vision & Mission",
+                Namespace = "theComponents",
+                ClassName = "VisionMission",
+                CSS = " col-12 my-2",
+                Group = "Strategy"
             },
         };
 
