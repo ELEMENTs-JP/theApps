@@ -6,52 +6,54 @@
 @if (Item != null)
 {
     @* Change *@
-    <div @key="@Item.GUID" id="@Item.GUID" 
-    class="drag row g-0 border rounded mx-1 my-2 rounded bg-surface align-items-center">
+    <div @key="@Item.GUID" id="@Item.GUID"
+         class="drag row g-0 @CSS">
 
-        <div class="col-auto me-auto p-1 px-2 fw-bold text-muted">
-            @Item.Title
-        </div>
-
-        <div class="col-auto ms-auto me-auto grab p-1 text-muted" >
-            <div class="hover rounded py-05 px-3" style="cursor:move;">
-                ...
-            </div>
-        </div>
-
-
-        @if (Item != null)
+        @if (IsEditMode == true)
         {
-             <div class="col-auto ms-auto p-1">
+            <div class="col-auto me-auto p-1 px-2 fw-bold text-muted">
+                @Item.Title
+            </div>
+
+            <div class="col-auto ms-auto me-auto grab p-1 text-muted">
+                <div class="hover rounded py-05 px-3" style="cursor:move;">
+                    ...
+                </div>
+            </div>
+
+            @if (Item != null)
+            {
+                <div class="col-auto ms-auto p-1">
+
                 
+                    <ModalForm @key="@(new Guid().ToSecureString())" Title="Einstellungen"
+                               ShowTitleInButton="false" Value=""
+                               OnOKClicked="@( async e => {  } )">
+                        <Icon>
+                            <SymbolIcon Symbol="Icon.Config" CSS="" />
+                        </Icon>
+                        <ChildContent>
 
-                  <ModalForm @key="@(new Guid().ToSecureString())" Title="Einstellungen"
-                           ShowTitleInButton="false" Value=""
-                           OnOKClicked="@( async e => {  } )">
-                    <Icon>
-                        <SymbolIcon Symbol="Icon.Config" CSS="" />
-                    </Icon>
-                    <ChildContent>
-            
-                    </ChildContent>
-                    <FooterContent>
+                        </ChildContent>
+                        <FooterContent>
 
-                    </FooterContent>
-                </ModalForm>
+                        </FooterContent>
+                    </ModalForm>
 
 
-            </div>
+                </div>
 
-            <div class="col-auto p-1">
-                <SymbolIcon Symbol="Icon.Delete"
-                OnClick="@( async e => { await DeletItem(); })"
-                CSS="pointer hover rounded p-05" />
-            </div>
+                <div class="col-auto p-1">
+                    <SymbolIcon Symbol="Icon.Delete"
+                                OnClick="@( async e => { await DeletItem(); })"
+                                CSS="pointer hover rounded p-05" />
+                </div>
+            }
         }
 
         @if (Component != null)
         {
-            <div class="col-12 border-top p-2">
+            <div class="col-12 p-2">
                 <DynamicComponent Type="@(Component.ComponentType)" Parameters="@(Component.Parameters)" />
             </div>
         }
@@ -66,8 +68,21 @@
     // Fields
     string drop = "dropControls";
 
-    // [Parameter]
-    // public DragDropElement Item { get; set; }
+    private string _css = " border rounded mx-1 my-2 bg-surface align-items-center ";
+    [Parameter]
+    public string CSS
+    {
+        get
+        {
+            if (IsEditMode == true)
+            {
+                return _css;
+            }
+
+            return string.Empty;
+        }
+        set { _css = value; }
+    }
 
     private Builder builder { get; set; }
 
@@ -75,6 +90,9 @@
 
     [Parameter]
     public IDTO Item { get; set; }
+
+    [Parameter]
+    public bool IsEditMode { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -100,7 +118,7 @@
 
         await sql.Delete(Item);
 
-        // Refresh 
+        // Refresh
         msg.Publish("Item", BusAction.Refresh);
     }
 

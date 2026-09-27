@@ -8,13 +8,13 @@
 
         @foreach (Column column in Columns)
         {
-            <div class="col-@column.Width">
+            <div class="@( "col-md-" + column.Width + " " + column.AltCol )">
 
                 <DragDropContainer Entries="Widgets" Zone="@column.Zone" 
-                                CSS="bg-surface-secondary p-2 my-1"
+                                CSS="bg-surface-secondary p-2 my-1" IsEditMode="@IsEditMode"
                                    DragEnd="@( async e => { await DragEnd.InvokeAsync(e);  } )">
                     <ItemTemplate Context="ctl">
-                        <Widget @key="@ctl.GUID" Item="@ctl" />
+                        <Widget @key="@ctl.GUID" Item="@ctl" IsEditMode="@IsEditMode" />
                     </ItemTemplate>
                 </DragDropContainer>
 
@@ -39,6 +39,9 @@
 
     [Parameter]
     public List<IDTO> Controls { get; set; } = new();
+
+    [Parameter]
+    public bool IsEditMode { get; set; } = false;
 
     // Internal 
     List<Column> Columns { get; set; } = new List<Column>();
@@ -75,38 +78,38 @@
             case "66":
                 {
                     Columns = new List<Column> { 
-                            new Column { Width = 6, Zone = "6L-" + Item.GUID },
-                                new Column { Width = 6, Zone = "6R-" + Item.GUID }, };
+                            new Column { Width = 6, AltCol = "col-12", Zone = "6L-" + Item.GUID },
+                                new Column { Width = 6, AltCol = "col-12", Zone = "6R-" + Item.GUID }, };
                     break;
                 }
             case "444":
                 {
                     Columns = new List<Column> { 
-                            new Column { Width = 4, Zone = "4L-" + Item.GUID }, 
-                            new Column { Width = 4, Zone = "4M-" + Item.GUID }, 
-                            new Column { Width = 4, Zone = "4R-" + Item.GUID }, };
+                            new Column { Width = 4, AltCol = "col-12", Zone = "4L-" + Item.GUID }, 
+                            new Column { Width = 4, AltCol = "col-12", Zone = "4M-" + Item.GUID }, 
+                            new Column { Width = 4, AltCol = "col-12", Zone = "4R-" + Item.GUID }, };
                     break;
                 }
             case "363":
                 {
                     Columns = new List<Column> {
-                            new Column { Width = 3, Zone = "3L-" + Item.GUID },
-                            new Column { Width = 6, Zone = "6M-" + Item.GUID },
-                            new Column { Width = 3, Zone = "3R-" + Item.GUID }, };
+                            new Column { Width = 3,  AltCol = "col-12", Zone = "3L-" + Item.GUID },
+                            new Column { Width = 6,  AltCol = "col-12", Zone = "6M-" + Item.GUID },
+                            new Column { Width = 3,  AltCol = "col-12", Zone = "3R-" + Item.GUID }, };
                     break;
                 }
             case "57":
                 {
                     Columns = new List<Column> { 
-                            new Column { Width = 5, Zone = "5L-" + Item.GUID },
-                                new Column { Width = 7, Zone = "7R-" + Item.GUID }, };
+                            new Column { Width = 5,  AltCol = "col-12",  Zone = "5L-" + Item.GUID },
+                                new Column { Width = 7,  AltCol = "col-12", Zone = "7R-" + Item.GUID }, };
                     break;
                 }
             case "75":
                 {
                     Columns = new List<Column> {
-                            new Column { Width = 7, Zone = "7L-" + Item.GUID },
-                                new Column { Width = 5, Zone = "5R-" + Item.GUID }, };
+                            new Column { Width = 7,  AltCol = "col-12", Zone = "7L-" + Item.GUID },
+                                new Column { Width = 5,  AltCol = "col-12", Zone = "5R-" + Item.GUID }, };
                     break;
                 }
             default:

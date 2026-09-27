@@ -1,5 +1,4 @@
-﻿
-@inject IJSRuntime JS
+﻿@inject IJSRuntime JS
 @inject ISqlDatabaseService sql
 @inject ISecurityService sec
 @inject IMessagingBusService msg
@@ -7,46 +6,56 @@
 
 @if (Item != null)
 {
-    <Frame Border="true" >
+    <Frame Border="true">
         <Header>
             <ControlHeader PreTitle="Page" Title="@Item.Title" PostTitle="@Item.Content" />
         </Header>
         <Related>
             <div class="hstack gap-3">
-                <ModalForm Title="Einstellungen" 
-                        OnOKClicked="@( async e => {  await sql.Update(Item); })">
-                    <ChildContent>
-                        <div class="row">
-                            <div class="col-12 px-2">
-                                <TextBox Label="Titel" Value="@Item.Title"
-                                         ValueChanged="@(e =>  { Item.Title = e; })" />
-                                <div class="border-bottom my-3"></div>
-                                <TextBox Label="Beschreibung" Value="@Item.Content"
-                                         ValueChanged="@(e =>  { Item.Content = e; })" />
-                                <div class="border-bottom my-3"></div>
+
+                @if (sec.User["IsAdmin"].ToSecureBool() == true)
+                {
+                    <CheckBox Value="@IsEditMode.ToSecureString()"
+                              ValueChanged="@( e => { IsEditMode = e.ToSecureBool(); })" />
+                }
+
+                @if (IsEditMode == true)
+                {
+                    <ModalForm Title="Einstellungen"
+                               OnOKClicked="@( async e => {  await sql.Update(Item); })">
+                        <ChildContent>
+                            <div class="row">
+                                <div class="col-12 px-2">
+                                    <TextBox Label="Titel" Value="@Item.Title"
+                                             ValueChanged="@(e =>  { Item.Title = e; })" />
+                                    <div class="border-bottom my-3"></div>
+                                    <TextBox Label="Beschreibung" Value="@Item.Content"
+                                             ValueChanged="@(e =>  { Item.Content = e; })" />
+                                    <div class="border-bottom my-3"></div>
+                                </div>
                             </div>
-                        </div>
-                    </ChildContent>
-                </ModalForm>
+                        </ChildContent>
+                    </ModalForm>
 
-                <DragDropDesigner Entries="@Rows" Definitions="@LayoutDefinitions"
-                                  DefinitionsTitle="Spalten hinzufügen..." EntriesTitle="Layout"
-                                  Zone="Layout" DragEnd="@( async e => { Rows = e;  })"
-                                  ItemAdded="@( async e => {  await AddLayoutRow(e); })">
-                    <Icon>
-                        <SymbolIcon Symbol="@Icon.Layout" />
-                    </Icon>
-                </DragDropDesigner>
+                    <DragDropDesigner Entries="@Rows" Definitions="@LayoutDefinitions"
+                                      DefinitionsTitle="Spalten hinzufügen..." EntriesTitle="Layout"
+                                      Zone="Layout" DragEnd="@( async e => { Rows = e;  })"
+                                      ItemAdded="@( async e => {  await AddLayoutRow(e); })">
+                        <Icon>
+                            <SymbolIcon Symbol="@Icon.Layout" />
+                        </Icon>
+                    </DragDropDesigner>
 
-                <DragDropDesigner Title="Steuerelemente"
-                                  Entries="@Controls" Definitions="@ControlDefinitions"
-                                  Zone="Controls" HasBackdrop="false" ReAssignZones="true"
-                                  DragEnd="@( async e => { Controls = e; await UpdateControls(e);  })"
-                                  ItemAdded="@( async e => {  await AddControl(e); })">
-                    <Icon>
-                        <SymbolIcon Symbol="@Icon.Controls" />
-                    </Icon>
-                </DragDropDesigner>
+                    <DragDropDesigner Title="Steuerelemente"
+                                      Entries="@Controls" Definitions="@ControlDefinitions"
+                                      Zone="Controls" HasBackdrop="false" ReAssignZones="true"
+                                      DragEnd="@( async e => { Controls = e; await UpdateControls(e);  })"
+                                      ItemAdded="@( async e => {  await AddControl(e); })">
+                        <Icon>
+                            <SymbolIcon Symbol="@Icon.Controls" />
+                        </Icon>
+                    </DragDropDesigner>
+                }
             </div>
         </Related>
         <Content>
@@ -54,8 +63,8 @@
             <div data-zone="Page" class="bg-surface rounded-2 p-2 py-3">
                 @foreach (IDTO row in Rows)
                 {
-                    <LayoutRow @key="@( "olr-" + row.GUID.ToSecureString())" 
-                               Item="@row" Controls="@Controls"
+                    <LayoutRow @key="@( "olr-" + row.GUID.ToSecureString())"
+                               Item="@row" Controls="@Controls" IsEditMode="@IsEditMode"
                                DragEnd="@( async e => { await UpdateControls(e); } )">
 
                     </LayoutRow>
@@ -79,6 +88,8 @@
     [Parameter]
     public List<IDTO> Controls { get; set; } = new();
     List<IDTO> ControlDefinitions { get; set; } = new();
+
+    private bool IsEditMode { get; set; } = false;
 
     // CTR
     protected override async Task OnInitializedAsync()
@@ -134,9 +145,9 @@
         Builder build = new Builder(sql);
         foreach (ComponentDefinition comp in Helper.ControlDefinitions)
         {
-            ControlDefinitions.Add(new DTO() 
-            { 
-                Title = comp.Name, 
+            ControlDefinitions.Add(new DTO()
+            {
+                Title = comp.Name,
                 ["Namespace"] = comp.Namespace,
                 ["ClassName"] = comp.ClassName,
                 ["CSS"] = comp.CSS,
@@ -168,7 +179,7 @@
         }
     }
 
-    // Layout 
+    // Layout
     public async Task AddLayoutRow(IDTO dde)
     {
         // Parameter
@@ -202,7 +213,7 @@
         // Zuordnung
         await sql.Assign(Item, row, AssociationTyp.Children);
 
-        // Reload Rows 
+        // Reload Rows
         await LoadRows();
     }
     public async Task LoadRows()
@@ -231,7 +242,7 @@
         qp.UserGUID = sec.User.GUID;
         qp.UserName = sec.User.Title;
 
-        // Update DragDrop 
+        // Update DragDrop
         dde.ID = qp.GUID.ToSecureString();
 
         // Create
@@ -253,7 +264,7 @@
         ctl["CSS"] = dde["CSS"].ToSecureString();
         ctl["ItemType"] = dde["ItemType"].ToSecureString();
 
-        // Update 
+        // Update
         await sql.Update(ctl);
 
         // Zuordnung
@@ -264,10 +275,10 @@
     }
     public async Task UpdateControls(List<IDTO> ctls)
     {
-        // Check Loading 
+        // Check Loading
         if (Controls.Count() == 0)
         {
-            await LoadControls();    
+            await LoadControls();
         }
 
         foreach (var ctl in ctls)
@@ -282,10 +293,10 @@
             await sql.Update(dto);
         }
 
-        // Reload Controls 
+        // Reload Controls
         await LoadControls();
 
-        // Update 
+        // Update
         await InvokeAsync(StateHasChanged);
     }
     public async Task LoadControls()

@@ -40,11 +40,12 @@ namespace theInfrastructure
         {
             List<FieldInfo> fields = new List<FieldInfo>();
 
-            //if (ItemType == "Template")
-            //{
-            //    fields.Add(new FieldInfo("Template", "string"));
-              
-            //}
+            if (ItemType == "Objective")
+            {
+                fields.Add(new FieldInfo("Priority", FieldTyp.Priority));
+                fields.Add(new FieldInfo("Fortschritt", FieldTyp.Progress));
+                fields.Add(new FieldInfo("Status", FieldTyp.Status));
+            }
 
             return fields;
         }

@@ -20,6 +20,7 @@ namespace theInfrastructure
     public class Column
     {
         public int Width { get; set; } = 12;
+        public string AltCol { get; set; } = ""; // Alternative col (col-lg-4 col-12)
         public string Zone { get; set; } = string.Empty;
     }
 }

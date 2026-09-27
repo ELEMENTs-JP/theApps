@@ -7,7 +7,7 @@
 
 
 <div class="@( drop + Zone ) DefaultDragDropZone position-relative @CSS"
-     data-zone="@Zone" style="min-height:5rem;">
+     data-zone="@Zone" style="@Style">
 
     @if (!string.IsNullOrEmpty(this.Title))
     {
@@ -54,6 +54,9 @@
     [Parameter]
     public string SortProperty { get; set; } = "Sort";
 
+    [Parameter]
+    public bool IsEditMode { get; set; } = false;
+
     /// <summary>
     /// Wird benötigt um im Mehrnutzungsszenarion die initiale Container zu definieren 
     /// </summary>
@@ -63,8 +66,37 @@
     [Parameter]
     public List<IDTO> Entries { get; set; } = new();
 
+    private string _css = " bg-surface border rounded px-2 py-1 my-2 ";
     [Parameter]
-    public string CSS { get; set; } = " bg-surface border rounded px-2 py-1 my-2 ";
+    public string CSS 
+    {
+        get 
+        {
+            if (IsEditMode == true)
+            {
+                return _css;    
+            }
+
+            return string.Empty; 
+        }
+        set { _css = value; } 
+    }
+
+    private string _style = " min-height:5rem; ";
+    [Parameter]
+    public string Style
+    {
+        get
+        {
+            if (IsEditMode == true)
+            {
+                return _style;
+            }
+
+            return string.Empty;
+        }
+        set { _style = value; }
+    }
 
     // Objects
     private Lazy<Task<IJSObjectReference>> module;
