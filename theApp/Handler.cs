@@ -42,7 +42,7 @@ namespace theApp
                     .AddHubOptions(options =>
                     {
                         // für Copy Paste Dateiupload 
-                        options.MaximumReceiveMessageSize = 30 * 1024 * 1024; // 10 MB Limit
+                        options.MaximumReceiveMessageSize = 100 * 1024 * 1024; // 100 MB Limit
                     })
                     .AddCircuitOptions(options =>
                     {
@@ -121,6 +121,9 @@ namespace theApp
                 // Timer Service 
                 builder.Services.AddScoped<TimerService>();
 
+                // HttpClient allgemein f. Webzugriffe hinzufügen 
+                builder.Services.AddHttpClient();
+            
                 // A valid antiforgery token was not provided with the request. Add an antiforgery token, or disable antiforgery validation for this endpoint.
 
                 // --- 1. Cookie-Authentifizierung konfigurieren

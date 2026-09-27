@@ -207,7 +207,7 @@ namespace theInfrastructure
             }
 
             // Start 
-            string start = await GetRelevantPropertyName(RelevantPropertyType.Start);
+            string start = await GetRelevantPropertyName(RelevantPropertyType.StartTime);
             if (!string.IsNullOrEmpty(start))
             {
                 // Value 
@@ -225,7 +225,7 @@ namespace theInfrastructure
             }
 
             // Ende 
-            string end = await GetRelevantPropertyName(RelevantPropertyType.End);
+            string end = await GetRelevantPropertyName(RelevantPropertyType.EndTime);
             if (!string.IsNullOrEmpty(end))
             {
                 // Value 
@@ -362,7 +362,27 @@ namespace theInfrastructure
             }
 
             // Start 
-            if(typ == RelevantPropertyType.Start)
+            if (typ == RelevantPropertyType.StartDate)
+            {
+                IField? startField = fields.Find(se => (se.Typ == FieldTyp.Date || se.Typ == FieldTyp.DateTime) && (se.Column == "Start" || se.Column == "DueTo" || se.Column == "Date"));
+                if (startField != null)
+                {
+                    prop = startField.Column;
+                }
+            }
+
+            // End 
+            if (typ == RelevantPropertyType.EndDate)
+            {
+                IField? endField = fields.Find(se => (se.Typ == FieldTyp.Date || se.Typ == FieldTyp.DateTime) && (se.Column == "End" || se.Column == "Ende" || se.Column == "DueTo" || se.Column == "Date"));
+                if (endField != null)
+                {
+                    prop = endField.Column;
+                }
+            }
+
+            // Start 
+            if (typ == RelevantPropertyType.StartTime)
             {
                 IField? startField = fields.Find(se => se.Typ == FieldTyp.Time && se.Column == "Start" && se.Typ == FieldTyp.Time);
                 if (startField != null)
@@ -372,7 +392,7 @@ namespace theInfrastructure
             }
 
             // End 
-            if(typ == RelevantPropertyType.End)
+            if(typ == RelevantPropertyType.EndTime)
             {
                 IField? endField = fields.Find(se => se.Typ == FieldTyp.Time && (se.Column == "End" || se.Column == "Ende" && se.Typ == FieldTyp.Time));
                 if (endField != null)

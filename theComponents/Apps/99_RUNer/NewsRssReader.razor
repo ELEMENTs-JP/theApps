@@ -1,0 +1,309 @@
+﻿@using System.Xml.Linq
+@using System.Globalization
+@inject IHttpClientFactory HttpClientFactory
+
+<div class="container my-2">
+        <h1 class="h1">Nachrichten</h1>
+    <div class="row g-0 align-items-center my-2 p-1">
+        <div class="col-4 p-1">
+            <label class="form-label fw-bold">Thema wählen</label>
+            <select class="form-select form-select-sm" @onchange="OnThemeChanged">
+                @foreach (var theme in themes)
+                {
+                    <option value="@theme.Name">@theme.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-5 p-1">
+            <label class="form-label fw-bold">Nach Begriff filtern</label>
+            <div class="input-group">
+                <input type="text" class="form-control form-control-sm"
+                       @bind="FilterTerm" @bind:event="oninput"
+                       placeholder="z.B. DAX, KI, Ukraine..." />
+                <div class="hover pointer rounded p-1"
+                     @onclick="() => { FilterTerm = string.Empty; ApplyFilter(); }">
+                    <i class="bi bi-x-lg"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto px-3">
+            <div class="hover pointer rounded p-1 px-2"
+                 @onclick="LoadAllFeeds" disabled="@isLoading">
+                <i class="bi bi-arrow-clockwise px-1"></i> News aktualisieren
+            </div>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center my-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Lade Nachrichten aus @currentSourcesCount Quellen...</p>
+        </div>
+    }
+
+    @if (filteredArticles != null)
+    {
+        <div class="my-2">
+            <div class="d-flex justify-content-between align-items-center my-2">
+                <h5>Thema: @selectedTheme?.Name</h5>
+                <span class="badge bg-primary">@filteredArticles.Count Artikel gefunden</span>
+            </div>
+
+            <div class="list-group list-group-flush border-top overflow-y-auto" style="max-height:48rem;">
+                @foreach (var item in filteredArticles)
+                {
+                    <div class="row g-0 p-2 border-bottom align-items-center hover">
+                        @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                        {
+                            <div class="col-auto me-3" style="width: 90px;">
+                                <div class="ratio ratio-4x3">
+                                    <img src="@item.ImageUrl"
+                                         class="rounded object-fit-cover"
+                                         alt="@item.Title"
+                                         loading="lazy" />
+                                </div>
+                            </div>
+                        }
+
+                        <div class="col">
+                            <div class="d-flex align-items-center mb-1">
+                                <span class="badge @GetSourceBadgeClass(item.Source) me-2">@item.Source</span>
+                                <span class="text-muted small">@item.PublishDate.ToString("dd.MM. HH:mm") Uhr</span>
+                            </div>
+                            <h4 class="mb-1 fw-bold text-primary text-truncate">@item.Title</h4>
+                            <p class="mb-0 small text-muted text-truncate">@item.Description</p>
+                        </div>
+                        <div class="col-auto px-3">
+                            <a href="@item.Link" target="_blank" class="hover pointer rounded text-muted">
+                                <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<div class="my-5"></div>
+
+@code {
+    [Parameter] public string FilterTerm { get; set; } = "";
+
+    private bool isLoading = false;
+    private int currentSourcesCount = 0;
+    private List<RssItem> allDownloadedItems = new();
+    private List<RssItem>? filteredArticles;
+    private ThemeOption? selectedTheme;
+
+    protected override async Task OnInitializedAsync()
+    {
+        selectedTheme = themes.First();
+        await LoadAllFeeds();
+    }
+
+    private async Task OnThemeChanged(ChangeEventArgs e)
+    {
+        var themeName = e.Value?.ToString();
+        selectedTheme = themes.FirstOrDefault(t => t.Name == themeName);
+        await LoadAllFeeds();
+    }
+
+    private async Task LoadAllFeeds()
+    {
+        if (selectedTheme == null)
+            return;
+
+        isLoading = true;
+        allDownloadedItems.Clear();
+        currentSourcesCount = selectedTheme.Sources.Count;
+
+        // Parallelisiertes Laden aller Quellen eines Themas
+        var tasks = selectedTheme.Sources.Select(source => FetchRssFeed(source.Url, source.ProviderName));
+        await Task.WhenAll(tasks);
+
+        ApplyFilter();
+        isLoading = false;
+    }
+
+    private async Task FetchRssFeed(string url, string provider)
+    {
+        try
+        {
+            var client = HttpClientFactory.CreateClient();
+            var xmlString = await client.GetStringAsync(url);
+            var doc = XDocument.Parse(xmlString);
+
+            // Wir suchen nach 'item' (RSS) ODER 'entry' (Atom)
+            var items = doc.Descendants().Where(x => x.Name.LocalName == "item" || x.Name.LocalName == "entry")
+                      .Select(x => new RssItem
+                      {
+                          Title = x.Elements().FirstOrDefault(e => e.Name.LocalName == "title")?.Value ?? "",
+                          Link = x.Elements().FirstOrDefault(e => e.Name.LocalName == "link")?.Value
+                                 ?? x.Elements().FirstOrDefault(e => e.Name.LocalName == "link")?.Attribute("href")?.Value ?? "",
+                          Description = x.Elements().FirstOrDefault(e => e.Name.LocalName == "description" || e.Name.LocalName == "summary")?.Value ?? "",
+                          PublishDate = ParseDate(x.Elements().FirstOrDefault(e => e.Name.LocalName == "pubDate"
+                                                                  || e.Name.LocalName == "published"
+                                                                  || e.Name.LocalName == "updated")?.Value),
+                          Source = provider,
+
+                          // Bild-URLs aus <enclosure>, <media:content> oder <media:thumbnail> extrahieren:
+                          ImageUrl = x.Elements().FirstOrDefault(e => e.Name.LocalName == "enclosure" && e.Attribute("type")?.Value.StartsWith("image/") == true)?.Attribute("url")?.Value
+                                     ?? x.Elements().FirstOrDefault(e => e.Name.LocalName == "content" && e.Attribute("url")?.Value != null)?.Attribute("url")?.Value
+                                     ?? x.Elements().FirstOrDefault(e => e.Name.LocalName == "thumbnail")?.Attribute("url")?.Value ?? ""
+                      });
+
+            lock (allDownloadedItems)
+            {
+                foreach (var item in items)
+                {
+                    if (!allDownloadedItems.Any(i => i.Link == item.Link))
+                        allDownloadedItems.Add(item);
+                }
+            }
+        }
+        catch (Exception ex) { Console.WriteLine($"Fehler bei {provider}: {ex.Message}"); }
+    }
+
+    private void ApplyFilter()
+    {
+        var query = allDownloadedItems.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(FilterTerm))
+        {
+            query = query.Where(i => i.Title.Contains(FilterTerm, StringComparison.OrdinalIgnoreCase) ||
+                                     i.Description.Contains(FilterTerm, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Zentrales Sortieren: Neueste zuerst
+        filteredArticles = query.OrderByDescending(i => i.PublishDate).ToList();
+    }
+
+    private DateTime ParseDate(string? dateStr)
+    {
+        if (DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt))
+            return dt;
+        return DateTime.Now;
+    }
+
+    private string GetSourceBadgeClass(string provider) => provider.ToLower() switch
+    {
+        "tagesschau" => "bg-dark text-white",
+        "n-tv" => "bg-danger text-white",
+        "welt" => "bg-info text-white",
+        "Euronews" => "bg-blue text-white",
+        "ZDF" => "bg-warning text-dark",
+        "Phoenix" => "bg-warning text-white",
+        _ => "bg-secondary text-white"
+    };
+
+    public class RssItem
+    {
+        public string Title { get; set; } = "";
+        public string Link { get; set; } = "";
+        public string Description { get; set; } = "";
+        public DateTime PublishDate { get; set; }
+        public string Source { get; set; } = "";
+        public string ImageUrl { get; set; } = ""; // Neues Feld für das Vorschaubild
+    }
+
+    // --- Struktur für die Erweiterbarkeit ---
+
+    public record NewsSource(string ProviderName, string Url);
+    public record ThemeOption(string Name, List<NewsSource> Sources);
+
+    private List<ThemeOption> themes = new()
+    {
+        new ThemeOption("Wirtschaft & Finanzen", new() {
+            new NewsSource("Tagesschau", "https://www.tagesschau.de/wirtschaft/index~rss2.xml"),
+            new NewsSource("n-tv", "https://www.n-tv.de/wirtschaft/rss"),
+            new NewsSource("Welt", "https://www.welt.de/feeds/section/wirtschaft.rss"),
+            new NewsSource("ZDF", "https://www.zdf.de/rss/zdf/nachrichten"),
+            new NewsSource("Euronews", "https://de.euronews.com/rss?format=mrss&level=theme&name=business"),
+            new NewsSource("Handelsblatt", "https://www.handelsblatt.com/contentexport/feed/wirtschaft"),
+            new NewsSource("CNBC", "https://search.cnbc.com/rs/search/view.xml?partnerId=2000&keywords=business"),
+            new NewsSource("Yahoo Finance", "https://finance.yahoo.com/news/rssindex"),
+            new NewsSource("Market Watch", "http://feeds.marketwatch.com/marketwatch/topstories/"),
+            new NewsSource("FAZ", "https://www.faz.net/rss/aktuell/finanzen/"),
+            new NewsSource("Manager Magazin", "https://www.manager-magazin.de/finanzen/index.rss"),
+            new NewsSource("Börse Online", "https://www.boerse-online.de/rss/spartoem"),
+        }),
+
+        new ThemeOption("US & Global Markets", new() {
+            new NewsSource("CNBC Business", "https://search.cnbc.com/rs/search/view.xml?partnerId=2000&keywords=business"),
+            new NewsSource("Yahoo Finance", "https://finance.yahoo.com/news/rssindex"),
+            new NewsSource("MarketWatch", "http://feeds.marketwatch.com/marketwatch/topstories/"),
+            new NewsSource("The Verge (Tech)", "https://www.theverge.com/rss/index.xml"),
+            new NewsSource("MarketWatch Top", "https://feeds.content.dowjones.io/public/rss/mw_topstories"),
+            new NewsSource("Reuters Business", "https://www.investing.com/rss/news_25.rss"),
+            new NewsSource("Wall Street Journal", "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml"),
+        }),
+
+        new ThemeOption("Politik", new() {
+            new NewsSource("Tagesschau", "https://www.tagesschau.de/inland/innenpolitik/index~rss2.xml"),
+            new NewsSource("n-tv", "https://www.n-tv.de/politik/rss"),
+            new NewsSource("Welt", "https://www.welt.de/feeds/section/politik.rss"),
+            new NewsSource("ZDF", "https://www.zdf.de/rss/zdf/politik-gesellschaft"),
+            new NewsSource("Phoenix", "https://www.phoenix.de/podcast/runde/video/rss.xml"),
+            new NewsSource("Euronews", "https://de.euronews.com/rss?format=mrss&level=theme&name=news"),
+            new NewsSource("Zeit", "https://newsfeed.zeit.de/index"),
+            new NewsSource("FAZ", "https://www.faz.net/rss/aktuell/politik/"),
+            new NewsSource("Süddeutsche Zeitung", "https://rss.sueddeutsche.de/rss/Topthemen"),
+            new NewsSource("Der Spiegel", "https://www.spiegel.de/politik/index.rss"),
+        }),
+        new ThemeOption("Technologie", new() {
+            new NewsSource("Tagesschau", "https://www.tagesschau.de/wirtschaft/technologie/index~rss2.xml"),
+            new NewsSource("n-tv", "https://www.n-tv.de/technik/rss"),
+            new NewsSource("Welt", "https://www.welt.de/feeds/section/webwelt.rss"),
+            new NewsSource("Euronews", "https://de.euronews.com/rss?format=mrss&level=theme&name=sci-tech"),
+            new NewsSource("Golem", "https://www.golem.de/rss.php?feed=RSS2.0"),
+            new NewsSource("heise", "https://www.heise.de/rss/heise-atom.xml"),
+            new NewsSource("the Verge", "https://www.theverge.com/rss/index.xml"),
+            new NewsSource("Chip", "https://www.chip.de/rss/rss_downloads.xml"),
+            new NewsSource("ComputerBase", "https://www.computerbase.de/rss/news.xml"),
+            new NewsSource("T3n", "https://t3n.de/rss.xml"),
+        }),
+        new ThemeOption("Panorama & Vermischtes", new() {
+            new NewsSource("Tagesschau", "https://www.tagesschau.de/inland/gesellschaft/index~rss2.xml"),
+            new NewsSource("n-tv", "https://www.n-tv.de/panorama/rss"),
+            new NewsSource("Welt", "https://www.welt.de/feeds/section/vermischtes.rss"),
+            new NewsSource("ZDF", "https://www.zdf.de/rss/zdf/gesellschaft-mensch"),
+            new NewsSource("Der Spiegel", "https://www.spiegel.de/panorama/index.rss"),
+            new NewsSource("FAZ", "https://www.faz.net/rss/aktuell/gesellschaft/"),
+            new NewsSource("Süddeutsche Zeitung", "https://rss.sueddeutsche.de/rss/Panorama"),
+        }),
+            new ThemeOption("Growth & Tech Trends", new() {
+            new NewsSource("Heise", "https://www.heise.de/rss/heise-atom.xml"),
+            new NewsSource("Golem", "https://www.golem.de/rss.php?feed=RSS2.0"),
+            new NewsSource("Product Hunt", "https://www.producthunt.com/feed"), // International, aber top für Growth!
+            new NewsSource("Handelsblatt", "https://www.handelsblatt.com/contentexport/feed/wirtschaft"),
+            new NewsSource("Basic Thinking", "https://www.basicthinking.de/blog/feed/"),
+            new NewsSource("TechCrunch", "https://techcrunch.com/feed/"),
+            new NewsSource("VentureBeat", "https://venturebeat.com/feed/")
+        }),
+    };
+
+
+
+
+
+    // new("Amerika", "https://www.tagesschau.de/ausland/amerika/index~rss2.xml"),
+    // new("Inland", "https://www.tagesschau.de/inland/index~rss2.xml"),
+    // new("Gesellschaft", "https://www.tagesschau.de/inland/gesellschaft/index~rss2.xml"),
+    // new("Regional", "https://www.tagesschau.de/inland/regional/index~rss2.xml"),
+    // new("Ausland", "https://www.tagesschau.de/ausland/index~rss2.xml"),
+    // new("Europa", "https://www.tagesschau.de/ausland/europa/index~rss2.xml"),
+    // new("Afrika", "https://www.tagesschau.de/ausland/afrika/index~rss2.xml"),
+    // new("Asien", "https://www.tagesschau.de/ausland/asien/index~rss2.xml"),
+    // new("Ozeanien", "https://www.tagesschau.de/ausland/ozeanien/index~rss2.xml"),
+    // new("Verbraucher", "https://www.tagesschau.de/wirtschaft/verbraucher/index~rss2.xml"),
+    // new("Technologie", "https://www.tagesschau.de/wirtschaft/technologie/index~rss2.xml"),
+    // new("Weltwirtschaft", "https://www.tagesschau.de/wirtschaft/weltwirtschaft/index~rss2.xml"),
+    // new("Konjunktur", "https://www.tagesschau.de/wirtschaft/konjunktur/index~rss2.xml"),
+    // new("Wissen", "https://www.tagesschau.de/wissen/index~rss2.xml"),
+    // new("Gesundheit", "https://www.tagesschau.de/wissen/gesundheit/index~rss2.xml"),
+    // new("Klima & Umwelt", "https://www.tagesschau.de/wissen/klima/index~rss2.xml"),
+    // new("Forschung", "https://www.tagesschau.de/wissen/forschung/index~rss2.xml")
+
+}

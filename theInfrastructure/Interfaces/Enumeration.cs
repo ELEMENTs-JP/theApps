@@ -74,10 +74,12 @@ namespace theInfrastructure
 
         Date = 11,
         Year = 12,
-        End = 13,
-        Start = 14,
-        Progress = 15,
-        Stop = 16,
+        StartDate = 13,
+        EndDate = 14,
+        StartTime,
+        EndTime,
+        Progress,
+        Stop,
     }
     public enum ItemTypeTyp
     {
@@ -257,7 +259,6 @@ namespace theInfrastructure
         TextBlock,
         Text,
         TextArea,
-        Html,
         DropDown, // Text Drop Down Auswahl 
         Select, // Items Selection // Connection 
         CheckBox,

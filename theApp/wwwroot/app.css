@@ -1,4 +1,6 @@
 :root {
+    --sidebar-width: 250px;
+    --main-max-width: calc(100vw - var(--sidebar-width));
     --tsp-hover: #77777733;
     --tsp-hover-light: #33333311;
     --tsp-header-height: 3.5rem;
@@ -53,6 +55,11 @@ textarea::placeholder {
     font-style: italic;
     font-size: 0.75rem;
     opacity: 0.5; /* Verhindert, dass Firefox die Farbe transparenter macht */
+}
+
+/* Macht das Dreieck halbtransparent (50% Deckkraft) */
+textarea::-webkit-resizer {
+    opacity: 0.5;
 }
 
 .progress-bg {

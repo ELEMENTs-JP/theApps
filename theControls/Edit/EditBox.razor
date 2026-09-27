@@ -21,12 +21,12 @@
                       Label="@Title" Description="@Description" Value="@Value"
                       ValueChanged="@(async e => { onValueChanged(e); await Change(); })"
                       Placeholder="@Field.Placeholder"
-                      CssClass="@CssClass"
+                      CssClass="@CssClass" Rounded="@Rounded"
                       Style="@ControlStyle"
-                      Rows="@Rows" ShowLabel="false" 
+                      Rows="@Rows" ShowLabel="@ShowLabel" 
                       IsEditable="@IsEditable">
                 <Overlay>
-                    <div class="hover pointer rounded-2 p-1 me-1" @onclick="Save">
+                    <div class="hover pointer rounded-2 p-1" @onclick="Save">
                         <i class="ti ti-check"></i>
                     </div>
                 </Overlay>
@@ -186,20 +186,6 @@
                     </Overlay>
                 </Heading>
             }
-            else if (Field.Typ == FieldTyp.Html)
-            {
-                <HtmlBox @key="@( "Html-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-                         Label="@Title" Description="@Description" Value="@Value"
-                         ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
-                         CssClass="@CssClass"
-                         IsEditable="@IsEditable">
-                    <Overlay>
-                        <div class="hover pointer rounded-2 p-1 me-2" @onclick="Save">
-                            <SymbolIcon Symbol="@Icon.Check" />
-                        </div>
-                    </Overlay>
-                </HtmlBox>
-            }
             else if (Field.Typ == FieldTyp.TextBlock)
             {
                 <TextBlock @key="@( "TextBlock-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
@@ -210,7 +196,7 @@
             else
             {
                 <TextBox @key="@( "TextBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
-                     Label="@Title" Description="@Description" Value="@Value" ShowLabel="false"
+                     Label="@Title" Description="@Description" Value="@Value" ShowLabel="@ShowLabel"
                          ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
                          Type="@Field.Typ"
                          Placeholder="@Field.Placeholder"
@@ -284,7 +270,10 @@
     public bool TextTruncate { get; set; } = true;
 
     [Parameter]
-    public bool ShowLabel { get; set; } = false;
+    public bool ShowLabel { get; set; } = true;
+
+    [Parameter]
+    public bool Rounded { get; set; } = true;
 
     [Parameter]
     public string? Min { get; set; }

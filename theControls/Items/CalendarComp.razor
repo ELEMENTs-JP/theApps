@@ -28,10 +28,12 @@
 
                  
                     <ButtonSelectionBox Value="@View" ItemChanged="@(e => { View = e.ID; })"
+                        DisplayItemCount="4"
                                         Items="@(new List<IDTO>() {
                                             new DTO() { ID = "Monat", Title = "Monat" },
                                             new DTO() { ID = "Woche", Title = "Woche" },
-                                                new DTO() { ID = "Tag", Title = "Tag" } } )" />
+                                            new DTO() { ID = "Tag", Title = "Tag" },
+                                            new DTO() { ID = "Planner", Title = "Planner" }} )" />
 
                 </div>
             </Controls>
@@ -57,35 +59,51 @@
                 @if (View == "Monat")
                 {
                     <CalendarMonthComp TItem="IDTO"
-                                       Items="@Context.Items"
-                                       DateSelector="@(dto => dto[dateColumn].ToSecureString().ToSecureDateTime())"
-                                       TitleSelector="@(dto => dto.Title.ToSecureString())"
-                                       OnItemClick="@(dto => nm.NavigateTo(Helper.GetItemUrl(dto)))"
-                                       OnItemDeleted="@(async dto => await ItemDelete(dto))" />
+                    Items="@Context.Items"
+                    DateSelector="@(dto => dto[dateColumn].ToSecureString().ToSecureDateTime())"
+                    TitleSelector="@(dto => dto.Title.ToSecureString())"
+                    OnItemClick="@(dto => nm.NavigateTo(Helper.GetItemUrl(dto)))"
+                    OnItemDeleted="@(async dto => await ItemDelete(dto))" />
 
                 }
                 else if (View == "Woche")
                 {
                     <CalendarWeekComp TItem="IDTO"
-                                      Items="@Context.Items"
-                                      ShowWeekend="@showWeekendSetting"
-                                      DateSelector="@(item => item[dateColumn].ToSecureDateTime())"
-                                      StartSelector="@(item => item["Start"].ToSecureDateTime().TimeOfDay)"
-                                      EndSelector="@(item => item["Ende"].ToSecureDateTime().TimeOfDay)"
-                                      TitleSelector="@(item => item.Title)"
-                                      OnItemClick="@(item => nm.NavToItem(item.ItemType, item.GUID))"
-                                      OnCreateAppointment="@CreateRedirect" />
+                    Items="@Context.Items"
+                    ShowWeekend="@showWeekendSetting"
+                    DateSelector="@(item => item[dateColumn].ToSecureDateTime())"
+                    StartSelector="@(item => item["Start"].ToSecureDateTime().TimeOfDay)"
+                    EndSelector="@(item => item["Ende"].ToSecureDateTime().TimeOfDay)"
+                    TitleSelector="@(item => item.Title)"
+                    OnItemClick="@(item => nm.NavToItem(item.ItemType, item.GUID))"
+                    OnCreateAppointment="@CreateRedirect" />
                 }
                 else if (View == "Tag")
                 {
                     <CalendarDayComp TItem="IDTO" 
-                                     Items="@Context.Items" CurrentDate="@CurrentDate"
-                                     DateSelector="@(item => item[dateColumn].ToSecureDateTime().Date)"
-                                     StartSelector="@(item => item["Start"].ToSecureDateTime().TimeOfDay)"
-                                     EndSelector="@(item => item["Ende"].ToSecureDateTime().TimeOfDay)"
-                                     TitleSelector="@(item => item.Title)"
-                                     OnItemClick="@(item => nm.NavToItem(item.ItemType, item.GUID))"
-                                     OnCreateAppointment="@CreateRedirect" />
+                    Items="@Context.Items" CurrentDate="@CurrentDate"
+                    DateSelector="@(item => item[dateColumn].ToSecureDateTime().Date)"
+                    StartSelector="@(item => item["Start"].ToSecureDateTime().TimeOfDay)"
+                    EndSelector="@(item => item["Ende"].ToSecureDateTime().TimeOfDay)"
+                    TitleSelector="@(item => item.Title)"
+                    OnItemClick="@(item => nm.NavToItem(item.ItemType, item.GUID))"
+                    OnCreateAppointment="@CreateRedirect" />
+                }
+                else if (View == "Planner")
+                {
+                    <Planner TItem="IDTO" Year="@CurrentDate.Year"
+                             Items="@Context.Items" CSS=""
+                             TitleSelector="@(item => item.Title)"
+                             AgendaSelector="@(item => item.Content)"
+                             StartDateSelector="@(item => GetStartDate(item))"
+                             EndDateSelector="@(item => GetEndDate(item))">
+                        <ItemTemplate Context="item">
+                            <div class="bg-secondary text-white rounded p-1 mb-1 text-truncate small">
+                                <strong>@item.Title</strong>
+                                @* <div class="text-muted text-truncate" style="font-size: 0.65rem;">@eventItem.Content</div> *@
+                            </div>
+                        </ItemTemplate>
+                    </Planner>
                 }
 
             </Content>
@@ -199,7 +217,19 @@
     {
         await Context.Search();
     }
+    private DateTime GetStartDate(IDTO item)
+    {
+        string start = ItemType.GetRelevantPropertyName(RelevantPropertyType.StartDate).Result;
+        DateTime dt = item[start].ToSecureDateTime();
+        return dt;
+    }
 
+    private DateTime GetEndDate(IDTO item)
+    {
+        string ende = ItemType.GetRelevantPropertyName(RelevantPropertyType.EndDate).Result;
+        DateTime dt = item[ende].ToSecureDateTime();
+        return dt;
+    }
     private async Task CreateRedirect()
     {
         IQueryParameter qp = QueryParameter.Default("neuer:e " + this.ItemType.Name);

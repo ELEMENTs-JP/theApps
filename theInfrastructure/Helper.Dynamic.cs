@@ -83,6 +83,16 @@ namespace theInfrastructure
                 CSS = " col-12 my-2",
                 Group = "Strategy"
             },
+
+              // RUNer 
+               new ComponentDefinition
+            {
+                Name = "RSS News Reader",
+                Namespace = "theComponents",
+                ClassName = "NewsRssReader",
+                CSS = " col-12 my-2",
+                Group = "Tools"
+            },
         };
 
 

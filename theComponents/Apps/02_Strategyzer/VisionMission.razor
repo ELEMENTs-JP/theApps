@@ -3,23 +3,23 @@
 <ControlHeader PreTitle="" Title="Home" PostTitle="Dein Geschäft, deine Basis, dein Weg" Border="true" />
 <div class="my-2"></div>
 <div class="row g-0">
-    <div class="col-4 py-2 border-start border-3 border-primary">
+    <div class="col-4 pt-2 border-start border-3 border-primary">
         <div class="text-secondary text-uppercase small px-2">Dein Business</div>
         <h3 class="h3 fw-bold px-2">Vision</h3>
-        <EditBox Context="@Context" Field="@fVision" TextTruncate="false"
-            Border="false" ShowLabel="false" FrameCSS="py-1" IsEditable="@IsEditable" />
+        <EditBox Context="@Context" Field="@fVision" TextTruncate="false" Rows="2" Rounded="false"
+            Border="false" ShowLabel="false" FrameCSS="pt-1" IsEditable="@IsEditable" />
     </div>
-    <div class="col-4 py-2 border-start border-3 border-primary">
+    <div class="col-4 pt-2 border-start border-3 border-primary">
         <div class="text-secondary text-uppercase small px-2">Die nächsten Jahre</div>
         <h3 class="h3 fw-bold px-2">Mission</h3>
-        <EditBox Context="@Context" Field="@fMission" TextTruncate="false"
-            Border="false" ShowLabel="false" FrameCSS="py-1" IsEditable="@IsEditable" />
+        <EditBox Context="@Context" Field="@fMission" TextTruncate="false" Rows="2" Rounded="false"
+            Border="false" ShowLabel="false" FrameCSS="pt-1" IsEditable="@IsEditable" />
     </div>
-    <div class="col-4 py-2 border-start border-3 border-primary">
+    <div class="col-4 pt-2 border-start border-3 border-primary">
         <div class="text-secondary text-uppercase small px-2">Die Strategie</div>
         <h3 class="h3 fw-bold px-2">Strategy</h3>
-        <EditBox Context="@Context" Field="@fStrategy" TextTruncate="false"
-            Border="false" ShowLabel="false" FrameCSS="py-1" IsEditable="@IsEditable" />
+        <EditBox Context="@Context" Field="@fStrategy" TextTruncate="false" Rows="2" Rounded="false" 
+            Border="false" ShowLabel="false" FrameCSS="pt-1" IsEditable="@IsEditable" />
     </div>
 </div>
 @code {

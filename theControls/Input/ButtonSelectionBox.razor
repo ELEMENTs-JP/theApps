@@ -11,7 +11,7 @@
 <div class="position-relative overlay-container p-1">
     <div class="btn-group" role="group">
 
-        @foreach (IDTO it in Items.FromTo<IDTO>(0, 2))
+        @foreach (IDTO it in Items.FromTo<IDTO>(0, (DisplayItemCount-1)))
         {
             <div class="@($"btn btn-sm {(Item?.ID == it.ID ? "btn-primary" : "")}")"
                  @onclick="@(async e => { Item = it; await onSelect(it); })">
@@ -19,7 +19,7 @@
             </div>
         }
 
-        @if (Items.Count() >= 4)
+        @if (Items.Count() >= (DisplayItemCount + 1))
         {
             <div class="btn-group" role="group">
                 <div class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -38,7 +38,7 @@
                                @bind:event="oninput" />
                     </div>
                     <div class="dropdown-divider"></div>
-                    @foreach (IDTO item in Items.FromTo<IDTO>(3, Items.Count() + 1))
+                    @foreach (IDTO item in Items.FromTo<IDTO>(DisplayItemCount, Items.Count() + 1))
                     {
                         <div class="@( "dropdown-item" )"
                              @onclick="@( async e => { Item = item; await onSelect(item); })">
@@ -123,6 +123,9 @@
 
     [Parameter]
     public string MaxHeightCSS { get; set; } = "max-height:44rem;";
+
+    [Parameter]
+    public int DisplayItemCount { get; set; } = 3;
 
     [Parameter]
     public List<IDTO> Items { get; set; } = new();
