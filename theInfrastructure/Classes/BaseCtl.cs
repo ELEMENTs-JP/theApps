@@ -49,6 +49,10 @@ namespace theInfrastructure
             }
         }
 
+        public async Task OpenInNewTab(string targetUrl)
+        {
+            await JS.InvokeVoidAsync("open", targetUrl, "_blank");
+        }
 
         public async ValueTask DisposeAsync()
         {

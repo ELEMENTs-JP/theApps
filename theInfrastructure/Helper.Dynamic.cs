@@ -93,6 +93,48 @@ namespace theInfrastructure
                 CSS = " col-12 my-2",
                 Group = "Tools"
             },
+
+            // News 
+            new ComponentDefinition
+            {
+                Name = "Wirtschaft u. Finanzen",
+                Namespace = "theComponents",
+                ClassName = "NewsBusinessFinance",
+                CSS = " col-12 my-2",
+                Group = "News"
+            },
+            new ComponentDefinition
+            {
+                Name = "Globales und Märkte",
+                Namespace = "theComponents",
+                ClassName = "NewsGlobalMarkets",
+                CSS = " col-12 my-2",
+                Group = "News"
+            },
+              new ComponentDefinition
+            {
+                Name = "Wachstum und Trends",
+                Namespace = "theComponents",
+                ClassName = "NewsGrowthTrends",
+                CSS = " col-12 my-2",
+                Group = "News"
+            },
+               new ComponentDefinition
+            {
+                Name = "Politik",
+                Namespace = "theComponents",
+                ClassName = "NewsPolitic",
+                CSS = " col-12 my-2",
+                Group = "News"
+            },
+               new ComponentDefinition
+            {
+                Name = "Technology",
+                Namespace = "theComponents",
+                ClassName = "NewsTechnology",
+                CSS = " col-12 my-2",
+                Group = "News"
+            },
         };
 
 
