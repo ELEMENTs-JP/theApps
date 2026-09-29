@@ -8,7 +8,8 @@
 {
     <div class="row g-0">
         <div class="col-3 p-2">
-            <DragDropContainer Zone="Must" Title="Must have" Entries="@Items" CSS="border rounded-2 p-2" 
+            <DragDropContainer Zone="Must" Title="Must have" Entries="@Items" 
+                CSS="bg-surface-secondary rounded-2 p-2" 
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                 ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })" >
@@ -22,7 +23,8 @@
             </DragDropContainer>
         </div>
         <div class="col-3 p-2">
-            <DragDropContainer Zone="Should" Title="Should have" Entries="@Items" CSS="border rounded-2 p-2 "
+            <DragDropContainer Zone="Should" Title="Should have" Entries="@Items" 
+                CSS="bg-surface-secondary  rounded-2 p-2 "
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -35,7 +37,8 @@
             </DragDropContainer>
         </div>
         <div class="col-3 p-2">
-            <DragDropContainer Zone="Could" Title="Could have" Entries="@Items" CSS=" border rounded-2 p-2"
+            <DragDropContainer Zone="Could" Title="Could have" Entries="@Items" 
+                CSS=" bg-surface-secondary  rounded-2 p-2"
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -48,7 +51,8 @@
             </DragDropContainer>
         </div>
         <div class="col-3 p-2">
-            <DragDropContainer Zone="Not" Title="Will not have" Entries="@Items" CSS="border rounded-2 p-2 "
+            <DragDropContainer Zone="Not" Title="Will not have" Entries="@Items" 
+                CSS="bg-surface-secondary  rounded-2 p-2 "
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -63,7 +67,8 @@
     </div>
 
     <div class="p-2">
-        <DragDropContainer Zone="Default" Title="Backlog" Entries="@Items" CSS="bg-background border rounded-2 p-2 "
+        <DragDropContainer Zone="Default" Title="Backlog" Entries="@Items" 
+            CSS="bg-surface-secondary  rounded-2 p-2 "
                            ZoneProperty="@( $"{ZoneParameter}" )"
                            SortProperty="@( $"{SortParameter}" )"
                            IsDefaultZone="true"
