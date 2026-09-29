@@ -65,5 +65,25 @@ namespace theInfrastructure
 
             return fields;
         }
+
+        public override List<PageInfo> GetPages()
+        {
+            List<PageInfo> pages = new List<PageInfo>();
+
+            pages.Add(new PageInfo("Alignment", "Alignment"));
+            pages.Add(new PageInfo("Zielerreichung", "Zielerreichung"));
+
+            return pages;
+        }
+
+        public override List<BoardInfo> GetBoards()
+        {
+            List<BoardInfo> boards = new List<BoardInfo>();
+         
+            boards.Add(new BoardInfo("Business Model Canvas", "Business Model Canvas", "Business Model Canvas"));
+
+            return boards;
+        }
+
     }
 }

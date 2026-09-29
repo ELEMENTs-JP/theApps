@@ -7,6 +7,8 @@ namespace theInfrastructure
 
     public record ItemTypeInfo(string Name, string Title);
     public record FieldInfo(string Column, string Title, FieldTyp Typ, string CSS);
+    public record PageInfo(string Name, string Title);
+    public record BoardInfo(string Name, string Title, string BoardTyp);
     public record ItemTypeConnection(string Parent, string Child);
     public interface ITemplateApp
     {
@@ -16,6 +18,8 @@ namespace theInfrastructure
         string Group { get; set; }
         List<ItemTypeInfo> GetItemTypes();
         List<FieldInfo> GetFields(string ItemType);
+        List<PageInfo> GetPages();
+        List<BoardInfo> GetBoards();
     }
 
     public class TemplateApp : ITemplateApp
@@ -57,6 +61,32 @@ namespace theInfrastructure
             //}
 
             return fields;
+        }
+
+        public virtual List<PageInfo> GetPages()
+        {
+            List<PageInfo> pages = new List<PageInfo>();
+
+            //if (ItemType == "Template")
+            //{
+            //    fields.Add(new FieldInfo("Template", "string"));
+            //    fields.Add(new FieldInfo("Template", "string"));
+            //}
+
+            return pages;
+        }
+
+        public virtual List<BoardInfo> GetBoards()
+        {
+            List<BoardInfo> boards = new List<BoardInfo>();
+
+            //if (ItemType == "Template")
+            //{
+            //    fields.Add(new FieldInfo("Template", "string"));
+            //    fields.Add(new FieldInfo("Template", "string"));
+            //}
+
+            return boards;
         }
     }
 

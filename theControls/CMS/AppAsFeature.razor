@@ -163,8 +163,14 @@
                             // aktualisieren
                             await sql.Update(newApp);
 
-                            // ItemTypes
+                            // ItemTypes 
                             await CreateItemTypesByApp(app);
+
+                            // Pages 
+                            await CreatePageByApp(app);
+
+                            // Board 
+                            await CreateBoardByApp(app);
                         }
 
                     }
@@ -287,7 +293,103 @@
             }
         }
     }
+    private async Task CreatePageByApp(ITemplateApp app)
+    {
+        await Init();
 
+        IDTO? activeApp = AllDbApps.Find(se =>
+            string.Equals(se.ID, app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+             string.Equals(se.Title, app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+              string.Equals(se.ID, app.Title, StringComparison.InvariantCultureIgnoreCase) ||
+               string.Equals(se.Title, app.Title, StringComparison.InvariantCultureIgnoreCase));
+
+        if (activeApp == null)
+            return;
+
+        List<IDTO> dbPages = sql.GetRelatedItems(activeApp, "Page", AssociationTyp.NULL).Result.Items;
+
+
+        foreach (PageInfo info in app.GetPages())
+        {
+            IDTO? activePage = dbPages.Find(se =>
+                            string.Equals(se.ID, info.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                            string.Equals(se.Title, info.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                                string.Equals(se.ID, info.Title, StringComparison.InvariantCultureIgnoreCase) ||
+                                string.Equals(se.Title, info.Title, StringComparison.InvariantCultureIgnoreCase));
+
+            if (activePage == null)
+            {
+                // Define
+                IQueryParameter qp = QueryParameter.Default(info.Name);
+                qp.MasterGUID = sql.MasterGUID;
+                qp.ItemType = "Page";
+
+                // Create 
+                IQueryResult result = await sql.Create(qp);
+
+                // Load
+                result = await sql.GetItem(qp);
+                IDTO newPage = result.Items.FirstOrDefault();
+                if (newPage != null)
+                {
+                    // Assign 
+                    await sql.Assign(activeApp, newPage, AssociationTyp.Children);
+                }
+            }
+        }
+    }
+    private async Task CreateBoardByApp(ITemplateApp app)
+    {
+        await Init();
+
+        IDTO? activeApp = AllDbApps.Find(se =>
+            string.Equals(se.ID, app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+             string.Equals(se.Title, app.Name, StringComparison.InvariantCultureIgnoreCase) ||
+              string.Equals(se.ID, app.Title, StringComparison.InvariantCultureIgnoreCase) ||
+               string.Equals(se.Title, app.Title, StringComparison.InvariantCultureIgnoreCase));
+
+        if (activeApp == null)
+            return;
+
+        List<IDTO> dbBoards = sql.GetRelatedItems(activeApp, "Board", AssociationTyp.NULL).Result.Items;
+
+        foreach (BoardInfo info in app.GetBoards())
+        {
+            IDTO? activeBoard = dbBoards.Find(se =>
+                string.Equals(se.ID, info.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                string.Equals(se.Title, info.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                    string.Equals(se.ID, info.Title, StringComparison.InvariantCultureIgnoreCase) ||
+                    string.Equals(se.Title, info.Title, StringComparison.InvariantCultureIgnoreCase));
+
+            if (activeBoard == null)
+            {
+                // Define
+                IQueryParameter qp = QueryParameter.Default(info.Name);
+                qp.MasterGUID = sql.MasterGUID;
+                qp.ItemType = "Board";
+
+                // Create
+                IQueryResult result = await sql.Create(qp);
+
+                // Load 
+                result = await sql.GetItem(qp);
+                IDTO newBoard = result.Items.FirstOrDefault();
+                if (newBoard != null)
+                {
+                    // Board Typ 
+                    newBoard["Typ"] = info.BoardTyp;
+                    newBoard["IsActive"] = "true";
+
+                    // Update 
+                    await sql.Update(newBoard);
+
+                    // Assign 
+                    await sql.Assign(activeApp, newBoard, AssociationTyp.Children);
+                }
+            }
+
+        }
+    }
     private async Task PushFeatureUpdate()
     {
         msg.Publish(new AppMessage("Feature", BusAction.Refresh));
