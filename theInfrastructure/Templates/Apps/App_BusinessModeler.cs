@@ -21,7 +21,7 @@ namespace theInfrastructure
         {
             List<ItemTypeInfo> types = new List<ItemTypeInfo>();
             
-            types.Add(new ItemTypeInfo("BusinessModel", "Business Model"));
+            types.Add(new ItemTypeInfo("Business Model", "Business Model"));
             types.Add(new ItemTypeInfo("Element", "Element"));
             
             return types;
@@ -37,7 +37,7 @@ namespace theInfrastructure
         {
             List<FieldInfo> fields = new List<FieldInfo>();
 
-            if (ItemType == "BusinessModel")
+            if (ItemType == "Business Model")
             {
                 fields.Add(new FieldInfo("VP", "Value Proposition", FieldTyp.TextArea, "col-12"));
 
