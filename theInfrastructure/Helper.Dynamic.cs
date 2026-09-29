@@ -45,6 +45,15 @@ namespace theInfrastructure
                 CSS = " col-12 my-2",
                 Group = "Date & Time"
             },
+               new ComponentDefinition
+            {
+                Name = "Kalender",
+                Namespace = "theComponents",
+                ClassName = "CalendarMonthMiniComp",
+                CSS = " col-12 my-2",
+                Group = "Date & Time"
+            },
+            
 
             // Apps & ItemTypes
             new ComponentDefinition

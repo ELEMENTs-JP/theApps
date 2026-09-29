@@ -1,0 +1,63 @@
+﻿@if (ItemType != null)
+{
+    @if (Views.Count >= 1)
+    {
+        <TabsFrame Orientation=" Orientation.Center" FrameCSS=" row g-0 w-100">
+            <HeaderContent>
+                <TabsItem ID="@( "Default_View")" Title="@ItemType.Name" IsActive="true" Layout="TabsLayout.Buttons" />
+
+                @foreach (IEditView view in Views)
+                {
+                    <TabsItem ID="@( "View_" + view.Name)" Title="@view.Title" Layout="TabsLayout.Buttons" />
+                }
+
+            </HeaderContent>
+            <ChildContent>
+
+                <TabsPanel ID="@( "Default_View")" IsActive="true">
+
+                    @Content
+                   
+                </TabsPanel>
+                @foreach (IEditView view in Views)
+                {
+                    <TabsPanel ID="@( "View_" + view.Name)">
+
+                    </TabsPanel>
+                }
+
+                
+
+            </ChildContent>
+        </TabsFrame>
+    }
+    @if (Views.Count == 0)
+    {
+        @Content
+    }
+}
+
+
+
+@code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    List<IEditView> Views { get; set; } = new();
+
+    [Parameter]
+    public RenderFragment Content { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (ItemType == null)
+            return;
+
+        Views = await ItemType.GetViews();
+
+    }
+
+}

@@ -4,15 +4,83 @@
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
 
-<div class="rounded p-1 px-3">
-    <ToolTip Title="@( "Letzte Überprüfung:" + (lastExecution == DateTime.MinValue ? "Noch keine" : lastExecution.ToString("HH:mm:ss")) )">
-        <SymbolIcon Symbol="Icon.Reminder" Size="24" />
-    </ToolTip>
+
+<div class="position-relative rounded p-1 px-3">
+
+
+@* 
+
+
+    <div class="dropup-center dropup">
+        <div class="" data-bs-toggle="dropdown" aria-expanded="false">
+            
+        </div>
+        <div class="dropdown-menu">
+
+        </div>
+    </div>
+ *@
+
+
+
+    <div id="@( "frame_popup_" + ID )" class="@(" w-100 dropup-center dropup")) ">
+
+        <div id="@( "link_popup_" + ID )" class="@(" row align-items-center ")" data-bs-toggle="dropdown">
+
+            @*  d-none d-xl-block   *@
+            <div id="@( "head_popup_" + ID )" class="col p-1 px-2">
+                <ToolTip Title="@( "Letzte Überprüfung:" + (lastExecution == DateTime.MinValue ? "Noch keine" : lastExecution.ToString("HH:mm:ss")) )">
+                    <SymbolIcon Symbol="Icon.Reminder" Size="24" />
+                </ToolTip>
+            </div>
+@*             <div class="@( "col-auto pointer hover rounded-2 px-1 me-2  dropdown-toggle")"
+                 style="padding-right: 0.5rem !important;">
+            </div> *@
+        </div>
+
+        <div id="@( "body_popup_" + ID )" class="@( "dropdown-menu w-100 ")" style="@MenuStyle">
+
+            <div class="row g-0">
+                <div class="col">
+                    <div class="dropdown-header">Erinnerungen</div>
+                </div>
+            </div>
+
+         
+
+
+            <div class="@( " overflow-y-auto " )" style="@( MaxHeightCSS )">
+
+                @foreach (IDTO item in Items)
+                {
+                    <div class="m-1 mx-2 hover pointer rounded-2 p-1">
+                      
+                            @item.Title
+                        
+                    </div>
+                }
+
+            </div>
+
+         
+        </div>
+    </div>
+
+
+
 </div>
 
 @code {
+
+    string ID { get; set; } = Guid.NewGuid().ToString();
+
     private readonly string registrationKey = Guid.NewGuid().ToString();
     private DateTime lastExecution = DateTime.MinValue;
+
+    string MenuStyle { get; set; } = "min-width:13rem;";
+    string MaxHeightCSS { get; set; } = "max-height:44rem;";
+
+    List<IDTO> Items { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -33,28 +101,28 @@
         // Ausführungslogik für den 5-Minuten-Tick
         lastExecution = DateTime.Now;
 
-        List<IDTO> reminders = new();
+        Items = new();
 
         IQueryParameter qp = QueryParameter.Default(string.Empty);
         qp.MasterGUID = sql.MasterGUID;
         qp.ItemType = "Reminder";
 
         IQueryResult result = await sql.GetItems(qp);
-        reminders = result.Items;
+        Items = result.Items;
 
         // Aktiv 
-        reminders = reminders.Where(se => se["IsActive"].ToSecureBool() == true).ToList();
+        Items = Items.Where(se => se["IsActive"].ToSecureBool() == true).ToList();
 
         // inkl. Heute (nicht beendet)
-        reminders = reminders.Where(se => se["Stop"].ToSecureDateTime().Date >= DateTime.Now.Date).ToList();
+        Items = Items.Where(se => se["Stop"].ToSecureDateTime().Date >= DateTime.Now.Date).ToList();
 
         // Tag (älter als Heute) nur heutige Reminder
-        reminders = reminders.Where(se => se["Date"].ToSecureDateTime().Date <= DateTime.Now.Date).ToList();
+        Items = Items.Where(se => se["Date"].ToSecureDateTime().Date <= DateTime.Now.Date).ToList();
 
         // Uhrzeit (älter als jetzt)
-        reminders = reminders.Where(se => se["Time"].ToSecureDateTime().TrimToMinute() <= DateTime.Now.TrimToMinute()).ToList();
+        Items = Items.Where(se => se["Time"].ToSecureDateTime().TrimToMinute() <= DateTime.Now.TrimToMinute()).ToList();
 
-        foreach (IDTO rem in reminders)
+        foreach (IDTO rem in Items)
         {
             string info = rem.Title + " " + rem.Content;
             msg.Publish("Reminder", BusAction.Info, info);

@@ -36,6 +36,8 @@ namespace theInfrastructure
         Task<(IDTO, IDTO)> OnRemoveItem(IItemEventArgs args);
 
 
+        // Views 
+        Task<List<IEditView>> GetViews(string typ = "");
 
         // Fields 
         Task<List<IField>> GetFields(string view = "");
@@ -293,6 +295,14 @@ namespace theInfrastructure
         {
             // return 
             return (args.Item, args.Related);
+        }
+
+        // Views 
+        public virtual async Task<List<IEditView>> GetViews(string typ = "")
+        {
+            List<IEditView> Views = new();
+
+            return Views;
         }
 
         // Fields 
