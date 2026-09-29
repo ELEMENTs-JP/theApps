@@ -20,7 +20,7 @@
             </td>
             <td class="border-0 p-2 m-0" style="height:18rem;">
                 <DragDropContainer Zone="Marktdurchdringung" Title="Marktdurchdringung" Entries="@Items" 
-                                        CSS="border rounded-2 p-2 h-100 "
+                                        CSS="bg-surface-secondary p-2 h-100 "
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -35,7 +35,7 @@
             </td>
             <td class="border-0 p-2 m-0" style="height:18rem;">
                 <DragDropContainer Zone="Produktentwicklung" Title="Produktentwicklung" Entries="@Items" 
-                                CSS="border rounded-2 p-2 h-100 "
+                                   CSS="bg-surface-secondary p-2 h-100 "
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -56,7 +56,7 @@
                 </td>
             <td class="border-0 p-2 m-0" style="height:18rem;">
                 <DragDropContainer Zone="Marktentwicklung" Title="Marktentwicklung" Entries="@Items" 
-                                    CSS="border rounded-2 p-2 h-100 "
+                                   CSS="bg-surface-secondary p-2 h-100 "
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -71,7 +71,7 @@
             </td>
             <td class="border-0 p-2 m-0" style="height:18rem;">
                 <DragDropContainer Zone="Diversifikation" Title="Diversifikation" Entries="@Items" 
-                                    CSS="border rounded-2 p-2 h-100 "
+                                   CSS="bg-surface-secondary p-2 h-100 "
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">

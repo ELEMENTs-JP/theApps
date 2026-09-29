@@ -259,11 +259,11 @@
             qp.ItemType = "Field";
 
             IQueryResult result = await sql.GetItems(qp);
-            IDTO field = result.Items.Find(se => se.Title == fi.Name && se["Typ"].ToSecureString() == fi.Typ.ToSecureString());
+            IDTO field = result.Items.Find(se => (se.Title == fi.Title || se["Column"] == fi.Column) && se["Typ"].ToSecureString() == fi.Typ.ToSecureString());
             if (field == null)
             {
                 // Create 
-                qp.Title = fi.Name;
+                qp.Title = fi.Title;
                 result = await sql.Create(qp);
 
                 // Load 
@@ -273,6 +273,8 @@
                 {
                     // set 
                     field["Typ"] = fi.Typ.ToSecureString();
+                    field["Column"] = fi.Column.ToSecureString();
+                    field["CSS"] = fi.CSS.ToSecureString();
 
                     // Update 
                     await sql.Update(field);

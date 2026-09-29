@@ -48,7 +48,7 @@ namespace theInfrastructure
             Fields.Add(new Field()
             {
                 Title = "Matchcode",
-                Typ = FieldTyp.TextBlock,
+                Typ = FieldTyp.Text,
                 Column = "Matchcode",
                 CSS = " col-12 "
             });

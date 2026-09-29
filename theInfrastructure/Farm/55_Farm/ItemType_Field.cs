@@ -20,8 +20,27 @@ namespace theInfrastructure
             Fields.Add(new Field() { 
                 Title = "Typ", Typ = FieldTyp.FieldTyp, 
                 Description = "Beschreibt den Typ des Feldess",
-                Column = "Typ", CSS = " col-12 ", 
+                Column = "Typ", CSS = " col-12 col-lg-4 ", 
                 OnDevice = DeviceDisplay.Desktop });
+
+            Fields.Add(new Field()
+            {
+                Title = "Spalte", Typ = FieldTyp.Text,
+                Description = "Name der Spalte des Feldes",
+                Column = "Column",
+                CSS = " col-12 col-lg-4 ",
+                OnDevice = DeviceDisplay.Desktop
+            });
+
+            Fields.Add(new Field()
+            {
+                Title = "CSS",
+                Typ = FieldTyp.Text,
+                Description = "Style der Spalte",
+                Column = "CSS",
+                CSS = " col-12 col-lg-4 ",
+                OnDevice = DeviceDisplay.Desktop
+            });
 
             Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });
             Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.TextArea, Column = "Description", CSS = " col-12", OnDevice = DeviceDisplay.Desktop });

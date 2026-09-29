@@ -17,13 +17,14 @@
             'cs-struct cs-struct cs-struct cs-struct cs-struct rev rev rev rev rev';
             ">
             <!-- Schlüsselpartner (Spalte 1-2, Zeile 1-2) -->
-            <div class="border rounded p-1" style="grid-area: kp;">
+            <div class="bg-surface-secondary rounded p-1" style="grid-area: kp;">
                 <DragDropContainer Zone="KeyPartner" Title="Partner" Entries="@Items" CSS="p-1"
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
-                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
+                               OnDrop="@( async e => { e = await UpdateMetadata("Partner", e);  } )"
+                               ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
                     <ItemTemplate Context="entry">
-                        <ListItem @key="@entry.GUID" Item="@entry"
+                    <ListItem @key="@entry.GUID" Item="@entry" Properties="@( new List<string>() { "Typ" })"
                                   IsSortable="true" CSS="border rounded-2 p-1 m-2"
                                   ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
                     </ItemTemplate>
@@ -31,13 +32,14 @@
             </div>
 
             <!-- Schlüsselaktivitäten (Spalte 3-4, Zeile 1) -->
-            <div class="border rounded p-1" style="grid-area: ka;">
+        <div class="bg-surface-secondary  rounded p-1" style="grid-area: ka;">
                 <DragDropContainer Zone="KeyActivities" Title="Activities" Entries="@Items" CSS="p-1"
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
-                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
+                               OnDrop="@( async e => { e = await UpdateMetadata("Activity", e);  } )"
+                               ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
                     <ItemTemplate Context="entry">
-                        <ListItem @key="@entry.GUID" Item="@entry"
+                    <ListItem @key="@entry.GUID" Item="@entry" Properties="@( new List<string>() { "Typ" })"
                                   IsSortable="true" CSS="border rounded-2 p-1 m-2"
                                   ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
                     </ItemTemplate>
@@ -45,13 +47,14 @@
             </div>
 
             <!-- Schlüsselressourcen (Spalte 3-4, Zeile 2) -->
-            <div class="border rounded p-1" style="grid-area: kr;">
+        <div class="bg-surface-secondary  rounded p-1" style="grid-area: kr;">
                 <DragDropContainer Zone="KeyRessourcen" Title="Ressourcen" Entries="@Items" CSS="p-1"
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
-                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
+                               OnDrop="@( async e => { e = await UpdateMetadata("Ressources", e);  } )"
+                               ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
                     <ItemTemplate Context="entry">
-                        <ListItem @key="@entry.GUID" Item="@entry"
+                    <ListItem @key="@entry.GUID" Item="@entry" Properties="@( new List<string>() { "Typ" })"
                                   IsSortable="true" CSS="border rounded-2 p-1 m-2"
                                   ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
                     </ItemTemplate>
@@ -59,13 +62,14 @@
             </div>
 
             <!-- Wertversprechen (Spalte 5-6, Zeile 1-2 - Zentriert über 2 Spalten) -->
-            <div class="border rounded p-1" style="grid-area: vp;">
+        <div class="bg-surface-secondary  rounded p-1" style="grid-area: vp;">
                 <DragDropContainer Zone="ValueProposition" Title="Value Proposition" Entries="@Items" CSS="p-1"
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
-                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
+                               OnDrop="@( async e => { e = await UpdateMetadata("Value Proposition", e);  } )"
+                               ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
                     <ItemTemplate Context="entry">
-                        <ListItem @key="@entry.GUID" Item="@entry"
+                    <ListItem @key="@entry.GUID" Item="@entry" Properties="@( new List<string>() { "Typ" })"
                                   IsSortable="true" CSS="border rounded-2 p-1 m-2"
                                   ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
                     </ItemTemplate>
@@ -73,13 +77,14 @@
             </div>
 
             <!-- Kundenbeziehungen (Spalte 7-8, Zeile 1) -->
-            <div class="border rounded p-1" style="grid-area: cr;">
+        <div class="bg-surface-secondary  rounded p-1" style="grid-area: cr;">
                 <DragDropContainer Zone="Customer" Title="Customer" Entries="@Items" CSS="p-1"
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
-                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
+                               OnDrop="@( async e => { e = await UpdateMetadata("Customer", e);  } )"
+                               ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
                     <ItemTemplate Context="entry">
-                        <ListItem @key="@entry.GUID" Item="@entry"
+                    <ListItem @key="@entry.GUID" Item="@entry" Properties="@( new List<string>() { "Typ" })"
                                   IsSortable="true" CSS="border rounded-2 p-1 m-2"
                                   ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
                     </ItemTemplate>
@@ -87,13 +92,14 @@
             </div>
 
             <!-- Kanäle (Spalte 7-8, Zeile 2) -->
-            <div class="border rounded p-1" style="grid-area: ch;">
+        <div class="bg-surface-secondary  rounded p-1" style="grid-area: ch;">
                 <DragDropContainer Zone="Channel" Title="Channel" Entries="@Items" CSS="p-1"
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
-                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
+                               OnDrop="@( async e => { e = await UpdateMetadata("Channel", e);  } )"
+                               ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
                     <ItemTemplate Context="entry">
-                        <ListItem @key="@entry.GUID" Item="@entry"
+                    <ListItem @key="@entry.GUID" Item="@entry" Properties="@( new List<string>() { "Typ" })"
                                   IsSortable="true" CSS="border rounded-2 p-1 m-2"
                                   ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
                     </ItemTemplate>
@@ -101,13 +107,14 @@
             </div>
 
             <!-- Kundensegmente (Spalte 9-10, Zeile 1-2) -->
-            <div class="border rounded p-1" style="grid-area: cs;">
+        <div class="bg-surface-secondary  rounded p-1" style="grid-area: cs;">
                 <DragDropContainer Zone="Segments" Title="Segmente" Entries="@Items" CSS="p-1"
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
-                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
+                               OnDrop="@( async e => { e = await UpdateMetadata("Segments", e);  } )"
+                               ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
                     <ItemTemplate Context="entry">
-                        <ListItem @key="@entry.GUID" Item="@entry"
+                    <ListItem @key="@entry.GUID" Item="@entry" Properties="@( new List<string>() { "Typ" })"
                                   IsSortable="true" CSS="border rounded-2 p-1 m-2"
                                   ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
                     </ItemTemplate>
@@ -115,13 +122,14 @@
             </div>
 
             <!-- Kostenstruktur (Spalte 1-5, Zeile 3 - Exakt linke Hälfte) -->
-            <div class="border rounded p-1" style="grid-area: cs-struct;">
+        <div class="bg-surface-secondary  rounded p-1" style="grid-area: cs-struct;">
                 <DragDropContainer Zone="Cost" Title="Cost Structure" Entries="@Items" CSS="p-1"
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
-                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
+                               OnDrop="@( async e => { e = await UpdateMetadata("Cost", e);  } )"
+                               ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
                     <ItemTemplate Context="entry">
-                        <ListItem @key="@entry.GUID" Item="@entry"
+                    <ListItem @key="@entry.GUID" Item="@entry" Properties="@( new List<string>() { "Typ" })"
                                   IsSortable="true" CSS="border rounded-2 p-1 m-2"
                                   ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
                     </ItemTemplate>
@@ -129,13 +137,14 @@
             </div>
 
             <!-- Einnahmenquellen (Spalte 6-10, Zeile 3 - Exakt rechte Hälfte) -->
-            <div class="border rounded p-1" style="grid-area: rev;">
+        <div class="bg-surface-secondary  rounded p-1" style="grid-area: rev;">
                 <DragDropContainer Zone="RevenueStreams" Title="Revenue Streams" Entries="@Items" CSS="p-1"
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
-                                   ItemDragEnd="@( async e => { Items.ReplaceByItem(e); })">
+                               OnDrop="@( async e => { e = await UpdateMetadata("Revenue", e);  } )"
+                               ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
                     <ItemTemplate Context="entry">
-                        <ListItem @key="@entry.GUID" Item="@entry"
+                    <ListItem @key="@entry.GUID" Item="@entry" Properties="@( new List<string>() { "Typ" })"
                                   IsSortable="true" CSS="border rounded-2 p-1 m-2"
                                   ItemType="@( new Factory(sql).BuildItemType(entry.ItemType).Result )" />
                     </ItemTemplate>
@@ -213,7 +222,18 @@
         IQueryResult result = await sql.GetItems(qp);
         Items = result.Items;
     }
+    private async Task<IDTO> UpdateMetadata(string value, IDTO entry)
+    {
+        if(entry == null)
+            return null;
 
+        entry["Typ"] = value;
+        await sql.Update(entry);
+
+        await InvokeAsync(StateHasChanged);
+
+        return entry;
+    }
     public async void OnMessageDone(AppMessage msg)
     {
         if (msg.Id == "Item" && msg.Action == BusAction.Refresh)

@@ -11,7 +11,7 @@
 
     @if (!string.IsNullOrEmpty(this.Title))
     {
-        <div class="py-2"></div>
+        <div class="py-3"></div>
         <div class="position-absolute top-0 start-0 px-3 py-2">
             <div class="fw-bold small text-secondary">
                 @this.Title
@@ -67,17 +67,18 @@
     public List<IDTO> Entries { get; set; } = new();
 
     private string _css = " bg-surface border rounded px-2 py-1 my-2 ";
+
     [Parameter]
     public string CSS 
     {
         get 
         {
-            if (IsEditMode == true)
-            {
+            // if (IsEditMode == true)
+            // {
+            // return string.Empty; 
+            // }
                 return _css;    
-            }
 
-            return string.Empty; 
         }
         set { _css = value; } 
     }
@@ -88,12 +89,12 @@
     {
         get
         {
-            if (IsEditMode == true)
-            {
-                return _style;
-            }
+            // if (IsEditMode == true)
+            // {
+            // return string.Empty;
+            // }
+            return _style;
 
-            return string.Empty;
         }
         set { _style = value; }
     }
@@ -233,8 +234,34 @@
 
     }
 
+    [JSInvokable]
+    public async void OnDropEnd(JsonElement json)
+    {
+        
+        foreach (JsonElement item in json.EnumerateArray())
+        {
+            string guid = item.GetProperty("GUID").GetString();
+            string sort = item.GetProperty("Sort").GetString();
+            string zone = item.GetProperty("Zone").GetString();
+
+            IDTO entry = Entries.FirstOrDefault(e => e.GUID.ToString() == guid);
+
+            if (entry != null)
+            {
+                // Event 
+                await OnDrop.InvokeAsync(entry);
+            }
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+
     [Parameter]
     public EventCallback<List<IDTO>> DragEnd { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnDrop { get; set; }
 
     [Parameter]
     public EventCallback<IDTO> ItemDragEnd { get; set; }

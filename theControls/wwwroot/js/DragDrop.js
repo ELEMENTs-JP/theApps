@@ -87,6 +87,15 @@ function assignSortableJS(containerElement, dragabbleClass, helper)
             },
 
 
+            async onAdd(evt) {
+                try {
+                    
+                    await intoDropContainer(evt.to, helper);
+                } catch (e) {
+                    alert("FAIL : DragDropJS : OnAdd : " + e.stack);
+                }
+            },
+
             // Element dragging ended 
             async onEnd(evt) {
 
@@ -145,6 +154,38 @@ async function updateSorting(container, helper)
         alert("FAIL : DragDropJS : OnDragEnd : " + e.stack);
     }
    
+}
+async function intoDropContainer(container, helper) {
+    try {
+
+
+        let items = [];
+
+        let allitems = container.children;
+
+        for (let i = 0; i < allitems.length; i++) {
+
+            let item = allitems[i];
+
+            let zone = getAttributeValue(container, "data-zone");
+
+            if (!item)
+                continue;
+
+            items.push(
+                {
+                    GUID: item.id,
+                    Sort: (i + 1).toString(),
+                    Zone: zone,
+                });
+        }
+
+        await helper.invokeMethodAsync("OnDropEnd", items);
+    }
+    catch (e) {
+        alert("FAIL : DragDropJS : OnDragEnd : " + e.stack);
+    }
+
 }
 
 

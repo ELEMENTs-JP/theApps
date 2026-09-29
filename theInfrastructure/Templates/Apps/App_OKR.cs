@@ -42,9 +42,9 @@ namespace theInfrastructure
 
             if (ItemType == "Objective")
             {
-                fields.Add(new FieldInfo("Priority", FieldTyp.Priority));
-                fields.Add(new FieldInfo("Fortschritt", FieldTyp.Progress));
-                fields.Add(new FieldInfo("Status", FieldTyp.Status));
+                fields.Add(new FieldInfo("Priority", "Priority", FieldTyp.Priority, "col-12 col-lg-4"));
+                fields.Add(new FieldInfo("Progress", "Fortschritt", FieldTyp.Progress, "col-12 col-lg-4"));
+                fields.Add(new FieldInfo("Status", "Status", FieldTyp.Status, "col-12 col-lg-4"));
             }
 
             return fields;

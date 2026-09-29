@@ -24,8 +24,8 @@
                         Field="@( Context.Fields.Find(se => se.Column == "Matchcode"))"
                          ItemSaved="@( async e => {  await Init(); } )"  />
                     <EditBox Context="@Context" Border="false"
-                         ItemSaved="@( async e => {  await Init(); } )"  
-                        Field="@( Context.Fields.Find(se => se.Typ == FieldTyp.ItemTypeList))" />
+                             ItemSaved="@( async e => {  await RemoveAllFilter(); await Init(); } )"
+                             Field="@( Context.Fields.Find(se => se.Typ == FieldTyp.ItemTypeList))" />
 
                     <FinderFilter Context="@Context" OnFilterChanged="@( async e => { await Init(); })" />
 
@@ -126,10 +126,24 @@
         if (Context.Item == null)
             return;
 
-        // Search
+        // Search 
         Items = await Helper.Query(sql, Context.Item, Items);
     }
+    private async Task RemoveAllFilter()
+    {
+        if (Context == null)
+            return;
 
+        if (Context.Item == null)
+            return;
+
+        // hinzugefügte Felder für die Filterung 
+        List<IDTO> PropertyList = await Context.Item.GetRelatedItems(sql, "SearchFilter");
+        foreach (IDTO pl in PropertyList)
+        {
+            await Context.Item.Remove(sql, pl);
+        }
+    }
     private async Task Search(string matchcode = "")
     {
         if (Context == null)
@@ -147,10 +161,7 @@
 
     }
 
-    private async Task RemoveAllFilter()
-    {
-        
-    }
+   
 
     public void Dispose()
     {

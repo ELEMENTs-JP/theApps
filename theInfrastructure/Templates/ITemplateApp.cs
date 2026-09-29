@@ -6,7 +6,7 @@ namespace theInfrastructure
 {
 
     public record ItemTypeInfo(string Name, string Title);
-    public record FieldInfo(string Name, FieldTyp Typ);
+    public record FieldInfo(string Column, string Title, FieldTyp Typ, string CSS);
     public record ItemTypeConnection(string Parent, string Child);
     public interface ITemplateApp
     {

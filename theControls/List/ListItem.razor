@@ -25,7 +25,7 @@
             {
                 <div class="col-auto ps-2">
                     <CheckBox Value="@Item["IsChecked"]" Style="" IsSwitch="false"
-                    ValueChanged="@( async e => {  Item["IsChecked"] = e; await base.Update(); } )" />
+                              ValueChanged="@( async e => {  Item["IsChecked"] = e; await base.Update(); } )" />
                 </div>
             }
         }
@@ -34,7 +34,7 @@
         @if (ExtendedView == true && !string.IsNullOrEmpty(DateColumn))
         {
             <div class="col-auto px-1 border-start border-end text-center pointer"
-            @onclick="@( e => { nm.NavigateTo($"/Calendar/Appointment/Tag/{Item[DateColumn].ToSecureDateTime().ToShortDateString()}"); })">
+                 @onclick="@( e => { nm.NavigateTo($"/Calendar/Appointment/Tag/{Item[DateColumn].ToSecureDateTime().ToShortDateString()}"); })">
                 <ToolTip Title="zum Kalender">
                     <div class="d-flex flex-column p-1 text-center">
                         <div class="p-05 border-bottom text-center">
@@ -60,7 +60,7 @@
         else
         {
             <div class="col px-2 py-1 hover pointer rounded-2 fw-bold pointer text-truncate text-nowrap @CheckStrikeOut()" title="@Item.ItemType"
-            @onclick="@( e => { nm.NavToItem(ItemType.Name, Item.GUID); })">
+                 @onclick="@( e => { nm.NavToItem(ItemType.Name, Item.GUID); })">
                 @(Item.Title.ToSecureString())
 
                 @if (ExtendedView)
@@ -73,6 +73,15 @@
             </div>
         }
 
+        @if (this.Properties.Count() >= 1)
+        {
+            @foreach (string p in this.Properties)
+            {
+                <div class="col-auto p-1">
+                    <div class="small text-muted">@Item[p].ToSecureString()</div>
+                </div>
+            }
+        }
 
 
         @if (ExtendedView)
@@ -84,8 +93,8 @@
             </div>
             <div class="col-auto p-1">
                 <div class="hover pointer rounded p-05 text-muted"
-                data-bs-toggle="collapse" data-bs-target="@("#" + collapseID)"
-                aria-expanded="false" aria-controls="@collapseID">
+                     data-bs-toggle="collapse" data-bs-target="@("#" + collapseID)"
+                     aria-expanded="false" aria-controls="@collapseID">
                     <SymbolIcon Symbol="Icon.Next" />
                 </div>
             </div>
@@ -103,14 +112,14 @@
             {
                 <div class="col-auto p-05">
                     <SymbolIcon Symbol="Icon.Delete" OnClick="@( async e => { await Delete(); })"
-                    CSS="pointer hover rounded" Style="color:var(--tblr-red); margin-top:-3px" />
+                                CSS="pointer hover rounded" Style="color:var(--tblr-red); margin-top:-3px" />
                 </div>
             }
             else
             {
                 <div class="col-auto p-05">
                     <SymbolIcon Symbol="Icon.Disconnect" CSS="pointer hover rounded p-05"
-                    OnClick="@( async  e => { await Disconnect(); })" />
+                                OnClick="@( async  e => { await Disconnect(); })" />
                 </div>
             }
         }
@@ -133,6 +142,9 @@
                 </div>
             </div>
         }
+
+
+
     </div>
 
 
@@ -155,6 +167,9 @@
 
     [Parameter]
     public string CSS { get; set; } = "list-item";
+
+    [Parameter]
+    public List<string> Properties { get; set; } = new();
 
     private string collapseID { get; set; } = string.Empty;
 
