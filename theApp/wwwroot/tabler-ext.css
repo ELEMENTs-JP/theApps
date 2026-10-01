@@ -6,16 +6,16 @@
     --tblr-border-color: #99999933 !important;
     --tblr-bg-surface-secondary: #12151855;
     /* --- Tabler Base Colors --- */
-    --tblr-blue: #066fd1;
+    --tblr-blue: #0461c0;
     --tblr-azure: #4299e1;
     --tblr-indigo: #4263eb;
-    --tblr-purple: #ae3ec9;
+    --tblr-purple: #9921b6;
     --tblr-pink: #d6336c;
-    --tblr-red: #d63939;
+    --tblr-red: #f01515;
     --tblr-orange: #f76707;
-    --tblr-yellow: #f59f00;
+    --tblr-yellow: #f5d700;
     --tblr-lime: #74b816;
-    --tblr-green: #2fb344;
+    --tblr-green: #0dc62a;
     --tblr-teal: #0ca678;
     --tblr-cyan: #17a2b8;
     /* --- Tabler Light Colors (-lt) --- */
@@ -61,7 +61,7 @@
     --tblr-body-bg: #292b33;
     --tblr-bg-surface: #24272d;
     --tblr-bg-surface-secondary: #12151855;
-    --tblr-green: #2fb344 !important;
+
 }
 
 

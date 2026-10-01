@@ -4,21 +4,20 @@
 <div class="text-center bg-surface rounded-2 p-2">
     <div class="row g-0 align-items-center">
 
-        <div class="col-3 p-2">
+        <div class="col-2 p-2">
             <div class="pointer hover rounded-2 p-5" @onclick="PreviousWeek">
                 <SymbolIcon Symbol="Icon.Previous" />
             </div>
         </div>
-        <div class="col-6 p-2 rounded-2">
-            <h1 class="display-6 fw-bold">@Now.Year.ToString()</h1>
+        <div class="col-8 p-2 rounded-2">
+            <h1 class="h1">
+                @Now.ToString("ddd, d. MMM yyyy", new System.Globalization.CultureInfo("de-DE"))
+            </h1>
             <h1 class="display-6 my-2">
                 W @Now.WeekOfYear().ToSecureString()
             </h1>
-            <h3 class="h3">
-                @Now.ToString("ddd, d. MMM", new System.Globalization.CultureInfo("de-DE"))
-            </h3>
         </div>
-        <div class="col-3 p-2" >
+        <div class="col-2 p-2" >
             <div class="pointer hover rounded-2 p-5" @onclick="NextWeek">
                 <SymbolIcon Symbol="Icon.Next" />
             </div>

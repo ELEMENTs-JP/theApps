@@ -2,27 +2,24 @@
 @inject NavigationManager nm
 @inject IAppService app
 
-<div class="row g-0">
-    
-    <div class="col-auto">
+<div class="d-flex">
         <div class="bg-surface p-2 hover pointer align-items-center border-bottom border-start border-end"
              @onclick="@( async e => { await ToHome(); })">
             <SymbolIcon Symbol="@Icon.Home" Style="" />
         </div>
-    </div>
-    <div class="col-auto d-none d-xl-block">
+    <div class="d-none d-xl-block">
         <BreadCrumpPath />
     </div>
-    <div class="col px-3">
+    <div class="flex-fill px-3">
     </div>
-    <div class="col-auto px-3">
-        <SimpleClock />
-    </div>
-    <div class="col-auto px-3 d-none d-xl-block">
+    <div class="px-2 d-none d-xl-block">
         <LoggedInPrincipal />
     </div>
-    <div class="col-auto  d-none d-xl-block">
+    <div class="px-2 d-none d-xl-block">
         <LoggedInUser />
+    </div>
+    <div class="px-2">
+        <SimpleClock />
     </div>
     
 </div>

@@ -13,7 +13,7 @@
     {
         <div class="py-3"></div>
         <div class="position-absolute top-0 start-0 px-3 py-2">
-            <div class="fw-bold small text-secondary">
+            <div class="@TitleCSS">
                 @this.Title
             </div>
         </div>
@@ -47,6 +47,9 @@
 
     [Parameter]
     public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string TitleCSS { get; set; } = " fw-bold small text-secondary ";
 
     [Parameter]
     public string ZoneProperty { get; set; } = "Zone";

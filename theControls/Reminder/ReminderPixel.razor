@@ -1,9 +1,7 @@
 ﻿@using theInfrastructure
 @implements IDisposable
 @inject TimerService timer
-@inject ISqlDatabaseService sql
-@inject IMessagingBusService msg
-
+@inherits BaseCtl
 
 <div class="position-relative rounded p-1 px-3">
 
@@ -28,7 +26,7 @@
         <div id="@( "link_popup_" + ID )" class="@(" row align-items-center ")" data-bs-toggle="dropdown">
 
             @*  d-none d-xl-block   *@
-            <div id="@( "head_popup_" + ID )" class="col p-1 px-2">
+            <div id="@( "head_popup_" + ID )" class="col p-2 hover rounded pointer">
                 <ToolTip Title="@( "Letzte Überprüfung:" + (lastExecution == DateTime.MinValue ? "Noch keine" : lastExecution.ToString("HH:mm:ss")) )">
                     <SymbolIcon Symbol="Icon.Reminder" Size="24" />
                 </ToolTip>
@@ -51,12 +49,20 @@
 
             <div class="@( " overflow-y-auto " )" style="@( MaxHeightCSS )">
 
-                @foreach (IDTO item in Items)
+                @foreach (IDTO item in Reminder)
                 {
-                    <div class="m-1 mx-2 hover pointer rounded-2 p-1">
+                    <div class="d-flex m-1 mx-2 hover pointer rounded-2 p-1"
+                        @onclick="@( e => { nm.NavToItem(item.ItemType, item.GUID); } )" >
                       
+                        <div class="flex-fill p-1">
                             @item.Title
-                        
+                        </div>
+                        <div class="p-1">
+                            @item["Date"].ToSecureDateTime().ToShortDateString()
+                        </div>
+                        <div class="p-1">
+                            @item["Time"].ToSecureDateTime().ToShortTimeString()
+                        </div>
                     </div>
                 }
 
@@ -77,10 +83,12 @@
     private readonly string registrationKey = Guid.NewGuid().ToString();
     private DateTime lastExecution = DateTime.MinValue;
 
-    string MenuStyle { get; set; } = "min-width:13rem;";
+    string MenuStyle { get; set; } = "min-width:18rem;";
     string MaxHeightCSS { get; set; } = "max-height:44rem;";
 
     List<IDTO> Items { get; set; } = new();
+    List<IDTO> Reminder { get; set; } = new();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -115,6 +123,9 @@
 
         // inkl. Heute (nicht beendet)
         Items = Items.Where(se => se["Stop"].ToSecureDateTime().Date >= DateTime.Now.Date).ToList();
+
+        // Reminder 
+        Reminder = Items;
 
         // Tag (älter als Heute) nur heutige Reminder
         Items = Items.Where(se => se["Date"].ToSecureDateTime().Date <= DateTime.Now.Date).ToList();

@@ -21,6 +21,7 @@
             <td class="border-0 p-2 m-0" style="height:18rem;">
                 <DragDropContainer Zone="Strengths" Title="Strengths" Entries="@Items"
                                         CSS="border rounded-2 p-2 h-100 bg-green"
+                                   TitleCSS=" fw-bold small text-white "
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -36,6 +37,7 @@
             <td class="border-0 p-2 m-0" style="height:18rem;">
                 <DragDropContainer Zone="Weaknesses" Title="Weaknesses" Entries="@Items"
                                 CSS="border rounded-2 p-2 h-100 bg-yellow"
+                                   TitleCSS=" fw-bold small text-white "
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -57,6 +59,7 @@
             <td class="border-0 p-2 m-0" style="height:18rem;">
                 <DragDropContainer Zone="Opportunities" Title="Opportunities" Entries="@Items"
                                     CSS="border rounded-2 p-2 h-100 bg-blue"
+                                   TitleCSS=" fw-bold small text-white "
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -72,6 +75,7 @@
             <td class="border-0 p-2 m-0" style="height:18rem;">
                 <DragDropContainer Zone="Threats" Title="Threats" Entries="@Items" 
                                     CSS="border rounded-2 p-2 h-100 bg-red"
+                                   TitleCSS=" fw-bold small text-white "
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">

@@ -1,0 +1,184 @@
+﻿@using System.Globalization
+@using System.Timers
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<div class="w-100 bg-primary rounded-2 p-2">
+
+    <div class="d-flex justify-content-between text-center overflow-auto py-1">
+        @for (int i = 1; i <= 12; i++)
+        {
+            var monthNumber = i;
+            var isCurrentMonth = (monthNumber == _currentDate.Month && _currentDate.Year == DateTime.Today.Year);
+            var monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber);
+            var monthShort = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(monthNumber);
+
+            <div class="d-flex flex-column align-items-center mx-1" style="min-width: 60px; flex: 1;">
+                <div class="rounded p-1 px-2 d-flex align-items-center justify-content-center text-nowrap"
+                     title="@monthName"
+                     style="@(isCurrentMonth ? "background-color: #ffffff; color: #777; font-weight: bold;" : "color: var(--tblr-body-color);")">
+                    @monthShort
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="d-flex justify-content-between text-center overflow-auto py-1">
+        @for (int i = 1; i <= _daysInMonth; i++)
+        {
+            var dayNumber = i;
+            var isToday = (dayNumber == _currentDate.Day && _currentDate.Month == DateTime.Today.Month && _currentDate.Year == DateTime.Today.Year);
+
+            <div class="d-flex flex-column align-items-center mx-1" style="min-width: 24px;">
+                <span class="text-white fw-bold small">
+                    @GetDayOfWeekAbbreviation(dayNumber)
+                </span>
+                <div class="rounded p-1 px-1 d-flex align-items-center justify-content-center @_itemHighlightClass"
+                     style="@("color:#fff !important; " + (isToday ? "background-color: #fff !important; color:#777 !important; border-radius: 50% !important; width: 28px; height: 28px;" : "width: 28px; height: 28px;"))">
+                    @dayNumber
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="d-flex flex-nowrap w-100 bg-tertiary rounded overflow-hidden"
+         style="height: 14px;">
+
+        @for (int i = 0; i < 24; i++)
+        {
+            var hourIndex = i;
+
+            <div class="border-end border-white position-relative" style="flex: 1 1 0px;"
+                 title="@($"{hourIndex:00}:00 - {hourIndex + 1:00}:00")">
+
+                <div class="h-100 bg-white"
+                     style="@GetFillStyle(hourIndex)">
+                </div>
+
+                @if (hourIndex % 3 == 0)
+                {
+                    <span class="position-absolute bottom-0 start-0 small text-muted ps-1 pb-1"
+                          style="font-size: 0.5rem; line-height: 1;">
+                        @hourIndex
+                    </span>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private DateTime _currentDate = DateTime.Today;
+    private int _daysInMonth;
+    private string _itemHighlightClass = "text-dark";
+
+    private string GetDayOfWeekAbbreviation(int day)
+    {
+        var date = new DateTime(_currentDate.Year, _currentDate.Month, day);
+        return date.ToString("ddd").Substring(0, 2);
+    }
+
+    private DateTime _clientTime = DateTime.Now;
+    private Timer? _timer;
+    private int _timezoneOffsetMinutes = 0;
+    private bool _initialized = false;
+    private IJSObjectReference? _jsModule;
+
+    protected override void OnInitialized()
+    {
+        _daysInMonth = DateTime.DaysInMonth(_currentDate.Year, _currentDate.Month);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/theComponents/YearMonthDayTimeProgress.razor.js");
+                var offset = await _jsModule.InvokeAsync<int>("getTimezoneOffset");
+
+                _timezoneOffsetMinutes = -offset;
+                UpdateClientTime();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"JS Interop Fehler: {ex.Message}");
+                // Fallback auf die Server-Zeit, falls der JS-Import fehlschlägt
+                _clientTime = DateTime.Now;
+            }
+            finally
+            {
+                // Garantiert die Freigabe der Render-Logik
+                _initialized = true;
+                StateHasChanged();
+                StartTimer();
+            }
+        }
+    }
+
+    private void StartTimer()
+    {
+        _timer = new Timer(1000);
+        _timer.Elapsed += OnTimerElapsed;
+        _timer.AutoReset = true;
+        _timer.Enabled = true;
+    }
+
+    private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+    {
+        UpdateClientTime();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void UpdateClientTime()
+    {
+        if (_jsModule != null)
+        {
+            _clientTime = DateTime.UtcNow.AddMinutes(_timezoneOffsetMinutes);
+        }
+        else
+        {
+            _clientTime = DateTime.Now;
+        }
+    }
+
+    private string GetFillStyle(int hourIndex)
+    {
+        try
+        {
+            if (!_initialized)
+                return "width: 0%;";
+
+            if (hourIndex < _clientTime.Hour)
+            {
+                return "width: 100%;";
+            }
+            else if (hourIndex > _clientTime.Hour)
+            {
+                return "width: 0%;";
+            }
+            else
+            {
+                double percentage = (_clientTime.Minute / 60.0) * 100.0;
+                string percentageString = percentage.ToString("F1", System.Globalization.CultureInfo.InvariantCulture);
+
+                return $"--fill-width: {percentageString}%; width: var(--fill-width); transition: width 1s linear;";
+            }
+        }
+        catch (Exception)
+        {
+            return "width: 0%;";
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _timer?.Dispose();
+
+        if (_jsModule is not null)
+        {
+            await _jsModule.DisposeAsync();
+        }
+    }
+}

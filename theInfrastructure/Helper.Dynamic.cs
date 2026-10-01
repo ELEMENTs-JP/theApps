@@ -53,6 +53,25 @@ namespace theInfrastructure
                 CSS = " col-12 my-2",
                 Group = "Date & Time"
             },
+               new ComponentDefinition
+            {
+                Name = "Jahr, Monat, Wochen u. Zeitübersicht",
+                Namespace = "theComponents",
+                ClassName = "YearMonthDayTimeProgress",
+                CSS = " col-12 my-2",
+                Group = "Date & Time",
+                IsActive = true,
+            },
+
+            // Host 
+            new ComponentDefinition
+            {
+                Name = "Willkommen",
+                Namespace = "theComponents",
+                ClassName = "WelcomeHost",
+                CSS = " col-12 my-2",
+                Group = "Host"
+            },
             
 
             // Apps & ItemTypes

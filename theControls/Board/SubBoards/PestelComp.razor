@@ -10,6 +10,8 @@
         <div class="col-4 p-2">
             <DragDropContainer Zone="Political" Title="Political" Entries="@Items"
                                CSS="border rounded-2 p-2 h-100 bg-purple"
+                               Style=" min-height:15rem; "
+                               TitleCSS=" fw-bold small text-white "
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -25,6 +27,8 @@
         <div class="col-4 p-2">
             <DragDropContainer Zone="Economical" Title="Economical" Entries="@Items"
                                CSS="border rounded-2 p-2 h-100 bg-blue"
+                               Style=" min-height:15rem; "
+                               TitleCSS=" fw-bold small text-white "
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -40,6 +44,8 @@
         <div class="col-4 p-2">
             <DragDropContainer Zone="Social" Title="Social" Entries="@Items"
                                CSS="border rounded-2 p-2 h-100 bg-green"
+                               Style=" min-height:15rem; "
+                               TitleCSS=" fw-bold small text-white "
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -55,6 +61,8 @@
         <div class="col-4 p-2">
             <DragDropContainer Zone="Technological" Title="Technological" Entries="@Items"
                                CSS="border rounded-2 p-2 h-100 bg-yellow"
+                               Style=" min-height:15rem; "
+                               TitleCSS=" fw-bold small text-white "
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -70,6 +78,8 @@
         <div class="col-4 p-2">
             <DragDropContainer Zone="Environment" Title="Environment" Entries="@Items"
                                CSS="border rounded-2 p-2 h-100 bg-orange"
+                               Style=" min-height:15rem; "
+                               TitleCSS=" fw-bold small text-white "
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -85,6 +95,8 @@
         <div class="col-4 p-2">
             <DragDropContainer Zone="Legal" Title="Legal" Entries="@Items"
                                CSS="border rounded-2 p-2 h-100 bg-red"
+                               Style=" min-height:15rem; "
+                               TitleCSS=" fw-bold small text-white "
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                                ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -104,6 +116,7 @@
     <div class="p-2" style="height:11rem;">
         <DragDropContainer Zone="Default" Title="Backlog" Entries="@Items" 
                             CSS="bg-background border rounded-2 p-2 h-100 "
+                           Style=" min-height:15rem; "
                            ZoneProperty="@( $"{ZoneParameter}" )"
                            SortProperty="@( $"{SortParameter}" )"
                            IsDefaultZone="true"

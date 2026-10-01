@@ -7,7 +7,8 @@
 @if (Item != null)
 {
     <div class="p-2">
-        <DragDropContainer Zone="Default" Title="Backlog" Entries="@Items" CSS="bg-background border rounded-2 p-2 "
+        <DragDropContainer Zone="Default" Title="Backlog" Entries="@Items" 
+                        CSS="bg-surface-secondary p-2 "
                            ZoneProperty="@( $"{ZoneParameter}" )"
                            SortProperty="@( $"{SortParameter}" )"
                            IsDefaultZone="true"
@@ -27,7 +28,8 @@
         @foreach (IDTO prio in Priorities)
         {
             <div class="col-3 p-2">
-                <DragDropContainer Zone="@prio.Title" Title="@prio.Title" Entries="@Items" CSS="border rounded-2 p-2"
+                <DragDropContainer Zone="@prio.Title" Title="@prio.Title" Entries="@Items" 
+                                    CSS="bg-surface-secondary p-2 "
                                ZoneProperty="@( $"{ZoneParameter}" )"
                                SortProperty="@( $"{SortParameter}" )"
                 ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })" >

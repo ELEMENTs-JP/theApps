@@ -143,7 +143,7 @@
 
         // Controls
         Builder build = new Builder(sql);
-        foreach (ComponentDefinition comp in Helper.ControlDefinitions)
+        foreach (ComponentDefinition comp in Helper.ControlDefinitions.Where(se => se.IsActive == true))
         {
             ControlDefinitions.Add(new DTO()
             {

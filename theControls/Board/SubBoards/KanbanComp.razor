@@ -9,7 +9,8 @@
     <div class="overflow-x-auto p-2">
         <div class="d-flex flex-nowrap gap-3">
             <div class="flex-shrink-0" style="width:18rem; height:21rem;">
-                <DragDropContainer Zone="InPlanung" Title="in Planung" Entries="@Items" CSS="h-100 border rounded-2 p-2"
+                <DragDropContainer Zone="InPlanung" Title="in Planung" Entries="@Items" 
+                    CSS="h-100 bg-surface-secondary p-2"
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -23,7 +24,8 @@
                 </DragDropContainer>
             </div>
             <div class="flex-shrink-0" style="width:18rem; height:21rem;">
-                <DragDropContainer Zone="InBearbeitung" Title="in Bearbeitung" Entries="@Items" CSS="h-100 border rounded-2 p-2 "
+                <DragDropContainer Zone="InBearbeitung" Title="in Bearbeitung" Entries="@Items" 
+                                   CSS="h-100 bg-surface-secondary p-2 "
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -36,7 +38,8 @@
                 </DragDropContainer>
             </div>
             <div class="flex-shrink-0" style="width:18rem; height:21rem;">
-                <DragDropContainer Zone="Review" Title="Review" Entries="@Items" CSS="h-100  border rounded-2 p-2"
+                <DragDropContainer Zone="Review" Title="Review" Entries="@Items" 
+                                   CSS="h-100 bg-surface-secondary p-2"
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -49,7 +52,8 @@
                 </DragDropContainer>
             </div>
             <div class="flex-shrink-0" style="width:18rem; height:21rem;">
-                <DragDropContainer Zone="Zurückgestellt" Title="zurückgestellt" Entries="@Items" CSS="h-100  border rounded-2 p-2"
+                <DragDropContainer Zone="Zurückgestellt" Title="zurückgestellt" Entries="@Items" 
+                                   CSS="h-100 bg-surface-secondary p-2"
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -62,7 +66,8 @@
                 </DragDropContainer>
             </div>
             <div class="flex-shrink-0" style="width:18rem; height:21rem;">
-                <DragDropContainer Zone="Abgeschlossen" Title="abgeschlossen" Entries="@Items" CSS="h-100 border rounded-2 p-2 "
+                <DragDropContainer Zone="Abgeschlossen" Title="abgeschlossen" Entries="@Items" 
+                                   CSS="h-100 bg-surface-secondary p-2 "
                                    ZoneProperty="@( $"{ZoneParameter}" )"
                                    SortProperty="@( $"{SortParameter}" )"
                                    ItemDragEnd="@( async e => { Items.ReplaceByItem(e);  })">
@@ -78,7 +83,8 @@
     </div>
 
     <div class="p-2">
-        <DragDropContainer Zone="Default" Title="Backlog" Entries="@Items" CSS="bg-background border rounded-2 p-2 "
+        <DragDropContainer Zone="Default" Title="Backlog" Entries="@Items" 
+                           CSS="bg-surface-secondary p-2 "
                            ZoneProperty="@( $"{ZoneParameter}" )"
                            SortProperty="@( $"{SortParameter}" )"
                            IsDefaultZone="true"

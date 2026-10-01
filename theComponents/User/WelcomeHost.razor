@@ -1,0 +1,13 @@
+﻿@using System.Globalization
+
+<div class="border rounded-2 p-2 bg-primary">
+    <h2 class="h2 text-white">Hallo und Willkommen!</h2>
+    <div class="text-white my-1">
+        Heute ist @DateTime.Now.ToString("dddd, d. MMMM yyyy", new CultureInfo("de-DE")) 
+    </div>
+</div>
+
+
+@code {
+
+}

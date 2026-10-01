@@ -10,9 +10,57 @@
     <table class="w-100 border-0 p-0 m-0">
         <tr>
             <td class="border-0 p-0 m-0 text-center" style="width:1.5rem;"></td>
-            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>niedrige Aufwand</strong></td>
-            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>hoher Aufwand</strong></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>niedrige Nutzen</strong></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>hoher Nutzen</strong></td>
             <td class="border-0 p-0 m-0 text-center" style="width:1.5rem;"></td>
+        </tr>
+        <tr>
+            <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
+                style="height:18rem;">
+                <strong>niedriges Risiko</strong>
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+               
+                <DragCanvas TItem="IDTO" CanvasId="CONSIDER" GroupName="Priorization"
+                            CSS="bg-orange" Height="320"
+                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "CONSIDER").ToList() )"
+                            OnItemDropped="HandleItemDropped">
+                    <ItemTemplate>
+                        <div class="d-flex rounded p-2 bg-surface" style="width: 180px;">
+                            <div class="pe-1">
+                                <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
+                            </div>
+                            <div class="fw-bold flex-fill" style="font-size: 0.8rem;">@context.Data.Title</div>
+                        </div>
+                    </ItemTemplate>
+                </DragCanvas>
+
+
+               
+            </td>
+            <td class="border-0 p-2 m-0" style="height:18rem;">
+             
+                <DragCanvas TItem="IDTO" CanvasId="PRIORIZE" GroupName="Priorization"
+                            CSS="bg-green" Height="320"
+                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "PRIORIZE").ToList() )"
+                            OnItemDropped="HandleItemDropped">
+                    <ItemTemplate>
+                        <div class="d-flex rounded p-2 bg-surface" style="width: 180px;">
+                            <div class="pe-1">
+                                <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
+                            </div>
+                            <div class="fw-bold flex-fill" style="font-size: 0.8rem;">@context.Data.Title</div>
+                        </div>
+                    </ItemTemplate>
+                </DragCanvas>
+
+
+               
+            </td>
+            <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
+                style="height:18rem;">
+                <strong>niedrige Kosten</strong>
+            </td>
         </tr>
         <tr>
             <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
@@ -20,9 +68,8 @@
                 <strong>hohes Risiko</strong>
             </td>
             <td class="border-0 p-2 m-0" style="height:18rem;">
-               
-                <DragCanvas TItem="IDTO" CanvasId="AVOID" GroupName="Priorization" 
-                    CSS="bg-red" Height="320"
+                 <DragCanvas TItem="IDTO" CanvasId="AVOID" GroupName="Priorization"
+                            CSS="bg-red" Height="320"
                             Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "AVOID").ToList() )"
                             OnItemDropped="HandleItemDropped">
                     <ItemTemplate>
@@ -37,14 +84,13 @@
 
             </td>
             <td class="border-0 p-2 m-0" style="height:18rem;">
-             
                 <DragCanvas TItem="IDTO" CanvasId="INVESTIGATE" GroupName="Priorization"
-                    CSS="bg-blue" Height="320"
+                            CSS="bg-blue" Height="320"
                             Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "INVESTIGATE").ToList() )"
                             OnItemDropped="HandleItemDropped">
                     <ItemTemplate>
                         <div class="d-flex rounded p-2 bg-surface" style="width: 180px;">
-                              <div class="pe-1">
+                            <div class="pe-1">
                                 <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
                             </div>
                             <div class="fw-bold flex-fill" style="font-size: 0.8rem;">@context.Data.Title</div>
@@ -52,6 +98,7 @@
                     </ItemTemplate>
                 </DragCanvas>
 
+              
             </td>
             <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
                 style="height:18rem;">
@@ -59,53 +106,9 @@
             </td>
         </tr>
         <tr>
-            <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
-                style="height:18rem;">
-                <strong>niedriges Risiko</strong>
-            </td>
-            <td class="border-0 p-2 m-0" style="height:18rem;">
-             
-                <DragCanvas TItem="IDTO" CanvasId="CONSIDER" GroupName="Priorization"
-                    CSS="bg-orange" Height="320"
-                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "CONSIDER").ToList() )"
-                            OnItemDropped="HandleItemDropped">
-                    <ItemTemplate>
-                        <div class="d-flex rounded p-2 bg-surface" style="width: 180px;">
-                              <div class="pe-1">
-                                <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
-                            </div>
-                            <div class="fw-bold flex-fill" style="font-size: 0.8rem;">@context.Data.Title</div>
-                        </div>
-                    </ItemTemplate>
-                </DragCanvas>
-
-            </td>
-            <td class="border-0 p-2 m-0" style="height:18rem;">
-               
-                <DragCanvas TItem="IDTO" CanvasId="PRIORIZE" GroupName="Priorization"
-                        CSS="bg-green" Height="320"
-                            Items="@( Entries.Where(se => se.Data[ZoneParameter].ToSecureString() == "PRIORIZE").ToList() )"
-                    OnItemDropped="HandleItemDropped">
-            <ItemTemplate>
-                <div class="d-flex rounded p-2 bg-surface" style="width: 180px;">
-                      <div class="pe-1">
-                                <SymbolIcon Symbol="Icon.Grib" Color="#fff" />
-                            </div>
-                    <div class="fw-bold flex-fill" style="font-size: 0.8rem;">@context.Data.Title</div>
-                </div>
-            </ItemTemplate>
-        </DragCanvas>
-
-            </td>
-            <td class="border-0 p-0 m-0 text-vertikal d-flex align-items-center justify-content-center"
-                style="height:18rem;">
-                <strong>niedrige Kosten</strong>
-            </td>
-        </tr>
-        <tr>
             <td class="border-0 p-0 m-0 text-center" style="width:1.5rem;"></td>
-            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>wenig Nutzen</strong></td>
-            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>hoher Nutzen</strong></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>hoher Aufwand</strong></td>
+            <td class="border-0 p-0 m-0 text-center" style="width:49%;"><strong>niedriger Aufwand</strong></td>
             <td class="border-0 p-0 m-0 text-center" style="width:1.5rem;"></td>
         </tr>
     </table>
