@@ -121,6 +121,14 @@ namespace theInfrastructure
                 CSS = " col-12 my-2",
                 Group = "Tools"
             },
+            new ComponentDefinition
+            {
+                Name = "Mission Control",
+                Namespace = "theComponents",
+                ClassName = "MissionControl",
+                CSS = " col-12 my-2",
+                Group = "Tools"
+            },
 
             // News 
             new ComponentDefinition

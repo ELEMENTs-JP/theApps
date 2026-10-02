@@ -1,0 +1,59 @@
+﻿@inherits BaseCtl
+
+
+<ControlFrame CSS="hover rounded-2 p-2">
+    <HeadContent>
+        <ControlHeader PreTitle="DESK" Title="Mission Control" PostTitle=""
+                       Description="@ItemType.Description" />
+    </HeadContent>
+    <RelatedContent>
+        <div class="d-flex">
+            <div class="flex-fill">
+            </div>
+            <div class="flex-fill">
+            </div>
+        </div>
+    </RelatedContent>
+    <ChildContent>
+
+        @if (Items != null && Items.Any())
+        {
+            @foreach (IDTO item in Items)
+            {
+                <ListItem Item="@item" ItemType="@ItemType" ExtendedView="true"></ListItem>
+            }
+        }
+
+    </ChildContent>
+</ControlFrame>
+
+
+
+@code {
+
+    private IItemType ItemType { get; set; } = new ItemType_TimeFrame();
+
+    List<IDTO> Items { get; set; } = new();
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            await Init();
+            StateHasChanged();
+        }
+    }
+
+    private async Task Init()
+    {
+        IQueryParameter qp = QueryParameter.Default(".");
+        qp.MasterGUID = sql.MasterGUID;
+        qp.ItemType = ItemType.Name;
+
+        IQueryResult result = await sql.GetItems(qp);
+        Items = result.Items;
+    }
+}
