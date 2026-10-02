@@ -1,4 +1,5 @@
-﻿@inherits BaseRow
+﻿@using theControls.Chart
+@inherits BaseRow
 
 @if (ItemType != null)
 {
@@ -86,7 +87,8 @@
 
         @if (ExtendedView)
         {
-            <div class="col-auto p-1 text-muted small">
+            <div class="col-auto p-1 text-muted small hover pointer rounded-2" 
+                @onclick="@( e => { nm.NavToLibrary(Item.ItemType); })">
                 <ToolTip Title="ItemType">
                     @Item.ItemType
                 </ToolTip>
@@ -143,7 +145,7 @@
             </div>
         }
 
-
+        <ProgressRangeKPI Item="@Item" ItemType="@ItemType" Border="" />
 
     </div>
 

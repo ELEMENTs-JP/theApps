@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using theComponents.Apps._99_RUNer
 
 @inject ISecurityService sec
 
@@ -23,6 +24,8 @@
 
             
                             <CompanyDashboard/> 
+
+                            <MissionControl CSS="bg-surface hover rounded-2 p-2" />
 
                     </TabsPanel>
                     <TabsPanel ID="@( ID + "2")">

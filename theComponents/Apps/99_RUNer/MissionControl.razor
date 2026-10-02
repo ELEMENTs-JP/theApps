@@ -1,7 +1,7 @@
 ﻿@inherits BaseCtl
 
 
-<ControlFrame CSS="hover rounded-2 p-2">
+<ControlFrame CSS="@CSS">
     <HeadContent>
         <ControlHeader PreTitle="DESK" Title="Mission Control" PostTitle=""
                        Description="@ItemType.Description" />
@@ -35,6 +35,8 @@
 
     List<IDTO> Items { get; set; } = new();
 
+    [Parameter]
+    public string CSS { get; set; } = "hover rounded-2 p-2";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
