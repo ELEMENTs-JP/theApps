@@ -50,6 +50,10 @@
     --tblr-info: #4299e1;
     --tblr-warning: #f59f00;
     --tblr-danger: #d63939;
+
+    /* --- Tabs Pages Nav Link --- */
+    --tblr-nav-link-padding-x: 0.5rem;
+    --tblr-nav-link-padding-y 0.35rem : 0.35rem;
 }
 
 
