@@ -9,43 +9,53 @@
             <ControlHeader PreTitle="Search" Title="FINDits" PostTitle="@Item.Title" />
         </Header>
         <Search>
-            <FinderSearchComp OnSearch="@( async e => {  await Search(e); })" />
+            <FinderSearchComp OnSearch="@( async e => { await Search(e); })" />
         </Search>
+        <Features>
+            <div class="btn btn-action" @onclick="@( e => { nm.NavigateTo("/Items/Query"); })">
+                <SymbolIcon Symbol="Icon.Config" />
+            </div>
+        </Features>
         <Content>
 
             <div class="row g-0" style="height:36rem;">
                 <div class="col-3 px-2">
 
                     <EditBox @key="@( "H1-" + Context.ID + "-" + Context.Item.GUID)"
-                     Field="@TitleField" Binding="ValueBindingTyp.Title"
-                     Context="@Context" Border="false" ItemSaved="@( async e => {  await Init(); } )"  />
+                             Field="@TitleField" Binding="ValueBindingTyp.Title"
+                             Context="@Context" Border="false" ItemSaved="@( async e => {  await Init(); } )" />
+
+                    <div class="border-bottom my-2"></div>
 
                     <EditBox Context="@Context" Border="false"
-                        Field="@( Context.Fields.Find(se => se.Column == "Matchcode"))"
-                         ItemSaved="@( async e => {  await Init(); } )"  />
+                             Field="@( Context.Fields.Find(se => se.Column == "Matchcode"))"
+                             ItemSaved="@( async e => {  await Init(); } )" />
+
                     <EditBox Context="@Context" Border="false"
                              ItemSaved="@( async e => {  await RemoveAllFilter(); await Init(); } )"
                              Field="@( Context.Fields.Find(se => se.Typ == FieldTyp.ItemTypeList))" />
 
+                    <div class="border-bottom my-2"></div>
+
                     <FinderFilter Context="@Context" OnFilterChanged="@( async e => { await Init(); })" />
 
-                    <FilterArea Context="@Context" OnFilterChanged="@(async e => { await Init(); })"  />
+                    <FilterArea Context="@Context" OnFilterChanged="@(async e => { await Init(); })" />
 
                 </div>
                 <div class="col-6 px-2 border-start border-end overflow-y-auto h-100">
                     <div>
                         @foreach (IDTO Item in Items)
                         {
-                            <div class="d-flex p-1 hover rounded" >
+                            <div class="d-flex p-1 hover rounded">
                                 <div class="p-1 small text-muted">
                                     @Item.ID
                                 </div>
-                                <div class="py-1 px-2 flex-fill fw-bold hover rounded pointer" 
-                                @onclick="@( e => { nm.NavToItem(Item.ItemType, Item.GUID);  })">
+                                <div class="py-1 px-2 flex-fill fw-bold hover rounded pointer"
+                                     @onclick="@( e => { nm.NavToItem(Item.ItemType, Item.GUID); })">
                                     @Item.Title
                                 </div>
-                                <div class="py-1 px-2 hover pointer rounded" 
-                                    @onclick="@( e => { nm.NavToLibrary(Item.ItemType);  })">
+                                <div class="py-1 px-2 hover pointer rounded"
+                                     @onclick="@( e => { nm.NavToLibrary(Item.ItemType); })">
                                     @Item.ItemType
                                 </div>
                             </div>
@@ -62,15 +72,10 @@
         <Bottom>
             <div class="row g-0">
                 <div class="col-auto">
-
                 </div>
                 <div class="col">
-
                 </div>
                 <div class="col-auto">
-                    <div class="btn btn-sm" @onclick="@( e => { nm.NavigateTo( "/Items/Query"); } )">
-                        Suchanfragen verwalten...
-                    </div>
                 </div>
             </div>
         </Bottom>
@@ -100,7 +105,7 @@
     {
         await base.OnParametersSetAsync();
 
-        // Field 
+        // Field
         TitleField = new Factory(sql).BuildField(FieldTyp.Heading);
 
         Context = new QueryContext(sql, sec, new ItemType_Query(), Item);
@@ -113,7 +118,7 @@
         if (message.Id == "EditBox" && message.Action == BusAction.Refresh)
         {
             // Search
-            Items= await Helper.Query(sql, Context.Item, Items);
+            Items = await Helper.Query(sql, Context.Item, Items);
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -126,7 +131,7 @@
         if (Context.Item == null)
             return;
 
-        // Search 
+        // Search
         Items = await Helper.Query(sql, Context.Item, Items);
     }
     private async Task RemoveAllFilter()
@@ -137,7 +142,7 @@
         if (Context.Item == null)
             return;
 
-        // hinzugefügte Felder für die Filterung 
+        // hinzugefügte Felder für die Filterung
         List<IDTO> PropertyList = await Context.Item.GetRelatedItems(sql, "SearchFilter");
         foreach (IDTO pl in PropertyList)
         {
@@ -152,11 +157,11 @@
         if (Context.Item == null)
             return;
 
-        // Query 
-        Context.Item["Matchcode"] = matchcode.ToSecureString(); 
+        // Query
+        Context.Item["Matchcode"] = matchcode.ToSecureString();
         await Context.Update(Context.Item);
 
-        // Search 
+        // Search
         Items = await Helper.Query(sql, Context.Item, Items);
 
     }

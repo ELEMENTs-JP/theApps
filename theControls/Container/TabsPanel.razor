@@ -3,7 +3,7 @@
      id="@( "nav-" + ID )"
      aria-labelledby="@( "nav-" + ID + "-tab" )"
      tabindex="0">
-    <div class="@CssClass">
+    <div class="@CSS">
         @ChildContent
      </div>
 </div>
@@ -20,6 +20,6 @@
     public bool IsActive { get; set; } = false;
 
     [Parameter]
-    public string CssClass { get; set; } = " px-2 py-3";
+    public string CSS { get; set; } = " px-2 py-3";
 
 }

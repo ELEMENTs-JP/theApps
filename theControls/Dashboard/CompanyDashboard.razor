@@ -7,9 +7,18 @@
     </div>
     <div class="col-6 p-2">
         <div class="rounded-2 p-2 bg-surface">
-        <ItemsList Title="Objective" ItemType="@( new Factory(sql).BuildItemType("Objective").Result)" IsSortable="false" ShowID="false" />
-        <ItemsList Title="Key Results" ItemType="@( new Factory(sql).BuildItemType("KeyResult").Result)" IsSortable="false" ShowID="false" />
-        <ItemsList Title="Check Ins" ItemType="@( new Factory(sql).BuildItemType("CheckIn").Result)" IsSortable="false" ShowID="false" />
+        
+        <ItemsList Title="Objective" TitleCSS="px-2 py-1 small text-muted fw-bold border-bottom" 
+                        ItemType="@( new Factory(sql).BuildItemType("Objective").Result)" 
+                            IsSortable="false" ShowID="false" ShowAddItem="true" />
+
+        <ItemsList Title="Key Results"  TitleCSS="px-2 py-1 mt-3 small text-muted fw-bold border-bottom"  
+                            ItemType="@( new Factory(sql).BuildItemType("KeyResult").Result)" 
+                                IsSortable="false" ShowID="false" ShowAddItem="true" />
+
+        <ItemsList Title="Check Ins"  TitleCSS="px-2 py-1 mt-3 small text-muted fw-bold border-bottom" 
+                        ItemType="@( new Factory(sql).BuildItemType("CheckIn").Result)" 
+                            IsSortable="false" ShowID="false" ShowAddItem="true" />
         </div>
     </div>
 </div>

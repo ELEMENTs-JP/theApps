@@ -5,7 +5,7 @@
 
 @if (!string.IsNullOrEmpty(this.Title))
 {
-    <div class="h3 py-1 text-secondary d-flex">
+    <div class="@( TitleCSS + " py-1 d-flex ")">
         @Title
     </div>
 }
@@ -23,7 +23,7 @@
                            Items="@Context.Items">
             <ItemTemplate Context="item">
                 <ListItem @key="@item.GUID" ItemType="@ItemType" Item="@item" RelatedItem="@RelatedItem" 
-                            ExtendedView="@ExtendedView"
+                            ExtendedView="@ExtendedView" ItemCSS="@ItemCSS"
                           OnConnect="@( async e => { await OnConnect.InvokeAsync(e); })"
                           OnDelete="@( async e => { await OnDelete.InvokeAsync(e); })"
                           OnUpdate="@( async e => { await OnUpdate.InvokeAsync(e); })"
@@ -32,6 +32,15 @@
             </ItemTemplate>
         </SortableContainer>
 
+        @if (ShowAddItem)
+        {
+
+                <AddFast ItemType="@Context.ItemType"  ShowItemType="false" 
+                    ButtonCSS="btn btn-sm btn-action" Style="width:100%;"
+                    ControlCSS="form-control form-control-sm form-control-flush hover"
+                    OnItemAdded="@( async e => { await Context.Search(); })" />
+
+        }
     }
 }
 
@@ -42,10 +51,19 @@
     public bool IsSortable { get; set; } = true;
 
     [Parameter]
+    public bool ShowAddItem { get; set; } = false;
+
+    [Parameter]
     public bool ShowID { get; set; } = true;
 
     [Parameter]
     public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string TitleCSS { get; set; } = " h3 text-secondary ";
+
+    [Parameter]
+    public string ItemCSS { get; set; } = "  ";
 
     [Parameter]
     public bool ExtendedView { get; set; } = false;
@@ -55,7 +73,6 @@
     {
     
     }
-
 
        
     [Parameter]

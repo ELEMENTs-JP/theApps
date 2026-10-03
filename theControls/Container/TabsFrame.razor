@@ -2,12 +2,14 @@
 @inject ISecurityService sec
 @inject IAppService app
 
-<div id="@( "tabs_frame_div " + ID )" class=" @app.Configuration.GetRoundedCSS() @BackgroundCSS p-2 @FrameCSS" style="@( app.Configuration.GetAkzentStyle() )">
+<div id="@( "tabs_frame_div " + ID )" 
+     class=" @app.Configuration.GetRoundedCSS() @BackgroundCSS @Padding @FrameCSS"
+                    style="@( Akzent  )">
 
     @if (Orientation == Orientation.Center)
     {
         <div class="row g-0">
-            <div class="col-auto mx-auto d-flex mb-2 mx-auto align-items-center overflow-hidden">
+            <div class="col-auto mx-auto d-flex my-1 mx-auto align-items-center overflow-hidden">
 
                 @if (!string.IsNullOrEmpty(this.Icon))
                 {
@@ -38,7 +40,7 @@
             </div>
         </div>
 
-        <div class="row g-0 mt-2">
+        <div class="row g-0">
             <div class="col mx-auto">
                 <div class="tab-content" id="nav-tabContent">
                     @ChildContent
@@ -46,7 +48,6 @@
             </div>
         </div>
     }
-
 
     @if (Orientation == Orientation.Horizontal)
     {
@@ -78,7 +79,6 @@
         </div>
     }
 
-
     @if (Orientation == Orientation.Vertical)
     {
         @if (!string.IsNullOrEmpty(this.Title))
@@ -100,7 +100,6 @@
             </div>
         </div>
     }
-
 
 </div>
 
@@ -124,6 +123,9 @@
     public string Title { get; set; } = string.Empty;
 
     [Parameter]
+    public string Padding { get; set; } = " p-2 ";
+
+    [Parameter]
     public bool ShowAsTabs { get; set; } = true;
 
     [Parameter]
@@ -135,7 +137,22 @@
     [Parameter]
     public Orientation Orientation { get; set; } = Orientation.Horizontal;
 
+    [Parameter]
+    public bool ShowAkzente { get; set; } = true;
+    private string Akzent { get; set; } = string.Empty;
 
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (ShowAkzente)
+        {
+            if (app != null && app.Configuration != null)
+            {
+                Akzent = app.Configuration.GetAkzentStyle();
+            }
+        }
+    }
 
 
 }

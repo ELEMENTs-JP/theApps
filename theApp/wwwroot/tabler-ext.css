@@ -52,8 +52,8 @@
     --tblr-danger: #d63939;
 
     /* --- Tabs Pages Nav Link --- */
-    --tblr-nav-link-padding-x: 0.5rem;
-    --tblr-nav-link-padding-y 0.35rem : 0.35rem;
+    --tblr-nav-link-padding-x: 0.35rem;
+    --tblr-nav-link-padding-y: 0.25rem : 0.25rem;
 }
 
 
@@ -132,7 +132,9 @@
     padding-left: 2rem;*/
     margin-bottom: 0 !important;
 }
-
+.form-control-sm {
+    padding: .285rem .35rem !important;
+}
 
 
 .dropdown-item {
@@ -143,6 +145,18 @@
     cursor: pointer;
 }
 
+.btn-action {
+    padding-left: 0.4rem !important;
+}
+    .btn-action:hover {
+        border-color: transparent !important;
+        box-shadow: none !important;
+        outline: none !important;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        transition: backdrop-filter 700ms ease-in-out;
+    }
 
 .btn-primary {
     background-color: #fff !important;
@@ -161,7 +175,7 @@
 .btn:focus-visible {
     color: #ffffff !important;
     border-color: #ffffff !important;
-    box-shadow: none !important; /* Weißer Fokus-Schatten */
+    box-shadow: none !important; 
     outline: none !important;
 }
 

@@ -124,6 +124,9 @@
     public EventCallback<string> ValueChanged { get; set; }
 
     [Parameter]
+    public EventCallback<string> KeyPressed { get; set; }
+
+    [Parameter]
     public string Placeholder { get; set; } = string.Empty;
 
     [Parameter]
@@ -193,6 +196,24 @@
             }
         }
     }
+
+    // private async Task HandleKeyDown(KeyboardEventArgs e)
+    // {
+    //     if (e.Key == "Enter")
+    //     {
+    //         if (Type == FieldTyp.Money)
+    //         {
+    //             // Live-Formatierung im DOM via JS während des Tippens
+    //             Value = await js.InvokeAsync<string>("numberFormatter.formatInput", inputElement, Culture);
+    //         }
+    //         else
+    //         {
+    //             Value = e.Value?.ToString() ?? string.Empty;
+    //         }
+
+    //         await KeyPressed.InvokeAsync(Value);
+    //     }
+    // }
 
     private string? GetAutocomplete()
     {

@@ -56,7 +56,7 @@
 
             <div class="dropdown-divider"></div>
       
-            <div class="@( " overflow-y-auto " )" style="@( MaxHeightCSS )">
+       @*      <div class="@( " overflow-y-auto " )" style="@( MaxHeightCSS )">
 
                 @foreach (IDTO item in GetFilteredItems())
                 {
@@ -72,7 +72,26 @@
                     </div>
                 }
 
-            </div>
+            </div> *@
+
+            <GroupedList TItem="IDTO"
+                         Items="GetFilteredItems()"
+                         IsGrouped="@IsGrouped"
+                         GroupSelector="@(p => p[Group].ToSecureString())"
+                         TitleSelector="@(p => p.Title)"
+                         MaxHeightCss="MaxHeightCSS"
+                         OnItemClick="@(e => HandleInput(e))">
+                <ItemTemplate Context="item">
+                    @if (ItemTemplate is not null)
+                    {
+                        @ItemTemplate(item)
+                    }
+                    else
+                    {
+                        @item.Title
+                    }
+                </ItemTemplate>
+            </GroupedList>
 
          
         </div>
@@ -134,6 +153,10 @@
 
     [Parameter]
     public string Description { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool IsGrouped { get; set; } = false;
+
     [Parameter]
     public string Hint { get; set; } = string.Empty;
 
@@ -153,8 +176,10 @@
     public string MaxHeightCSS { get; set; } = "max-height:44rem;";
 
     [Parameter]
-    public List<IDTO> Items { get; set; } = new();
+    public string Group { get; set; } = string.Empty; // Definiert die Spalte nach der die Items gruppiert werden 
 
+    [Parameter]
+    public List<IDTO> Items { get; set; } = new();
 
     [Parameter]
     public IDTO SelectedItem { get; set; }
@@ -230,8 +255,16 @@
         if (string.IsNullOrWhiteSpace(searchTerm))
             return Items;
 
-        return Items.Where(x => x.Title != null &&
-                                x.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+        IEnumerable<IDTO> items = Items.Where(x => x.Title != null &&
+                            x.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+        // if (!string.IsNullOrEmpty(Group))
+        // {
+        //     this.Groups = items.Select(se => se[Group].ToSecureString()).Distinct().ToList();
+        // }
+
+        return items;
     }
 
     private string InputName =>

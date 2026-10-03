@@ -41,7 +41,7 @@
             </div>
         </Related>
         <Content>
-            <ItemsList ItemType="@ItemType" RelatedItem="@RelatedItem" 
+            <ItemsList ItemType="@ItemType" RelatedItem="@RelatedItem" ItemCSS=" p-1 "
                 OnDelete="@( async e => { await OnDelete.InvokeAsync(e); })"
                 OnDisconnect="@( async e => { await OnDisconnect.InvokeAsync(e); })"
                             Association="@this.Association" />

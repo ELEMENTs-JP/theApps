@@ -10,7 +10,7 @@
 
 @if (ItemType != null && !string.IsNullOrEmpty(ID) && Context != null && Context.Item != null)
 {
-    <Frame Border="true" CSS="pt-2">
+    <Frame Border="true" CSS="pt-2" ContentCSS="">
         <Icon>
             @if (ItemType.Typ == ItemTypeTyp.User)
             {
@@ -51,12 +51,12 @@
                     <div class="vr"></div>
                     <AllRelatedItemsPopup Items="@RelatedItems" />
                 }
-                    
+
             </div>
         </Header>
         <Related>
-            <ContextMenu Context="@Context" ItemType="@ItemType" CSS="me-3" 
-                ItemDeleted="@( async e => { await ItemDeleted.InvokeAsync(e);  } )" />
+            <ContextMenu Context="@Context" ItemType="@ItemType" CSS="me-3"
+                         ItemDeleted="@( async e => { await ItemDeleted.InvokeAsync(e);  } )" />
             @if (Context.ItemType.Name == "User")
             {
                 <SetPasswordComp Item="@Context.Item" Mode="ModalRenderMode.Modal" />
@@ -65,41 +65,46 @@
             <ItemMetadataModal Item="@Context.Item" />
         </Related>
         <Content>
-            
-            <ProgressRangeKPI Item="@Context.Item" ItemType="@ItemType" />
+            <TabEditViews ItemType="@this.ItemType">
+                <Content>
+                    <ProgressRangeKPI Item="@Context.Item" ItemType="@ItemType" />
 
-            <div class="row g-0">
-                @foreach (IField field in Fields)
-                {
-                    @if (field.Typ == FieldTyp.HR)
-                    {
-                        <div class="hr-text px-3">@field.Title</div>
-                    }
-                    else
-                    {
-                        <div class="@( field.CSS + " p-2 " )">
-                            <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column + "-" + Context.Item.GUID)"
-                                     Field="@field" Context="@Context"
-                                     IsEditable="@field.IsEditable" Border="false" />
-                        </div>
-                    }
-                }
-            </div>
+                    <div class="row g-0">
+                        @foreach (IField field in Fields)
+                        {
+                            @if (field.Typ == FieldTyp.HR)
+                            {
+                                <div class="hr-text px-3">@field.Title</div>
+                            }
+                            else
+                            {
+                                <div class="@( field.CSS + " p-2 " )">
+                                    <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column + "-" + Context.Item.GUID)"
+                                             Field="@field" Context="@Context"
+                                             IsEditable="@field.IsEditable" Border="false" />
+                                </div>
+                            }
+                        }
+                    </div>
+                </Content>
+            </TabEditViews>
+
+          
         </Content>
         <Bottom>
 
             @if (hasUpdatePermission == false)
             {
                 <div class="d-inline-flex align-items-center">
-                  <div class="bg-danger rounded-circle me-2" style="width: 12px; height: 12px; border:1px solid #fff; flex-shrink: 0;"></div>
-                  <small class="text-muted small">
+                    <div class="bg-danger rounded-circle me-2" style="width: 12px; height: 12px; border:1px solid #fff; flex-shrink: 0;"></div>
+                    <small class="text-muted small">
                         @loc.GetLabel("Berechtigungen aktiv (Bearbeitung)", "Permissions active (Editing)")
-                  </small>
+                    </small>
                 </div>
             }
 
         </Bottom>
-    
+
     </Frame>
 
 }
@@ -126,18 +131,18 @@
 
         if (ItemType == null)
             return;
-             
-        // Field 
+
+        // Field
         TitleField = new Factory(sql).BuildField(FieldTyp.Heading);
         Fields = await ItemType.GetFields();
         Fields = Fields.Where(se => se.OnDisplay.Edit == true).ToList();
 
-        // Context 
+        // Context
         Context = new QueryContext(sql, sec);
         Context.ItemType = ItemType;
         await Context.Load(ID);
 
-        // Permission 
+        // Permission
         hasUpdatePermission = await sec.HasItemTypePermission(Context.ItemType, SecurityFunction.Update);
 
         await ValidateParents();

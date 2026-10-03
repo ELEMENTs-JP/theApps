@@ -2,7 +2,7 @@
 {
     <ProgressRange Start="@Start" StartTitle="@StartColumn" 
                     Ende="@Ende" EndeTitle="@EndeColumn" 
-                    CSS="@( Border + " flex-fill px-2 pb-2 " )" 
+                    CSS="@( Border + " flex-fill p-2 " )" 
                     Title="Zeitlicher Fortschritt" />
 }
 
@@ -15,7 +15,7 @@
     public IItemType ItemType { get; set; }
 
     [Parameter]
-    public string Border { get; set; } = "border-bottom";
+    public string Border { get; set; } = " border-bottom border-top ";
 
     private DateTime Start { get; set; }
     private DateTime Ende { get; set; }

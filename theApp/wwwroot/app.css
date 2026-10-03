@@ -13,7 +13,7 @@
 }
 
 [data-bs-theme=light] {
-    --tsp-link-color: #333;
+    --tsp-link-color: #555;
     --tsp-glass-color: #fff;
 }
 
@@ -42,18 +42,13 @@ iframe {
     color-scheme: normal !important;
 }
 
-
-
-
-
-
-
 /* Standard-Syntax für moderne Browser */
 input::placeholder,
 textarea::placeholder {
     color: #999999cc;
     font-style: italic;
     font-size: 0.75rem;
+    padding-left:0.35rem;
     opacity: 0.5; /* Verhindert, dass Firefox die Farbe transparenter macht */
 }
 
@@ -122,12 +117,19 @@ a, a:visited {
 
     a:hover {
         color: var(--tsp-link-color);
-        border-radius: 0.25rem;
-        background: rgba(255, 255, 255, 0.15) !important;
+        opacity:0.5 !important;
+ /*       border-radius: 0.25rem;
+        background: rgba(255, 255, 255, 0.05) !important;
         backdrop-filter: blur(20px) !important;
         -webkit-backdrop-filter: blur(20px) !important;
-        transition: background-color 0.25s ease !important;
+        transition: background-color 0.25s ease !important;*/
     }
+
+.link:hover {
+    color: var(--tblr-blue) !important;
+    transition: color 0.25s ease !important;
+    /*    opacity: 0.5 !important;*/
+}
 
 .selected {
     border-left: 3px solid #fff;
@@ -174,10 +176,10 @@ a, a:visited {
 }
 
 .hover:hover {
-    background: rgba(195, 195, 195, 0.10);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    transition: background-color 0.35s ease;
+    background: rgba(195, 195, 195, 0.10) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    transition: background-color 0.35s ease !important;
 }
 
 .opacity:hover {

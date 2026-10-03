@@ -4,7 +4,7 @@
 @if (ItemType != null)
 {
 
-    <div id="@( Item.GUID.ToSecureString() )" class="row g-0 p-1 hover align-items-center drag @CSS">
+    <div id="@( Item.GUID.ToSecureString() )" class="row g-0 hover align-items-center drag @ItemCSS @CSS">
 
         @if (IsSortable)
         {
@@ -49,9 +49,6 @@
             </div>
         }
 
-
-
-
         @if (ItemType.Typ == ItemTypeTyp.Comment)
         {
             <div class="col px-2 fw-bold text-truncate text-nowrap" title="@Item.ItemType">
@@ -60,7 +57,7 @@
         }
         else
         {
-            <div class="col px-2 py-1 hover pointer rounded-2 fw-bold pointer text-truncate text-nowrap @CheckStrikeOut()" title="@Item.ItemType"
+            <div class="col px-2 py-1 pointer link fw-bold pointer text-truncate text-nowrap @CheckStrikeOut()" title="@Item.ItemType"
                  @onclick="@( e => { nm.NavToItem(ItemType.Name, Item.GUID); })">
                 @(Item.Title.ToSecureString())
 
@@ -87,7 +84,7 @@
 
         @if (ExtendedView)
         {
-            <div class="col-auto p-1 text-muted small hover pointer rounded-2" 
+            <div class="col-auto p-1 text-muted small link pointer rounded-2" 
                 @onclick="@( e => { nm.NavToLibrary(Item.ItemType); })">
                 <ToolTip Title="ItemType">
                     @Item.ItemType
@@ -97,7 +94,10 @@
                 <div class="hover pointer rounded p-05 text-muted"
                      data-bs-toggle="collapse" data-bs-target="@("#" + collapseID)"
                      aria-expanded="false" aria-controls="@collapseID">
-                    <SymbolIcon Symbol="Icon.Next" />
+                    <i class="bi bi-chevron-down"></i>
+              @*       <i class="ti ti-pencil"></i>
+                    <i class="fa-solid fa-check"></i>
+                    <i class="ri-arrow-up-circle-line"></i> *@
                 </div>
             </div>
         }
@@ -169,6 +169,9 @@
 
     [Parameter]
     public string CSS { get; set; } = "list-item";
+
+    [Parameter]
+    public string ItemCSS { get; set; } = "";
 
     [Parameter]
     public List<string> Properties { get; set; } = new();

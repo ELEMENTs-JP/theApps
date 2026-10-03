@@ -94,7 +94,8 @@
                       IDValueChanged="@(async e =>{ onValueChanged(e.Item2, e.Item1); await Change(); await Save(); })"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass" 
-                        ItemCSS="@( (Field.Typ == FieldTyp.Color ? " d-inline-flex gap-1 " : "")  )"
+                    ItemCSS="@( (Field.Typ == FieldTyp.Color ? " d-inline-flex gap-1 " : "")  )"
+
                       IsEditable="@IsEditable">
                 <HeaderTemplate Context="headitem">
                     @if (Field.Typ == FieldTyp.Progress)

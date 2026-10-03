@@ -2,26 +2,29 @@
 {
     @if (Views.Count >= 1)
     {
-        <TabsFrame Orientation=" Orientation.Center" FrameCSS=" row g-0 w-100">
+        <TabsFrame Orientation=" Orientation.Center" 
+                FrameCSS=" row g-0 w-100" Padding="" ShowAkzente="false">
             <HeaderContent>
-                <TabsItem ID="@( "Default_View")" Title="@ItemType.Name" IsActive="true" Layout="TabsLayout.Buttons" />
+                <TabsItem ID="@( "Default_View")" Title="@ItemType.Name" 
+                        IsActive="true" Layout="TabsLayout.Buttons" />
 
                 @foreach (IEditView view in Views)
                 {
-                    <TabsItem ID="@( "View_" + view.Name)" Title="@view.Title" Layout="TabsLayout.Buttons" />
+                    <TabsItem ID="@( "View_" + view.Name)" 
+                                Title="@view.Title" Layout="TabsLayout.Buttons" />
                 }
 
             </HeaderContent>
             <ChildContent>
 
-                <TabsPanel ID="@( "Default_View")" IsActive="true">
+                <TabsPanel ID="@( "Default_View")" IsActive="true" CSS="p-1">
 
                     @Content
                    
                 </TabsPanel>
                 @foreach (IEditView view in Views)
                 {
-                    <TabsPanel ID="@( "View_" + view.Name)">
+                    <TabsPanel ID="@( "View_" + view.Name)" CSS="p-1">
 
                     </TabsPanel>
                 }

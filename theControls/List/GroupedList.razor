@@ -1,0 +1,117 @@
+﻿@typeparam TItem
+
+<div class="overflow-y-auto" style="@MaxHeightCss">
+    @if (IsGrouped)
+    {
+        @foreach (var group in EffectiveGroups)
+        {
+            <div class="fw-bold my-2 px-2">@group</div>
+
+            @if (GroupedItems.Contains(group))
+            {
+                @foreach (var item in GroupedItems[group])
+                {
+                    <div class="@ItemCss m-1 mx-2 hover pointer rounded p-1" 
+                    @onclick="() => OnItemClick.InvokeAsync(item)">
+                        @if (ItemTemplate is not null)
+                        {
+                            @ItemTemplate(item)
+                        }
+                        else
+                        {
+                            @GetDefaultTitle(item)
+                        }
+                    </div>
+                }
+            }
+        }
+    }
+    else
+    {
+        @foreach (var item in Items)
+        {
+            <div class="@ItemCss m-1 mx-2 hover pointer rounded p-1" 
+            @onclick="() => OnItemClick.InvokeAsync(item)">
+                @if (ItemTemplate is not null)
+                {
+                    @ItemTemplate(item)
+                }
+                else
+                {
+                    @GetDefaultTitle(item)
+                }
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public IEnumerable<TItem> Items { get; set; } = Enumerable.Empty<TItem>();
+
+    [Parameter]
+    public IEnumerable<string>? Groups { get; set; }
+
+    [Parameter]
+    public bool IsGrouped { get; set; }
+
+    [Parameter]
+    public RenderFragment<TItem>? ItemTemplate { get; set; }
+
+    [Parameter]
+    public EventCallback<TItem> OnItemClick { get; set; }
+
+    [Parameter]
+    public Func<TItem, string>? GroupSelector { get; set; }
+
+    // [Parameter]
+    // public Func<TItem, bool>? FilterPredicate { get; set; }
+
+    [Parameter]
+    public Func<TItem, string>? TitleSelector { get; set; }
+
+    [Parameter]
+    public string ItemCss { get; set; } = string.Empty;
+
+    [Parameter]
+    public string MaxHeightCss { get; set; } = string.Empty;
+
+    // // private IEnumerable<TItem> FilteredItems =>
+    // //     FilterPredicate is null ? Items : Items.Where(FilterPredicate);
+
+    private ILookup<string, TItem> GroupedItems =>
+        GroupSelector is null
+            ? Enumerable.Empty<TItem>().ToLookup(_ => string.Empty)
+            : Items.ToLookup(GroupSelector);
+
+    private IEnumerable<string> EffectiveGroups
+    {
+        get
+        {
+            if (Groups is not null && Groups.Any())
+            {
+                return Groups;
+            }
+
+            if (GroupSelector is not null)
+            {
+                return Items
+                    .Select(GroupSelector)
+                    .Where(g => !string.IsNullOrEmpty(g))
+                    .Distinct();
+            }
+
+            return Enumerable.Empty<string>();
+        }
+    }
+
+    private string GetDefaultTitle(TItem item)
+    {
+        if (TitleSelector is not null)
+        {
+            return TitleSelector(item);
+        }
+
+        return item?.ToString() ?? string.Empty;
+    }
+}
