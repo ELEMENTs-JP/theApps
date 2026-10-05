@@ -1,0 +1,83 @@
+﻿@inject IAppService app
+
+
+<div id="@( "ch-frame-" + ID )"
+     class="@app.Configuration.GetGlassClass() @GetOrientation() w-100 p-2 rounded-2 text-truncate @( ((Border) ? " border-bottom " : "")  )">
+
+    @if (!string.IsNullOrEmpty(PreTitle))
+    {
+        <div class="text-uppercase small text-truncate">
+            @PreTitle
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Title))
+    {
+        <h1 class="h1 text-truncate">
+            @Title
+        </h1>
+    }
+
+    @if (!string.IsNullOrEmpty(SubTitle))
+    {
+        <div class="text-muted  text-truncate" title="@SubTitle">
+            @SubTitle
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(PostTitle))
+    {
+        <div class="text-muted text-truncate" title="@PostTitle">
+            @PostTitle
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Description))
+    {
+        <div class="text-muted text-truncate"
+             style="max-width:15rem;" title="@Description">
+            @Description
+        </div>
+    }
+
+</div>
+
+
+
+@code {
+
+    private string ID { get; set; } = $"{Guid.NewGuid()}";
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+
+    [Parameter]
+    public string PreTitle { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string SubTitle { get; set; } = string.Empty;
+
+    [Parameter]
+    public string PostTitle { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool Border { get; set; } = false;
+
+    [Parameter]
+    public Orientation Orientation { get; set; } = theInfrastructure.Orientation.Left;
+
+    private string GetOrientation()
+    {
+        return Orientation switch
+        {
+            Orientation.Left => "text-start",
+            Orientation.Center => "text-center",
+            Orientation.Right => "text-end",
+            _ => "text-start"
+        };
+    }
+
+}

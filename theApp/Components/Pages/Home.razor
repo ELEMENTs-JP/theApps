@@ -5,8 +5,10 @@
 
 <div class="container">
 
-    <ControlHeader PreTitle="Dashboard" Title="the App" PostTitle="the App Plattform" Border="true"
-                   PreRelated="Willkommen" Related="@user" PostRelated="@post" />
+    <div class="d-flex justify-content-between border-bottom">
+        <Header PreTitle="Dashboard" Title="the App" PostTitle="the App Plattform" Border="false" Orientation="Orientation.Left" />
+        <Header PreTitle="Willkommen" Title="@user" PostTitle="@post" Border="false" Orientation="Orientation.Right" />
+    </div>
 
     <div class="row g-0">
         <div class="col-12 p-2">

@@ -1,4 +1,5 @@
-﻿
+﻿@using theControls.Hierarchy
+
 @inject ISqlDatabaseService sql
 @inject IMessagingBusService msg
 
@@ -8,7 +9,7 @@
         <div class="@(Item != null ? "col-12 col-lg-3 px-2" : "col-12 px-2")">
             <Frame Border="true" CSS="hierarchy" ContentCSS=" hierarchy-content overflow-y-auto p-1 " ContentStyle="">
                 <Header>
-                    <ControlHeader PreTitle="List" Title="@ItemType.Name" PostTitle="@ItemType.Description" />
+                    <Header PreTitle="List" Title="@ItemType.Name" PostTitle="@ItemType.Description" Orientation="Orientation.Left" />
                 </Header>
                 <Related>
                     @if (this.ItemType.Name != "Trash")

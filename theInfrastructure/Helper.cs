@@ -412,9 +412,14 @@ namespace theInfrastructure
             }
             else if (field.Typ == FieldTyp.BoardTyp)
             {
+                Items.Add(new DTO() { ID = "Business Model Canvas", Title = "Business Model Canvas" });
+                
+                Items.Add(new DTO() { ID = "Ansoff Matrix", Title = "Ansoff Matrix" });
+                Items.Add(new DTO() { ID = "SWOT", Title = "SWOT" });
+                Items.Add(new DTO() { ID = "PESTEL", Title = "PESTEL" });
+                
                 Items.Add(new DTO() { ID = "Backlog", Title = "Backlog" });
                 Items.Add(new DTO() { ID = "Kanban", Title = "Kanban" });
-                Items.Add(new DTO() { ID = "Business Model Canvas", Title = "Business Model Canvas" });
                 Items.Add(new DTO() { ID = "Balanced Scorecard", Title = "Balanced Scorecard" });
                 Items.Add(new DTO() { ID = "Moscow Board", Title = "Moscow Priorisierung" });
                 Items.Add(new DTO() { ID = "Idea Funnel", Title = "Idea Funnel" });
@@ -422,13 +427,11 @@ namespace theInfrastructure
                 Items.Add(new DTO() { ID = "Incident Tracking", Title = "Incident Tracking" });
                 Items.Add(new DTO() { ID = "Task Priorities", Title = "Task Priorities" });
                 Items.Add(new DTO() { ID = "Task Status", Title = "Task Status" });
-                Items.Add(new DTO() { ID = "Ansoff Matrix", Title = "Ansoff Matrix" });
                 Items.Add(new DTO() { ID = "Risiko Matrix", Title = "Risiko Matrix" });
                 Items.Add(new DTO() { ID = "Change Management", Title = "Change Management" });
                 Items.Add(new DTO() { ID = "Brand Positioning", Title = "Brand Positioning" });
                 Items.Add(new DTO() { ID = "Priorization", Title = "Priorization" });
-                Items.Add(new DTO() { ID = "SWOT", Title = "SWOT" });
-                Items.Add(new DTO() { ID = "PESTEL", Title = "PESTEL" });
+                
                 
             }
             else if (field.Typ == FieldTyp.FieldTyp)

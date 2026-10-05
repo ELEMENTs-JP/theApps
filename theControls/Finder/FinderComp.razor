@@ -6,7 +6,7 @@
 
     <Frame>
         <Header>
-            <ControlHeader PreTitle="Search" Title="FINDits" PostTitle="@Item.Title" />
+            <Header PreTitle="Search" Title="FINDits" PostTitle="@Item.Title" />
         </Header>
         <Search>
             <FinderSearchComp OnSearch="@( async e => { await Search(e); })" />

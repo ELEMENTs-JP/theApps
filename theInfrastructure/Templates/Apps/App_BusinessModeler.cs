@@ -41,7 +41,7 @@ namespace theInfrastructure
             {
                 fields.Add(new FieldInfo("VP", "Value Proposition", FieldTyp.TextArea, "col-12"));
 
-                fields.Add(new FieldInfo("Typ", "Typ", FieldTyp.Text, "col-lg-4 col-12"));
+                fields.Add(new FieldInfo("Typ", "Typ", FieldTyp.TextBlock, "col-lg-4 col-12"));
                 fields.Add(new FieldInfo("Owner", "Owner", FieldTyp.User, "col-lg-4 col-12"));
                 fields.Add(new FieldInfo("Prognose","Prognose", FieldTyp.Text, "col-lg-4 col-12"));
 
@@ -55,12 +55,20 @@ namespace theInfrastructure
 
             if (ItemType == "Element")
             {
-                fields.Add(new FieldInfo("Typ", "Typ", FieldTyp.Text, " col-12 col-lg-6"));
-                fields.Add(new FieldInfo("Owner", "Owner", FieldTyp.User, " col-12 col-lg-6"));
+                fields.Add(new FieldInfo("Value", "Value", FieldTyp.TextArea, "col-12"));
+
+                fields.Add(new FieldInfo("Owner", "Owner", FieldTyp.User, " col-12 col-lg-4"));
+                fields.Add(new FieldInfo("Typ", "Typ", FieldTyp.Text, " col-12 col-lg-4"));
+                fields.Add(new FieldInfo("Horizont", "Horizont", FieldTyp.Text, " col-12 col-lg-4"));
 
                 fields.Add(new FieldInfo("Priority", "Priority", FieldTyp.Priority, " col-12 col-lg-4"));
                 fields.Add(new FieldInfo("Progress", "Fortschritt", FieldTyp.Progress, " col-12 col-lg-4"));
                 fields.Add(new FieldInfo("Status", "Status", FieldTyp.Status, "col-12 col-lg-4 "));
+                
+                fields.Add(new FieldInfo("MH", "Möglichkeiten u. Herausforderungen", FieldTyp.HR, "col-12"));
+                fields.Add(new FieldInfo("Moeglichkeiten", "Möglichkeiten", FieldTyp.TextArea, "col-12 col-lg-6 "));
+                fields.Add(new FieldInfo("Herausforderungen", "Herausforderungen", FieldTyp.TextArea, "col-12 col-lg-6 "));
+
             }
 
             return fields;
@@ -70,8 +78,8 @@ namespace theInfrastructure
         {
             List<PageInfo> pages = new List<PageInfo>();
 
-            pages.Add(new PageInfo("Alignment", "Alignment"));
-            pages.Add(new PageInfo("Zielerreichung", "Zielerreichung"));
+            //pages.Add(new PageInfo("Alignment", "Alignment"));
+            //pages.Add(new PageInfo("Zielerreichung", "Zielerreichung"));
 
             return pages;
         }

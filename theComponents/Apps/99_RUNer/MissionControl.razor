@@ -1,20 +1,20 @@
 ﻿@inherits BaseCtl
 
 
-<ControlFrame CSS="@CSS">
-    <HeadContent>
-        <ControlHeader PreTitle="DESK" Title="Mission Control" PostTitle=""
+<Frame CSS="@CSS">
+    <Header>
+        <Header PreTitle="DESK" Title="Mission Control" PostTitle=""
                        Description="@ItemType.Description" />
-    </HeadContent>
-    <RelatedContent>
+    </Header>
+    <Related>
         <div class="d-flex">
             <div class="flex-fill">
             </div>
             <div class="flex-fill">
             </div>
         </div>
-    </RelatedContent>
-    <ChildContent>
+    </Related>
+    <Content>
 
         @if (Items != null && Items.Any())
         {
@@ -24,8 +24,8 @@
             }
         }
 
-    </ChildContent>
-</ControlFrame>
+    </Content>
+</Frame>
 
 
 

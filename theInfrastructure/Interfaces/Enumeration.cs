@@ -107,6 +107,10 @@ namespace theInfrastructure
         Vertical = 1,
         Horizontal = 2,
         Center = 3,
+        Left = 4,
+        Right = 5,
+        Top = 6,
+        Bottom = 7,
     }
     public enum TabsLayout
     {
