@@ -13,7 +13,7 @@
 }
 
 [data-bs-theme=light] {
-    --tsp-link-color: #555;
+    --tsp-link-color: #555555;
     --tsp-glass-color: #fff;
 }
 
@@ -48,7 +48,7 @@ textarea::placeholder {
     color: #999999cc;
     font-style: italic;
     font-size: 0.75rem;
-    padding-left:0.35rem;
+    padding-left:0.25rem;
     opacity: 0.5; /* Verhindert, dass Firefox die Farbe transparenter macht */
 }
 
@@ -126,7 +126,7 @@ a, a:visited {
     }
 
 .link:hover {
-    color: var(--tblr-blue) !important;
+    color: var(--tblr-secondary) !important;
     transition: color 0.25s ease !important;
     /*    opacity: 0.5 !important;*/
 }
@@ -176,10 +176,10 @@ a, a:visited {
 }
 
 .hover:hover {
-    background: rgba(195, 195, 195, 0.10) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    transition: background-color 0.35s ease !important;
+    background: rgba(185, 195, 215, 0.10) !important;
+/*    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;*/
+    transition: background-color 0.5s ease !important;
 }
 
 .opacity:hover {

@@ -12,8 +12,8 @@
             <FinderSearchComp OnSearch="@( async e => { await Search(e); })" />
         </Search>
         <Features>
-            <div class="btn btn-action" @onclick="@( e => { nm.NavigateTo("/Items/Query"); })">
-                <SymbolIcon Symbol="Icon.Config" />
+            <div class="p-2 rounded-2 hover pointer me-3" @onclick="@( e => { nm.NavigateTo("/Items/Query"); })">
+                <i class="bi bi-sliders"></i>
             </div>
         </Features>
         <Content>
@@ -50,11 +50,11 @@
                                 <div class="p-1 small text-muted">
                                     @Item.ID
                                 </div>
-                                <div class="py-1 px-2 flex-fill fw-bold hover rounded pointer"
+                                <div class="py-1 px-2 flex-fill fw-bold link rounded pointer"
                                      @onclick="@( e => { nm.NavToItem(Item.ItemType, Item.GUID); })">
                                     @Item.Title
                                 </div>
-                                <div class="py-1 px-2 hover pointer rounded"
+                                <div class="py-1 px-2 link pointer rounded"
                                      @onclick="@( e => { nm.NavToLibrary(Item.ItemType); })">
                                     @Item.ItemType
                                 </div>

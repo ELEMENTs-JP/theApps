@@ -14,10 +14,13 @@
 
 @if (ItemType != null)
 {
-    <div class="@CSS pointer @app.Configuration.GetRoundedCSS() overflow-hidden bg-surface text-secondary position-relative mx-2"
+   
+
+    <div class="@CSS pointer @app.Configuration.GetRoundedCSS() overflow-hidden bg-surface text-muted position-relative 
+                            @((SizeMode == FileInputSizeMode.Maximized ? "  " : " mx-1 "))"
          style="@( (SizeMode == FileInputSizeMode.Maximized 
-                        ? " border: 2px dashed #777 !important; " 
-                        : " border: 1px dashed #555 !important; " ) + " " + InternalStyle )">
+                        ? " border: 1px dashed #55555566 !important; " 
+                        : " border: 1px dashed #55555566 !important; ") + " " + InternalStyle )">
 
         @if (isLoading)
         {
@@ -91,9 +94,9 @@
     public int Progress { get; set; } = 0;
 
     [Parameter]
-    public string ControlStyle { get; set; } = "height: 36px; ";
+    public string ControlStyle { get; set; } = " "; // height: 36px;
 
-    private string InternalStyle { get; set; } = " width:36px !important; height:28px !important; ";
+    private string InternalStyle { get; set; } = " width:36px !important;  "; // height:28px !important;
 
     [Parameter]
     public int Width { get; set; } = 12;
