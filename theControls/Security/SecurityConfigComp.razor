@@ -1,0 +1,101 @@
+﻿@inherits BaseCtl
+
+<div class="border-bottom pb-2 mb-2">
+    <h1 class="h1 w-100">Sicherheit</h1>
+</div>
+
+<div class="row">
+    <div class="col-4">
+        <div class="border-bottom  p-1 mb-2">
+            <h3 class="h3 w-100">Anmeldung</h3>
+        </div>
+
+        <CheckBox Label="Fokus auf Username" Value="@sec.Configuration.FocusOnLogin.ToSecureString()"
+                  ValueChanged="@(e =>
+                                      {
+                                          sec.Configuration.FocusOnLogin = e.ToSecureBool();
+                                          sec.Configuration.Save();
+                                      })" />
+        <div class="border-bottom my-3"></div>
+
+        <CheckBox Label="Dauerhafte Anmeldung erlauben"
+                  Value="@sec.Configuration.AllowDauerhafteAnmeldung.ToSecureString()"
+                  ValueChanged="@(e =>
+                                      {
+                                          sec.Configuration.AllowDauerhafteAnmeldung = e.ToSecureBool();
+                                          sec.Configuration.Save();
+                                      })" />
+        <div class="border-bottom my-3"></div>
+
+        <DropDown Label="Gültigkeit der Anmeldung"
+                  Value="@sec.Configuration.GueltigkeitAnmeldungDauer.ToSecureString()"
+                  IDChanged="@(e =>
+                                      {
+                                          sec.Configuration.GueltigkeitAnmeldungDauer = e;
+                                          sec.Configuration.Save();
+                                      })"
+                  Items="@(new List<IDTO>()
+                                                {
+                                                    new DTO() { ID = "1", Title = loc.GetLabel("1 Stunde", "1 hour") },
+                                                    new DTO() { ID = "4", Title = loc.GetLabel("4 Stunden", "4 hours") },
+                                                    new DTO() { ID = "8", Title = loc.GetLabel("8 Stunden", "8 hours") },
+                                                    new DTO() { ID = "12", Title = loc.GetLabel("12 Stunden", "12 hours") },
+                                                } )" />
+        <div class="border-bottom my-3"></div>
+    </div>
+
+    <div class="col-4 border-start border-end">
+        <div class="border-bottom  p-1 mb-2">
+            <h3 class="h3 w-100">Registrierung</h3>
+        </div>
+
+        <CheckBox Label="Fokus auf Username" Value="@sec.Configuration.FocusOnRegister.ToSecureString()"
+                  ValueChanged="@(e =>
+                                                                                      {
+                                                                                          sec.Configuration.FocusOnRegister = e.ToSecureBool();
+                                                                                          sec.Configuration.Save();
+                                                                                      })" />
+        <div class="my-3"></div>
+
+        <ButtonSelectionBox Label="Anfrage oder Registrierung"
+                            Value="@sec.Configuration.RegisterOrRequest.ToSecureString()"
+                            ItemChanged="@(async e => {
+                            sec.Configuration.RegisterOrRequest = e.ID.ToSecureString();
+                            sec.Configuration.Save();
+                        })"
+                            Items="@(new List<IDTO>() {
+                                                    new DTO() { ID = "Register", Title = loc.GetLabel("Registrierung", "Registration") },
+                                                    new DTO() { ID = "Request", Title = loc.GetLabel("Anfrage", "Request") },
+                                                } )" />
+    </div>
+
+    <div class="col-4">
+        <div class="border-bottom  p-1 mb-2">
+            <h3 class="h3 w-100">Passwort</h3>
+        </div>
+
+        <ButtonSelectionBox Label="Passwortlänge"
+                            Value="@sec.Configuration.PasswordSize.ToSecureString()"
+                            ItemChanged="@(e =>
+                        {
+                            sec.Configuration.PasswordSize = e.ID.ToSecureInt();
+                            sec.Configuration.Save();
+                        })"
+                            Items="@(new List<IDTO>() {
+                                                    new DTO() { ID = "6", Title = loc.GetLabel("6 Zeichen", "6 digits") },
+                                                    new DTO() { ID = "8", Title = loc.GetLabel("8 Zeichen", "8 digits") },
+                                                    new DTO() { ID = "12", Title = loc.GetLabel("12 Zeichen", "12 digits") },
+                                                    new DTO() { ID = "16", Title = loc.GetLabel("16 Zeichen", "16 digits") },
+                                                } )" />
+        <div class="border-bottom my-3"></div>
+    </div>
+</div>
+
+
+
+
+
+
+@code {
+
+}

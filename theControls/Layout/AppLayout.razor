@@ -72,10 +72,21 @@
                     zum Login...
                 </div>
 
-                <div class="fw-bold border hover pointer rounded-2 p-3 my-2 pe-5"
-                     @onclick="@( e => { nm.NavigateTo("/Security/Register", false); })">
-                    zur Registration...
-                </div>
+
+                    @if (sec.Configuration.RegisterOrRequest == "Register")
+                    {
+                        <div class="fw-bold border hover pointer rounded-2 p-3 my-2 pe-5"
+                             @onclick="@( e => { nm.NavigateTo("/Security/Register", false); })">
+                            zur Registration...
+                        </div>
+                    }
+                    else if (sec.Configuration.RegisterOrRequest == "Request")
+                    {
+                        <div class="fw-bold border hover pointer rounded-2 p-3 my-2 pe-5"
+                             @onclick="@( e => { nm.NavigateTo("/Security/RequestAccess", false); })">
+                            Zugang beantragen...
+                        </div>
+                    }
 
                 <div class="fw-bold border hover pointer rounded-2 p-3 my-2 pe-5"
                      @onclick="@( e => { nm.NavigateTo("/", false); })">

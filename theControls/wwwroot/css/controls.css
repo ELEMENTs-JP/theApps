@@ -92,7 +92,7 @@
 
 .editbox {
     border: 1px solid transparent !important;
-    border-radius: 0.35rem;
+    border-radius: 0.35rem !important;
     width: 100%;
     background-color: transparent !important;
     outline: none;

@@ -42,7 +42,7 @@
                        ItemAssigned="@(async e =>{ await SelectAssign(e);  })"
                        ItemRemoved="@(async e =>{ await SelectRemove(e); })"
                        ItemChanged="@(async e =>{  })"
-                       Placeholder="@Field.Placeholder"
+                       Placeholder="@Field.Placeholder" TitleNavigationLink="@TitleNavigationLink"
                        HeadCSS="@( headstyles.Any(x => string.Equals(x, Field.ItemType, StringComparison.OrdinalIgnoreCase)) ? " d-inline-flex gap-1 " : " d-inline-flex gap-1 " )"
                        CssClass="@CssClass" 
                        IsEditable="@IsEditable">
@@ -93,7 +93,7 @@
                       Label="@Title" Description="@Description" Value="@Value" Items="@Items"
                       IDValueChanged="@(async e =>{ onValueChanged(e.Item2, e.Item1); await Change(); await Save(); })"
                       Placeholder="@Field.Placeholder"
-                      CssClass="@CssClass" 
+                      CssClass="@CssClass" TitleNavigationLink="@TitleNavigationLink"
                     ItemCSS="@( (Field.Typ == FieldTyp.Color ? " d-inline-flex gap-1 " : "")  )"
 
                       IsEditable="@IsEditable">
@@ -296,6 +296,9 @@
 
     [Parameter]
     public bool IsEditable { get; set; } = true;
+
+    [Parameter]
+    public string TitleNavigationLink { get; set; } = string.Empty;
 
     public List<string> headstyles { get; set; } = new List<string>() { "Folder", "Tag", "Label" };
 

@@ -68,6 +68,7 @@ namespace theInfrastructure
         public bool FocusOnLogin { get; set; } = false;
         public string GueltigkeitAnmeldungDauer { get; set; } = "4";
         public int PasswordSize { get; set; } = 8;
+        public string RegisterOrRequest { get; set; } = "Register";
         public bool AllowDauerhafteAnmeldung { get; set; } = true;
         public bool FocusOnRegister { get; set; } = false;
         public void Save()

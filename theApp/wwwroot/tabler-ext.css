@@ -164,9 +164,8 @@
 }
 
 .btn-compact {
-    padding: 0.15rem 0.35rem;
+    padding: 0.10rem 0.35rem;
     font-size: 0.75rem;
-    line-height: 1.2;
 }
 
 /* Stile für Aktivierung (Mouse Down) und Fokus */
@@ -183,35 +182,6 @@
     margin-right: 0 !important;
 }
 
-.tox .tox-tbtn svg {
-    fill: #ccc !important;
-}
-
-.tox .tox-mbtn {
-    color: #ccc !important;
-}
-
-.tox .tox-collection__item {
-    color: #ccc !important;
-}
-
-.tox :not(svg):not(rect) {
-    color: #ccc !important;
-    fill: #ccc !important;
-}
-
-/* Standardzustand: Das Dropdown nutzt wieder Bootstraps normales An-/Ausblenden */
-.dropdown-menu {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: none;
-}
-
-    .dropdown-menu.show {
-        opacity: 1;
-        transform: translateY(0);
-        transition: opacity 0.2s ease-out, transform 0.2s ease-out;
-    }
 
 
 .form-control:focus {

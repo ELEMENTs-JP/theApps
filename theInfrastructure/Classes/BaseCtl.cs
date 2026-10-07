@@ -23,6 +23,9 @@ namespace theInfrastructure
         public ISecurityService sec { get; set; } = default!;
 
         [Inject]
+        public ILocalizationService loc { get; set; } = default!;
+
+        [Inject]
         public ISearchService searchService { get; set; } = default!;
 
         [Inject]

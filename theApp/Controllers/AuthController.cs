@@ -264,7 +264,7 @@ public class AuthController : ControllerBase
         // Mail Format 
         if (username.IsMailFormat() == false)
         {
-            return Redirect("/setup?error=true");
+            return Redirect("/requestaccess?error=true");
         }
 
         IQueryParameter query = new QueryParameter();
@@ -275,7 +275,7 @@ public class AuthController : ControllerBase
 
 
 
-        return Redirect("/setup?error=true");
+        return Redirect("/requestaccess?error=true");
     }
 
 

@@ -18,7 +18,16 @@
                 <NotAuthorized>
                     <a href="/Security/Login" class="btn btn-sm btn-primary">@loc.GetLabel("Anmeldung", "Login")</a>
                     <div class="mx-2"></div>
-                    <a href="/Security/Register" class="btn btn-sm btn-primary">@loc.GetLabel("Registrierung", "Register")</a>
+
+                    @if (sec.Configuration.RegisterOrRequest == "Register")
+                    {
+                        <a href="/Security/Register" class="btn btn-sm btn-primary">@loc.GetLabel("Registrierung", "Register")</a>
+                    }
+                    else if (sec.Configuration.RegisterOrRequest == "Request")
+                    {
+                        <a href="/Security/RequestAccess" class="btn btn-sm btn-primary">@loc.GetLabel("Zugriff beantragen...", "Request")</a>
+                    }
+
                 </NotAuthorized>
             </AuthorizeView>
         </div>

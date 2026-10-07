@@ -1,10 +1,17 @@
-﻿@inject ISqlDatabaseService sql
-@inject ILocalizationService loc
+﻿@inherits BaseCtl
 @implements IAsyncDisposable
 
 @if (!string.IsNullOrEmpty(this.Label))
 {
-    <label class="form-label text-secondary" for="@ID">@Label</label>
+    <label class="form-label text-secondary" for="@ID" data-id="lbl-dropdown-@ID">
+        @Label
+    
+        @if (!string.IsNullOrEmpty(TitleNavigationLink))
+        {
+            <i class="bi bi-box-arrow-up-right pointer mx-2 small" @onclick="Navigate"></i>
+        }
+
+    </label>
 }
 
 <div class="position-relative overlay-container">
@@ -152,6 +159,9 @@
     public string Label { get; set; } = string.Empty;
 
     [Parameter]
+    public string TitleNavigationLink { get; set; } = string.Empty;
+
+    [Parameter]
     public string Description { get; set; } = string.Empty;
 
     [Parameter]
@@ -265,6 +275,14 @@
         // }
 
         return items;
+    }
+
+    private async Task Navigate()
+    {
+        if (!string.IsNullOrEmpty(TitleNavigationLink))
+        {
+            nm.NavigateTo(TitleNavigationLink);
+        }
     }
 
     private string InputName =>

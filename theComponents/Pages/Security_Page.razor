@@ -36,7 +36,14 @@
     }
     @if (Typ.ToLowerInvariant() == "RequestAccess".ToLowerInvariant())
     {
-        <RequestAccessComp />    
+        @if (sql.DatabaseExists)
+        {
+            <RequestAccessComp />    
+        }
+        else
+        {
+            <SetupComp />
+        }
     }
     @if (Typ.ToLowerInvariant() == "SetNewPwd".ToLowerInvariant())
     {

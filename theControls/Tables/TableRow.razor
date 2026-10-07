@@ -39,6 +39,7 @@
                     @(Item.Title.ToSecureString())
                 </a>
             
+                <CanvasEditView Item="@Item" />
             </div>
             
             @if (Item.Metadata.CreatedBy != sec.User.GUID)
@@ -48,6 +49,7 @@
                     <SymbolIcon Symbol="Icon.Connect" Color="#777777" />
                 </ToolTip>
             }
+
 
         </td>
 

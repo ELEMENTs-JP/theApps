@@ -1,21 +1,23 @@
-﻿
-@using Microsoft.AspNetCore.Components.Forms
+﻿@using Microsoft.AspNetCore.Components.Forms
 @using theControls.Layout
 @inject NavigationManager nm
+@inject ISecurityService sec
+@inject IJSRuntime js
 
 
 <div class="container mt-5">
     <div class="card mx-auto" style="max-width: 400px;">
         <div class="card-body">
-            <h4>Neues Passwort anfragen</h4>
+            <h2 class="h2 text-center fw-bold">Zugang beantragen</h2>
+            <div class="hr-text">Geschäftsaccount</div>
             <form action="/api/auth/requestaccess" method="post">
                 <AntiforgeryToken />
-
                 <div class="mb-3">
-                    <label>E-Mail</label>
-                    <input type="text" name="username" class="form-control" />
+                    <label class="form-label">E-Mail</label>
+                    <input id="input_txt_mail" type="text" name="username" 
+                        class="form-control" placeholder="E-Mail bitte hier eintragen..." />
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Request new password</button>
+                <button type="submit" class="btn btn-primary w-100">Zugang beantragen</button>
             </form>
 
             @if (nm.Uri.Contains("error"))
@@ -29,5 +31,16 @@
 
 
 @code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
 
+        if (firstRender)
+        {
+            if (sec.Configuration.FocusOnLogin)
+            {
+                await js.InvokeVoidAsync("setFocusById", "input_txt_username");
+            }
+        }
+    }
 }

@@ -40,7 +40,7 @@
 
                     @foreach (IDTO dto in Items.Where(se => se.ItemType == group))
                     {
-                            <ListItem @key="@dto.GUID"  Item="@dto" ExtendedView="true"
+                            <ListItem @key="@dto.GUID"  Item="@dto" ExtendedView="true" ItemCSS="px-1"
                                 RelatedItem="@this.Item"  IsRelated="@( (Item != null) )"
                                 ItemType="@( new Factory(sql).BuildItemType(dto.ItemType).Result )"
                                 OnDisconnect="@( async e => { await RemoveItem(dto);} )" />

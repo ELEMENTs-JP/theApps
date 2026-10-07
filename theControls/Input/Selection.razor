@@ -1,13 +1,16 @@
-﻿@inject ISqlDatabaseService sql
-@inject ILocalizationService loc
-@inject IMessagingBusService msg
-@inject IJSRuntime js
+﻿@inherits BaseCtl
 @implements IAsyncDisposable
 @implements IAssignableItems
 
 @if (!string.IsNullOrEmpty(this.Label))
 {
-    <label class="form-label text-secondary" for="@ID">@Label</label>
+    <label class="form-label text-secondary" for="@ID" data-id="lbl-selection-@ID">
+        @Label
+     @if (!string.IsNullOrEmpty(TitleNavigationLink))
+        {
+            <i class="bi bi-box-arrow-up-right pointer mx-2 small" @onclick="Navigate"></i>
+        }    
+    </label>
 }
 
 <div class="position-relative overlay-container">
@@ -166,6 +169,9 @@
     public string Label { get; set; } = string.Empty;
 
     [Parameter]
+    public string TitleNavigationLink { get; set; } = string.Empty;
+
+    [Parameter]
     public string Description { get; set; } = string.Empty;
     [Parameter]
     public string Hint { get; set; } = string.Empty;
@@ -317,6 +323,14 @@
 
         return Items.Where(x => x.Title != null &&
                                 x.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private async Task Navigate()
+    {
+        if (!string.IsNullOrEmpty(TitleNavigationLink))
+        {
+            nm.NavigateTo(TitleNavigationLink);
+        }
     }
 
     private string InputName =>

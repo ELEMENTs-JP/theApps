@@ -11,7 +11,7 @@
             <div class="col-12 p-1">
 
                 <EditBox @key="@( "RelBox-" + Context.ID + "-" + Context.Item.GUID)"
-                         Field="@( TimeFrame )" Context="@Context" Border="false" />
+                         Field="@( TimeFrame )" Context="@Context" Border="false" TitleNavigationLink="/Items/TimeFrame" />
             </div>
         </div>
         <div class="border-bottom my-2"></div>
@@ -19,17 +19,17 @@
             <div class="col-12 col-md-4 col-lg-4 p-1">
 
                 <EditBox @key="@( "RelBox-" + Context.ID + "-" + Context.Item.GUID)"
-                         Field="@( Folder )" Context="@Context" Border="false" />
+                         Field="@( Folder )" Context="@Context" Border="false" TitleNavigationLink="/Items/Folder"/>
             </div>
             <div class="col-12 col-md-4 col-lg-4 p-1">
                 <EditBox @key="@( "RelBox-" + Context.ID + "-" + Context.Item.GUID)"
-                         Field="@( Tag )" Context="@Context" Border="false" />
+                         Field="@( Tag )" Context="@Context" Border="false" TitleNavigationLink="/Items/Tag"/>
 
             </div>
             <div class="col-12 col-md-4 col-lg-4 p-1">
 
                 <EditBox @key="@( "RelBox-" + Context.ID + "-" + Context.Item.GUID)"
-                         Field="@( Label )" Context="@Context" Border="false" />
+                         Field="@( Label )" Context="@Context" Border="false" TitleNavigationLink="/Items/Label"/>
             </div>
         </div>
     </div>
