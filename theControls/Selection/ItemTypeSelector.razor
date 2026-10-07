@@ -18,7 +18,7 @@
 
     <div class="btn-group" role="group">
 
-        @foreach (IItemType it in Items.FromTo<IItemType>(0, 2))
+        @foreach (IItemType it in Items.FromTo<IItemType>(0, (VisibleItemsCount-1)))
         {
             <div class="@( "btn btn-sm btn-compact " + ((it.Name == ItemType.Name) ? " btn-primary " : "") )"
                  @onclick="@( async e => { ItemType = it; await ButtonClick(it); })">
@@ -26,7 +26,7 @@
             </div>
         }
 
-        @if (Items.Count() >= 4)
+        @if (Items.Count() >= (VisibleItemsCount +1))
         {
             <div class="btn-group" role="group">
                 <div class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -34,7 +34,7 @@
                 </div>
                 <div class="dropdown-menu" style="">
 
-                    @foreach (IItemType it in Items.FromTo<IItemType>(3, Items.Count() + 1))
+                    @foreach (IItemType it in Items.FromTo<IItemType>(VisibleItemsCount, Items.Count() + 1))
                     {
                         <div class="@( "dropdown-item" )"
                              @onclick="@( async e => { ItemType = it; await ButtonClick(it); })">
@@ -56,6 +56,9 @@
 
     [Parameter]
     public List<IItemType> Items { get; set; } = new();
+
+    [Parameter]
+    public int VisibleItemsCount { get; set; } = 4;
 
     [Parameter]
     public AssociationTyp Association { get; set; } = AssociationTyp.NULL;

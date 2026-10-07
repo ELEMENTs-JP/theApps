@@ -18,6 +18,7 @@ namespace theInfrastructure
             List<IItemType> ItemTypes = new();
 
             // ItemTypes 
+            ItemTypes.Add(new ItemType_Approval());
             ItemTypes.Add(new ItemType_Notification());
             ItemTypes.Add(new ItemType_Favorite());
             ItemTypes.Add(new ItemType_Checklist());

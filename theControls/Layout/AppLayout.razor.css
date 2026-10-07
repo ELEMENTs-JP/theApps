@@ -26,7 +26,6 @@ html, body {
 .main {
     flex: 1 1 auto;
     min-width: 0;
-   
 }
 main:focus {
     outline: none !important;
@@ -56,9 +55,11 @@ main:focus {
     .frame {
         flex-direction: row;
     }
-
+    main {
+        min-width: calc(100vw - 250px) !important;
+    }
     .sidebar {
-        width: var(--sidebar-width);
+        width: 250px;
         flex-shrink: 0;
     }
     .footer {
