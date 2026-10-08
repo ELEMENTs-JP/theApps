@@ -21,6 +21,14 @@ namespace theInfrastructure
             },
 
             // Date 
+             new ComponentDefinition
+            {
+                Name = "Uhr",
+                Namespace = "theComponents",
+                ClassName = "ClockComp",
+                CSS = " col-12 my-2",
+                Group = "Date & Time"
+            },
             new ComponentDefinition
             {
                 Name = "Date",

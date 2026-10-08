@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <!-- Erzwingt die Einbindung von Static Web Assets aus Razor Class Libraries -->
+    <EnableDefaultStaticWebAssets>true</EnableDefaultStaticWebAssets>
   </PropertyGroup>
 
   <ItemGroup>

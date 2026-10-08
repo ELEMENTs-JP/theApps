@@ -1,0 +1,175 @@
+﻿.clock-container {
+    box-sizing: border-box;
+    overflow: hidden;
+    min-width: 100px;
+    min-height: 100px;
+}
+
+
+
+.clock-face {
+    width: var(--clock-size, 200px);
+    height: var(--clock-size, 200px);
+    border-radius: 50%;
+    border: 6px solid currentColor;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.clock-marks {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+/* Der Container spannt sich über die gesamte Uhr und rotiert exakt um die Mitte */
+.clock-mark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: 50% 50%;
+    transform: rotate(var(--angle));
+}
+
+    /* Der eigentliche sichtbare Strich wird am oberen Rand platziert */
+    .clock-mark::before {
+        content: '';
+        position: absolute;
+        top: 6px; /* Abstand von der inneren Rahmenlinie */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: currentColor;
+    }
+
+.hour-mark::before {
+    width: 6px;
+    height: 28px;
+}
+
+.minute-mark::before {
+    width: 2px;
+    height: 18px;
+}
+
+.hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: 50% 100%;
+    border-radius: 2px;
+    background-color: currentColor;
+}
+
+.hour-hand {
+    width: 8px;
+    height: 28%;
+}
+
+.minute-hand {
+    width: 5px;
+    height: 40%;
+}
+
+.second-hand {
+    width: 2px;
+    height: 45%;
+}
+
+.clock-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+
+
+
+/*.clock-container {
+    box-sizing: border-box;
+    overflow: hidden;
+    min-width: 100px;
+    min-height: 100px;
+}
+
+.clock-face {
+    width: var(--clock-size, 200px);
+    height: var(--clock-size, 200px);
+    border-radius: 50%;
+    border: 6px solid currentColor;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.clock-marks {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.clock-mark {
+    position: absolute;
+    left: 50%;
+    top: 16px;
+    background-color: currentColor;
+    transform-origin: 50% calc((var(--clock-size, 200px) / 2) - 16px);
+    transform: translateX(-50%) rotate(var(--angle));
+}
+
+.hour-mark {
+    width: 6px;
+    height: 28px;
+}
+
+.minute-mark {
+    width: 2px;
+    height: 18px;
+}
+
+
+
+.hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: 50% 100%;
+    border-radius: 2px;
+    background-color: currentColor;
+}
+
+.hour-hand {
+    width: 8px;
+    height: 28%;
+}
+
+.minute-hand {
+    width: 5px;
+    height: 40%;
+}
+
+.second-hand {
+    width: 2px;
+    height: 45%;
+}
+
+.clock-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+*/

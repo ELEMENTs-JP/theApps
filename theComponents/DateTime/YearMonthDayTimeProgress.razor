@@ -95,7 +95,7 @@
         {
             try
             {
-                _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/theComponents/YearMonthDayTimeProgress.razor.js");
+                _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/theComponents/DateTime/YearMonthDayTimeProgress.razor.js");
                 var offset = await _jsModule.InvokeAsync<int>("getTimezoneOffset");
 
                 _timezoneOffsetMinutes = -offset;
