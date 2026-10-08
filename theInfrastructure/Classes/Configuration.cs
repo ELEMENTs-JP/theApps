@@ -84,7 +84,21 @@ namespace theInfrastructure
 
     }
 
-  
+    public class DatabaseConfiguration
+    {
+        public string DatabaseTyp { get; set; } = "SQLite"; // "DuckDB" oder "SQLite"
+
+        public void Save()
+        {
+            DatabaseConfiguration config = this as DatabaseConfiguration;
+
+            Serializer.Save<DatabaseConfiguration>(config, "database.config");
+        }
+        public static DatabaseConfiguration Load()
+        {
+            return Serializer.Load<DatabaseConfiguration>("database.config");
+        }
+    }
 
 
 

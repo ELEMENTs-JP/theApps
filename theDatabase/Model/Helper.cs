@@ -20,7 +20,7 @@ namespace theDatabase
                 List<string> ids = new List<string>();
 
                 // Context 
-                using (SQLiteContext context = SQLiteService.GetContext())
+                using (SQLDbContext context = SqlDbService.GetContext())
                 {
                     // Setting 
                     ids = (from item in context.tbl_CON_Content

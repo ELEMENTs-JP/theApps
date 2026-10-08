@@ -1,26 +1,29 @@
+using DuckDB.EFCoreProvider.Extensions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Authentication;
-using System.Diagnostics;
 using theInfrastructure;
 
 namespace theDatabase
 {
-    public class SQLiteContext : DbContext, IDisposable, IAsyncDisposable
+    public class SQLDbContext : DbContext, IDisposable, IAsyncDisposable
     {
-        public ContextConfig Config { get; private set; }
+        public string DataBaseFileName { get; private set; } =
+            ((SqlDbService.Configuration.DatabaseTyp == "SQLite" ? "Default.db" : "Default.duckdb"));
 
         bool useIntegratedSecurity = false;
 
-        public SQLiteContext(string filepath, bool uis = false)
+        public SQLDbContext(string filepath, bool uis = false)
         {
-            Config = ContextConfig.Default(filepath);
+            DataBaseFileName = filepath;
             useIntegratedSecurity = uis;
         }
 
@@ -30,7 +33,7 @@ namespace theDatabase
             try
             {
                 // TODO: Hier wird der Pfad zur Datenbank gesetzt 
-                string fullFilePath = Path.Combine(SQLiteService.ContentRootPath, "Database", Config.DatabaseFileName);
+                string fullFilePath = Path.Combine(SqlDbService.ContentRootPath, "Database", DataBaseFileName);
 
                 // Directory 
                 string directoryPath = Path.GetDirectoryName(fullFilePath);
@@ -43,7 +46,16 @@ namespace theDatabase
                 }
 
                 // neue Variante 
-                optionsBuilder.UseSqlite("Data Source=" + fullFilePath);
+
+                if (SqlDbService.Configuration.DatabaseTyp == "SQLite")
+                {
+                    optionsBuilder.UseSqlite("Data Source=" + fullFilePath);
+                }
+                else if (SqlDbService.Configuration.DatabaseTyp == "DuckDB")
+                {
+                    // optionsBuilder.UseSqlite("Data Source=" + fullFilePath);
+                    optionsBuilder.UseDuckDB("Data Source="+ fullFilePath);
+                }
 
                 base.OnConfiguring(optionsBuilder);
             }

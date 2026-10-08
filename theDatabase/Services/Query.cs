@@ -6,40 +6,31 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using theInfrastructure;
-using theInfrastructure;
 
 namespace theDatabase
 {
     public partial class Query
     {
         // CREATE 
-
         public static FormattableString CreateQuery(IQueryParameter input, Metadata mtd)
         {
-            // !!! ACHTUNG hier niemals eine Berücksichtigung von Meta oder Query... 
-            // Die Datensätze müssen immer sauber injitiert werden 
-            string sql = string.Empty;
-
             string meta = Helper.Serialize<Metadata>(mtd);
-
             string matchcode = input.Title.ToSecureString() + " " + input.Content.ToSecureString();
             string properties = "[]";
 
-            return $@" INSERT INTO tbl_CON_Content ( [GUID], [MasterGUID], 
-                                                     [ID], [Title], 
-                                                     [Content], [Matchcode], 
-                                                     [ItemType], [Metadata], [Properties]) 
-                                VALUES (
-                                {input.GUID}, {input.MasterGUID}, 
-                                {input.ID.ToSecureString()}, 
-                                
-                                {input.Title.ToSecureString()}, 
-                                {input.Content.ToSecureString()}, 
-                                {matchcode}, 
-
-                                {input.ItemType}, 
-                                {meta}, {properties})";
-
+            return $@"INSERT INTO tbl_CON_Content (
+                GUID, MasterGUID, ID, Title, Content, Matchcode, ItemType, Metadata, Properties
+              ) VALUES (
+                {input.GUID}, 
+                {input.MasterGUID}, 
+                {input.ID.ToSecureString()}, 
+                {input.Title.ToSecureString()}, 
+                {input.Content.ToSecureString()}, 
+                {matchcode}, 
+                {input.ItemType}, 
+                {meta}, 
+                {properties}
+              )";
         }
         public static FormattableString GetItems(IQueryParameter query)
         {

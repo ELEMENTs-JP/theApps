@@ -44,7 +44,7 @@ public class AuthController : ControllerBase
 
         IQueryParameter query = new QueryParameter();
         query.Matchcode = string.Empty;
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.MasterGUID = SqlDbService.GeneralMasterGUID;
         query.ItemType = "User";
         IQueryResult result = await sqlService.GetItems(query);
 
@@ -104,7 +104,7 @@ public class AuthController : ControllerBase
         }
 
         IQueryParameter query = new QueryParameter();
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.MasterGUID = SqlDbService.GeneralMasterGUID;
         query.ItemType = "User";
         query.Matchcode = string.Empty;
         IQueryResult result = await sqlService.GetItems(query);
@@ -118,7 +118,7 @@ public class AuthController : ControllerBase
 
         // Create 
         query = new QueryParameter();
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.MasterGUID = SqlDbService.GeneralMasterGUID;
         query.ItemType = "User";
         query.Title = username;
         query.UserGUID = security.User.GUID;
@@ -193,8 +193,8 @@ public class AuthController : ControllerBase
         // Suche 
         IQueryParameter qp = new QueryParameter();
         qp.Matchcode = string.Empty;
-        qp.MasterGUID = SQLiteService.GeneralMasterGUID;
-        qp.GUID = SQLiteService.GeneralMasterGUID;
+        qp.MasterGUID = SqlDbService.GeneralMasterGUID;
+        qp.GUID = SqlDbService.GeneralMasterGUID;
         qp.ItemType = "Principal";
         IQueryResult result = await sqlService.GetItem(qp);
         
@@ -206,7 +206,7 @@ public class AuthController : ControllerBase
         }
 
         // Principal erzeugen 
-        qp.GUID = SQLiteService.GeneralMasterGUID;
+        qp.GUID = SqlDbService.GeneralMasterGUID;
         qp.Title = principal;
         qp.ItemType = "Principal";
         result = await sqlService.Create(qp);
@@ -228,7 +228,7 @@ public class AuthController : ControllerBase
 
         // User erzeugen 
         qp.GUID = Guid.NewGuid();
-        qp.MasterGUID = SQLiteService.GeneralMasterGUID;
+        qp.MasterGUID = SqlDbService.GeneralMasterGUID;
         qp.Title = username;
         qp.ItemType = "User";
         result = await sqlService.Create(qp);
@@ -269,7 +269,7 @@ public class AuthController : ControllerBase
 
         IQueryParameter query = new QueryParameter();
         query.Matchcode = string.Empty;
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.MasterGUID = SqlDbService.GeneralMasterGUID;
         query.ItemType = "Principal";
         IQueryResult result = await sqlService.GetItems(query);
 
@@ -290,7 +290,7 @@ public class AuthController : ControllerBase
         // Query: Principal 
         IQueryParameter query = new QueryParameter();
         query.Matchcode = string.Empty;
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.MasterGUID = SqlDbService.GeneralMasterGUID;
         query.ItemType = "Principal";
 
         // Suche 
@@ -298,25 +298,25 @@ public class AuthController : ControllerBase
 
         // Principal filtern 
         IDTO principal = pResult.Items.Where(se =>
-                            se.GUID == SQLiteService.GeneralMasterGUID &&
-                            se.MasterGUID == SQLiteService.GeneralMasterGUID).FirstOrDefault();
+                            se.GUID == SqlDbService.GeneralMasterGUID &&
+                            se.MasterGUID == SqlDbService.GeneralMasterGUID).FirstOrDefault();
 
         // prüfen ob existiert : falls NEIN 
         if (principal == null)
         {
             // Create : Principal erstellen 
             IQueryParameter c = new QueryParameter();
-            c.MasterGUID = SQLiteService.GeneralMasterGUID;
-            c.GUID = SQLiteService.GeneralMasterGUID;
+            c.MasterGUID = SqlDbService.GeneralMasterGUID;
+            c.GUID = SqlDbService.GeneralMasterGUID;
             c.ItemType = "Principal";
             c.Title = "Default";
-            c.UserGUID = SQLiteService.GeneralMasterGUID;
+            c.UserGUID = SqlDbService.GeneralMasterGUID;
             c.UserName = "Default";
             IQueryResult newResult = await sqlService.Create(c);
 
             principal = newResult.Items.Where(se =>
-                            se.GUID == SQLiteService.GeneralMasterGUID &&
-                            se.MasterGUID == SQLiteService.GeneralMasterGUID).FirstOrDefault();
+                            se.GUID == SqlDbService.GeneralMasterGUID &&
+                            se.MasterGUID == SqlDbService.GeneralMasterGUID).FirstOrDefault();
         }
 
         if (principal == null)

@@ -14,13 +14,31 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace theDatabase
 {
-    public class SQLiteService : ISqlDatabaseService
+    public class SqlDbService : ISqlDatabaseService
     {
+        static DatabaseConfiguration config = null;
+        public static DatabaseConfiguration Configuration 
+        { 
+            get
+            {
+                if (config == null)
+                {
+                    config = DatabaseConfiguration.Load();
+                }
+                return config;
+            }
+            set
+            {
+                config = value;
+            }
+        } 
+
         // Fields 
-        public static string Database { get; set; } = "Default.db";
+        public static string Database { get; set; } = 
+            ((SqlDbService.Configuration.DatabaseTyp == "SQLite" ? "Default.db" : "Default.duckdb"));
         public static string ContentRootPath = string.Empty;
         public static Guid GeneralMasterGUID = new Guid("30C61E17-DBD3-4FF1-8BD6-612834D328D9");
-        public Guid MasterGUID { get { return SQLiteService.GeneralMasterGUID; } }
+        public Guid MasterGUID { get { return SqlDbService.GeneralMasterGUID; } }
 
         // Properties 
         public Guid SystemGUID
@@ -34,7 +52,7 @@ namespace theDatabase
         {
             get
             {
-                if (SQLiteService.Database.ToLower().Contains("default"))
+                if (SqlDbService.Database.ToLower().Contains("default"))
                 {
                     return DatabaseTyp.Master;
                 }
@@ -46,32 +64,34 @@ namespace theDatabase
         {
             get
             {
-                string fullFilePath = Path.Combine(SQLiteService.ContentRootPath, "Database", SQLiteService.Database);
-                return File.Exists(fullFilePath);
+                string fullFilePath = Path.Combine(SqlDbService.ContentRootPath, "Database", SqlDbService.Database);
+                bool exists = File.Exists(fullFilePath);
+                return exists;
             }
         }
         public string DefaultDatabasePath
         {
             get
             {
-                return Path.Combine(SQLiteService.ContentRootPath, "Database", SQLiteService.Database);
+                return Path.Combine(SqlDbService.ContentRootPath, "Database", SqlDbService.Database);
             }
         }
 
         // CTR 
-        public SQLiteService()
-        {
 
-        }
-        public SQLiteService(string contentrootpath)
+        public SqlDbService()
         {
-            SQLiteService.ContentRootPath = contentrootpath;
+          
+        }
+        public SqlDbService(string contentrootpath)
+        {
+            SqlDbService.ContentRootPath = contentrootpath;
         }
 
         // Context 
-        public static SQLiteContext GetContext(bool integrated = false, bool isCreationMode = false)
+        public static SQLDbContext GetContext(bool integrated = false, bool isCreationMode = false)
         {
-            string ffp = Path.Combine(SQLiteService.ContentRootPath, "Database", SQLiteService.Database);
+            string ffp = Path.Combine(SqlDbService.ContentRootPath, "Database", SqlDbService.Database);
             if (isCreationMode == false)
             {
                 if (!File.Exists(ffp))
@@ -82,7 +102,7 @@ namespace theDatabase
 
             try
             {
-                return new SQLiteContext(ffp, integrated);
+                return new SQLDbContext(ffp, integrated);
             }
             catch (Exception ex)
             {
@@ -99,7 +119,7 @@ namespace theDatabase
             info.Message = "";
 
             // Check Name 
-            if (string.IsNullOrEmpty(SQLiteService.Database))
+            if (string.IsNullOrEmpty(SqlDbService.Database))
             {
                 // Error 
                 info.Status = "FAIL";
@@ -109,7 +129,7 @@ namespace theDatabase
 
 
             // vollständige Pfad zur Datenbank 
-            string filePath = Path.Combine(SQLiteService.ContentRootPath, "Database", SQLiteService.Database);
+            string filePath = Path.Combine(SqlDbService.ContentRootPath, "Database", SqlDbService.Database);
             if (string.IsNullOrEmpty(filePath))
             {
                 // Error 
@@ -140,7 +160,7 @@ namespace theDatabase
             try
             {
                 // Context 
-                using (SQLiteContext ctx = GetContext(isCreationMode: true))
+                using (SQLDbContext ctx = GetContext(isCreationMode: true))
                 {
                     // Create 
                     ctx.Database.EnsureCreated();
@@ -177,7 +197,7 @@ namespace theDatabase
             info.Message = "";
 
             // Check Name 
-            if (string.IsNullOrEmpty(SQLiteService.Database))
+            if (string.IsNullOrEmpty(SqlDbService.Database))
             {
                 // Error 
                 info.Status = "FAIL";
@@ -186,7 +206,7 @@ namespace theDatabase
             }
 
             // vollständige Pfad zur Datenbank 
-            string filePath = Path.Combine(SQLiteService.ContentRootPath, "Database", SQLiteService.Database);
+            string filePath = Path.Combine(SqlDbService.ContentRootPath, "Database", SqlDbService.Database);
             if (string.IsNullOrEmpty(filePath))
             {
                 // Error 
@@ -211,7 +231,7 @@ namespace theDatabase
                 string walPath = $"{filePath}-wal";
 
                 // Context 
-                using (SQLiteContext ctx = GetContext())
+                using (SQLDbContext ctx = GetContext())
                 {
                     // Datenbank schließen... 
                     var connection = ctx.Database.GetDbConnection();
@@ -277,7 +297,7 @@ namespace theDatabase
             IQueryResult info = new QueryResult();
 
             // Check Name 
-            if (string.IsNullOrEmpty(SQLiteService.Database))
+            if (string.IsNullOrEmpty(SqlDbService.Database))
             {
                 info.Status = "FAIL";
                 info.Message = "Datenbankdatei wurde nicht benannt";
@@ -285,7 +305,7 @@ namespace theDatabase
             }
 
             // Vollständiger Pfad zur Quell-Datenbank 
-            string filePath = Path.Combine(SQLiteService.ContentRootPath, "Database", SQLiteService.Database);
+            string filePath = Path.Combine(SqlDbService.ContentRootPath, "Database", SqlDbService.Database);
             if (!File.Exists(filePath))
             {
                 info.Status = "FAIL";
@@ -294,7 +314,7 @@ namespace theDatabase
             }
 
             // Backup Ordner
-            string backupPath = Path.Combine(SQLiteService.ContentRootPath, "Database", "Backup");
+            string backupPath = Path.Combine(SqlDbService.ContentRootPath, "Database", "Backup");
 
             try
             {
@@ -308,7 +328,7 @@ namespace theDatabase
                 string backupFilePath = Path.Combine(backupPath, backupFile);
 
                 // Offizielle SQLite Backup-Methode über EF Core Context & Microsoft.Data.Sqlite
-                using (SQLiteContext ctx = GetContext(isCreationMode: false))
+                using (SQLDbContext ctx = GetContext(isCreationMode: false))
                 {
                     // Erforderliche Verbindungen für Quell- und Ziel-Datenbank
                     var sourceConnection = (SqliteConnection)ctx.Database.GetDbConnection();
@@ -351,7 +371,7 @@ namespace theDatabase
 
             try
             {
-                using (SQLiteContext ctx = GetContext())
+                using (SQLDbContext ctx = GetContext())
                 {
                     // Temporäre Dateien im RAM halten für schnelleres VACUUM
                     await ctx.Database.ExecuteSqlRawAsync("PRAGMA temp_store = MEMORY;");
@@ -384,7 +404,7 @@ namespace theDatabase
             try
             {
                 // Context 
-                using (SQLiteContext ctx = GetContext())
+                using (SQLDbContext ctx = GetContext())
                 {
                     // Aktualisiert die Abfrage-Statistiken in sqlite_stat1/sqlite_stat4
                     await ctx.Database.ExecuteSqlRawAsync("ANALYZE;");
@@ -413,7 +433,7 @@ namespace theDatabase
         {
             try
             {
-                using (SQLiteContext ctx = GetContext())
+                using (SQLDbContext ctx = GetContext())
                 {
                     var connection = ctx.Database.GetDbConnection();
 
@@ -445,7 +465,7 @@ namespace theDatabase
         {
             try
             {
-                using (SQLiteContext ctx = GetContext())
+                using (SQLDbContext ctx = GetContext())
                 {
                     var connection = ctx.Database.GetDbConnection();
 
@@ -477,7 +497,7 @@ namespace theDatabase
         {
             try
             {
-                using (SQLiteContext ctx = GetContext())
+                using (SQLDbContext ctx = GetContext())
                 {
                     // Nutzung von EF Core CountAsync für eine saubere, asynchrone SQL-COUNT-Abfrage
                     return await ctx.tbl_CON_Content.CountAsync();
@@ -535,7 +555,7 @@ namespace theDatabase
 
             try
             {
-                await using (SQLiteContext ctx = GetContext())
+                await using (SQLDbContext ctx = GetContext())
                 {
                     await ctx.Database.ExecuteSqlAsync(fq);
 
@@ -583,7 +603,7 @@ namespace theDatabase
 
             try
             {
-                await using (SQLiteContext ctx = GetContext())
+                await using (SQLDbContext ctx = GetContext())
                 {
                     // Item Delete 
                     var rowsAffected = await ctx.Database.ExecuteSqlAsync(query);
@@ -635,7 +655,7 @@ namespace theDatabase
 
             try
             {
-                await using (SQLiteContext ctx = GetContext())
+                await using (SQLDbContext ctx = GetContext())
                 {
                     var dbItems = await ctx.tbl_CON_Content
                         .FromSql(sql)
@@ -683,7 +703,7 @@ namespace theDatabase
 
             try
             {
-                await using (SQLiteContext ctx = GetContext())
+                await using (SQLDbContext ctx = GetContext())
                 {
                     var dbItems = await ctx.tbl_CON_Content
                         .FromSql(sql)
@@ -725,11 +745,17 @@ namespace theDatabase
             {
                 await using var ctx = GetContext();
 
+                //var item = await ctx.tbl_CON_Content
+                //    .AsNoTracking()
+                //    .FirstOrDefaultAsync(x =>
+                //        EF.Functions.Collate(x.GUID, "NOCASE") == query.GUID &&
+                //        EF.Functions.Collate(x.MasterGUID, "NOCASE") == query.MasterGUID);
+
                 var item = await ctx.tbl_CON_Content
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(x =>
-                        EF.Functions.Collate(x.GUID, "NOCASE") == query.GUID &&
-                        EF.Functions.Collate(x.MasterGUID, "NOCASE") == query.MasterGUID);
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(x =>
+                                x.GUID.ToString().ToLower() == query.GUID.ToString().ToLower() &&
+                                x.MasterGUID.ToString().ToLower() == query.MasterGUID.ToString().ToLower());
 
                 if (item != null)
                 {
@@ -754,7 +780,7 @@ namespace theDatabase
 
             try
             {
-                await using (SQLiteContext ctx = GetContext())
+                await using (SQLDbContext ctx = GetContext())
                 {
                     var dbitem = await (from query in ctx.tbl_CON_Content
                                         where query.GUID == dto.GUID
@@ -817,7 +843,7 @@ namespace theDatabase
 
             try
             {
-                await using (SQLiteContext ctx = GetContext())
+                await using (SQLDbContext ctx = GetContext())
                 {
                     var dbitem = await (from query in ctx.tbl_CON_Content
                                         where query.GUID == dto.GUID
@@ -913,7 +939,7 @@ namespace theDatabase
 
             try
             {
-                using SQLiteContext ctx = GetContext();
+                using SQLDbContext ctx = GetContext();
 
                 var query = await (from relation in ctx.tbl_TEC_Relation
                                    join content in ctx.tbl_CON_Content
@@ -952,7 +978,7 @@ namespace theDatabase
             List<IDTO> resultList = new List<IDTO>();
             try
             {
-                using SQLiteContext ctx = GetContext();
+                using SQLDbContext ctx = GetContext();
 
                 var query = await (from relation in ctx.tbl_TEC_Relation
                                    join content in ctx.tbl_CON_Content
@@ -991,7 +1017,7 @@ namespace theDatabase
 
             try
             {
-                using SQLiteContext ctx = GetContext();
+                using SQLDbContext ctx = GetContext();
 
                 var query = await (from content in ctx.tbl_CON_Content
 
@@ -1039,7 +1065,7 @@ namespace theDatabase
 
             try
             {
-                using SQLiteContext ctx = GetContext();
+                using SQLDbContext ctx = GetContext();
 
                 bool ignoreRelationType = typ == AssociationTyp.NULL;
                 string relationTypeString = typ.ToString();
@@ -1172,7 +1198,7 @@ namespace theDatabase
 
             try
             {
-                await using (SQLiteContext ctx = GetContext())
+                await using (SQLDbContext ctx = GetContext())
                 {
                     // check 
                     var result = await (from query in ctx.tbl_TEC_Relation
@@ -1233,7 +1259,7 @@ namespace theDatabase
 
             try
             {
-                await using (SQLiteContext ctx = GetContext())
+                await using (SQLDbContext ctx = GetContext())
                 {
                     // check 
                     var result = await (from query in ctx.tbl_TEC_Relation

@@ -65,7 +65,7 @@
 
         IQueryParameter query = new QueryParameter();
         query.Matchcode = string.Empty;
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.MasterGUID = SqlDbService.GeneralMasterGUID;
         query.ItemType = "User";
         IQueryResult result = await sql.GetItems(query);
 

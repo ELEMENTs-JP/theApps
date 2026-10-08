@@ -71,7 +71,7 @@ namespace theApp
                     // Auslesen des ContentRootPath
                     string rootPath = environment.ContentRootPath;
                     // Manuelle Instanziierung und Übergabe des Pfads
-                    return new SQLiteService(rootPath);
+                    return new SqlDbService(rootPath);
                 });
 
                 // Language Service 
@@ -82,7 +82,7 @@ namespace theApp
                     string rootPath = environment.ContentRootPath;
 
                     // Manuelle Instanziierung und Übergabe 
-                    return new LocalizationService(environment, new SQLiteService(rootPath));
+                    return new LocalizationService(environment, new SqlDbService(rootPath));
                 });
 
                 // Security Service 
@@ -93,7 +93,7 @@ namespace theApp
                     string rootPath = environment.ContentRootPath;
 
                     // Manuelle Instanziierung und Übergabe 
-                    return new SecurityService(environment, new SQLiteService(rootPath));
+                    return new SecurityService(environment, new SqlDbService(rootPath));
                 });
 
                 // App Service 
@@ -104,7 +104,7 @@ namespace theApp
                     string rootPath = environment.ContentRootPath;
 
                     // Manuelle Instanziierung und Übergabe 
-                    return new AppService(environment, new SQLiteService(rootPath));
+                    return new AppService(environment, new SqlDbService(rootPath));
                 });
 
                 // Search Service 
@@ -115,7 +115,7 @@ namespace theApp
                     string rootPath = environment.ContentRootPath;
 
                     // Manuelle Instanziierung und Übergabe 
-                    return new SearchService(environment, new SQLiteService(rootPath));
+                    return new SearchService(environment, new SqlDbService(rootPath));
                 });
 
                 // Timer Service 

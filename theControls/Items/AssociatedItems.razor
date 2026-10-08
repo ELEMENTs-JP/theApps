@@ -101,7 +101,7 @@
         Items.Clear();
 
         IQueryParameter query = new QueryParameter();
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.MasterGUID = SqlDbService.GeneralMasterGUID;
         query.ItemType = "Search";
 
         IQueryResult result = await sql.GetRelatedItems(Item, "", Association);

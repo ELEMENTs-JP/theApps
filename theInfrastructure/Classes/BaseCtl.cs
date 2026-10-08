@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,9 @@ namespace theInfrastructure
 
         [Inject]
         public NavigationManager nm { get; set; } = default!;
+
+        [Inject]
+        public IWebHostEnvironment env { get; set; } = default!;
 
         // Events 
         protected override async Task OnInitializedAsync()

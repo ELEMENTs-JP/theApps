@@ -160,7 +160,7 @@
             return;
 
         IQueryParameter query = new QueryParameter();
-        query.MasterGUID = SQLiteService.GeneralMasterGUID;
+        query.MasterGUID = SqlDbService.GeneralMasterGUID;
         query.ItemType = ItemType.Name;
         IQueryResult result = await sql.GetRelatedItems(Context.Item, "", AssociationTyp.NULL);
         RelatedItems = result.Items;

@@ -95,7 +95,7 @@ namespace theDatabase
             IQueryParameter query = new QueryParameter
             {
                 Matchcode = string.Empty,
-                MasterGUID = SQLiteService.GeneralMasterGUID,
+                MasterGUID = SqlDbService.GeneralMasterGUID,
                 ItemType = ItemType.Name
             };
 
@@ -214,7 +214,7 @@ namespace theDatabase
 
                 IQueryParameter query = new QueryParameter();
                 query.Matchcode = string.Empty;
-                query.MasterGUID = SQLiteService.GeneralMasterGUID;
+                query.MasterGUID = SqlDbService.GeneralMasterGUID;
                 query.GUID = new Guid(GUID);
                 query.ItemType = this.ItemType.Name;
                 IQueryResult result = await sqlService.GetItem(query);
@@ -250,7 +250,7 @@ namespace theDatabase
             _items.Clear();
             IQueryParameter query = new QueryParameter();
             query.Matchcode = string.Empty;
-            query.MasterGUID = SQLiteService.GeneralMasterGUID;
+            query.MasterGUID = SqlDbService.GeneralMasterGUID;
             query.ItemType = ItemType.Name;
             IQueryResult result = await sqlService.GetRelatedItems(RelatedItem, itemType, ast);
             _items = result.Items;
