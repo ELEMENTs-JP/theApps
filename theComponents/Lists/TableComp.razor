@@ -1,0 +1,100 @@
+﻿@inherits BaseCtl
+
+
+@if (this.ItemType != null && Context != null)
+{
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+
+            <ModalForm @key="@(new Guid().ToSecureString())" Title="Einstellungen"
+                       ShowTitleInButton="false" Value=""
+                       OnOKClicked="@( async e => {  } )">
+                <Icon>
+                    <SymbolIcon Symbol="Icon.Config" CSS="" />
+                </Icon>
+                <ChildContent>
+
+                    @if (field != null)
+                    {
+                        <div class="row g-0">
+                            <div class="col-12">
+
+                             @*    <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column )"
+                                         Field="@field" Context="@Context" Border="false" /> *@
+
+                            </div>
+                        </div>
+                    }
+
+                </ChildContent>
+                <FooterContent>
+
+                </FooterContent>
+            </ModalForm>
+
+        </div>
+    </div>
+
+    <DataTable ItemType="@this.ItemType" Matchcode="@Context.Filter.Matchcode" Items="@Context.Items"
+               OnDelete="@( async e => { await ItemDelete(e); })"
+               OnDisconnect="@( async e => { await Context.Search(); })"
+               OnSort="@( async e => { await Context.Search(); } )">
+        <Empty>
+            <QuickAdd ItemType="@this.ItemType" OnAdd="@( e => { })" />
+        </Empty>
+    </DataTable>
+
+}
+
+
+@code {
+
+    IItemType ItemType { get; set; }
+    IQueryContext Context { get; set; }
+    IField field { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ItemType == null)
+        {
+            ItemType = new ItemType_Task();
+
+            // Field
+            field = new Factory(sql).BuildField(FieldTyp.ItemTypeList);
+            field.Column = "ItemType";
+            field.Title = "ItemType";
+            field.Description = "Bitte wählen Sie den ItemType.";
+        }
+
+        if (Context == null)
+        {
+            // Context
+            Context = new QueryContext(sql, sec, ItemType);
+            await Context.Search();
+        }
+    }
+
+    private async Task ItemDelete(IDTO dto)
+    {
+        try
+        {
+            if (dto == null)
+                return;
+
+            await Context.Delete(dto);
+            await Context.Search();
+
+            msg.Publish("", BusAction.Refresh);
+            msg.Publish("", BusAction.Info, "Item wurde gelöscht");
+
+            // Notification Service
+            notify.NotifyChanged(Context.Item, NotificationType.Update, sec.User);
+
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+
+}

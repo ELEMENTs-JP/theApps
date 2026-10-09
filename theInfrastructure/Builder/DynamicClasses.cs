@@ -27,6 +27,7 @@ namespace theInfrastructure
         IItemType ItemType { get; set; }
 
         IList<IDynamicComponent> Children { get; set; }
+
     }
     
     // Base Class 
@@ -38,6 +39,7 @@ namespace theInfrastructure
         public bool IsActive { get; set; } = true;
         public IItemType ItemType { get; set; }
         public IList<IDynamicComponent> Children { get; set; } = new List<IDynamicComponent>();
+
     }
     
     // Template 

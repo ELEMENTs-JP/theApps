@@ -41,6 +41,9 @@ namespace theInfrastructure
         [Inject]
         public IWebHostEnvironment env { get; set; } = default!;
 
+        [Inject]
+        public INotificationService notify { get; set; } = default!;
+
         // Events 
         protected override async Task OnInitializedAsync()
         {

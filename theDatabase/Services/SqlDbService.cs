@@ -592,6 +592,9 @@ namespace theDatabase
             {
                 info.Status = "FAIL";
                 info.Message = ex.Message;
+
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
             }
 
             return info;
@@ -624,6 +627,9 @@ namespace theDatabase
             {
                 result.Status = "FAIL";
                 result.Message = ex.Message;
+
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
             }
 
             return result;
@@ -670,6 +676,9 @@ namespace theDatabase
             {
                 result.Status = "FAIL";
                 result.Message = ex.Message;
+
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
             }
 
             return result;
@@ -717,6 +726,9 @@ namespace theDatabase
             {
                 result.Status = "FAIL";
                 result.Message = ex.Message;
+
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
             }
 
      
@@ -770,6 +782,9 @@ namespace theDatabase
             {
                 result.Status = "FAIL";
                 result.Message = ex.Message;
+
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
             }
 
             return result;
@@ -832,6 +847,9 @@ namespace theDatabase
             {
                 result.Status = "FAIL";
                 result.Message = ex.Message;
+
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
             }
 
             return result;
@@ -870,6 +888,9 @@ namespace theDatabase
             {
                 result.Status = "FAIL";
                 result.Message = ex.Message;
+
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
             }
 
             return result;
@@ -897,36 +918,15 @@ namespace theDatabase
 
             try
             {
-
-                //if (Typ == AssociationTyp.Children ||
-                //   Typ == AssociationTyp.Parallels ||
-                //   Typ == AssociationTyp.Related ||
-                //   Typ == AssociationTyp.UserImage ||
-                //   Typ == AssociationTyp.Default)
-                //{
-                //    info.Items = await GetChildren(dto, ItemType, Typ);
-                //}
-                //else if (Typ == AssociationTyp.Parents)
-                //{
-                //    info.Items = await GetParents(dto, ItemType, Typ);
-                //}
-                //else if (Typ == AssociationTyp.Association)
-                //{
-                //    info.Items = await GetAll(dto, ItemType, Typ);
-                //}
-                //else if (Typ == AssociationTyp.Connection)
-                //{
-                //    info.Items = await GetAllConnected(dto, ItemType, Typ);
-                //}
-                //else
-                //{
-                //}
                 info.Items = await GetAll(dto, ItemType, Typ);
             }
             catch (Exception ex)
             {
                 info.Status = "FAIL";
                 info.Message = ex.Message;
+
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
             }
 
             return info;
@@ -1141,7 +1141,8 @@ namespace theDatabase
             }
             catch (Exception ex)
             {
-
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
             }
 
             return resultList.DistinctBy(se => se.GUID).ToList();
@@ -1244,6 +1245,9 @@ namespace theDatabase
             {
                 info.Status = "FAIL";
                 info.Message = ex.Message;
+
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
             }
 
             info.Status = "OK";
@@ -1294,6 +1298,9 @@ namespace theDatabase
             {
                 info.Status = "FAIL";
                 info.Message = ex.Message;
+
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
             }
 
             return info;

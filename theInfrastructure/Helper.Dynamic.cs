@@ -20,6 +20,16 @@ namespace theInfrastructure
                 Group = "Test"
             },
 
+            // Lists 
+             new ComponentDefinition
+            {
+                Name = "Tabelle",
+                Namespace = "theComponents",
+                ClassName = "TableComp",
+                CSS = " col-12 my-2",
+                Group = "Tables & Lists"
+            },
+
             // Date 
              new ComponentDefinition
             {
