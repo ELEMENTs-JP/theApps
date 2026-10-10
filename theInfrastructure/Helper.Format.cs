@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Markdig;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -9,6 +10,24 @@ namespace theInfrastructure
 {
     public static partial class Helper
     {
+        public static string MarkdownToHtml(this string markdown)
+        {
+            if (string.IsNullOrWhiteSpace(markdown))
+                return "";
+
+            // var cleanedMarkdown = Regex.Replace(markdown, @"^\*([^\s\*])", "* $1", RegexOptions.Multiline);
+
+            // Markdig Pipeline konfigurieren (Advanced für Tabellen, Listen, etc.)
+            var pipeline = new MarkdownPipelineBuilder()
+                .UseAdvancedExtensions()
+                .Build();
+
+            // Markdown zu HTML konvertieren
+            return Markdown.ToHtml(markdown, pipeline);
+        }
+
+
+
         public static bool IsNumeric(this string text)
         {
             if (string.IsNullOrEmpty(text))

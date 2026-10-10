@@ -96,6 +96,7 @@ namespace theInfrastructure
         Task<IApp?> AppByPage(IDTO? page);
         Task<IApp?> AppByBoard(IDTO? board);
         LayoutConfiguration Configuration { get; set; }
+        KIConfiguration KIConfiguration { get; set; }
         event PropertyChangedEventHandler PropertyChanged;
         void Init();
 

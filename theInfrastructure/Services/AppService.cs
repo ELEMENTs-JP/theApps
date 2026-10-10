@@ -18,6 +18,7 @@ namespace theInfrastructure
         ISqlDatabaseService SqlService;
 
         public LayoutConfiguration Configuration { get; set; } = null;
+        public KIConfiguration KIConfiguration { get; set; } = null;
 
         // Properties 
         private IApp _app = null;
@@ -80,6 +81,10 @@ namespace theInfrastructure
             if (Configuration == null)
             {
                 Configuration = LayoutConfiguration.Load();
+            }
+            if (KIConfiguration == null)
+            {
+                KIConfiguration = KIConfiguration.Load();
             }
 
             Factory builder = new Factory(SqlService);

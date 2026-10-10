@@ -100,6 +100,23 @@ namespace theInfrastructure
         }
     }
 
+    public class KIConfiguration
+    {
+        public string GeminiApiKey { get; set; } = string.Empty;
+        public string GeminiAnweisungen { get; set; } = string.Empty;
+
+        public void Save()
+        {
+            KIConfiguration config = this as KIConfiguration;
+
+            Serializer.Save<KIConfiguration>(config, "KI.config");
+        }
+        public static KIConfiguration Load()
+        {
+            return Serializer.Load<KIConfiguration>("KI.config");
+        }
+    }
+
 
 
 }
