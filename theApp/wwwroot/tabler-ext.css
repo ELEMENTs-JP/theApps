@@ -51,8 +51,9 @@
     --tblr-warning: #f59f00;
     --tblr-danger: #d63939;
     /* --- Tabs Pages Nav Link --- */
-    --tblr-nav-link-padding-x: 0.35rem;
-    --tblr-nav-link-padding-y: 0.25rem : 0.25rem;
+    /*    --tblr-nav-link-padding-x: 0.35rem;
+    --tblr-nav-link-padding-y: 0.25rem;*/
+    
     /* --- OffCanvas --- */
     --tblr-offcanvas-padding-x: 1.15rem !important;
     --tblr-offcanvas-padding-y: 1.15rem !important;
@@ -116,6 +117,10 @@
 
 .nav-link:focus, .nav-link:hover {
     color: inherit !important;
+}
+.nav {
+    --tblr-nav-link-padding-x: 0.35rem !important;
+    --tblr-nav-link-padding-y: 0.25rem !important;
 }
 
 .form-switch .form-check-input:focus {

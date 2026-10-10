@@ -6,6 +6,10 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public interface IWidget
+    {
+        IDTO Item { get; set; }
+    }
     public interface IFilterParameter
     {
         string Matchcode { get; set; }

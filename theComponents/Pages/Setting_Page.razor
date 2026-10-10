@@ -96,19 +96,30 @@
                                                                                   })" />
                         </div>
                         <div class="col-12 col-md-4 col-lg-4 px-2">
-                            <LanguageSelector Value="@loc.Configuration.Sprache"
-                                              ValueChanged="@(e =>
-                                                                                          {
-                                                                                              loc.Configuration.Sprache = e.ID;
-                                                                                              loc.Configuration.Save();
-                                                                                          })" />
+                            <DropDown Label="Sprache" Value="@loc.Configuration.Sprache"  
+                                Items="@( Helper.InitDropDown(LanguageField, sql).Result)" 
+                                      IDChanged="@(e => { loc.Configuration.Sprache = e;
+                                      loc.Configuration.Save(); })" />
+
+
+                    @*         <LanguageSelector Value="@loc.Configuration.Sprache"
+                                              ValueChanged="@(e => {
+                                                loc.Configuration.Sprache = e.ID;
+                                                loc.Configuration.Save();
+                                            })" /> *@
                             <div class="border-bottom my-2"></div>
-                            <CurrencySelector Value="@loc.Configuration.Currency"
+
+                            <DropDown Label="Währung" Value="@loc.Configuration.Currency"
+                                      Items="@( Helper.InitDropDown(CurrencyField, sql).Result)"
+                                      IDChanged="@(e => { loc.Configuration.Currency = e;
+                                            loc.Configuration.Save(); })" />
+
+                       @*      <CurrencySelector Value="@loc.Configuration.Currency"
                                               ValueChanged="@(e =>
                                                                                           {
                                                                                               loc.Configuration.Currency = e.ID;
                                                                                               loc.Configuration.Save();
-                                                                                          })" />
+                                                                                          })" /> *@
                         </div>
                     </div>
                 </TabsPanel>
@@ -163,10 +174,16 @@
 
     private string ID = "" + Guid.NewGuid();
 
+    IField LanguageField { get; set; }
+    IField CurrencyField { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+        // Field 
+        LanguageField = new Factory(sql).BuildField(FieldTyp.Language);
+        CurrencyField = new Factory(sql).BuildField(FieldTyp.Currency);
     }
 
     protected override async Task OnParametersSetAsync()

@@ -464,6 +464,17 @@ namespace theInfrastructure
                 Items.Add(new DTO() { ID = ItemTypeTyp.Image.ToString(), Title = ItemTypeTyp.Image.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.Video.ToString(), Title = ItemTypeTyp.Video.ToString() });
             }
+            else if (field.Typ == FieldTyp.Language)
+            {
+                Items.Add(new DTO { ID = "de", Title = "Deutsch" });
+                Items.Add(new DTO { ID = "en", Title = "Englisch" });
+                Items.Add(new DTO { ID = "es", Title = "Spanisch" });
+            }
+            else if (field.Typ == FieldTyp.Currency)
+            {
+                Items.Add(new DTO { ID = "EUR", Title = "EUR" });
+                Items.Add(new DTO { ID = "USD", Title = "USD" });
+            }
             else if (field.Typ == FieldTyp.User)
             {
                 IQueryParameter qp = new QueryParameter();

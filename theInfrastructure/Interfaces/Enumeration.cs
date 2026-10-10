@@ -304,6 +304,9 @@ namespace theInfrastructure
         FunctionList, // Liste der Funktionen die allow oder deny werden können 
         AssociationTyp, // Typ der Verbindungen von Datensätzen (Association Type bei Relation) 
         BoardTyp, // Typ eines Drag Drop Board / Canvas / Backlog / Kanban, etc.
+
+        Language,
+        Currency,
     }
 
     public enum DatabaseTyp
