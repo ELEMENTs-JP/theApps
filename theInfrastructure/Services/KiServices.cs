@@ -12,10 +12,12 @@ public class GeminiService : IDisposable
     private readonly HttpClient _httpClient;
     private readonly string _apiKey;
 
-    private const string ModelId = "gemini-2.5-flash";
     // Korrektur: /v1/ wurde in der URL ergänzt
-    private const string BaseUrl = $"https://generativelanguage.googleapis.com/v1/models/{ModelId}:generateContent";
+    //private const string ModelId = "gemini-2.5-flash";
+    //private const string BaseUrl = $"https://generativelanguage.googleapis.com/v1/models/{ModelId}:generateContent";
 
+    private const string ModelId = "gemini-3.5-flash-lite";
+    private const string BaseUrl = $"https://generativelanguage.googleapis.com/v1/models/{ModelId}:generateContent";
     public GeminiService(HttpClient httpClient, string key)
     {
         _httpClient = httpClient;

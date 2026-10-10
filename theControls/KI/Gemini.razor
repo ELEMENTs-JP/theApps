@@ -35,9 +35,9 @@
         <div class="offcanvas-body">
 
             <div class="input-group m-1">
-                <input @bind="_currentInput" @onkeyup="OnKeyUp" class="form-control border-primary"
+                <input @bind="_currentInput" @onkeyup="OnKeyUp" class="form-control"
                        placeholder="Deine Nachricht..." disabled="@_isThinking" />
-                <button class="btn btn-primary px-3" @onclick="Send" disabled="@_isThinking">
+                <div class="p-3 pointer hover rounded-2 ms-2" @onclick="Send" disabled="@_isThinking">
                     @if (_isThinking)
                     {
                         <span class="spinner-border spinner-border-sm"></span>
@@ -46,7 +46,7 @@
                     {
                         <i class="bi bi-send"></i>
                     }
-                </button>
+                </div>
             </div>
 
 
@@ -58,17 +58,24 @@
                 @foreach (var msg in _messages.AsEnumerable().Reverse())
                 {
                     <div class="d-flex mb-2 @(msg.Role == "user" ? "justify-content-end" : "justify-content-start")">
-                        <div class="p-3 border @(msg.Role == "user" ? "rounded-start rounded-top bg-dark" : "rounded-end rounded-top")"
+                        <div class="p-2 border @(msg.Role == "user" ? "rounded-start rounded-top bg-dark" : "rounded-end rounded-top")"
                              style="max-width: 90%; line-height: 1.5;">
                             <small class="d-block fw-bold text-muted opacity-75">@(msg.Role == "user" ? sec.User.Title : "Gemini")</small>
 
                             @if (msg.Role == "user")
                             {
+                                <div class="p-1">
                                 @( (MarkupString)ConfigureInput(msg.Text).MarkdownToHtml() )
+                                </div>
                             }
                             else
                             {
-                                @( (MarkupString)msg.Text.MarkdownToHtml() )
+                                var messageId = $"msg-{Guid.NewGuid()}";
+
+                                <div id="@messageId" class="hover pointer rounded p-1 px-1" 
+                                @onclick="() => CopyContent(messageId)">
+                                    @( (MarkupString)msg.Text.MarkdownToHtml() )
+                                </div>
                             }
                         </div>
                     </div>
@@ -77,6 +84,21 @@
         </div>
     </div>
 }
+
+
+@* <div class="position-absolute top-0 start-100 translate-middle hover rounded pointer">
+    <i class="bi bi-copy"></i>
+</div> *@
+
+<script>
+    window.copyElementTextById = function (id) {
+        const element = document.getElementById(id);
+        if (element) {
+            const text = element.innerText;
+            navigator.clipboard.writeText(text);
+        }
+    };
+</script>
 
 
 @code {
@@ -154,6 +176,13 @@
         input = input + "<div class='border-top py-1 text-muted' />" + "" + Anweisungen + "";
 
         return input;
+    }
+
+    private ElementReference contentElement;
+
+    private async Task CopyContent(string elementId)
+    {
+        await JS.InvokeVoidAsync("copyElementTextById", elementId);
     }
 
     // Dispose 
