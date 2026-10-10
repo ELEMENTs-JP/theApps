@@ -12,12 +12,9 @@ public class GeminiService : IDisposable
     private readonly HttpClient _httpClient;
     private readonly string _apiKey;
 
-    // Korrektur: /v1/ wurde in der URL ergänzt
-    //private const string ModelId = "gemini-2.5-flash";
-    //private const string BaseUrl = $"https://generativelanguage.googleapis.com/v1/models/{ModelId}:generateContent";
-
     private const string ModelId = "gemini-3.5-flash-lite";
     private const string BaseUrl = $"https://generativelanguage.googleapis.com/v1/models/{ModelId}:generateContent";
+
     public GeminiService(HttpClient httpClient, string key)
     {
         _httpClient = httpClient;
@@ -60,11 +57,8 @@ public class GeminiService : IDisposable
 
     public async Task<List<Section>> GetStructuredResponseAsync(List<ChatMessage> history)
     {
-        // Korrektur: Verwendet nun konsistent die korrigierte BaseUrl inklusive /v1/
         string url = $"{BaseUrl}?key={_apiKey}";
-
-        var parts = new List<object>();
-        string systemPrompt = "ANWEISUNG: Antworte NUR im JSON-Format als Liste von Objekten mit den Feldern 'title' und 'content'.\n\n";
+        string systemPrompt = "ANWEISUNG: Analysiere die Anfrage und strukturiere das Ergebnis in logische Abschnitte.\n\n";
 
         var contents = new List<object>();
 
@@ -81,58 +75,93 @@ public class GeminiService : IDisposable
             });
         }
 
-        var requestBody = new { contents = contents.ToArray() };
-
-        try
+        var requestBody = new
         {
-            var jsonRequest = JsonSerializer.Serialize(requestBody);
-            var httpContent = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PostAsync(url, httpContent);
-            var responseBody = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
+            contents = contents.ToArray(),
+            generationConfig = new
             {
-                switch ((int)response.StatusCode)
+                responseMimeType = "application/json",
+                responseSchema = new
                 {
-                    case 429:
-                    return new List<Section> {
-                            new Section { Title = "API-Limit", Content = "Kontingent erschöpft (429). Bitte warte eine Minute oder prüfe dein Tageslimit." }
-                        };
-                    case 401:
-                    case 403:
-                    return new List<Section> {
-                            new Section { Title = "Authentifizierung", Content = "API-Key ungültig oder keine Berechtigung (401/403)." }
-                        };
-                    default:
-                    return new List<Section> {
-                            new Section { Title = $"API Fehler {(int)response.StatusCode}", Content = responseBody }
-                        };
+                    type = "ARRAY",
+                    items = new
+                    {
+                        type = "OBJECT",
+                        properties = new
+                        {
+                            title = new { type = "STRING" },
+                            content = new { type = "STRING" }
+                        },
+                        required = new[] { "title", "content" }
+                    }
                 }
             }
+        };
 
-            var result = JsonSerializer.Deserialize<GeminiResponse>(responseBody);
-            var rawJsonText = result?.Candidates?.FirstOrDefault()?.Content?.Parts?.FirstOrDefault()?.Text;
+        int maxRetries = 3;
+        int delayMs = 1000;
 
-            if (string.IsNullOrEmpty(rawJsonText))
-                return new List<Section>();
-
-            string cleanJson = rawJsonText.Trim();
-            if (cleanJson.Contains("```json"))
-            {
-                cleanJson = cleanJson.Split("```json")[1].Split("```")[0].Trim();
-            }
-            else if (cleanJson.Contains("```"))
-            {
-                cleanJson = cleanJson.Split("```")[1].Split("```")[0].Trim();
-            }
-
-            return JsonSerializer.Deserialize<List<Section>>(cleanJson) ?? new List<Section>();
-        }
-        catch (Exception ex)
+        for (int attempt = 1; attempt <= maxRetries; attempt++)
         {
-            return new List<Section> { new Section { Title = "Exception", Content = ex.Message } };
+            try
+            {
+                var jsonRequest = JsonSerializer.Serialize(requestBody);
+                var httpContent = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync(url, httpContent);
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                if ((int)response.StatusCode == 429 && attempt < maxRetries)
+                {
+                    await Task.Delay(delayMs);
+                    delayMs *= 2;
+                    continue;
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    switch ((int)response.StatusCode)
+                    {
+                        case 429:
+                        return new List<Section> {
+                                new Section { Title = "API-Limit", Content = "Kontingent erschöpft (429). Bitte warte eine Minute oder prüfe dein Tageslimit." }
+                            };
+                        case 401:
+                        case 403:
+                        return new List<Section> {
+                                new Section { Title = "Authentifizierung", Content = "API-Key ungültig oder keine Berechtigung (401/403)." }
+                            };
+                        default:
+                        return new List<Section> {
+                                new Section { Title = $"API Fehler {(int)response.StatusCode}", Content = responseBody }
+                            };
+                    }
+                }
+
+                var result = JsonSerializer.Deserialize<GeminiResponse>(responseBody);
+                var rawJsonText = result?.Candidates?.FirstOrDefault()?.Content?.Parts?.FirstOrDefault()?.Text;
+
+                if (string.IsNullOrEmpty(rawJsonText))
+                {
+                    return new List<Section> { new Section { Title = "Hinweis", Content = "Keine Daten empfangen." } };
+                }
+
+                var sections = JsonSerializer.Deserialize<List<Section>>(rawJsonText);
+                return sections ?? new List<Section>();
+            }
+            catch (Exception ex)
+            {
+                if (attempt == maxRetries)
+                {
+                    return new List<Section> {
+                        new Section { Title = "Verarbeitungsfehler", Content = ex.Message }
+                    };
+                }
+                await Task.Delay(delayMs);
+            }
         }
+
+        return new List<Section> { new Section { Title = "Timeout", Content = "Maximale Anzahl an Versuchen überschritten." } };
     }
 
     public class GeminiResponse
