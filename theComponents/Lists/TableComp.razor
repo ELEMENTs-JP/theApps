@@ -4,6 +4,9 @@
 @if (this.ItemType != null && Context != null)
 {
     <div class="d-flex justify-content-between align-items-center">
+        <div class="px-2">
+            <strong>@this.ItemType.ToString()</strong>
+        </div>
         <div>
 
             <ModalForm @key="@(new Guid().ToSecureString())" Title="Einstellungen"
@@ -19,8 +22,8 @@
                         <div class="row g-0">
                             <div class="col-12">
 
-                             @*    <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column )"
-                                         Field="@field" Context="@Context" Border="false" /> *@
+                                <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column )"
+                                         Field="@field" Context="@Context" Border="false" />
 
                             </div>
                         </div>
@@ -49,6 +52,9 @@
 
 @code {
 
+    [Parameter]
+    public IDTO Item { get; set; }
+
     IItemType ItemType { get; set; }
     IQueryContext Context { get; set; }
     IField field { get; set; }
@@ -57,8 +63,19 @@
     {
         if (ItemType == null)
         {
-            ItemType = new ItemType_Task();
+            string it = Item["ItemType"].ToSecureString();
+            if (!string.IsNullOrEmpty(it))
+            {
+                ItemType = await new Factory(sql).BuildItemType(it);
+            }
+            else
+            {
+                ItemType = new ItemType_Task();
+            }
+        }
 
+        if (ItemType != null)
+        {
             // Field
             field = new Factory(sql).BuildField(FieldTyp.ItemTypeList);
             field.Column = "ItemType";
@@ -70,6 +87,7 @@
         {
             // Context
             Context = new QueryContext(sql, sec, ItemType);
+            Context.Item = Item;
             await Context.Search();
         }
     }

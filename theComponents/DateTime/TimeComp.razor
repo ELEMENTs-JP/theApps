@@ -9,6 +9,9 @@
 </div>
 
 @code {
+    [Parameter]
+    public IDTO Item { get; set; }
+
     private string CurrentTime { get; set; } = string.Empty;
     private DotNetObjectReference<TimeComp>? objRef;
 

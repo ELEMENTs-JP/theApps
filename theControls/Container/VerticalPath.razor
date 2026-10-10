@@ -1,0 +1,37 @@
+
+
+<div class="row g-0 p-1 align-items-center" data-bs-toggle="collapse" data-bs-target="@( "#" + ID)">
+    <div class="col-075 p-1 justify-content-center" style="@Style">
+        <div class="rounded-3 bg-secondary ms-1" style="border:solid 2px #fff; height:15px; width:15px;"></div>
+    </div>
+    <div class="col p-1">
+        @Head
+    </div>
+    <div class="col-auto p-1 rounded hover pointer">
+        <i class="ti ti-chevron-down text-muted"></i>
+    </div>
+</div>
+
+<div class="row g-0 p-1 border-top collapse show" id="@ID" >
+    <div class="col-075" style="display:grid; @Style">
+        <div class="vr my-2 mx-3" style="align-self:stretch;"></div>
+    </div>
+    <div class="col">
+        @Content
+    </div>
+</div>
+
+
+@code {
+
+    private string ID { get; set; } = "vertical_path_chevron_" + Guid.NewGuid();
+
+    [Parameter]
+    public string Style { get; set; } = string.Empty;
+
+    [Parameter]
+    public RenderFragment Head { get; set; }
+
+    [Parameter]
+    public RenderFragment Content { get; set; }
+}

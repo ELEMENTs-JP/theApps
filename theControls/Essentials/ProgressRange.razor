@@ -1,4 +1,4 @@
-﻿<div class="row align-items-center @CSS" title="@Title">
+﻿<div class="row g-0 align-items-center @CSS" title="@Title">
     
     @if (!string.IsNullOrEmpty(StartTitle))
     {
@@ -7,13 +7,13 @@
        @StartTitle
     </div>
     }
-    <div class="col-auto small text-muted">
+    <div class="col-auto px-3 small text-muted">
         @(Start.HasValue ? Start.Value.ToString("dd.MM.yyyy") : "-")
     </div>
     <div class="col">
         <ProgressBar Value="@ProgressPercentage.ToSecureString()" />
     </div>
-    <div class="col-auto small text-muted">
+    <div class="col-auto px-3 small text-muted">
         @(Ende.HasValue ? Ende.Value.ToString("dd.MM.yyyy") : "-")
     </div>
     @if (!string.IsNullOrEmpty(EndeTitle))

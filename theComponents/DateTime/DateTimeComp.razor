@@ -13,6 +13,9 @@
 
 @code {
 
+    [Parameter]
+    public IDTO Item { get; set; }
+
     private DateTime now { get; set; } = DateTime.Now.Date;
     private string CurrentTime { get; set; } = string.Empty;
     private DotNetObjectReference<DateTimeComp>? objRef;

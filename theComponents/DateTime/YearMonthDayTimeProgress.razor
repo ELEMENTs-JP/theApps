@@ -68,6 +68,9 @@
 </div>
 
 @code {
+    [Parameter]
+    public IDTO Item { get; set; }
+
     private DateTime _currentDate = DateTime.Today;
     private int _daysInMonth;
     private string _itemHighlightClass = "text-dark";

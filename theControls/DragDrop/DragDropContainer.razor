@@ -58,10 +58,10 @@
     public string SortProperty { get; set; } = "Sort";
 
     [Parameter]
-    public bool IsEditMode { get; set; } = false;
+    public bool IsEditMode { get; set; } = true;
 
     /// <summary>
-    /// Wird benötigt um im Mehrnutzungsszenarion die initiale Container zu definieren 
+    /// Wird benötigt um im Mehrnutzungsszenarion die initiale Container zu definieren
     /// </summary>
     [Parameter]
     public bool IsDefaultZone { get; set; } = false;
@@ -72,18 +72,18 @@
     private string _css = " bg-surface border rounded px-2 py-1 my-2 ";
 
     [Parameter]
-    public string CSS 
+    public string CSS
     {
-        get 
+        get
         {
-            // if (IsEditMode == true)
-            // {
-            // return string.Empty; 
-            // }
-                return _css;    
+            if (IsEditMode == true)
+            {
+                return _css;
+            }
 
+            return string.Empty;
         }
-        set { _css = value; } 
+        set { _css = value; }
     }
 
     private string _style = " min-height:5rem; ";
@@ -92,11 +92,12 @@
     {
         get
         {
-            // if (IsEditMode == true)
-            // {
-            // return string.Empty;
-            // }
-            return _style;
+            if (IsEditMode == true)
+            {
+                    return _style;
+            }
+
+            return string.Empty;
 
         }
         set { _style = value; }
@@ -148,21 +149,21 @@
         {
             foreach (IDTO item in Entries)
             {
-                // set Zone 
+                // set Zone
                 string zone = item[ZoneProperty].ToSecureString();
                 if (string.IsNullOrEmpty(zone))
                 {
                     item[ZoneProperty] = Zone;
                 }
 
-                // set Order 
+                // set Order
                 string sort = item[SortProperty].ToSecureString();
                 if (string.IsNullOrEmpty(sort))
                 {
                     item[SortProperty] = "1";
                 }
 
-                // Update 
+                // Update
                 await sql.Update(item);
             }
         }
@@ -240,7 +241,7 @@
     [JSInvokable]
     public async void OnDropEnd(JsonElement json)
     {
-        
+
         foreach (JsonElement item in json.EnumerateArray())
         {
             string guid = item.GetProperty("GUID").GetString();
@@ -251,7 +252,7 @@
 
             if (entry != null)
             {
-                // Event 
+                // Event
                 await OnDrop.InvokeAsync(entry);
             }
         }

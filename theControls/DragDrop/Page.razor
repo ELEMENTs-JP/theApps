@@ -23,6 +23,9 @@
                 {
                     <ModalForm Title="Einstellungen"
                                OnOKClicked="@( async e => {  await sql.Update(Item); })">
+                                 <Icon>
+                    <SymbolIcon Symbol="Icon.Config" CSS="" />
+                </Icon>
                         <ChildContent>
                             <div class="row">
                                 <div class="col-12 px-2">
@@ -312,7 +315,6 @@
         IQueryResult resultRows = await sql.GetRelatedItems(Item, "Control", AssociationTyp.Children);
         Controls = resultRows.Items;
     }
-
     
     public async ValueTask DisposeAsync()
     {

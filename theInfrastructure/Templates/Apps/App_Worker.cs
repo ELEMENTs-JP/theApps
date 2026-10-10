@@ -13,7 +13,7 @@ namespace theInfrastructure
             ID = "WORK";
             Name = "WORKer";
             Title = "the WORKer";
-            Group = "Operational";
+            Group = "Operation";
         }
 
    

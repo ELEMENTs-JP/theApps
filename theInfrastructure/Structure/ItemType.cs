@@ -19,8 +19,9 @@ namespace theInfrastructure
         bool IsNavigation { get; set; }
         bool InSubNavigation { get; set; }
         bool ShowInTaskBarNavigation { get; set; }
-        bool AppItemType { get; set; }
-        int Order { get; set; }
+        bool AppItemType { get; set; } // Legt fest, ob es sich um den Hauptitemtyp der App handelt, der für die Dashboard-Selektion verwendet wird
+        int Order { get; set; } // Sortierung in Navigation 
+        bool IsPathElement { get; set; } // Legt fest, ob es sich um einen ItemType des STRIDEsPath handelt 
 
         // ItemType 
         Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association);
@@ -58,7 +59,8 @@ namespace theInfrastructure
         public bool ShowInTaskBarNavigation { get; set; } = true; // In der Taskbar unten rechts anzeigen 
         public bool AppItemType { get; set; } = false; // Definiert den HauptitemType der App für die Dashboard Selektion 
         public int Order { get; set; } = 0;
-        
+        public bool IsPathElement { get; set; } = false;
+
         public ItemTypeTyp Typ { get; set; } = ItemTypeTyp.Item;
         public BaseItemType()
         { 

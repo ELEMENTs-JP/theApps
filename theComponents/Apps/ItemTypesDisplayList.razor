@@ -25,6 +25,9 @@
 
 @code {
 
+    [Parameter]
+    public IDTO Item { get; set; }
+
     List<IItemType> ItemTypes { get; set; } = new();
 
     [Parameter]

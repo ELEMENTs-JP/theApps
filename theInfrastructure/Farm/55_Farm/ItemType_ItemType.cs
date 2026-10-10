@@ -40,7 +40,7 @@ namespace theInfrastructure
                 Description = "Legt die Gruppe des ItemTyp fest.",
                 Typ = FieldTyp.Text,
                 Column = "Group",
-                CSS = " col-6 "
+                CSS = " col-4 "
             });
             Fields.Add(new Field()
             {
@@ -48,8 +48,17 @@ namespace theInfrastructure
                 Description = "Legt den Typ des ItemType fest.",
                 Typ = FieldTyp.ItemTypeTyp,
                 Column = "ItemTypeTyp",
-                CSS = " col-6 "
+                CSS = " col-4 "
             });
+            Fields.Add(new Field()
+            {
+                Title = "Path Element",
+                Description = "Legt fest ob es ein STRIDEs Path Element ist.",
+                Typ = FieldTyp.CheckBox,
+                Column = "IsPathElement",
+                CSS = " col-4 "
+            });
+            
 
 
             Fields.Add(new Field() { Title = "Navigation", Typ = FieldTyp.HR });

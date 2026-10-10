@@ -13,7 +13,7 @@ namespace theInfrastructure
             ID = "CRM";
             Name = "CUSTOMer";
             Title = "the CUSTOMer";
-            Group = "Operational";
+            Group = "Operation";
         }
 
 

@@ -57,6 +57,10 @@
 <div class="my-5"></div>
 
 @code {
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
     [Parameter] public string FilterTerm { get; set; } = "";
 
     private bool isLoading = false;

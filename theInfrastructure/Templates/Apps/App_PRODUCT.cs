@@ -13,7 +13,7 @@ namespace theInfrastructure
             ID = "PRODUCT";
             Name = "PRODUCT";
             Title = "the PRODUCTler";
-            Group = "Operational";
+            Group = "Operation";
         }
 
        

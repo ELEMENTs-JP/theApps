@@ -50,10 +50,12 @@
     --tblr-info: #4299e1;
     --tblr-warning: #f59f00;
     --tblr-danger: #d63939;
-
     /* --- Tabs Pages Nav Link --- */
     --tblr-nav-link-padding-x: 0.35rem;
     --tblr-nav-link-padding-y: 0.25rem : 0.25rem;
+    /* --- OffCanvas --- */
+    --tblr-offcanvas-padding-x: 1.15rem !important;
+    --tblr-offcanvas-padding-y: 1.15rem !important;
 }
 
 
@@ -249,17 +251,21 @@
 
 .col-025 {
     flex: 0 0 auto;
-    width: 2.08333333%;
+    width: 2.08333333% !important;
 }
 
 .col-050 {
     flex: 0 0 auto;
-    width: 4.16666667%;
+    width: 4.16666667% !important;
+}
+.col-05 {
+    flex: 0 0 auto;
+    width: 4.16666667% !important;
 }
 
 .col-075 {
     flex: 0 0 auto;
-    width: 6.25%;
+    width: 6.25% !important;
 }
 
 .dropdown-item:active,

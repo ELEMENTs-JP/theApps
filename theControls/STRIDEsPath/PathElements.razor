@@ -1,0 +1,93 @@
+﻿@inherits BaseCtl
+
+
+
+<div class="border rounded-2 hover pointer p-2" data-bs-toggle="offcanvas" data-bs-target="@( "#" + ID )"
+     aria-controls="@( ID )">
+     <span class="px-2">the STRIDEs Path</span>
+@*     <i class="bi bi-bar-chart-steps"></i> *@
+</div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1"
+     id="@( ID )" aria-labelledby="offcanvasRightLabel"
+     style="--tblr-offcanvas-width: 600px !important;">
+    <div class="offcanvas-header">
+
+        <h1 class="h1">the STRIDEs Path</h1>
+
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+
+        
+        @foreach (IItemType itemType in ItemTypes)
+        {
+
+            <VerticalPath>
+                <Head>
+                    <strong>Business Modell</strong>
+                </Head>
+                <Content>
+                    @foreach (IDTO item in this.Items.Where(se => se.ItemType == itemType.Name))
+                    {
+                        <ListItem Item="@item" ItemType="@itemType" ExtendedView="true" ShowID="false" />
+                    }
+                </Content>
+            </VerticalPath>
+        }
+
+    </div>
+</div>
+
+
+
+
+@code {
+
+    private string ID { get; set; } = "Canvas_theSTRIDEsPath_" + Guid.NewGuid();
+
+    List<IItemType> ItemTypes { get; set; } = new();
+    List<IDTO> Items { get; set; } = new();
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            // ItemType 
+            ItemTypes.Clear();
+            foreach (IApp app in appService.AllApps)
+            {
+                List<IItemType> itemTypes = await app.GetItemTypes(AssociationTyp.Children);
+                itemTypes = itemTypes.Where(se => se.IsPathElement == true).ToList();
+                ItemTypes.AddRange(itemTypes);
+            }
+            ItemTypes.OrderBy(se => se.Order);
+
+            // Items 
+            Items.Clear();
+
+            foreach (IItemType itemType in ItemTypes)
+            {
+                List<IDTO> items = searchService.Store.Where(se => se.ItemType == itemType.Name).ToList();
+                Items.AddRange(items);
+            }
+
+            // Update 
+            this.StateHasChanged();
+        }
+    }
+
+}

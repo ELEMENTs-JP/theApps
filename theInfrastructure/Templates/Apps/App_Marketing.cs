@@ -13,7 +13,7 @@ namespace theInfrastructure
             ID = "MARKETING";
             Name = "Marketing";
             Title = "the MARKETING";
-            Group = "Operational";
+            Group = "Operation";
         }
 
     

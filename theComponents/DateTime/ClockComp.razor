@@ -17,6 +17,10 @@
 </div>
 
 @code {
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
     private ElementReference _clockContainer;
     private ElementReference _hourHand;
     private ElementReference _minuteHand;

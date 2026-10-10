@@ -34,14 +34,14 @@
 
         @if (ExtendedView == true && !string.IsNullOrEmpty(DateColumn))
         {
-            <div class="col-auto px-1 border-start border-end text-center pointer"
+            <div class="col-auto px-1 border-end text-center pointer"
                  @onclick="@( e => { nm.NavigateTo($"/Calendar/Appointment/Tag/{Item[DateColumn].ToSecureDateTime().ToShortDateString()}"); })">
                 <ToolTip Title="zum Kalender">
                     <div class="d-flex flex-column p-1 text-center">
                         <div class="p-05 border-bottom text-center">
                             @(Item[DateColumn].ToSecureDateTime().ToString("dd"))
                         </div>
-                        <div class="p-05 text-center">
+                        <div class="p-05 text-center text-secondary">
                             @( Item[DateColumn].ToSecureDateTime().ToString("MMM"))
                         </div>
                     </div>

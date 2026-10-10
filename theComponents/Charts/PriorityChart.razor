@@ -8,6 +8,9 @@
 
 @code {
 
+    [Parameter]
+    public IDTO Item { get; set; }
+
     eConfiguration chart_pie = new eConfiguration(EChartTyp.pie, size: eSize.M, mode: eChartMode.Chart);
     List<IDTO> Items { get; set; } = new();
 

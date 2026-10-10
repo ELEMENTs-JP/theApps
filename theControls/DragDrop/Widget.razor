@@ -24,10 +24,6 @@
             {
                 <div class="col-auto ms-auto p-1">
 
-                
-                   
-
-
                 </div>
 
                 <div class="col-auto p-1">
@@ -95,6 +91,7 @@
         if (Item != null)
         {
             Component = builder.BuildComponent(builder.GetDefinition(Item.Title));
+            Component.Parameters.Add("Item", Item);
         }
     }
 

@@ -20,6 +20,7 @@ namespace theInfrastructure
             this.Typ = dto["ItemTypeTyp"].ToSecureString().ToEnumOrDefault<ItemTypeTyp>(ItemTypeTyp.Item);
             this.Description = dto["Description"].ToSecureString();
             this.AppItemType = dto["AppItemType"].ToSecureBool();
+            this.IsPathElement = dto["IsPathElement"].ToSecureBool();
 
             this.Order = dto["Order"].ToSecureInt();
         }

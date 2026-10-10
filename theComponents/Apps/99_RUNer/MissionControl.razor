@@ -4,7 +4,7 @@
 <Frame CSS="@CSS">
     <Header>
         <Header PreTitle="DESK" Title="Mission Control" PostTitle=""
-                       Description="@ItemType.Description" />
+                Description="@ItemType.Description" />
     </Header>
     <Related>
         <div class="d-flex">
@@ -18,9 +18,19 @@
 
         @if (Items != null && Items.Any())
         {
-            @foreach (IDTO item in Items)
+            @foreach (int year in Years)
             {
-                <ListItem Item="@item" ItemType="@ItemType" ExtendedView="true"></ListItem>
+                <VerticalPath Style="max-width:3rem !important;">
+                    <Head>
+                        <h3 class="h3 fw-bold">@year.ToSecureString()</h3>
+                    </Head>
+                    <Content>
+                        @foreach (IDTO item in Items)
+                        {
+                            <ListItem Item="@item" ItemType="@ItemType" ExtendedView="true"></ListItem>
+                        }
+                    </Content>
+                </VerticalPath>
             }
         }
 
@@ -31,9 +41,13 @@
 
 @code {
 
+    [Parameter]
+    public IDTO Item { get; set; }
+
     private IItemType ItemType { get; set; } = new ItemType_TimeFrame();
 
     List<IDTO> Items { get; set; } = new();
+    List<int> Years { get; set; } = new();
 
     [Parameter]
     public string CSS { get; set; } = "rounded-2 p-2";
@@ -57,5 +71,8 @@
 
         IQueryResult result = await sql.GetItems(qp);
         Items = result.Items;
+
+        Years.Clear();
+        Years = Items.Select(se => se["Year"].ToSecureInt()).Distinct().OrderBy(y => y).ToList();
     }
 }
