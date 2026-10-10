@@ -105,6 +105,9 @@ namespace theInfrastructure
         public string GeminiApiKey { get; set; } = string.Empty;
         public string GeminiAnweisungen { get; set; } = string.Empty;
 
+        public string GroqApiKey { get; set; } = string.Empty;
+        public string GroqAnweisungen { get; set; } = string.Empty;
+
         public void Save()
         {
             KIConfiguration config = this as KIConfiguration;

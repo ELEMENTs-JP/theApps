@@ -199,6 +199,23 @@
                                      apps.KIConfiguration.Save(); })" />
                         </div>
                     </div>
+
+
+
+                    <div class="row">
+                        <div class="col-12 col-md-6 col-lg-6 px-2">
+                            <TextBox Label="Groq Key"
+                                     Value="@apps.KIConfiguration.GroqApiKey"
+                                     ValueChanged="@(e => { apps.KIConfiguration.GroqApiKey = e;
+                                     apps.KIConfiguration.Save(); })" />
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-6 px-2">
+                            <TextBox Label="Groq Anweisungen"
+                                     Value="@apps.KIConfiguration.GroqAnweisungen"
+                                     ValueChanged="@(e => { apps.KIConfiguration.GroqAnweisungen = e;
+                                     apps.KIConfiguration.Save(); })" />
+                        </div>
+                    </div>
                 </TabsPanel>
 
             </ChildContent>

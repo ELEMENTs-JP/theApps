@@ -164,6 +164,113 @@ public class GeminiService : IDisposable
         return new List<Section> { new Section { Title = "Timeout", Content = "Maximale Anzahl an Versuchen überschritten." } };
     }
 
+    public async Task<byte[]> GenerateImageAsync(string prompt)
+    {
+        const string imageModelId = "gemini-nano-banana-2.1";
+        string url = $"https://generativelanguage.googleapis.com/v1/models/{imageModelId}:generateContent?key={_apiKey}";
+
+        var requestBody = new
+        {
+            contents = new[]
+            {
+                new
+                {
+                    role = "user",
+                    parts = new[] { new { text = prompt } }
+                }
+            },
+            generationConfig = new
+            {
+                responseModalities = new[] { "IMAGE" },
+                imageConfig = new
+                {
+                    aspectRatio = "16:9",
+                    imageSize = "2K"
+                }
+            }
+        };
+
+        try
+        {
+            var json = JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(url, content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"API Fehler ({response.StatusCode}): {responseBody}");
+            }
+
+            var result = JsonSerializer.Deserialize<GeminiResponse>(responseBody);
+            var inlineData = result?.Candidates?.FirstOrDefault()?.Content?.Parts?
+                .FirstOrDefault(p => p.InlineData != null)?.InlineData;
+
+            if (inlineData != null && !string.IsNullOrEmpty(inlineData.Data))
+            {
+                return Convert.FromBase64String(inlineData.Data);
+            }
+
+            throw new Exception("Keine Bilddaten in der Antwort enthalten.");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Bildgenerierung fehlgeschlagen: {ex.Message}");
+        }
+    }
+
+    public async Task<byte[]> GenerateTextToSpeechAsync(string textToSpeak)
+    {
+        const string ttsModelId = "gemini-3.8-flash-tts";
+        string url = $"https://generativelanguage.googleapis.com/v1/models/{ttsModelId}:generateContent?key={_apiKey}";
+
+        var requestBody = new
+        {
+            contents = new[]
+            {
+                new
+                {
+                    role = "user",
+                    parts = new[] { new { text = textToSpeak } }
+                }
+            },
+            generationConfig = new
+            {
+                responseModalities = new[] { "AUDIO" }
+            }
+        };
+
+        try
+        {
+            var json = JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(url, content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"API Fehler ({response.StatusCode}): {responseBody}");
+            }
+
+            var result = JsonSerializer.Deserialize<GeminiResponse>(responseBody);
+            var inlineData = result?.Candidates?.FirstOrDefault()?.Content?.Parts?
+                .FirstOrDefault(p => p.InlineData != null)?.InlineData;
+
+            if (inlineData != null && !string.IsNullOrEmpty(inlineData.Data))
+            {
+                return Convert.FromBase64String(inlineData.Data);
+            }
+
+            throw new Exception("Keine Audio-Daten in der Antwort enthalten.");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Sprachgenerierung fehlgeschlagen: {ex.Message}");
+        }
+    }
+
     public class GeminiResponse
     {
         [JsonPropertyName("candidates")] public List<Candidate>? Candidates { get; set; }
@@ -179,6 +286,12 @@ public class GeminiService : IDisposable
     public class Part
     {
         [JsonPropertyName("text")] public string? Text { get; set; }
+        [JsonPropertyName("inlineData")] public InlineData? InlineData { get; set; }
+    }
+    public class InlineData
+    {
+        [JsonPropertyName("mimeType")] public string? MimeType { get; set; }
+        [JsonPropertyName("data")] public string? Data { get; set; }
     }
 
     public void Dispose()

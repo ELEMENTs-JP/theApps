@@ -5,7 +5,6 @@
 @inherits BaseCtl
 
 <style>
-
     pre {
         background-color: #f1f1f1;
         padding: 10px;
@@ -13,27 +12,25 @@
         overflow-x: auto;
         color: #222;
     }
-
 </style>
 
 @if (gs != null)
 {
-
-    <div class="rounded-2 hover pointer p-2" data-bs-toggle="offcanvas" data-bs-target="@( "#" + ID )"
-         aria-controls="@( ID )">
+    <div class="rounded-2 hover pointer p-2" data-bs-toggle="offcanvas" data-bs-target="@("#" + ID)"
+         aria-controls="@(ID)">
         <i class="bi bi-stars"></i>
     </div>
 
     <div class="offcanvas offcanvas-end" tabindex="-1"
-         id="@( ID )" aria-labelledby="offcanvasRightLabel"
+         id="@(ID)" aria-labelledby="offcanvasRightLabel"
          style="--tblr-offcanvas-width: 720px !important;">
         <div class="offcanvas-header">
-
-            <h1 class="h1">Gemini</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <h1 class="h1">Groq</h1>
+            <div class="hover pointer rounded p-1 px-1" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </div>
         </div>
         <div class="offcanvas-body">
-
             <div class="input-group">
                 <input @bind="_currentInput" @onkeyup="OnKeyUp" class="form-control"
                        placeholder="Deine Nachricht..." disabled="@_isThinking" />
@@ -54,28 +51,28 @@
             <div id="chatbox" class="overflow-auto my-2">
                 @if (_isThinking)
                 {
-                    <div class="text-muted small ms-2 animate-pulse mb-2">Gemini denkt nach...</div>
+                    <div class="text-muted small ms-2 animate-pulse mb-2">Groq denkt nach...</div>
                 }
                 @foreach (var msg in _messages.AsEnumerable().Reverse())
                 {
                     <div class="d-flex mb-3 @(msg.Role == "user" ? "justify-content-end" : "justify-content-start")">
                         <div class="p-2 border @(msg.Role == "user" ? "rounded-start rounded-top bg-surface-secondary" : "rounded-end rounded-top")"
                              style="max-width: 80%; line-height: 1.5;">
-                            <small class="d-block fw-bold text-muted opacity-75">@(msg.Role == "user" ? sec.User.Title : "Gemini")</small>
+                            <small class="d-block fw-bold text-muted opacity-75">@(msg.Role == "user" ? sec.User.Title : "Groq")</small>
 
                             @if (msg.Role == "user")
                             {
                                 <div class="p-1">
-                                @( (MarkupString)ConfigureInput(msg.Text).MarkdownToHtml() )
+                                    @((MarkupString)ConfigureInput(msg.Text).MarkdownToHtml())
                                 </div>
                             }
                             else
                             {
                                 var messageId = $"msg-{Guid.NewGuid()}";
 
-                                <div id="@messageId" class="hover pointer rounded p-1 px-1" 
-                                @onclick="() => CopyContent(messageId)">
-                                    @( (MarkupString)msg.Text.MarkdownToHtml() )
+                                <div id="@messageId" class="hover pointer rounded p-1 px-1"
+                                     @onclick="() => CopyContent(messageId)">
+                                    @((MarkupString)msg.Text.MarkdownToHtml())
                                 </div>
                             }
                         </div>
@@ -85,11 +82,6 @@
         </div>
     </div>
 }
-
-
-@* <div class="position-absolute top-0 start-100 translate-middle hover rounded pointer">
-    <i class="bi bi-copy"></i>
-</div> *@
 
 <script>
     window.copyElementTextById = function (id) {
@@ -101,51 +93,44 @@
     };
 </script>
 
-
 @code {
+    private string ID { get; set; } = "Groq_" + Guid.NewGuid().ToString();
 
-    private string ID { get; set; } = "Gemini_" + Guid.NewGuid().ToString();
-
-    private GeminiService gs;
+    private GroqService gs;
     private List<ChatMessage> _messages = new();
     private string _currentInput = "";
     private bool _isThinking = false;
 
     private string Anweisungen { get; set; } = string.Empty;
 
-    // Events 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
         try
         {
-            // 2.) UserConfiguration 
             IDTO user = sec.User;
             if (user != null)
             {
-                // Google Gemini API Key laden
-                string G_API_Key = appService.KIConfiguration.GeminiApiKey.ToSecureString();
-                Anweisungen = appService.KIConfiguration.GeminiAnweisungen.ToSecureString();
+                string Groq_API_Key = appService.KIConfiguration.GroqApiKey.ToSecureString();
+                Anweisungen = appService.KIConfiguration.GroqAnweisungen.ToSecureString();
 
-                if (!string.IsNullOrEmpty(G_API_Key))
+                if (!string.IsNullOrEmpty(Groq_API_Key))
                 {
-                    gs = new GeminiService(client, G_API_Key);
+                    gs = new GroqService(client, Groq_API_Key);
                 }
             }
         }
         catch (Exception ex)
         {
-            
+            System.Diagnostics.Debug.WriteLine("FAIL Init: " + ex.Message);
         }
     }
 
-    // Methods 
     private async Task Send()
     {
         if (string.IsNullOrWhiteSpace(_currentInput) || _isThinking)
             return;
-
 
         if (!string.IsNullOrEmpty(Anweisungen))
         {
@@ -155,18 +140,23 @@
         var userMsg = new ChatMessage { Role = "user", Text = _currentInput };
         _messages.Add(userMsg);
 
-        var inputToSubmit = _currentInput;
         _currentInput = "";
         _isThinking = true;
 
         var response = await gs.GetResponseAsync(_messages);
 
-        _messages.Add(new ChatMessage { Role = "model", Text = response });
+        _messages.Add(new ChatMessage { Role = "assistant", Text = response });
         _isThinking = false;
 
         await JS.InvokeVoidAsync("eval", "setTimeout(() => { document.getElementById('chatbox').scrollTop = document.getElementById('chatbox').scrollHeight; }, 50);");
     }
-    private async Task OnKeyUp(KeyboardEventArgs e) { if (e.Key == "Enter") await Send(); }
+
+    private async Task OnKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            await Send();
+    }
+
     private string ConfigureInput(string input)
     {
         if (input.Contains(Anweisungen))
@@ -174,37 +164,28 @@
             input = input.Replace(Anweisungen, string.Empty);
         }
 
-        input = input + "<div class='border-top py-1 text-muted' />" + "" + Anweisungen + "";
-
+        input = input + "<div class='border-top py-1 text-muted' />" + Anweisungen;
         return input;
     }
-
-    private ElementReference contentElement;
 
     private async Task CopyContent(string elementId)
     {
         await JS.InvokeVoidAsync("copyElementTextById", elementId);
     }
 
-    // Dispose 
     public void Dispose()
     {
         try
-        {
-            GC.Collect();
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine("FAIL Dispose: " + ex.Message);
-        }
+        { GC.Collect(); }
+        catch { }
     }
+
     public async ValueTask DisposeAsync()
     {
         try
         {
             GC.Collect();
-
-            await Task.FromResult<string>("Done");
+            await Task.FromResult("Done");
         }
         catch (Exception ex)
         {
