@@ -1,21 +1,17 @@
 ﻿@using theControls.Dashboard
 @using theControls.Icons
 @using theInfrastructure
-@inject IAppService app
-@inject NavigationManager nm
-@inject IMessagingBusService msg
-@inject IAppService apps
-@inject ISecurityService sec
+@inherits BaseCtl
 @implements IAsyncDisposable
 
 <div class="p-3">
 
     @* --- App Modus (App wurde selektiert) --- *@
-    @if (app.App != null)
+    @if (appService.App != null)
     {
         @* --- HOME (go back to HOME) --- *@
         <div class="row g-0 rounded-2 hover pointer p-2 m-1"
-             @onclick="@( async e => { app.App = null; app.ItemType = null; app.Page = null; nm.NavigateTo("/", false); })">
+             @onclick="@( async e => { appService.App = null; appService.ItemType = null; appService.Page = null; nm.NavigateTo("/", false); })">
             <div class="col-auto pe-2"><SymbolIcon Symbol="Icon.Home" /></div>
             <div class="col fw-bold"> Home</div>
             <div class="col-12 text-muted  ps-4">zurück zum Start</div>
@@ -24,13 +20,13 @@
 
     
     @* --- HOME Modus --- *@
-    @if (app.App == null)
+    @if (appService.App == null)
     {
-        @if (apps.Configuration.AppSelector == "List")
+        @if (appService.Configuration.AppSelector == "List")
         {
             <AppSelectionList OnAppSelected="@( async e => { await OnAppSelect(e); })" />
         }
-        else if (apps.Configuration.AppSelector == "Popup")
+        else if (appService.Configuration.AppSelector == "Popup")
         {
             @* --- App DROP DOWN --- *@
             <div class="w-100 dropdown-center my-1">
@@ -71,7 +67,7 @@
     }
 
     @* --- App INHALT --- *@
-    @if (app.App != null)
+    @if (appService.App != null)
     {
         <div class="border-top my-3"></div>
 
@@ -80,21 +76,21 @@
         </div>
         @* --- APP (selected App) --- *@
         <div class="selected pointer p-2 mx-2"
-             @onclick="@( async e => { await OnAppSelect(app.App); })">
+             @onclick="@( async e => { await OnAppSelect(appService.App); })">
             <div class="fw-bold">
-                @app.App.ToString()
+                @appService.App.ToString()
             </div>
-            @if (!string.IsNullOrEmpty(app.App.Description))
+            @if (!string.IsNullOrEmpty(appService.App.Description))
             {
                 <small class="text-muted">
-                    @app.App.Description.ToString()
+                    @appService.App.Description.ToString()
                 </small>
             }
         </div>
 
         <div class="border-top my-3"></div>
-        <MainAppItemSelector App="@app.App" />
-        
+        <MainAppItemSelector App="@appService.App" />
+
         @if (CurrentItemTypes.Count() >= 1)
         {
             <div class="border-top my-3"></div>
@@ -104,9 +100,9 @@
                             .OrderBy(se => se.Order != 0 ? se.Order : int.MaxValue).ThenBy(se => se.Title))
                 {
                     <div class="col-12 p-1">
-                        <div class="rounded-2 hover pointer p-1 px-2 fw-bold 
+                        <div class="rounded-2 hover pointer p-1 px-2 fw-bold
                             @( " " + (it.InSubNavigation ? " text-secondary ps-4 " : "" ) )
-                                        @( " " + GetItemTypeSelection(it) )"
+                            @( " " + GetItemTypeSelection(it) )"
                              @onclick="@( async e => { await OnItemType(it); })">
                             @it.ToString()
                         </div>
@@ -170,28 +166,40 @@
     }
     public async void OnMessage(AppMessage message)
     {
-        if (message.Id == "App")
+        if (message.Id == "App" && message.Action == BusAction.Refresh)
         {
-            if (message.Action == BusAction.Refresh)
+            CurrentItemTypes.Clear();
+            CurrentPages.Clear();
+            CurrentBoards.Clear();
+
+            if (appService.App != null)
             {
-                CurrentItemTypes.Clear();
-                CurrentPages.Clear();
-                CurrentBoards.Clear();
-
-                if (app.App != null)
-                {
-                    CurrentItemTypes = await app.App.GetItemTypes(AssociationTyp.Children);
-                    CurrentPages = await app.App.GetPages(AssociationTyp.Children);
-                    CurrentBoards = await app.App.GetBoards(AssociationTyp.Children);
-                    CurrentBoards = CurrentBoards.Where(se => se["IsActive"].ToSecureBool() == true).ToList();
-                }
-
-                await InvokeAsync(StateHasChanged);
+                CurrentItemTypes = await appService.App.GetItemTypes(AssociationTyp.Children);
+                CurrentPages = await appService.App.GetPages(AssociationTyp.Children);
+                CurrentBoards = await appService.App.GetBoards(AssociationTyp.Children);
+                CurrentBoards = CurrentBoards.Where(se => se["IsActive"].ToSecureBool() == true).ToList();
             }
+
+            await InvokeAsync(StateHasChanged);
         }
 
         if (message.Id == "ItemType" && message.Action == BusAction.Refresh)
         {
+            IItemType _it = appService.ItemType;
+            IApp _app = await appService.AppByItemType(appService.ItemType);
+            if (_app != null && _it != null)
+            {
+                // set App 
+                await appService.SetApp(_app);
+
+                // Load 
+                CurrentItemTypes = await appService.App.GetItemTypes(AssociationTyp.Children);
+                CurrentPages = await appService.App.GetPages(AssociationTyp.Children);
+                CurrentBoards = await appService.App.GetBoards(AssociationTyp.Children);
+                CurrentBoards = CurrentBoards.Where(se => se["IsActive"].ToSecureBool() == true).ToList();
+
+                await appService.SetItemType(_it);
+            }
             await InvokeAsync(StateHasChanged);
         }
 
@@ -205,7 +213,7 @@
     // Structure
     private async Task OnAppSelect(IApp _app)
     {
-        await app.SetApp(_app);
+        await appService.SetApp(_app);
 
         nm.NavToApp(_app.Name);
 
@@ -216,11 +224,11 @@
     }
     private async Task OnItemType(IItemType it)
     {
-        await app.SetItemType(it);
+        await appService.SetItemType(it);
         nm.NavToLibrary(it.Name, it.Typ);
 
         // App Selection
-        await app.AppByItemType(it);
+        await appService.AppByItemType(it);
 
         // Refresh
         // msg.Publish(new AppMessage("ItemType", BusAction.Refresh));
@@ -229,7 +237,7 @@
     }
     private async Task OnPage(IDTO page)
     {
-        await app.SetPage(page);
+        await appService.SetPage(page);
         nm.NavigateTo("/Page/" + page.GUID, false);
 
         // Refresh
@@ -240,59 +248,59 @@
     private async Task OnBoard(IDTO board)
     {
         string boardTyp = board["Typ"].ToSecureString();
-        await app.SetBoard(board);
+        await appService.SetBoard(board);
         nm.NavigateTo($"/Board/{boardTyp}/{board.GUID}", false);
 
         // Refresh
         msg.Publish(new AppMessage("Board", BusAction.Refresh));
 
         await Task.CompletedTask;
-        
+
     }
 
-    // Layout 
+    // Layout
     private string GetAppSelection(IApp _app)
     {
-        if (app.App == null)
+        if (appService.App == null)
             return string.Empty;
 
-        if (app.App.Name == _app.Name)
+        if (appService.App.Name == _app.Name)
             return " selected ";
 
         return string.Empty;
     }
     private string GetItemTypeSelection(IItemType it)
     {
-        if (app.ItemType == null)
+        if (appService.ItemType == null)
             return string.Empty;
 
-        if (app.ItemType.Name == it.Name)
+        if (appService.ItemType.Name == it.Name)
             return " selected ";
 
         return string.Empty;
     }
     private string GetPageSelection(IDTO dto)
     {
-        if (app.Page == null)
+        if (appService.Page == null)
             return string.Empty;
 
-        if (app.Page.Title == dto.Title)
+        if (appService.Page.Title == dto.Title)
             return " selected ";
 
         return string.Empty;
     }
     private string GetBoardSelection(IDTO dto)
     {
-        if (app.Board == null)
+        if (appService.Board == null)
             return string.Empty;
 
-        if (app.Board.Title == dto.Title)
+        if (appService.Board.Title == dto.Title)
             return " selected ";
 
         return string.Empty;
     }
 
-    // Dispose 
+    // Dispose
     public async ValueTask DisposeAsync()
     {
         try
@@ -305,7 +313,7 @@
         }
     }
 
-    // Groups 
+    // Groups
     private readonly List<string> PreferredGroupOrder = new()
     {
         "Strategy",
