@@ -28,13 +28,16 @@
                 <div class="col-12 col-lg-5 p-2">
 
                     <theControls.Hilfe.HelpByItemType ItemType="@this.ItemType" />
-
                     <ItemAssignments  Context="@Context"/>
-
+                    
                     <PdfViewer File="@RelatedItem" />
+                    
                     <ImagePreview Image="@RelatedItem" />
-                    <AudioPlayer Item="@RelatedItem" FrameCSS="my-2" />
                     <VideoPlayer Item="@RelatedItem" FrameCSS="my-2" />
+                    
+                    <MediaItemMetadata Item="@RelatedItem" ItemType="@this.ItemType" />
+                    <AudioPlayer Item="@RelatedItem" FrameCSS="my-2" />
+
 
                     <RelatedItemsComp CSS="my-3" ItemTypes="@(ItemTypes.FirstOrDefault(se => se.Key == AssociationTyp.Parents).Value ?? new List<IItemType>())"
                                       RelatedItem="@RelatedItem" Association="AssociationTyp.Parents" />

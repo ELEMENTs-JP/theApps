@@ -5,33 +5,44 @@
 {
     @if (FileExt.IsValidImageExtension())
     {
-        <div id="@( "user_image_relative_" + ID )"
-             class="border rounded-2 overflow-hidden bg-surface align-items-center"
-             style="@(MinStyle + " " + app.Configuration.GetAkzentStyle())">
+        <div class="position-relative mt-2">
+            <div style="display: grid; grid-template-columns: repeat(12, 1fr); grid-template-rows: repeat(12, 1fr);aspect-ratio: 1 / 1; width: 100%;"
+                    class="w-100">
+            <div style="grid-column: 1 / 13; grid-row: 1 / 13;">
+                <!-- Bild-DIV -->
+                <div id="@( "user_image_relative_" + ID )"
+                     class="border rounded-2 overflow-hidden bg-surface align-items-center"
+                     style="@(MinStyle + " " + app.Configuration.GetAkzentStyle())">
 
-            <div class="row g-0 p-1">
-                <div class="col-auto ms-auto">
+                    <div class="@( ImageCSS  + " row col-auto mx-auto position-relative" )"
+                         style="@(ImageStyle + " " + BackgroundColor +
+                                                                            " background-image: url(" + this.Base64String + "); " )">
+                    </div>
+                </div>
+
+            </div>
+            <div style="grid-column: 12 / 13; grid-row: 1 / 2;" class="p-2">
+                <!-- Modal-DIV -->
+                <div class="p-1 rounded-2">
                     <ModalForm Size="ModalFormSize.Full"
                                ContentCSS="p-0 m-0" ModalCSS="modal-dialog modal-dialog-centered">
                         <Icon>
-                            <SymbolIcon Symbol="Icon.Max" />
+                            <SymbolIcon Symbol="Icon.Max" Color="#777" />
                         </Icon>
                         <ChildContent>
                             <div class="@( ImageCSS  + " row col-auto mx-auto " )"
                                  style="@(FullSizeImageStyle + " " + BackgroundColor +
-                                                            " background-image: url(" + this.Base64String + "); " )">
+                                                                                                                                                                                                                    " background-image: url(" + this.Base64String + "); " )">
                             </div>
                         </ChildContent>
                     </ModalForm>
                 </div>
-            </div>
 
-            <div class="@( ImageCSS  + " row col-auto mx-auto " )" 
-                    style="@(ImageStyle + " " + BackgroundColor +
-                    " background-image: url(" + this.Base64String + "); " )">
-            </div>
 
+            </div>
         </div>
+        </div>
+
     }
 }
 

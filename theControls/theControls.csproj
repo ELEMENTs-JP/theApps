@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FFMpegCore" Version="5.5.0" />
+    <PackageReference Include="MetadataExtractor" Version="2.9.3" />
+    <PackageReference Include="NAudio" Version="3.1.0" />
+    <PackageReference Include="TagLibSharp" Version="2.3.0" />
     <PackageReference Include="theSTRIDEsPath.theCalendar" Version="0.26.272.1212" />
     <PackageReference Include="theSTRIDEsPath.theCharts" Version="0.26.255.1335" />
     <PackageReference Include="theSTRIDEsPath.theInteractDragDrop" Version="0.26.263.1544" />
@@ -20,6 +24,10 @@
   <ItemGroup>
     <ProjectReference Include="..\theDatabase\theDatabase.csproj" />
     <ProjectReference Include="..\theInfrastructure\theInfrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Metadata\" />
   </ItemGroup>
 
 

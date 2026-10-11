@@ -41,6 +41,13 @@
                     OnItemAdded="@( async e => { await Context.Search(); })" />
 
         }
+
+      @*   @if (Context.Items.Where(se => se.GetAttachedProperty<bool>("IsSelected") == true).Count() >= 1)
+        {
+            <div class="d-flex flex-row-reverse border-bottom p-1">
+                <CombineAudioComp Items="@Context.Items" ItemType="@Context.ItemType" Item="@RelatedItem" />
+            </div>
+        } *@
     }
 }
 
@@ -71,10 +78,17 @@
     // Events
     protected override async Task OnInitializedAsync()
     {
-    
+        bus.OnMessage += OnMessage;
     }
 
-       
+    private async void OnMessage(AppMessage am)
+    {
+        if(am.Action == BusAction.Refresh && am.Id == "AttachedProperty")
+        {
+            await InvokeAsync(this.StateHasChanged);
+        }
+    }
+
     [Parameter]
     public EventCallback<IDTO> OnUpdate { get; set; }
 
@@ -93,7 +107,7 @@
     {
         try
         {
-
+            bus.OnMessage -= OnMessage;
         }
         catch (Exception ex)
         {

@@ -100,6 +100,7 @@ namespace theInfrastructure
         Checklist = 13,
 
         Folder = 14,
+        Selectable = 19,
     }
     public enum Orientation
     {

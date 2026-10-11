@@ -1,0 +1,262 @@
+﻿@using FFMpegCore
+@using MetadataExtractor
+@using NAudio.Wave
+@using TagLib
+
+@if (Item != null && ItemType != null &&
+    (ItemType.Typ == ItemTypeTyp.Audio ||
+     ItemType.Typ == ItemTypeTyp.Video ||
+     ItemType.Typ == ItemTypeTyp.Image))
+{
+    <div class="@CSS">
+        @if (System.IO.File.Exists(FilePath))
+        {
+            @if (ItemType.Typ == ItemTypeTyp.Audio)
+            {
+                @if (!string.IsNullOrEmpty(coverBase64))
+                {
+                    <div class="my-2">
+                        <img src="data:@coverMimeType;base64,@coverBase64" alt="Album Cover"
+                             style="width: 100%; aspect-ratio: 1 / 1; object-fit: cover;" class="border rounded w-100" />
+                    </div>
+                }
+            }
+
+
+            @if (metadataList.Any())
+            {
+                <div class="border-bottom p-1">
+                    <h3 class="h3">Metadaten</h3>
+                </div>
+
+                <div class="overflow-y-auto" style="max-height:18rem;">
+                    @foreach (var item in metadataList)
+                    {
+                        @if (!string.IsNullOrEmpty(item.Value) && item.Value.ToSecureString() != "0")
+                        {
+                            <div class="row g-0 p-1 overflow-hidden">
+                                <div class="col px-1 text-truncate fw-bold text-secondary overflow-hidden">
+                                    @item.Key
+                                </div>
+                                <div class="col px-1 text-truncate overflow-hidden">
+                                    @item.Value
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-muted">Lese Metadaten...</div>
+            }
+        }
+        else
+        {
+            <div class="text-danger">Die Datei wurde unter dem angegebenen Pfad nicht gefunden.</div>
+        }
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public string CSS { get; set; } = "rounded p-2 bg-surface my-2";
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    private Dictionary<string, string> metadataList = new();
+    private string FilePath { get; set; } = string.Empty;
+    private string NewCoverPath { get; set; } = string.Empty;
+    private string coverBase64 = string.Empty;
+    private string coverMimeType = "image/jpeg";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        FilePath = string.Empty;
+
+        if (Item == null || ItemType == null)
+            return;
+
+        FilePath = Item["FullFilePath"].ToSecureString();
+
+        if (ItemType.Typ == ItemTypeTyp.Audio)
+        {
+            LoadAudioMetadata();
+            LoadCover();
+        }
+
+        if (ItemType.Typ == ItemTypeTyp.Video)
+        {
+            await LoadVideoMetadataAsync();
+        }
+
+        if (ItemType.Typ == ItemTypeTyp.Image)
+        {
+            LoadImageMetadata();
+        }
+
+    }
+
+    private void LoadAudioMetadata()
+    {
+        metadataList.Clear();
+
+        if (string.IsNullOrWhiteSpace(FilePath) || !System.IO.File.Exists(FilePath))
+        {
+            return;
+        }
+
+        try
+        {
+            using var reader = new AudioFileReader(FilePath);
+            metadataList["Dateiname"] = Path.GetFileName(FilePath);
+            metadataList["Laufzeit"] = reader.TotalTime.ToString(@"mm\:ss");
+            metadataList["Samplerate"] = $"{reader.WaveFormat.SampleRate} Hz";
+            metadataList["Kanäle"] = reader.WaveFormat.Channels.ToString();
+            metadataList["Bitrate"] = $"{reader.WaveFormat.AverageBytesPerSecond * 8 / 1000} kbps";
+
+        }
+        catch (Exception ex) { }
+
+        try
+        {
+            using var file = TagLib.File.Create(FilePath);
+            metadataList["Titel"] = file.Tag.Title ?? string.Empty;
+            metadataList["Interpret"] = string.Join(", ", file.Tag.Performers);
+            metadataList["Album"] = file.Tag.Album ?? string.Empty;
+            metadataList["Jahr"] = file.Tag.Year.ToString();
+            metadataList["Bitrate"] = $"{file.Properties.AudioBitrate} kbps";
+        }
+        catch (Exception ex) { }
+    }
+
+    private async Task LoadVideoMetadataAsync()
+    {
+        metadataList.Clear();
+
+        if (string.IsNullOrWhiteSpace(FilePath) || !System.IO.File.Exists(FilePath))
+        {
+            return;
+        }
+
+        try
+        {
+            var analysis = await FFProbe.AnalyseAsync(FilePath);
+
+            metadataList["Dateiname"] = Path.GetFileName(FilePath);
+            metadataList["Gesamtlaufzeit"] = analysis.Duration.ToString(@"hh\:mm\:ss");
+            metadataList["Format"] = analysis.Format.FormatName;
+            metadataList["Gesamtbitrate"] = $"{analysis.Format.BitRate / 1000} kbps";
+
+            var videoStream = analysis.PrimaryVideoStream;
+            if (videoStream != null)
+            {
+                metadataList["Video-Codec"] = videoStream.CodecName;
+                metadataList["Auflösung"] = $"{videoStream.Width}x{videoStream.Height}";
+                metadataList["Bildrate (FPS)"] = videoStream.FrameRate.ToString("0.##");
+                metadataList["Pixelformat"] = videoStream.PixelFormat;
+            }
+
+            var audioStream = analysis.PrimaryAudioStream;
+            if (audioStream != null)
+            {
+                metadataList["Audio-Codec"] = audioStream.CodecName;
+                metadataList["Samplerate"] = $"{audioStream.SampleRateHz} Hz";
+                metadataList["Kanäle"] = audioStream.Channels.ToString();
+            }
+        }
+        catch (Exception ex) { }
+        {
+            metadataList["Fehler"] = "Metadaten konnten nicht ausgelesen werden.";
+        }
+    }
+
+    private void LoadImageMetadata()
+    {
+        metadataList.Clear();
+
+        if (string.IsNullOrWhiteSpace(FilePath) || !System.IO.File.Exists(FilePath))
+        {
+            return;
+        }
+
+        try
+        {
+            metadataList["Dateiname"] = Path.GetFileName(FilePath);
+
+            var directories = ImageMetadataReader.ReadMetadata(FilePath);
+
+            foreach (var directory in directories)
+            {
+                foreach (var tag in directory.Tags)
+                {
+                    string key = $"{directory.Name} - {tag.Name}";
+                    string value = tag.Description ?? string.Empty;
+
+                    if (!metadataList.ContainsKey(key) && !string.IsNullOrWhiteSpace(value))
+                    {
+                        metadataList[key] = value;
+                    }
+                }
+            }
+        }
+        catch
+        {
+            metadataList["Fehler"] = "Bild-Metadaten konnten nicht ausgelesen werden.";
+        }
+    }
+
+    private void LoadCover()
+    {
+        if (string.IsNullOrWhiteSpace(FilePath) || !System.IO.File.Exists(FilePath))
+            return;
+
+        try
+        {
+            using var file = TagLib.File.Create(FilePath);
+            var picture = file.Tag.Pictures.FirstOrDefault();
+
+            if (picture != null)
+            {
+                var binData = picture.Data.Data;
+                coverBase64 = Convert.ToBase64String(binData);
+                coverMimeType = picture.MimeType;
+            }
+        }
+        catch { }
+    }
+
+    private void SaveCover()
+    {
+        if (string.IsNullOrWhiteSpace(FilePath) || !System.IO.File.Exists(FilePath) || string.IsNullOrWhiteSpace(NewCoverPath) || !System.IO.File.Exists(NewCoverPath))
+            return;
+
+        try
+        {
+            using var file = TagLib.File.Create(FilePath);
+            var byteData = System.IO.File.ReadAllBytes(NewCoverPath);
+
+            var picture = new TagLib.Picture(new TagLib.ByteVector(byteData))
+            {
+                Type = TagLib.PictureType.FrontCover,
+                MimeType = "image/jpeg",
+                Description = "Cover"
+            };
+
+            file.Tag.Pictures = new IPicture[] { picture };
+            file.Save();
+
+            LoadCover();
+            StateHasChanged();
+        }
+        catch { }
+    }
+}

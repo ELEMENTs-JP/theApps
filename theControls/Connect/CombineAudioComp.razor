@@ -1,0 +1,92 @@
+﻿@using theControls.Icons
+@using theControls.Input
+@using theControls.Modal
+
+@inherits BaseCtl
+@implements IAsyncDisposable
+
+
+    <ModalForm @key="@(new Guid().ToSecureString())" Title="Audio verbinden"
+               ShowTitleInButton="false" Value="" ButtonText="Audio verbinden"
+               OnOKClicked="@( async e => { await OnOK(); } )">
+               <Icon>
+            <SymbolIcon Symbol="Icon.Connect" CSS="" />
+               </Icon>
+        <ChildContent>
+
+        <SortableContainer Zone="@( "Default")" MinStyleHeight=""
+                           Items="@( Items.Where(se => se.GetAttachedProperty<bool>("IsSelected") == true).ToList() )">
+            <ItemTemplate Context="item">
+           
+                <ListItem @key="@item.GUID" ItemType="@ItemType" Item="@item" RelatedItem="@Item"
+                          OnConnect="@( async e => {  })"
+                          OnDelete="@( async e => {  })"
+                          OnUpdate="@( async e => {  })"
+                          OnDisconnect="@( async e => {  })"
+                          IsRelated="@( (Item != null) )" IsSortable="@true" ShowID="@false" />
+
+
+            </ItemTemplate>
+        </SortableContainer>
+
+           
+
+        </ChildContent>
+    </ModalForm>
+
+
+@code {
+
+    [Parameter]
+    public List<IDTO> Items { get; set; } = new();
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessage;
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+    private async void OnMessage(AppMessage am)
+    {
+        if (am.Action == BusAction.Refresh && am.Id == "AttachedProperty")
+        {
+            await InvokeAsync(this.StateHasChanged);
+        }
+    }
+
+    private async Task OnOK()
+    {
+        // Message 
+        AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz verbunden");
+        msg.Publish(am);
+
+        // Visual Update 
+        await InvokeAsync(this.StateHasChanged);
+    }
+
+    [Parameter]
+    public EventCallback<IDTO> OnConnected { get; set; }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessage;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
+}

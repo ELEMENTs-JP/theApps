@@ -21,6 +21,8 @@
         </Header>
         <Related>
             <div class="hstack align-items-center">
+             
+
                 <ConnectComp ItemType="@ItemType" RelatedItem="@RelatedItem" 
                     Association="@this.Association" ButtonTitle=""
                      OnConnected="@( async e => { await OnConnect.InvokeAsync(e); })" />

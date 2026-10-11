@@ -1,7 +1,7 @@
 ﻿@using theControls.Chart
 @inherits BaseRow
 
-@if (ItemType != null)
+@if (ItemType != null && Item != null)
 {
 
     <div id="@( Item.GUID.ToSecureString() )" class="row g-0 hover align-items-center drag @ItemCSS @CSS">
@@ -22,15 +22,22 @@
 
         @if (ItemType.Typ == ItemTypeTyp.Checklist)
         {
-            @if (Item != null)
-            {
-                <div class="col-auto ps-2">
-                    <CheckBox Value="@Item["IsChecked"]" Style="" IsSwitch="false"
-                              ValueChanged="@( async e => {  Item["IsChecked"] = e; await base.Update(); } )" />
-                </div>
-            }
+            <div class="col-auto ps-2">
+                <CheckBox Value="@Item["IsChecked"]" Style="" IsSwitch="false"
+                            ValueChanged="@( async e => {  Item["IsChecked"] = e; await base.Update(); } )" />
+            </div>
         }
 
+        @if (ItemType.Typ == ItemTypeTyp.Selectable || ItemType.Typ == ItemTypeTyp.Audio)
+        {
+            <div class="col-auto ps-2">
+                <CheckBox Value="@( Item.GetAttachedProperty<bool>("IsSelected").ToSecureString() )" Style="" IsSwitch="false"
+                          ValueChanged="@( async e => {  
+                                Item.SetAttachedProperty("IsSelected", e.ToSecureBool()); 
+                                            msg.Publish(new AppMessage("AttachedProperty", BusAction.Refresh));
+                                    } )" />
+            </div>
+        }
 
         @if (ExtendedView == true && !string.IsNullOrEmpty(DateColumn))
         {

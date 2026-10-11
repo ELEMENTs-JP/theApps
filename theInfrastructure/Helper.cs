@@ -459,16 +459,19 @@ namespace theInfrastructure
                 Items.Add(new DTO() { ID = ItemTypeTyp.Item.ToString(), Title = ItemTypeTyp.Item.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.Appointment.ToString(), Title = ItemTypeTyp.Appointment.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.Hierarchy.ToString(), Title = ItemTypeTyp.Hierarchy.ToString() });
+                Items.Add(new DTO() { ID = ItemTypeTyp.Checklist.ToString(), Title = ItemTypeTyp.Checklist.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.File.ToString(), Title = ItemTypeTyp.File.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.Audio.ToString(), Title = ItemTypeTyp.Audio.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.Image.ToString(), Title = ItemTypeTyp.Image.ToString() });
                 Items.Add(new DTO() { ID = ItemTypeTyp.Video.ToString(), Title = ItemTypeTyp.Video.ToString() });
+                Items.Add(new DTO() { ID = ItemTypeTyp.Selectable.ToString(), Title = ItemTypeTyp.Selectable.ToString() });
             }
             else if (field.Typ == FieldTyp.Language)
             {
                 Items.Add(new DTO { ID = "de", Title = "Deutsch" });
                 Items.Add(new DTO { ID = "en", Title = "Englisch" });
                 Items.Add(new DTO { ID = "es", Title = "Spanisch" });
+                //Items.Add(new DTO { ID = "fr", Title = "Französisch" });
             }
             else if (field.Typ == FieldTyp.Currency)
             {
