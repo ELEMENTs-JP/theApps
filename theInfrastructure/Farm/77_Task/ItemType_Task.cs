@@ -21,10 +21,10 @@ namespace theInfrastructure
         {
             List<IEditView> Views = new();
 
-            Views.Add(new EditView() { Name = "Task", Title = "Task", Typ = "", Description = "" });
+            //Views.Add(new EditView() { Name = "Task", Title = "Task", Typ = "", Description = "" });
             Views.Add(new EditView() { Name = "Priorization", Title = "Priorization", Typ = "", Description = "" });
             Views.Add(new EditView() { Name = "Ownership", Title = "Ownership", Typ = "", Description = "" });
-            Views.Add(new EditView() { Name = "DueTo", Title = "Due To", Typ = "", Description = "" });
+            Views.Add(new EditView() { Name = "Estimation", Title = "Estimation", Typ = "", Description = "" });
 
             return Views;
         }
@@ -34,101 +34,194 @@ namespace theInfrastructure
             // Fields 
             List<IField> Fields = new List<IField>();
 
-            Fields.Add(new Field()
+            if (view == "Estimation")
             {
-                Title = "Aufgabe", Description ="Beschreibt die inhaltliche Aufgabe.",
-                Typ = FieldTyp.TextArea,
-                Column = "Description",
-                CSS = " col-12 col-md-6 col-lg-6 ",
-                OnDevice = DeviceDisplay.Desktop,
-                OnDisplay = new FieldDisplay(true, true, false, false),
-            });
-            Fields.Add(new Field()
+                // Estimation 
+                Fields.Add(new Field() { Title = "Estimation", Typ = FieldTyp.HR });
+                Fields.Add(new Field()
+                {
+                    Title = "Aufwand (h)",
+                    Typ = FieldTyp.Integer,
+                    Column = "Effort",
+                    Extension = "h",
+                    Description = "Geschätzter Aufwand in Arbeitsstunden",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDisplay = new FieldDisplay(true, true, false, false),
+                });
+
+                Fields.Add(new Field()
+                {
+                    Title = "Budget",
+                    Typ = FieldTyp.Money,
+                    Column = "Budget",
+                    Description = "Benötigtes Budget in EUR",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDisplay = new FieldDisplay(true, true, false, false),
+                });
+
+                Fields.Add(new Field()
+                {
+                    Title = "Aktiv",
+                    Typ = FieldTyp.CheckBox,
+                    Column = "IsActive",
+                    DefaultValue = "true",
+                    TrueText = "Aktiv",
+                    FalseText = "Inaktiv",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDisplay = new FieldDisplay(true, true, false, false),
+                });
+            }
+            
+            if (view == "Ownership")
             {
-                Title = "Ergebnis", Description="Beschreibt das erwartete Ergebnis.",
-                Typ = FieldTyp.TextArea,
-                Column = "Result",
-                CSS = " col-12 col-md-6 col-lg-6 ",
-                OnDevice = DeviceDisplay.Desktop,
-                OnDisplay = new FieldDisplay(true, true, false, false),
-            });
+                Fields.Add(new Field() { Title = "Assignment", Typ = FieldTyp.HR });
+                Fields.Add(new Field()
+                {
+                    Title = "Owner",
+                    Description = "Legt den Eigentümer der Aufgabe fest.",
+                    Typ = FieldTyp.Select,
+                    Association = AssociationTyp.Parents,
+                    ItemType = "User",
+                    Column = "Owner",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDisplay = new FieldDisplay(true, true, true, false),
 
+                });
 
-            Fields.Add(new Field() { Title = "Assignment", Typ = FieldTyp.HR });
-            Fields.Add(new Field()
+                Fields.Add(new Field()
+                {
+                    Title = "Assign To",
+                    Typ = FieldTyp.Select,
+                    Association = AssociationTyp.Related,
+                    ItemType = "User",
+                    Column = "AssignTo",
+                    Description = "Legt die fachliche und operative Verantwortung fest",
+                    CSS = " col-12 col-md-4 col-lg-4 "
+                });
+
+                Fields.Add(new Field()
+                {
+                    Title = "Due To",
+                    Typ = FieldTyp.Date,
+                    Formatierung = TextFormat.Datum,
+                    Column = "DueTo",
+                    Description = "Legt den Termin der erwarteten oder notwendigen Fertigstellung fest",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDisplay = new FieldDisplay(true, true, true, true),
+                    OnDevice = DeviceDisplay.Desktop
+                });
+
+            }
+
+            if (view == "Priorization")
             {
-                Title = "Owner", Description= "Legt den Eigentümer der Aufgabe fest.",
-                Typ = FieldTyp.Select,
-                Association = AssociationTyp.Parents,
-                ItemType = "User",
-                Column = "Owner",
-                CSS = " col-12 col-md-4 col-lg-4 ",
-                OnDisplay = new FieldDisplay(true, true, true, false),
-
-            });
-
-            Fields.Add(new Field()
+                // Performance
+                Fields.Add(new Field() { Title = "Performance", Typ = FieldTyp.HR });
+                Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
+            }
+            if (view == "" || view == string.Empty || view == "Init")
             {
-                Title = "Assign To",
-                Typ = FieldTyp.Select,
-                Association = AssociationTyp.Related,
-                ItemType = "User",
-                Column = "AssignTo",
-                Description = "Legt die fachliche und operative Verantwortung fest",
-                CSS = " col-12 col-md-4 col-lg-4 "
-            });
+                // Default 
+                Fields.Add(new Field()
+                {
+                    Title = "Aufgabe",
+                    Description = "Beschreibt die inhaltliche Aufgabe.",
+                    Typ = FieldTyp.TextArea,
+                    Column = "Description",
+                    CSS = " col-12 col-md-6 col-lg-6 ",
+                    OnDevice = DeviceDisplay.Desktop,
+                    OnDisplay = new FieldDisplay(true, true, false, false),
+                });
+                Fields.Add(new Field()
+                {
+                    Title = "Ergebnis",
+                    Description = "Beschreibt das erwartete Ergebnis.",
+                    Typ = FieldTyp.TextArea,
+                    Column = "Result",
+                    CSS = " col-12 col-md-6 col-lg-6 ",
+                    OnDevice = DeviceDisplay.Desktop,
+                    OnDisplay = new FieldDisplay(true, true, false, false),
+                });
 
-            Fields.Add(new Field()
-            {
-                Title = "Due To",
-                Typ = FieldTyp.Date,
-                Formatierung = TextFormat.Datum,
-                Column = "DueTo",
-                Description = "Legt den Termin der erwarteten oder notwendigen Fertigstellung fest",
-                CSS = " col-12 col-md-4 col-lg-4 ",
-                OnDisplay = new FieldDisplay(true, true, true, true),
-                OnDevice = DeviceDisplay.Desktop
-            });
+
+                Fields.Add(new Field() { Title = "Assignment", Typ = FieldTyp.HR });
+                Fields.Add(new Field()
+                {
+                    Title = "Owner",
+                    Description = "Legt den Eigentümer der Aufgabe fest.",
+                    Typ = FieldTyp.Select,
+                    Association = AssociationTyp.Parents,
+                    ItemType = "User",
+                    Column = "Owner",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDisplay = new FieldDisplay(true, true, true, false),
+
+                });
+
+                Fields.Add(new Field()
+                {
+                    Title = "Assign To",
+                    Typ = FieldTyp.Select,
+                    Association = AssociationTyp.Related,
+                    ItemType = "User",
+                    Column = "AssignTo",
+                    Description = "Legt die fachliche und operative Verantwortung fest",
+                    CSS = " col-12 col-md-4 col-lg-4 "
+                });
+
+                Fields.Add(new Field()
+                {
+                    Title = "Due To",
+                    Typ = FieldTyp.Date,
+                    Formatierung = TextFormat.Datum,
+                    Column = "DueTo",
+                    Description = "Legt den Termin der erwarteten oder notwendigen Fertigstellung fest",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDisplay = new FieldDisplay(true, true, true, true),
+                    OnDevice = DeviceDisplay.Desktop
+                });
 
 
 
-            // Performance
-            Fields.Add(new Field() { Title = "Performance", Typ = FieldTyp.HR });
-            Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
+                // Performance
+                Fields.Add(new Field() { Title = "Performance", Typ = FieldTyp.HR });
+                Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
 
-            Fields.Add(new Field() { Title = "Estimation", Typ = FieldTyp.HR });
-            Fields.Add(new Field()
-            {
-                Title = "Aufwand (h)",
-                Typ = FieldTyp.Integer,
-                Column = "Effort",
-                Extension = "h",
-                Description = "Geschätzter Aufwand in Arbeitsstunden",
-                CSS = " col-12 col-md-4 col-lg-4 ",
-                OnDisplay = new FieldDisplay(true, true, false, false),
-            });
+                // Estimation 
+                Fields.Add(new Field() { Title = "Estimation", Typ = FieldTyp.HR });
+                Fields.Add(new Field()
+                {
+                    Title = "Aufwand (h)",
+                    Typ = FieldTyp.Integer,
+                    Column = "Effort",
+                    Extension = "h",
+                    Description = "Geschätzter Aufwand in Arbeitsstunden",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDisplay = new FieldDisplay(true, true, false, false),
+                });
 
-            Fields.Add(new Field()
-            {
-                Title = "Budget",
-                Typ = FieldTyp.Money,
-                Column = "Budget",
-                Description = "Benötigtes Budget in EUR",
-                CSS = " col-12 col-md-4 col-lg-4 ",
-                OnDisplay = new FieldDisplay(true, true, false, false),
-            });
+                Fields.Add(new Field()
+                {
+                    Title = "Budget",
+                    Typ = FieldTyp.Money,
+                    Column = "Budget",
+                    Description = "Benötigtes Budget in EUR",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDisplay = new FieldDisplay(true, true, false, false),
+                });
 
-            Fields.Add(new Field()
-            {
-                Title = "Aktiv",
-                Typ = FieldTyp.CheckBox,
-                Column = "IsActive",
-                DefaultValue = "true",
-                TrueText = "Aktiv",
-                FalseText = "Inaktiv",
-                CSS = " col-12 col-md-4 col-lg-4 ",
-                OnDisplay = new FieldDisplay(true, true, false, false),
-            });
+                Fields.Add(new Field()
+                {
+                    Title = "Aktiv",
+                    Typ = FieldTyp.CheckBox,
+                    Column = "IsActive",
+                    DefaultValue = "true",
+                    TrueText = "Aktiv",
+                    FalseText = "Inaktiv",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDisplay = new FieldDisplay(true, true, false, false),
+                });
+            }
 
             return Fields;
         }

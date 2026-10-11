@@ -2,7 +2,7 @@
 {
     @if (Views.Count >= 1)
     {
-        <TabsFrame Orientation=" Orientation.Center" 
+        <TabsFrame Orientation=" Orientation.Center" Border="  " Icon=" "
                 FrameCSS=" row g-0 w-100" Padding="" ShowAkzente="false">
             <HeaderContent>
                 <TabsItem ID="@( "Default_View")" Title="@ItemType.Name" 
@@ -17,19 +17,19 @@
             </HeaderContent>
             <ChildContent>
 
-                <TabsPanel ID="@( "Default_View")" IsActive="true" CSS="p-1">
+                <TabsPanel ID="@( "Default_View")" IsActive="true" CSS="">
 
                     @Content
                    
                 </TabsPanel>
                 @foreach (IEditView view in Views)
                 {
-                    <TabsPanel ID="@( "View_" + view.Name)" CSS="p-1">
+                    <TabsPanel ID="@( "View_" + view.Name)" CSS="">
+
+                        <EditFields Context="@Context" Fields="@( GetFields(view).Result )" />
 
                     </TabsPanel>
                 }
-
-                
 
             </ChildContent>
         </TabsFrame>
@@ -52,6 +52,9 @@
     [Parameter]
     public RenderFragment Content { get; set; }
 
+    [Parameter]
+    public IQueryContext Context { get; set; }
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -62,5 +65,9 @@
         Views = await ItemType.GetViews();
 
     }
-
+    private async Task<List<IField>> GetFields(IEditView view)
+    {
+        List<IField> Fields = await ItemType.GetFields(view.Name);
+        return Fields;
+    }
 }

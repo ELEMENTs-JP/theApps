@@ -1,4 +1,7 @@
-﻿@if (isVisible)
+﻿@implements IAsyncDisposable
+@inherits BaseCtl
+
+@if (isVisible)
 {
     <ProgressRange Start="@Start" StartTitle="@StartColumn" 
                     Ende="@Ende" EndeTitle="@EndeColumn" 
@@ -23,6 +26,14 @@
     private string StartColumn { get; set; }
     private string EndeColumn { get; set; }
 
+
+    // Events
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageRun;
+    }
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -121,6 +132,28 @@
         {
             Start = new DateTime(now.Year, 1, 1, 0, 0, 0);
             Ende = new DateTime(now.Year, 12, 31, 23, 59, 59);
+        }
+    }
+
+    // Events
+    public async void OnMessageRun(AppMessage message)
+    {
+        if (message.Id == "EditBox" && message.Action == BusAction.Refresh)
+        {
+            this.StateHasChanged();
+        }
+    }
+
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            msg.OnMessage -= OnMessageRun;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
         }
     }
 }

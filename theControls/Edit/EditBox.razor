@@ -307,6 +307,8 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+        msg.OnMessage += OnMessageRun;
     }
     protected override async Task OnParametersSetAsync()
     {
@@ -341,7 +343,7 @@
             this.Max = "2999";
         }
 
-        msg.OnMessage += OnMessageRun;
+      
     }
     private string CheckCondition(IDTO? dto)
     {

@@ -9,7 +9,7 @@
     @if (Orientation == Orientation.Center)
     {
         <div class="row g-0">
-            <div class="col-auto mx-auto border rounded-2 d-flex mx-auto align-items-center overflow-hidden">
+            <div class="col-auto mx-auto rounded-2 d-flex mx-auto align-items-center overflow-hidden @Border">
 
                 @if (!string.IsNullOrEmpty(this.Icon))
                 {
@@ -124,6 +124,9 @@
 
     [Parameter]
     public string Padding { get; set; } = " p-2 ";
+
+    [Parameter]
+    public string Border { get; set; } = " border ";
 
     [Parameter]
     public bool ShowAsTabs { get; set; } = true;

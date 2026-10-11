@@ -1,0 +1,30 @@
+﻿
+<div class="row g-0">
+    @foreach (IField field in Fields)
+    {
+        @if (field.Typ == FieldTyp.HR)
+        {
+            <div class="hr-text px-3">@field.Title</div>
+        }
+        else
+        {
+            <div class="@( field.CSS + " p-2 " )">
+                <EditBox @key="@( "EditBox-" + Context.ID + "-" + field.Column + "-" + Context.Item.GUID)"
+                         Field="@field" Context="@Context"
+                         IsEditable="@field.IsEditable" Border="false" />
+            </div>
+        }
+    }
+</div>
+
+
+
+
+@code {
+
+    [Parameter]
+    public IQueryContext Context { get; set; }
+
+    [Parameter]
+    public List<IField> Fields { get; set; } = new();
+}

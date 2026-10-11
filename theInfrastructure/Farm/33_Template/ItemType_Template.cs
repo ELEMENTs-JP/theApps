@@ -78,6 +78,7 @@ namespace theInfrastructure
                 field.Column = it["Column"].ToSecureString();
                 field.CSS = it["CSS"].ToSecureString();
                 field.Typ = (FieldTyp)Enum.Parse(typeof(FieldTyp), it["Typ"].ToSecureString());
+                field.Description = it["Description"].ToSecureString();
 
                 Fields.Add(field);
             }
