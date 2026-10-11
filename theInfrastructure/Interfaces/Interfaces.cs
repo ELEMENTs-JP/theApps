@@ -6,6 +6,10 @@ using System.Text;
 
 namespace theInfrastructure
 {
+    public interface IBoard
+    {
+        IDTO Item { get; set; }
+    }
     public interface IWidget
     {
         IDTO Item { get; set; }

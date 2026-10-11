@@ -54,6 +54,34 @@ namespace theInfrastructure
                 fields.Add(new FieldInfo("Priority", "Priority", FieldTyp.Priority, " col-12 col-lg-4"));
                 fields.Add(new FieldInfo("Progress", "Fortschritt", FieldTyp.Progress, " col-12 col-lg-4"));
                 fields.Add(new FieldInfo("Status", "Status", FieldTyp.Status, "col-12 col-lg-4 "));
+            }
+
+            if (ItemType == "Indicator")
+            {
+                fields.Add(new FieldInfo("Beschreibung", "Inhalt", FieldTyp.TextArea, " col-12 "));
+
+                fields.Add(new FieldInfo("Info", "Informationen", FieldTyp.HR, "col-12"));
+                fields.Add(new FieldInfo("Kategorie", "Kategorie", FieldTyp.Text, " col-12 col-lg-4"));
+                fields.Add(new FieldInfo("Thema", "Thema", FieldTyp.Text, " col-12 col-lg-4"));
+                fields.Add(new FieldInfo("Datum", "Datum", FieldTyp.Date, " col-12 col-lg-4"));
+
+                fields.Add(new FieldInfo("Wert", "Wert", FieldTyp.HR, "col-12"));
+                fields.Add(new FieldInfo("Typ", "Typ", FieldTyp.Text, " col-12 col-lg-6"));
+                fields.Add(new FieldInfo("Wert", "Wert", FieldTyp.Text, " col-12 col-lg-6"));
+            }
+
+            if (ItemType == "Market")
+            {
+           
+            }
+
+            if (ItemType == "GeoArea")
+            {
+
+            }
+
+            if (ItemType == "Topic")
+            {
 
             }
 
