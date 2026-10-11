@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using NLog;
@@ -23,6 +24,10 @@ namespace theApp
                 // Builder 
                 var builder = WebApplication.CreateBuilder(args);
 
+                // NLog als Logging-Provider hinzufügen
+                builder.Logging.ClearProviders();
+                builder.Host.UseNLog();
+
                 // Preparation 
                 var filesPath = Path.Combine(builder.Environment.ContentRootPath, "FILES");
                 if (!Directory.Exists(filesPath))
@@ -30,9 +35,8 @@ namespace theApp
                     Directory.CreateDirectory(filesPath);
                 }
 
-                // NLog als Logging-Provider hinzufügen
-                builder.Logging.ClearProviders();
-                builder.Host.UseNLog();
+                // Registrierung des eigenen Passwort-/Geheimdienstes 
+                builder.Services.AddScoped<MasterKeyService>();
 
                 // Add services to the container.
                 builder.Services.AddRazorComponents()

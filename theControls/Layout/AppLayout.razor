@@ -4,6 +4,7 @@
 @inject ISecurityService sec
 @inject IAppService app
 @inject ISqlDatabaseService sql
+@inject MasterKeyService mks
 
 @implements IAsyncDisposable
 @attribute [Authorize]
@@ -144,7 +145,6 @@
 
         // Message Handler
         msg.OnMessage += OnMessageIncome;
-
 
     }
 

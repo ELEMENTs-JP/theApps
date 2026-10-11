@@ -163,6 +163,94 @@ public class GeminiService : IDisposable
 
         return new List<Section> { new Section { Title = "Timeout", Content = "Maximale Anzahl an Versuchen überschritten." } };
     }
+    public async Task<string> GetDiffSummaryAsync(string originalText, string modifiedText)
+    {
+        string url = $"{BaseUrl}?key={_apiKey}";
+        string prompt = $"Vergleiche die folgenden beiden Texte (Vorher und Nachher) und fasse die Änderung in exakt einer kurzen Zeile Text zusammen. Keine Absätze, keine Formatierung.\n\nVorher:\n{originalText}\n\nNachher:\n{modifiedText}";
+
+        var requestBody = new
+        {
+            contents = new[]
+            {
+                new
+                {
+                    role = "user",
+                    parts = new[] { new { text = prompt } }
+                }
+            },
+            generationConfig = new
+            {
+                maxOutputTokens = 50,
+                temperature = 0.0
+            }
+        };
+
+        try
+        {
+            var json = JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(url, content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return $"API Fehler ({response.StatusCode}): {responseBody}";
+            }
+
+            var result = JsonSerializer.Deserialize<GeminiResponse>(responseBody);
+            return result?.Candidates?.FirstOrDefault()?.Content?.Parts?.FirstOrDefault()?.Text?.Trim()
+                   ?? "Fehler: Antwort-Struktur ungültig.";
+        }
+        catch (Exception ex)
+        {
+            return $"Verbindungsfehler: {ex.Message}";
+        }
+    }
+    public async Task<string> GetSummaryAsync(string longText)
+    {
+        string url = $"{BaseUrl}?key={_apiKey}";
+        string prompt = $"Fasse den folgenden Text in genau einem prägnanten Absatz zusammen.\n\nText:\n{longText}";
+
+        var requestBody = new
+        {
+            contents = new[]
+            {
+                new
+                {
+                    role = "user",
+                    parts = new[] { new { text = prompt } }
+                }
+            },
+            generationConfig = new
+            {
+                maxOutputTokens = 200,
+                temperature = 0.2
+            }
+        };
+
+        try
+        {
+            var json = JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(url, content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return $"API Fehler ({response.StatusCode}): {responseBody}";
+            }
+
+            var result = JsonSerializer.Deserialize<GeminiResponse>(responseBody);
+            return result?.Candidates?.FirstOrDefault()?.Content?.Parts?.FirstOrDefault()?.Text?.Trim()
+                   ?? "Fehler: Antwort-Struktur ungültig.";
+        }
+        catch (Exception ex)
+        {
+            return $"Verbindungsfehler: {ex.Message}";
+        }
+    }
 
     public async Task<byte[]> GenerateImageAsync(string prompt)
     {
