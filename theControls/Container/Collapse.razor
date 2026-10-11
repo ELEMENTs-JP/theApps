@@ -1,0 +1,38 @@
+﻿
+<div class="hover-expand-container d-inline-flex align-items-center">
+    <div class="expandable-content overflow-hidden">
+        <div class="d-flex align-items-center">
+            @Expandable
+        </div>
+    </div>
+    <div class="main-content">
+        @Content
+    </div>
+</div>
+<style>
+    .hover-expand-container {
+        display: inline-flex;
+        flex-direction: row;
+    }
+
+    .expandable-content {
+        max-width: 0;
+        opacity: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        transition: max-width 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    }
+
+    .hover-expand-container:hover .expandable-content {
+        max-width: 1200px;
+        opacity: 1;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public RenderFragment? Content { get; set; }
+
+    [Parameter]
+    public RenderFragment? Expandable { get; set; }
+}

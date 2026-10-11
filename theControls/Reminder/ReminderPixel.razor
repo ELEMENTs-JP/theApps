@@ -27,9 +27,9 @@
 
             @*  d-none d-xl-block   *@
             <div id="@( "head_popup_" + ID )" class="col p-2 hover rounded pointer">
-                <ToolTip Title="@( "Letzte Überprüfung:" + (lastExecution == DateTime.MinValue ? "Noch keine" : lastExecution.ToString("HH:mm:ss")) )">
+                @* <ToolTip Title="@( "Letzte Überprüfung:" + (lastExecution == DateTime.MinValue ? "Noch keine" : lastExecution.ToString("HH:mm:ss")) )">
+                </ToolTip> *@
                     <SymbolIcon Symbol="Icon.Reminder" Size="24" />
-                </ToolTip>
             </div>
 @*             <div class="@( "col-auto pointer hover rounded-2 px-1 me-2  dropdown-toggle")"
                  style="padding-right: 0.5rem !important;">
