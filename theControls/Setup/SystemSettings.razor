@@ -1,0 +1,101 @@
+﻿@inherits BaseCtl
+
+<div class="border-bottom pb-2 mb-2">
+    <h1 class="h1 w-100">Allgemeine Einstellungen</h1>
+</div>
+<div class="row">
+    <div class="col-12 col-md-4 col-lg-4 px-2">
+        <TextBox Label="Titel" Value="@sec.Configuration.Title"
+                 ValueChanged="@(e => {   sec.Configuration.Title = e;
+                                         sec.Configuration.Save(); })" />
+        <div class="my-3"></div>
+
+        <ButtonSelectionBox Label="App Selector"
+                            Value="@appService.Configuration.AppSelector.ToSecureString()"
+                            ItemChanged="@(async e => { appService.Configuration.AppSelector = e.ID.ToSecureString();
+                            appService.Configuration.Save();  await PushFeatureUpdate();  })"
+                            Items="@(new List<IDTO>() {
+                                                    new DTO() { ID = "List", Title = loc.GetLabel("Liste", "List") },
+                                                    new DTO() { ID = "Popup", Title = loc.GetLabel("Popup", "Popup") },
+                                                } )" />
+    </div>
+    <div class="col-12 col-md-4 col-lg-4 px-2 border-start border-end">
+        <ThemeSwitch />
+        <div class="border-bottom my-3"></div>
+        <CheckBox Label="Akzente" Value="@appService.Configuration.Akzente.ToSecureString()"
+                  ValueChanged="@(e =>   {   appService.Configuration.Akzente = e.ToSecureBool();
+                                              appService.Configuration.Save();  })" />
+        <div class="my-3"></div>
+
+        <ButtonSelectionBox Label="Stil"
+                            Value="@appService.Configuration.EckStil.ToSecureString()"
+                            ItemChanged="@(e =>   {     appService.Configuration.EckStil = e.ID.ToSecureString();
+                                                        appService.Configuration.Save();  })"
+                            Items="@(new List<IDTO>() {
+                                                    new DTO() { ID = "eckig", Title = loc.GetLabel("eckig", "eckig") },
+                                                    new DTO() { ID = "rund", Title = loc.GetLabel("rund", "rund") },
+                                                } )" />
+        <div class="border-bottom my-3"></div>
+
+
+        <TextBox Label="Hintergrundbild" Value="@appService.Configuration.Background" Type="FieldTyp.Url"
+                 ValueChanged="@(e =>  {    appService.Configuration.Background = e;
+                 appService.Configuration.Save();   })" />
+        <div class="border-bottom my-3"></div>
+        <CheckBox Label="Hintergrund Blur Effekt" Value="@appService.Configuration.Blur.ToSecureString()"
+                  ValueChanged="@(e =>  {    appService.Configuration.Blur = e.ToSecureBool();
+appService.Configuration.Save();  })" />
+
+        <div class="border-bottom my-3"></div>
+        <CheckBox Label="Vordergrund Glass Effekt" Value="@appService.Configuration.Glass.ToSecureString()"
+                  ValueChanged="@(e =>  {   appService.Configuration.Glass = e.ToSecureBool();
+appService.Configuration.Save();     })" />
+    </div>
+    <div class="col-12 col-md-4 col-lg-4 px-2">
+        <DropDown Label="Sprache" Value="@loc.Configuration.Sprache"
+                  Items="@( Helper.InitDropDown(LanguageField, sql).Result)"
+                  IDChanged="@(e => { loc.Configuration.Sprache = e;
+                                          loc.Configuration.Save(); })" />
+
+
+        @*         <LanguageSelector Value="@loc.Configuration.Sprache"
+                                              ValueChanged="@(e => {
+                                                loc.Configuration.Sprache = e.ID;
+                                                loc.Configuration.Save();
+                                            })" /> *@
+        <div class="border-bottom my-2"></div>
+
+        <DropDown Label="Währung" Value="@loc.Configuration.Currency"
+                  Items="@( Helper.InitDropDown(CurrencyField, sql).Result)"
+                  IDChanged="@(e => { loc.Configuration.Currency = e;
+                                          loc.Configuration.Save(); })" />
+
+        @*      <CurrencySelector Value="@loc.Configuration.Currency"
+                                              ValueChanged="@(e =>
+                                                                                          {
+                                                                                              loc.Configuration.Currency = e.ID;
+                                                                                              loc.Configuration.Save();
+                                                                                          })" /> *@
+    </div>
+</div>
+
+
+@code {
+
+    IField LanguageField { get; set; }
+    IField CurrencyField { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        // Field
+        LanguageField = new Factory(sql).BuildField(FieldTyp.Language);
+        CurrencyField = new Factory(sql).BuildField(FieldTyp.Currency);
+    }
+
+    private async Task PushFeatureUpdate()
+    {
+        msg.Publish(new AppMessage("Feature", BusAction.Refresh));
+    }
+}

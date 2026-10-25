@@ -20,6 +20,16 @@ namespace theInfrastructure
                 Group = "Test"
             },
 
+            // Map 
+             new ComponentDefinition
+            {
+                Name = "Map",
+                Namespace = "theComponents",
+                ClassName = "MapLibre",
+                CSS = " col-12 my-2",
+                Group = "Maps"
+            },
+
             // Lists 
              new ComponentDefinition
             {
@@ -188,6 +198,16 @@ namespace theInfrastructure
                 ClassName = "NewsTechnology",
                 CSS = " col-12 my-2",
                 Group = "News"
+            },
+
+            // Media 
+            new ComponentDefinition
+            {
+                Name = "Apple Media Search",
+                Namespace = "theComponents",
+                ClassName = "AppleMediaSearch",
+                CSS = " col-12 my-2",
+                Group = "Media"
             },
         };
 

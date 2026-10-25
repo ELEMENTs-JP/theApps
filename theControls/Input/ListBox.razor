@@ -1,0 +1,113 @@
+﻿@using System.Text.Json
+
+@if (!string.IsNullOrEmpty(this.Label))
+{
+    <label class="form-label text-secondary" for="@Id">
+        @Label
+    </label>
+}
+
+    <div class="my-2 px-1">
+        @if (items != null && items.Any())
+        {
+            @foreach (var item in items)
+            {
+                <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-1 px-1">
+                    <div class="d-flex align-items-center gap-2">
+                        @if (Typ == FieldTyp.CheckListBox)
+                        {
+                            <input type="checkbox" class="form-check-input m-0" @bind="item.IsChecked" @bind:after="UpdateValueAsync" />
+                        }
+                        <span>@item.Text</span>
+                    </div>
+                    <div class="hover pointer rounded p-1 px-2 text-danger" @onclick="() => RemoveItem(item)">x</div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-muted">Keine Einträge vorhanden.</div>
+        }
+    </div>
+
+    <div class="d-flex gap-2 align-items-center">
+        <input type="text" class="form-control form-control-sm" @bind="newItemText" placeholder="Neuer Eintrag..." />
+        <div class="hover pointer rounded p-1 px-2 bg-primary text-white" @onclick="AddItem">+</div>
+    </div>
+
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public FieldTyp Typ { get; set; } = FieldTyp.ListBox;
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    private List<ItemModel> items = new();
+    private string newItemText = "";
+
+    private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+    {
+        WriteIndented = true,
+        PropertyNameCaseInsensitive = true,
+        IncludeFields = true
+    };
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrWhiteSpace(Value))
+        {
+            try
+            {
+                items = JsonSerializer.Deserialize<List<ItemModel>>(Value, JsonOptions) ?? new();
+            }
+            catch
+            {
+                items = new();
+            }
+        }
+        else
+        {
+            items = new();
+        }
+    }
+
+    private async Task AddItem()
+    {
+        if (!string.IsNullOrWhiteSpace(newItemText))
+        {
+            items.Add(new ItemModel { Text = newItemText.Trim(), IsChecked = false });
+            newItemText = "";
+            await UpdateValueAsync();
+        }
+    }
+
+    private async Task RemoveItem(ItemModel item)
+    {
+        items.Remove(item);
+        await UpdateValueAsync();
+    }
+
+    private async Task UpdateValueAsync()
+    {
+        var json = JsonSerializer.Serialize(items, JsonOptions);
+        Value = json;
+        await ValueChanged.InvokeAsync(json);
+    }
+
+    public class ItemModel
+    {
+        public string Text { get; set; } = "";
+        public bool IsChecked { get; set; }
+    }
+}

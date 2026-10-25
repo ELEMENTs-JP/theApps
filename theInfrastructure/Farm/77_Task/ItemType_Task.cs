@@ -25,6 +25,7 @@ namespace theInfrastructure
             Views.Add(new EditView() { Name = "Priorization", Title = "Priorization", Typ = "", Description = "" });
             Views.Add(new EditView() { Name = "Ownership", Title = "Ownership", Typ = "", Description = "" });
             Views.Add(new EditView() { Name = "Estimation", Title = "Estimation", Typ = "", Description = "" });
+            Views.Add(new EditView() { Name = "Checks", Title = "Validierung", Typ = "", Description = "" });
 
             return Views;
         }
@@ -33,6 +34,29 @@ namespace theInfrastructure
         {
             // Fields 
             List<IField> Fields = new List<IField>();
+
+            if (view == "Checks")
+            {
+                Fields.Add(new Field()
+                {
+                    Title = "Notizen",
+                    Typ = FieldTyp.ListBox,
+                    Column = "Notizen",
+                    Description = ".",
+                    CSS = " col-12",
+                    OnDisplay = new FieldDisplay(false, false, false, false),
+                });
+
+                Fields.Add(new Field()
+                {
+                    Title = "Notizen",
+                    Typ = FieldTyp.CheckListBox,
+                    Column = "Notizen",
+                    Description = ".",
+                    CSS = " col-12",
+                    OnDisplay = new FieldDisplay(false, false, false, false),
+                });
+            }
 
             if (view == "Estimation")
             {

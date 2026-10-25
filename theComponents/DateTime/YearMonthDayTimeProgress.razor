@@ -179,10 +179,15 @@
     public async ValueTask DisposeAsync()
     {
         _timer?.Dispose();
-
-        if (_jsModule is not null)
+        try
         {
-            await _jsModule.DisposeAsync();
+
+            if (_jsModule is not null)
+            {
+                await _jsModule.DisposeAsync();
+            }
         }
+        catch (Exception ex)
+        { }
     }
 }

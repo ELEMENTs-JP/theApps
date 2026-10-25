@@ -35,17 +35,14 @@
         }
         @if (Mode == HierarchyMode.Related)
         {
-            @foreach (IItemType itemType in RelatedItemTypes)
+            @foreach (IItemType it in RelatedItemTypes)
             {
-          @*       <div class="text-muted fw-bold">
-                    @itemType.Name
-                </div> *@
                 @foreach (var groupIT in RelatedItems.Select(se => se.ItemType).Distinct())
                 {
                     @foreach (IDTO childItem in RelatedItems.Where(se => se.ItemType == groupIT))
                     {
                         <HierarchyItem Item="@childItem" Mode="HierarchyMode.Related"
-                                ItemType="@itemType.Name" IsChild="true" />
+                                ItemType="@it" IsChild="true" />
                     }
                 }
             }
@@ -57,8 +54,6 @@
 @code {
 
 
-    [Parameter]
-    public string ItemType { get; set; } // String Parameter für den ItemType 
 
     [Parameter]
     public HierarchyMode Mode { get; set; } = HierarchyMode.Strict;

@@ -1,6 +1,7 @@
 ﻿@page "/Setting"
 @using theControls.CMS
 @using theControls.Database
+@using theControls.KI
 
 
 
@@ -31,140 +32,23 @@
             </HeaderContent>
             <ChildContent>
                 <TabsPanel ID="@( ID + "1")" IsActive="true">
-
-                    <div class="border-bottom pb-2 mb-2">
-                        <h1 class="h1 w-100">Allgemeine Einstellungen</h1>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-4 col-lg-4 px-2">
-                            <TextBox Label="Titel" Value="@sec.Configuration.Title"
-                                     ValueChanged="@(e =>
-                                 {
-                                     sec.Configuration.Title = e;
-                                     sec.Configuration.Save();
-                                 })" />
-
-                            <div class="my-3"></div>
-
-                            <ButtonSelectionBox Label="App Selector"
-                                                Value="@apps.Configuration.AppSelector.ToSecureString()"
-                                                ItemChanged="@(async e => {
-                                                apps.Configuration.AppSelector = e.ID.ToSecureString();
-                                                apps.Configuration.Save();
-                                                await PushFeatureUpdate();
-                                            })"
-                                                Items="@(new List<IDTO>() {
-                                                    new DTO() { ID = "List", Title = loc.GetLabel("Liste", "List") },
-                                                    new DTO() { ID = "Popup", Title = loc.GetLabel("Popup", "Popup") },
-                                                } )" />
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-4 px-2 border-start border-end">
-                            <ThemeSwitch />
-                            <div class="border-bottom my-3"></div>
-                            <CheckBox Label="Akzente" Value="@apps.Configuration.Akzente.ToSecureString()"
-                                      ValueChanged="@(e =>
-                                  {
-                                      apps.Configuration.Akzente = e.ToSecureBool();
-                                      apps.Configuration.Save();
-                                  })" />
-                            <div class="my-3"></div>
-
-                            <ButtonSelectionBox Label="Stil"
-                                                Value="@apps.Configuration.EckStil.ToSecureString()"
-                                                ItemChanged="@(e =>
-                                            {
-                                                apps.Configuration.EckStil = e.ID.ToSecureString();
-                                                apps.Configuration.Save();
-                                            })"
-                                                Items="@(new List<IDTO>() {
-                                                    new DTO() { ID = "eckig", Title = loc.GetLabel("eckig", "eckig") },
-                                                    new DTO() { ID = "rund", Title = loc.GetLabel("rund", "rund") },
-                                                } )" />
-                            <div class="border-bottom my-3"></div>
-
-
-                            <TextBox Label="Hintergrundbild" Value="@apps.Configuration.Background" Type="FieldTyp.Url"
-                                     ValueChanged="@(e =>
-                                                                                                         {
-                                                                                                             apps.Configuration.Background = e;
-                                                                                                             apps.Configuration.Save();
-                                                                                                         })" />
-                            <div class="border-bottom my-3"></div>
-                            <CheckBox Label="Hintergrund Blur Effekt" Value="@apps.Configuration.Blur.ToSecureString()"
-                                      ValueChanged="@(e =>
-                                                                                                          {
-                                                                                                              apps.Configuration.Blur = e.ToSecureBool();
-                                                                                                              apps.Configuration.Save();
-                                                                                                          })" />
-
-                            <div class="border-bottom my-3"></div>
-                            <CheckBox Label="Vordergrund Glass Effekt" Value="@apps.Configuration.Glass.ToSecureString()"
-                                      ValueChanged="@(e =>
-                                                                                                          {
-                                                                                                              apps.Configuration.Glass = e.ToSecureBool();
-                                                                                                              apps.Configuration.Save();
-                                                                                                          })" />
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-4 px-2">
-                            <DropDown Label="Sprache" Value="@loc.Configuration.Sprache"
-                                      Items="@( Helper.InitDropDown(LanguageField, sql).Result)"
-                                      IDChanged="@(e =>
-                                  {
-                                      loc.Configuration.Sprache = e;
-                                      loc.Configuration.Save();
-                                  })" />
-
-
-                            @*         <LanguageSelector Value="@loc.Configuration.Sprache"
-                                              ValueChanged="@(e => {
-                                                loc.Configuration.Sprache = e.ID;
-                                                loc.Configuration.Save();
-                                            })" /> *@
-                            <div class="border-bottom my-2"></div>
-
-                            <DropDown Label="Währung" Value="@loc.Configuration.Currency"
-                                      Items="@( Helper.InitDropDown(CurrencyField, sql).Result)"
-                                      IDChanged="@(e =>
-                                  {
-                                      loc.Configuration.Currency = e;
-                                      loc.Configuration.Save();
-                                  })" />
-
-                            @*      <CurrencySelector Value="@loc.Configuration.Currency"
-                                              ValueChanged="@(e =>
-                                                                                          {
-                                                                                              loc.Configuration.Currency = e.ID;
-                                                                                              loc.Configuration.Save();
-                                                                                          })" /> *@
-                        </div>
-                    </div>
+                    <SystemSettings />
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "2")">
-
                     <DatabaseComp />
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "3")">
-
                     <FilesConfigComp />
-
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "4")">
-
-                    <div class="border-bottom pb-2 mb-2">
-                        <h1 class="h1 w-100">Features</h1>
-                    </div>
-
                     <FeaturesComp />
-
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "5")">
-
                     <SecurityConfigComp />
-
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "6")">
@@ -180,75 +64,22 @@
                 </TabsPanel>
 
                 <TabsPanel ID="@( ID + "9")">
-
-                    <div class="border-bottom pb-2 mb-2">
-                        <h1 class="h1 w-100">KI Einstellungen</h1>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12 col-md-6 col-lg-6 px-2">
-                            <TextBox Label="Gemini Key" 
-                                    Value="@apps.KIConfiguration.GeminiApiKey"
-                                     ValueChanged="@(e => { apps.KIConfiguration.GeminiApiKey = e;
-                                     apps.KIConfiguration.Save(); })" />
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-6 px-2">
-                            <TextBox Label="Gemini Anweisungen" 
-                                    Value="@apps.KIConfiguration.GeminiAnweisungen"
-                                     ValueChanged="@(e => {  apps.KIConfiguration.GeminiAnweisungen = e;
-                                     apps.KIConfiguration.Save(); })" />
-                        </div>
-                    </div>
-
-
-
-                    <div class="row">
-                        <div class="col-12 col-md-6 col-lg-6 px-2">
-                            <TextBox Label="Groq Key"
-                                     Value="@apps.KIConfiguration.GroqApiKey"
-                                     ValueChanged="@(e => { apps.KIConfiguration.GroqApiKey = e;
-                                     apps.KIConfiguration.Save(); })" />
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-6 px-2">
-                            <TextBox Label="Groq Anweisungen"
-                                     Value="@apps.KIConfiguration.GroqAnweisungen"
-                                     ValueChanged="@(e => { apps.KIConfiguration.GroqAnweisungen = e;
-                                     apps.KIConfiguration.Save(); })" />
-                        </div>
-                    </div>
+                    <KI_Settings />
                 </TabsPanel>
 
             </ChildContent>
         </TabsFrame>
     }
-
 </div>
-
 
 
 @code {
 
-    private string ID = "" + Guid.NewGuid();
-
-    IField LanguageField { get; set; }
-    IField CurrencyField { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-
-        // Field
-        LanguageField = new Factory(sql).BuildField(FieldTyp.Language);
-        CurrencyField = new Factory(sql).BuildField(FieldTyp.Currency);
-    }
+    private string ID = "Settings_" + Guid.NewGuid();
 
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
     }
-
-    private async Task PushFeatureUpdate()
-    {
-        msg.Publish(new AppMessage("Feature", BusAction.Refresh));
-    }
+   
 }

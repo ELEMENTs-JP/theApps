@@ -56,7 +56,6 @@
 
     private string bgColor { get; set; } = " bg-surface ";
 
-
     [Parameter]
     public bool ShowCloseButton { get; set; } = false;
 
@@ -66,6 +65,7 @@
     [Parameter]
     public int Seconds { get; set; } = 3;
 
+    // Init 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -74,6 +74,7 @@
         notify.OnNotify += OnNotification;
     }
 
+    // Calls  
     private async void OnNotification(IDTO item, NotificationType typ, IDTO user)
     {
         if(item == null)
@@ -133,6 +134,8 @@
             await HideInfoAfterDelay();
         }
     }
+    
+    // Methods 
     private async Task HideInfoAfterDelay()
     {
         if (CloseAfterSeconds)
@@ -142,11 +145,12 @@
             await InvokeAsync(StateHasChanged);
         }
     }
-
     private async Task ClickClose()
     {
         Message = string.Empty;
     }
+    
+    // Dispose 
     public async ValueTask DisposeAsync()
     {
         try

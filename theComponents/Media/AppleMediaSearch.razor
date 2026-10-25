@@ -1,0 +1,411 @@
+﻿
+@inherits BaseCtl
+@implements IWidget
+
+@using System.Net.Http.Json
+@using System.Text.Json.Serialization
+@inject HttpClient Http
+
+<div class="p-3">
+    <div class="row mb-3 align-items-center">
+        <div class="col-md-6 mb-2 mb-md-0">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Suchbegriff eingeben..." @bind="searchTerm" @bind:event="oninput" @keyup.enter="SearchAsync" />
+                <div class="hover pointer rounded p-1 px-2 ms-2 border d-flex align-items-center justify-content-center" @onclick="SearchAsync">
+                    Suchen
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-2 mb-md-0">
+            <select class="form-select" @bind="selectedCountry" @bind:after="OnFilterChanged">
+                <option value="US">USA (US)</option>
+                <option value="DE">Deutschland (DE)</option>
+                <option value="GB">Großbritannien (GB)</option>
+                <option value="FR">Frankreich (FR)</option>
+                <option value="IT">Italien (IT)</option>
+                <option value="ES">Spanien (ES)</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" @bind="selectedMedia" @bind:after="OnFilterChanged">
+                <option value="all">Alle Medien</option>
+                <option value="movie">Film</option>
+                <option value="podcast">Podcast</option>
+                <option value="music">Musik</option>
+                <option value="musicVideo">Musikvideo</option>
+                <option value="audiobook">Hörbuch</option>
+                <option value="shortFilm">Kurzfilm</option>
+                <option value="tvShow">TV-Show</option>
+                <option value="software">Software</option>
+                <option value="ebook">E-Book</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="p-2" style="max-height: 36rem; overflow-y: auto;">
+                <h4 class="fw-bold">Suchergebnisse</h4>
+                <hr class="my-2" />
+
+                @if (isLoading)
+                {
+                    <div class="text-center my-3">
+                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                    </div>
+                }
+                else if (groupedResults == null)
+                {
+                    <p class="text-muted small my-2">Geben Sie einen Suchbegriff ein und starten Sie die Suche.</p>
+                }
+                else if (!groupedResults.Any())
+                {
+                    <p class="text-muted small my-2">Keine Ergebnisse gefunden.</p>
+                }
+                else
+                {
+                    @foreach (var group in groupedResults)
+                    {
+                        var groupList = group.ToList();
+                        var topItems = groupList.Take(5).ToList();
+                        var restItems = groupList.Skip(5).ToList();
+                        var collapseId = $"collapse-{group.Key.GetHashCode()}";
+
+                        <div class="fw-bold small text-muted mt-2 mb-1">@GetFriendlyGroupName(group.Key)</div>
+                        <div class="list-group mb-2">
+                            @foreach (var item in topItems)
+                            {
+                                var mediaType = item.Kind ?? item.WrapperType ?? "k.A.";
+                                <div class="hover pointer p-1 px-1 my-1 d-flex align-items-center" title="@mediaType" @onclick="() => SelectItem(item)">
+                                    @if (!string.IsNullOrEmpty(item.ArtworkUrl60))
+                                    {
+                                        <img src="@item.ArtworkUrl60" class="rounded me-2" style="width: 40px; height: 40px;" />
+                                    }
+                                    <div class="text-truncate flex-grow-1">
+                                        <div class="fw-bold text-truncate">@(item.TrackName ?? item.CollectionName)</div>
+                                        <div class="text-muted small text-truncate">@item.ArtistName</div>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (restItems.Any())
+                            {
+                                <div class="collapse" id="@collapseId">
+                                    @foreach (var item in restItems)
+                                    {
+                                        var mediaType = item.Kind ?? item.WrapperType ?? "k.A.";
+                                        <div class="hover pointer rounded p-1 px-1 border-bottom my-1 d-flex align-items-center" title="@mediaType" @onclick="() => SelectItem(item)">
+                                            @if (!string.IsNullOrEmpty(item.ArtworkUrl60))
+                                            {
+                                                <img src="@item.ArtworkUrl60" class="rounded me-2" style="width: 40px; height: 40px;" />
+                                            }
+                                            <div class="text-truncate flex-grow-1">
+                                                <div class="fw-bold text-truncate">@(item.TrackName ?? item.CollectionName)</div>
+                                                <div class="text-muted small text-truncate">@item.ArtistName</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="text-end mt-1">
+                                    <a class="small text-decoration-none hover pointer" data-bs-toggle="collapse" href="#@collapseId" role="button" aria-expanded="false" aria-controls="@collapseId">
+                                        mehr anzeigen...
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="p-2">
+                <h4 class="fw-bold">Detailinformationen</h4>
+                <hr class="my-2" />
+
+                @if (selectedItem != null)
+                {
+                    <div class="d-flex align-items-start mb-3">
+                        @if (!string.IsNullOrEmpty(selectedItem.ArtworkUrl100))
+                        {
+                            <img src="@selectedItem.ArtworkUrl100" class="rounded me-3 border" style="width: 100px; height: 100px;" />
+                        }
+                        <div>
+                            <h5>@(selectedItem.TrackName ?? selectedItem.CollectionName)</h5>
+                            <p class="text-muted mb-1"><strong>Künstler:</strong> @selectedItem.ArtistName</p>
+                            @if (!string.IsNullOrEmpty(selectedItem.CollectionName))
+                            {
+                                <p class="text-muted mb-1"><strong>Album/Kollektion:</strong> @selectedItem.CollectionName</p>
+                            }
+                            @if (!string.IsNullOrEmpty(selectedItem.PrimaryGenreName))
+                            {
+                                <p class="text-muted mb-1"><strong>Genre:</strong> @selectedItem.PrimaryGenreName</p>
+                            }
+                            <p class="text-muted mb-1"><strong>Medientyp (Kind):</strong> @(selectedItem.Kind ?? selectedItem.WrapperType ?? "k.A.")</p>
+                            @if (selectedItem.TrackPrice.HasValue)
+                            {
+                                <p class="text-muted mb-1"><strong>Preis:</strong> @selectedItem.TrackPrice @selectedItem.Currency</p>
+                            }
+                            
+                            @{
+                                var rating = selectedItem.AverageUserRating ?? selectedItem.UserRating;
+                                if (rating.HasValue)
+                                {
+                                    var percentage = (double)(rating.Value / 5.0m) * 100;
+                                    <div class="mb-1">
+                                        <span class="text-muted small"><strong>Rating:</strong> @rating.Value / 5</span>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar bg-warning" role="progressbar" style="width: @percentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%;" aria-valuenow="@rating.Value" aria-valuemin="0" aria-valuemax="5"></div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(selectedItem.PreviewUrl) || !string.IsNullOrEmpty(selectedItem.EpisodeUrl))
+                    {
+                        var mediaUrl = selectedItem.PreviewUrl ?? selectedItem.EpisodeUrl;
+                        <div class="border-top my-2 pt-2">
+                            <label class="form-label fw-bold small">Vorschau:</label>
+                            @if (IsVideoKind(selectedItem.Kind))
+                            {
+                                <video @key="mediaUrl" controls class="w-100 rounded" style="max-height: 300px;">
+                                    <source src="@mediaUrl" type="video/mp4" />
+                                    Browser unterstützt kein Video.
+                                </video>
+                            }
+                            else
+                            {
+                                <audio @key="mediaUrl" controls class="w-100 ms-0">
+                                    <source src="@mediaUrl" type="audio/mpeg" />
+                                    Browser unterstützt kein Audio.
+                                </audio>
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted small my-2">Wählen Sie ein Element aus der Liste aus, um Details anzuzeigen.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+        [Parameter]
+        public IDTO Item { get; set; }
+
+    private string searchTerm = string.Empty;
+    private string selectedCountry = "US";
+    private string selectedMedia = "all";
+    private bool isLoading = false;
+    private List<ItunesResult>? rawResults;
+    private IEnumerable<IGrouping<string, ItunesResult>>? groupedResults;
+    private ItunesResult? selectedItem;
+
+    private async Task SearchAsync()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return;
+
+        isLoading = true;
+        selectedItem = null;
+
+        try
+        {
+            var url = $"https://itunes.apple.com/search?term={Uri.EscapeDataString(searchTerm)}&country={selectedCountry}&limit=200";
+            var response = await Http.GetFromJsonAsync<ItunesResponse>(url);
+            rawResults = response?.Results ?? new List<ItunesResult>();
+            ApplyFilter();
+        }
+        catch
+        {
+            rawResults = new List<ItunesResult>();
+            groupedResults = Enumerable.Empty<IGrouping<string, ItunesResult>>();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task OnFilterChanged()
+    {
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            ApplyFilter();
+        }
+    }
+
+    private void ApplyFilter()
+    {
+        if (rawResults == null)
+        {
+            groupedResults = null;
+            return;
+        }
+
+        var filtered = rawResults.Where(item =>
+        {
+            var kind = item.Kind?.ToLowerInvariant() ?? string.Empty;
+            var wrapper = item.WrapperType?.ToLowerInvariant() ?? string.Empty;
+            var target = selectedMedia.ToLowerInvariant();
+
+            if (target == "all") return true;
+
+            if (target == "movie")
+            {
+                return kind == "feature-movie" || kind.Contains("movie") || wrapper.Contains("movie");
+            }
+            if (target == "music")
+            {
+                return kind == "song" || kind == "track" || (kind != "feature-movie" && kind != "tv-episode" && (kind.Contains("song") || kind.Contains("music") || wrapper.Contains("track")));
+            }
+            if (target == "podcast")
+            {
+                return kind.Contains("podcast") || wrapper.Contains("podcast") || !string.IsNullOrEmpty(item.EpisodeUrl);
+            }
+            if (target == "musicvideo")
+            {
+                return kind.Contains("music-video") || kind.Contains("musicvideo");
+            }
+            if (target == "audiobook")
+            {
+                return kind.Contains("audiobook") || wrapper.Contains("audiobook");
+            }
+            if (target == "shortfilm")
+            {
+                return kind.Contains("shortfilm") || kind.Contains("short-film");
+            }
+            if (target == "tvshow")
+            {
+                return kind == "tv-episode" || kind.Contains("tv-episode") || kind.Contains("tvshow") || kind.Contains("episode");
+            }
+            if (target == "software")
+            {
+                return kind.Contains("software") || wrapper.Contains("software");
+            }
+            if (target == "ebook")
+            {
+                return kind.Contains("ebook") || wrapper.Contains("ebook");
+            }
+
+            return kind.Contains(target) || wrapper.Contains(target);
+        });
+
+        groupedResults = filtered
+            .GroupBy(item => item.Kind ?? item.WrapperType ?? "Sonstige")
+            .Select(g => new GroupingAdapter<string, ItunesResult>(
+                g.Key,
+                g.OrderByDescending(x => x.AverageUserRating ?? x.UserRating ?? 0m)
+            ));
+
+        selectedItem = null;
+    }
+
+    private string GetFriendlyGroupName(string key)
+    {
+        return key.ToLowerInvariant() switch
+        {
+            "feature-movie" => "Film",
+            "song" => "Song",
+            "podcast" => "Podcast",
+            "music-video" => "Musikvideo",
+            "audiobook" => "Hörbuch",
+            "shortfilm" => "Kurzfilm",
+            "tv-episode" => "TV-Episode",
+            "software-or-game" => "Software",
+            "ebook" => "E-Book",
+            "artist" => "Künstler",
+            "collection" => "Kollektion",
+            "track" => "Titel",
+            _ => char.ToUpper(key[0]) + key.Substring(1)
+        };
+    }
+
+    private void SelectItem(ItunesResult item)
+    {
+        selectedItem = item;
+    }
+
+    private bool IsVideoKind(string? kind)
+    {
+        if (string.IsNullOrEmpty(kind)) return false;
+        var k = kind.ToLowerInvariant();
+        return k.Contains("movie") || k.Contains("video") || k.Contains("episode") || k.Contains("software");
+    }
+
+    public class GroupingAdapter<TKey, TElement> : IGrouping<TKey, TElement>
+    {
+        private readonly IEnumerable<TElement> _elements;
+        public TKey Key { get; }
+
+        public GroupingAdapter(TKey key, IEnumerable<TElement> elements)
+        {
+            Key = key;
+            _elements = elements;
+        }
+
+        public IEnumerator<TElement> GetEnumerator() => _elements.GetEnumerator();
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    public class ItunesResponse
+    {
+        [JsonPropertyName("resultCount")]
+        public int ResultCount { get; set; }
+
+        [JsonPropertyName("results")]
+        public List<ItunesResult> Results { get; set; } = new();
+    }
+
+    public class ItunesResult
+    {
+        [JsonPropertyName("artistName")]
+        public string? ArtistName { get; set; }
+
+        [JsonPropertyName("collectionName")]
+        public string? CollectionName { get; set; }
+
+        [JsonPropertyName("trackName")]
+        public string? TrackName { get; set; }
+
+        [JsonPropertyName("kind")]
+        public string? Kind { get; set; }
+
+        [JsonPropertyName("wrapperType")]
+        public string? WrapperType { get; set; }
+
+        [JsonPropertyName("artworkUrl60")]
+        public string? ArtworkUrl60 { get; set; }
+
+        [JsonPropertyName("artworkUrl100")]
+        public string? ArtworkUrl100 { get; set; }
+
+        [JsonPropertyName("previewUrl")]
+        public string? PreviewUrl { get; set; }
+
+        [JsonPropertyName("episodeUrl")]
+        public string? EpisodeUrl { get; set; }
+
+        [JsonPropertyName("primaryGenreName")]
+        public string? PrimaryGenreName { get; set; }
+
+        [JsonPropertyName("trackPrice")]
+        public decimal? TrackPrice { get; set; }
+
+        [JsonPropertyName("currency")]
+        public string? Currency { get; set; }
+
+        [JsonPropertyName("averageUserRating")]
+        public decimal? AverageUserRating { get; set; }
+
+        [JsonPropertyName("userRating")]
+        public decimal? UserRating { get; set; }
+    }
+    }

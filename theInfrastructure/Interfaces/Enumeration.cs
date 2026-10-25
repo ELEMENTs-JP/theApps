@@ -308,6 +308,8 @@ namespace theInfrastructure
 
         Language,
         Currency,
+        ListBox,
+        CheckListBox
     }
 
     public enum DatabaseTyp

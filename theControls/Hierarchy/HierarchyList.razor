@@ -10,7 +10,7 @@
         <div class="overflow-y-auto">
         @foreach (IDTO item in Context.Items)
         {
-            <HierarchyItem Context="@Context" Item="@item" ItemType="@ItemType.Name" Mode="@Mode" />
+            <HierarchyItem Item="@item" ItemType="@ItemType" Mode="@Mode" />
         }
         </div>
     }

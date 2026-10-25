@@ -162,6 +162,12 @@
                 </ItemTemplate>
             </DropDown>
         }
+        else if(Field.Typ == FieldTyp.ListBox || Field.Typ == FieldTyp.CheckListBox)
+        {
+            <ListBox @key="@( "CheckListBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)" 
+                        Label="@Title" Typ="@Field.Typ"
+                     Value="@Value" ValueChanged="@( async e => { onValueChanged(e); await Change(); await Save(); })" />
+        }
         else if (Field.Typ == FieldTyp.CheckBox)
         {
             <CheckBox @key="@( "CheckBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"

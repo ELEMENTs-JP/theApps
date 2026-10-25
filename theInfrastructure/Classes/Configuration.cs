@@ -102,6 +102,7 @@ namespace theInfrastructure
 
     public class KIConfiguration
     {
+        public bool IsGeminiActive { get; set; } = false;
         public string GeminiApiKey { get; set; } = string.Empty;
         public string GeminiAnweisungen { get; set; } = string.Empty;
 

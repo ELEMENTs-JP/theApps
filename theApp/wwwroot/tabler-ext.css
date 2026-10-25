@@ -171,7 +171,7 @@
 }
 
 .btn-compact {
-    padding: 0.10rem 0.35rem;
+    padding: 0.175rem 0.375rem !important;
     font-size: 0.75rem;
 }
 
