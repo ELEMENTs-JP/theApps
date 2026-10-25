@@ -19,6 +19,14 @@
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.12" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Farm\11_Predefined\1_Strategy\" />
+    <Folder Include="Farm\11_Predefined\3_Tactical\" />
+    <Folder Include="Farm\11_Predefined\5_Operational\" />
+    <Folder Include="Farm\11_Predefined\7_Cross\" />
+    <Folder Include="Farm\11_Predefined\9_Support\" />
+  </ItemGroup>
+
 
 
 </Project>
