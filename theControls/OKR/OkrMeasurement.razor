@@ -1,0 +1,184 @@
+﻿@if (!string.IsNullOrEmpty(this.Label) && ShowLabel == true)
+{
+    <label class="form-label text-secondary no-select" for="@Id">@Label</label>
+}
+
+<div class="row g-0">
+    <div class="col-4 p-1">
+        <DropDown @key="@( "DropDown-" + Id)"
+                  Label="Messart" Value="@Messart" Items="@Items" 
+                  ItemChanged="@(async e => { Description = e.Description(); })"
+                  Initiation="@(async e => { Description = e.Description(); })"
+                  IDValueChanged="@(async e =>{ Messart = e.Item2; SaveValue("Messart", e.Item1, e.Item2);  })">
+        </DropDown>
+
+    </div>
+
+    @if (Messart == "Start / Ziel")
+    {
+        <div class="col-3 p-1">
+            <TextBox @key="@( "txtInit-" + Id)" Label="Start (von)" 
+                     Value="@Context.Item["Init"]"
+                     ValueChanged="@(async e =>{ SaveValue("Init", e, e);  })">
+            </TextBox>
+        </div>
+        <div class="col-3 p-1">
+            <TextBox @key="@( "txtFinal-" + Id)" Label="Ziel (bis)"
+                     Value="@Context.Item["Final"]"
+                     ValueChanged="@(async e =>{ SaveValue("Final", e, e);  })">
+            </TextBox>
+        </div>
+        <div class="col-2 p-1">
+            <TextBox @key="@( "txtIFEinheit-" + Id)"
+                     Label="Einheit" Placeholder="z.B. Prozent (%), Umsatz, Einheiten, Zeitraum, etc."
+                     Value="@Context.Item["Einheit"]"
+                     ValueChanged="@(async e =>{ SaveValue("Einheit", e, e);  })">
+            </TextBox>
+        </div>
+    }
+    else if (Messart == "Grenzwert")
+    {
+        <div class="col-3 p-1">
+            <TextBox @key="@( "txtGrenzwert-" + Id)" Label="Grenzwert"
+                     Value="@Context.Item["Grenzwert"]"
+                     ValueChanged="@(async e =>{ SaveValue("Grenzwert", e, e);  })">
+            </TextBox>
+        </div>
+        <div class="col-2 p-1">
+            <TextBox @key="@( "txtGWEinheit-" + Id)"
+                     Label="Einheit"
+                     Value="@Context.Item["Einheit"]"
+                     ValueChanged="@(async e =>{ SaveValue("Einheit", e, e);  })">
+            </TextBox>
+        </div>
+        <div class="col-3 p-1">
+            <DropDown @key="@( "ddlGwTyp-" + Id)" Label="Typ" 
+                        Items="@GrenzWertTypen" 
+                        Value="@Context.Item["GrenzWertTyp"].ToSecureString()"
+                        ValueChanged="@(async e =>{ SaveValue("GrenzWertTyp", e, e);  })"  />
+        </div>
+    }
+    else if (Messart == "Offen / Erledigt")
+    {
+        <div class="col-4 p-1">
+            <CheckBox @key="@( "chkOpenDone-" + Id)"
+                     Label="Offen / erledigt"
+                     Value="@Context.Item["OpenDone"].ToSecureBool().ToSecureString()"
+                     ValueChanged="@(async e =>{ SaveValue("OpenDone", e.ToSecureBool().ToSecureString(), e.ToSecureBool().ToSecureString());  })">
+            </CheckBox>
+        </div>
+       
+    }
+    else if (Messart == "Ergebnis")
+    {
+        <div class="col-8 p-1">
+            <TextArea @key="@( "txtResult-" + Id)" Label="Ergebnis" Placeholder="ein beschriebenes Ergbnis"
+                     Value="@Context.Item["Result"]" ValueChanged="@(async e =>{ SaveValue("Result", e, e);  })">
+            </TextArea>
+        </div>
+    }
+    else if(Messart == "Wert")
+    {
+        <div class="col-8 p-1">
+            <TextBox @key="@( "txtWert-" + Id)" Label="Wert" Placeholder="ein spezifischwer Wert"
+                     Value="@Context.Item["Wert"]" ValueChanged="@(async e =>{ SaveValue("Wert", e, e);  })">
+            </TextBox>
+        </div>
+    }
+
+</div>
+
+
+
+
+@if (!string.IsNullOrEmpty(Description))
+{
+    <div class="text-muted small border-top mt-1"
+         style="padding-left:3px; padding-top:3px; ">
+        <div class="text-truncate-2">
+            @this.Description.ToSecureString()
+        </div>
+    </div>
+}
+@if (!string.IsNullOrEmpty(Hint))
+{
+    <div class="form-hint text-truncate" style="padding-left:3px; padding-top:3px;">
+        @Hint.ToSecureString()
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public IQueryContext Context { get; set; }
+
+    [Parameter]
+    public string Id { get; set; } = "OKRM_" + Guid.NewGuid().ToString();
+
+    [Parameter]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool ShowLabel { get; set; } = true;
+
+    [Parameter]
+    public string Hint { get; set; } = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (Context != null && Context.Item != null)
+        {
+            Messart = Context.Item["Messart"].ToSecureString();
+        }
+    }
+
+    private async Task SaveValue(string Column, string id, string value)
+    {
+        if(Context == null || Context.Item == null)
+            return;
+
+        try
+        {
+            Context.Item[Column] = value;
+
+            await ValueChanged.InvokeAsync(value);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving value for column '{Column}': {ex.Message}");
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    // Messart 
+    private string Messart { get; set; } = string.Empty;
+    private List<IDTO> Items { get; set; } = new List<IDTO>()
+    {
+        new DTO() { ID = "StartZiel", Title = "Start / Ziel", Content = "Wertebereich (von / bis)" },
+        new DTO() { ID = "Grenzwert", Title = "Grenzwert", Content = "" },
+        new DTO() { ID = "TrueFalse", Title = "Offen / Erledigt", Content = "Offen oder erledigt" },
+        new DTO() { ID = "Ergebnis", Title = "Ergebnis", Content = "Ein umschriebenes Ergebnis" },
+        new DTO() { ID = "Wert", Title = "Wert", Content = "Ein genauer Wert" },
+    };
+
+    private List<IDTO> GrenzWertTypen { get; set; } = new List<IDTO>()
+    {
+        new DTO() { ID = "=", Title = "=", Content = "gleich" },
+        new DTO() { ID = "!=", Title = "!=", Content = "ungleich" },
+        new DTO() { ID = "<", Title = "<", Content = "kleiner" },
+        new DTO() { ID = ">", Title = ">", Content = "größer" },
+        new DTO() { ID = "<=", Title = "<=", Content = "kleiner oder gleich" },
+        new DTO() { ID = ">=", Title = ">=", Content = "größer oder gleich" },
+    };
+}

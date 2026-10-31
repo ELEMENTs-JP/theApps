@@ -383,6 +383,16 @@ namespace theInfrastructure
             return result;
         }
 
+
+        public static async Task<List<IDTO>> InitWeights()
+        {
+            List<IDTO> Items = new List<IDTO>();
+            for (int i = 1; i <= 5; i += 1)
+            {
+                Items.Add(new DTO() { ID = i.ToString(), Title = i.ToString() });
+            }
+            return Items;
+        }
         public static async Task<List<IDTO>> InitDropDown(IField field, ISqlDatabaseService sql)
         {
             List<IDTO> Items = new List<IDTO>();

@@ -309,7 +309,11 @@ namespace theInfrastructure
         Language,
         Currency,
         ListBox,
-        CheckListBox
+        CheckListBox,
+
+        // OKR 
+        KeyResult,
+        Gewichtung,
     }
 
     public enum DatabaseTyp

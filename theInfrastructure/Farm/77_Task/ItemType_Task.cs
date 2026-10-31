@@ -13,6 +13,7 @@ namespace theInfrastructure
             Icon = Icon.Task;
             this.InSubNavigation = false;
             this.Order = 1;
+            this.IsPathElement = true;
             Description = "Mit einer Aufgabe erfassen und verwalten Sie alle relevanten operativen Daten Ihres Projekts, wodurch Sie Informationsverluste vermeiden, den manuellen Abstimmungsaufwand im Team spürbar reduzieren und jederzeit eine verlässliche Datenbasis für fundierte unternehmerische Entscheidungen sowie effiziente Prozessabläufe schaffen.";
         }
 
@@ -22,7 +23,7 @@ namespace theInfrastructure
             List<IEditView> Views = new();
 
             //Views.Add(new EditView() { Name = "Task", Title = "Task", Typ = "", Description = "" });
-            Views.Add(new EditView() { Name = "Priorization", Title = "Priorization", Typ = "", Description = "" });
+            // Views.Add(new EditView() { Name = "Priorization", Title = "Priorization", Typ = "", Description = "" });
             Views.Add(new EditView() { Name = "Ownership", Title = "Ownership", Typ = "", Description = "" });
             Views.Add(new EditView() { Name = "Estimation", Title = "Estimation", Typ = "", Description = "" });
             Views.Add(new EditView() { Name = "Checks", Title = "Validierung", Typ = "", Description = "" });
@@ -137,12 +138,12 @@ namespace theInfrastructure
 
             }
 
-            if (view == "Priorization")
-            {
-                // Performance
-                Fields.Add(new Field() { Title = "Performance", Typ = FieldTyp.HR });
-                Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
-            }
+            //if (view == "Priorization")
+            //{
+            //    // Performance
+            //    Fields.Add(new Field() { Title = "Performance", Typ = FieldTyp.HR });
+            //    Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
+            //}
             if (view == "" || view == string.Empty || view == "Init")
             {
                 // Default 
@@ -208,8 +209,8 @@ namespace theInfrastructure
 
 
                 // Performance
-                Fields.Add(new Field() { Title = "Performance", Typ = FieldTyp.HR });
-                Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
+                //Fields.Add(new Field() { Title = "Performance", Typ = FieldTyp.HR });
+                //Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Performance));
 
                 // Estimation 
                 Fields.Add(new Field() { Title = "Estimation", Typ = FieldTyp.HR });

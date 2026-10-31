@@ -78,7 +78,7 @@ namespace theInfrastructure
                     Title = "Status", Description = "Mit dem Status kennzeichnen Sie den aktuellen Bearbeitungszustand einer Aufgabe, wodurch Sie den Arbeitsfluss im gesamten Team transparent strukturieren, Übergaben nahtlos gestalten und operative Blockaden im Unternehmensablauf sofort sichtbar machen.",
                     Typ = FieldTyp.Status,
                     DefaultValue = "neu",
-                    Column = "Status", CSS = " col-12 col-md-6 col-lg-4 ",
+                    Column = "Status", CSS = " col-12 ",
                     Funktionen = new FieldFunction(true, true),
                     OnDisplay = new FieldDisplay(true, true, true, true),
                     OnDevice = DeviceDisplay.Tablet
@@ -88,7 +88,7 @@ namespace theInfrastructure
                     Title = "Fortschritt", Description = "Mit dem Fortschritt dokumentieren und verfolgen Sie den aktuellen Erfüllungsgrad einer Aufgabe, wodurch Sie Abweichungen vom Zeitplan frühzeitig erkennen, die Transparenz im Team erhöhen und eine verlässliche Grundlage für die Kapazitäts- und Terminplanung im Unternehmen schaffen.", 
                     Typ = FieldTyp.Progress, 
                     DefaultValue = "0",
-                    Column = "Progress", CSS = " col-12 col-md-6 col-lg-4 ",
+                    Column = "Progress", CSS = " col-12 ",
                     Funktionen = new FieldFunction(true, true),
                     OnDisplay = new FieldDisplay(true, true, true, true),
                     OnDevice = DeviceDisplay.Tablet 
@@ -98,7 +98,7 @@ namespace theInfrastructure
                     Title = "Priorität", Description = "Mit der Priorität legen Sie die Dringlichkeit und Wichtigkeit einer Aufgabe fest, wodurch Ihr Team Ressourcen gezielt auf kritische Arbeitsschritte konzentriert, Engpässe frühzeitig vermeidet und die produktive Gesamtleistung des Unternehmens maximiert.", 
                     Typ = FieldTyp.Priority, 
                     DefaultValue = "ausgeglichen",
-                    Column = "Prio", CSS = " col-12 col-md-6 col-lg-4 ",
+                    Column = "Prio", CSS = " col-12  ",
                     Funktionen = new FieldFunction(true, true),
                     OnDisplay = new FieldDisplay(true, true, true, true),
                     OnDevice = DeviceDisplay.Tablet });
@@ -282,6 +282,13 @@ namespace theInfrastructure
     }
     public class FieldDisplay
     {
+        /// <summary>
+        /// Field: Edit, Add, Table, Related
+        /// </summary>
+        /// <param name="edit"></param>
+        /// <param name="add"></param>
+        /// <param name="table"></param>
+        /// <param name="related"></param>
         public FieldDisplay(bool edit = true,  bool add = true, 
                                 bool table = true,  bool related = false)
         {

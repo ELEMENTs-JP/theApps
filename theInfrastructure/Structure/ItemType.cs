@@ -21,7 +21,7 @@ namespace theInfrastructure
         bool ShowInTaskBarNavigation { get; set; }
         bool AppItemType { get; set; } // Legt fest, ob es sich um den Hauptitemtyp der App handelt, der für die Dashboard-Selektion verwendet wird
         int Order { get; set; } // Sortierung in Navigation 
-        bool IsPathElement { get; set; } // Legt fest, ob es sich um einen ItemType des STRIDEsPath handelt 
+        bool IsPathElement { get; set; } // Legt fest, ob es sich um einen ItemType des STRIDEsPath handelt (Beinhaltet dadurch die Properties: Status, Priorität und Fortschritt) 
 
         // ItemType 
         Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association);
@@ -62,6 +62,8 @@ namespace theInfrastructure
         public bool IsPathElement { get; set; } = false;
 
         public ItemTypeTyp Typ { get; set; } = ItemTypeTyp.Item;
+
+        // CTR 
         public BaseItemType()
         { 
         
@@ -148,6 +150,7 @@ namespace theInfrastructure
             return ItemTypes;
         }
 
+        // Events 
         public virtual async Task<IDTO> OnCreateItem(IItemEventArgs args)
         {
             // Drag Drop Functionality 

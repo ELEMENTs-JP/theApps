@@ -30,7 +30,7 @@
     {
         @foreach (var item in Items)
         {
-            <div class="@ItemCss m-1 mx-2 hover pointer rounded p-1" 
+            <div class="@ItemCss m-1 mx-2 hover pointer rounded p-1 px-2" 
             @onclick="() => OnItemClick.InvokeAsync(item)">
                 @if (ItemTemplate is not null)
                 {

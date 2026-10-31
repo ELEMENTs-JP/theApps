@@ -98,6 +98,10 @@ namespace theInfrastructure
             AllApps.Add(new App_Security());
             AllApps.Add(new App_RUNer());
 
+            // PreDefined Apps
+            AllApps.Add(new App_OKR());
+
+
             // Individuall Apps 
             IQueryParameter qp = new QueryParameter();
             qp.MasterGUID = SqlService.MasterGUID;

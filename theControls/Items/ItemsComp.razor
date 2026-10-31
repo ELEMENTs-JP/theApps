@@ -133,6 +133,7 @@
 
         // Title
         Title = await Helper.GetSettingValue(sql, "Title", ItemType.Name);
+        Title = Title.IsEmpty() ? ItemType.Title : Title;
         Title = Title.IsEmpty() ? ItemType.Name : Title;
 
         IsSecure = Helper.ValidateVisibility(SecuredFeature.List, ItemType, sec.User);

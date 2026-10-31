@@ -20,7 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Farm\11_Predefined\1_Strategy\" />
+    <Folder Include="Farm\11_Predefined\1_Strategy\01_BMC\" />
+    <Folder Include="Farm\11_Predefined\1_Strategy\02_STRATEGYzer\" />
+    <Folder Include="Farm\11_Predefined\1_Strategy\04_BD\" />
     <Folder Include="Farm\11_Predefined\3_Tactical\" />
     <Folder Include="Farm\11_Predefined\5_Operational\" />
     <Folder Include="Farm\11_Predefined\7_Cross\" />

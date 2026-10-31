@@ -1,6 +1,7 @@
 ﻿@using theControls.Essentials
 @using theControls.Icons
 @using theControls.Input
+@using theControls.OKR
 @inject IMessagingBusService msg
 @inject ISecurityService sec
 @inject ISqlDatabaseService sql
@@ -167,6 +168,17 @@
             <ListBox @key="@( "CheckListBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)" 
                         Label="@Title" Typ="@Field.Typ"
                      Value="@Value" ValueChanged="@( async e => { onValueChanged(e); await Change(); await Save(); })" />
+        }
+        else if(Field.Typ == FieldTyp.KeyResult)
+        {
+            <OkrMeasurement @key="@( "OkrMeasmBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)" Context="@Context"
+                            ValueChanged="@( async e => { await Change(); await Save(); })" />
+        }
+        else if (Field.Typ == FieldTyp.Gewichtung)
+        {
+            <ButtonSelectionBox @key="@( "WeightBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)" 
+                                Label="@Title" Items="@Items" DisplayItemCount="5" Description="@Description"
+                                Value="@Value" ItemChanged="@( async e => { onValueChanged(e.Title); await Change(); await Save(); })" />
         }
         else if (Field.Typ == FieldTyp.CheckBox)
         {
@@ -340,7 +352,13 @@
 
         hasUpdatePermission = await sec.HasItemTypePermission(Context.ItemType, SecurityFunction.Update);
 
+
         this.Items = await Helper.InitDropDown(Field, sql);
+
+        if (this.Field.Typ == FieldTyp.Gewichtung)
+        {
+            this.Items = await Helper.InitWeights();
+        }
 
         if (Field.Typ == FieldTyp.Year)
         {

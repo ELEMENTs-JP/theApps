@@ -5,7 +5,7 @@ using System.Text;
 
 namespace theInfrastructure
 {
-    public class  ItemType_Approval : BaseItemType, IItemType
+    public class ItemType_Approval : BaseItemType, IItemType
     {
         public ItemType_Approval()
         {

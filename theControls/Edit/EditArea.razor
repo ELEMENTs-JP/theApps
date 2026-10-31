@@ -69,7 +69,22 @@
                 <Content>
                     <ProgressRangeKPI Item="@Context.Item" ItemType="@ItemType" />
 
-                    <EditFields Fields="@Fields" Context="@Context" />
+
+                    <div class="row g-0">
+                        <div class="@(this.ItemType.IsPathElement ? "col-12 col-md-8" : "col-12")">
+                            <EditFields Fields="@Fields" Context="@Context" />
+                        </div>
+
+                        @if (this.ItemType.IsPathElement)
+                        {
+                            <div class="col-12 col-md-4 p-2">
+                                <div class="bg-surface-secondary border rounded p-1">
+                                    <div class="fw-bold p-2 px-3">the STRIDEs Path</div>
+                                    <EditFields Fields="@Field.DefaultFields(DefaultFieldTypes.Performance)" Context="@Context" />
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </Content>
             </TabEditViews>
 

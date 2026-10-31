@@ -104,7 +104,7 @@
 
 
 .hr-text {
-    margin: 1.0rem 0rem 0.5rem 0rem !important;
+    margin: 1.25rem 0rem 0.75rem 0rem !important;
 }
 
 .progress-bar {
@@ -280,7 +280,7 @@
 }
 
 .p-05 {
-    padding: 0.125rem !important;
+    padding: 0.125rem;
 }
 
 .px-05 {
@@ -317,7 +317,7 @@
 
 
 .p-025 {
-    padding: 0.065rem !important;
+    padding: 0.065rem;
 }
 
 .px-025 {
