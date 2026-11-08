@@ -2,25 +2,23 @@
 @inject NavigationManager nm
 
 <div class="d-flex flex-column">
-    <div class="position-relative header p-2 px-5 text-nowrap align-items-center bg-surface text-center">
-        <div class="h1 hover pointer rounded-2 p-1 text-center" style="margin-top:-8px;"
+    <div class="position-relative header p-2 text-nowrap align-items-center bg-surface text-center">
+        <div class="h1 hover pointer rounded-2 p-1 mx-5 text-center" 
              @onclick="@( e => { nm.NavigateTo("/", false); })">
             @AppTitle
         </div>
-
-        <div class="position-absolute top-50 end-0 translate-middle-y toggler pe-3"
-             data-bs-toggle="collapse"
-             data-bs-target="#app_navigation"
-             aria-expanded="false"
-             aria-controls="app_navigation">
+        <div class="position-absolute top-50 end-0 translate-middle-y toggler me-3 p-2 hover pointer rounded-2"
+             data-bs-toggle="offcanvas"
+             data-bs-target="#ocNavigation"
+             aria-controls="ocNavigation">
             <SymbolIcon Symbol="Icon.Menu" />
         </div>
-   
+
     </div>
 
     @if (Profile.HasContent())
     {
-        <div class="profile border-bottom align-items-center " 
+        <div class="profile border-bottom align-items-center "
              style="height: var(--tsp-user-profile-height)">
             @Profile
         </div>
@@ -32,11 +30,24 @@
         </nav>
     </div>
 
-
-
     <div class="footer">
     </div>
 </div>
+
+<div  id="ocNavigation" class="offcanvas offcanvas-start" 
+        data-bs-scroll="true" tabindex="-1" 
+        aria-labelledby="navLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="navLabel">Navigation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        @Navigation
+    </div>
+</div>
+
+
+
 
 @code {
 

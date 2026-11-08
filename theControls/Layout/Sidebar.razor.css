@@ -13,8 +13,9 @@
 }
 .scrollable {
  
-    height: calc(100vh - var(--tsp-header-height) - var(--tsp-user-profile-height) - var(--tsp-footer-height));
-    overflow-y: auto;
+   /* height: calc(100vh - var(--tsp-header-height) - var(--tsp-user-profile-height) - var(--tsp-footer-height));
+    overflow-y: auto;*/
+   display:none;
 }
 
 
@@ -34,8 +35,7 @@
         display: block;
     }
     .scrollable {
-   
-        
+        display: block;
         height: calc(100vh - var(--tsp-header-height) - var(--tsp-user-profile-height) - var(--tsp-footer-height));
         overflow-y: auto;
     }
