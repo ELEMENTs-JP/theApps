@@ -57,6 +57,10 @@ textarea::-webkit-resizer {
     opacity: 0.5;
 }
 
+textarea:disabled {
+    color: inherit;
+}
+
 .progress-bg {
     width: 100%;
     height: 100%;

@@ -11,6 +11,9 @@ namespace theInfrastructure
         { 
             Name = "RUNer";
             IsNavigation = false;
+
+            // Typ 
+            this.Typ = AppTyp.Personalized;
         }
 
         public override async Task<List<IItemType>> GetItemTypes(AssociationTyp typ = AssociationTyp.Association)

@@ -1,0 +1,113 @@
+@using theControls.STRIDEsPath
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+@inherits BaseCtl
+
+@if (Item != null)
+{
+    <div class="@CSS">
+        <div id="@Id" class="border rounded p-2 row g-0 bg-surface align-items-center my-1">
+            <div class="col-auto p-1 text-muted small">
+                @Item.ID
+            </div>
+            <div class="col p-1 fw-bold pointer" @onclick="@( e => { nm.NavToItem(Item.ItemType, Item.GUID); })">
+                @Item.Title
+            </div>
+            <div class="col-auto p-1">
+                <PathFields Item="@this.Item" />
+            </div>
+            <div class="col-auto p-1 text-muted" @onclick="@( e => {  })">
+                @Item.ItemType
+            </div>
+            <div class="col-auto p-1">
+                <AddArea ItemType="@( new ItemType_CheckIn())" RelatedItem="@Item" ButtonTitle="Check-In erstellen..." />
+            </div>
+
+            @if (Item.Description() != string.Empty)
+            {
+                <div class="col-12 p-1 text-muted">
+                    @Item.Description()
+                </div>
+            }
+        </div>
+
+        @foreach (IDTO item in Items)
+        {
+            <OkrItem @key="@item.GUID" Item="@item" Hierarchy="@Hierarchy" CSS="ms-3 my-1" />
+        }
+    </div>
+}
+
+@code {
+
+    string Id { get; set; } = "comp-" + Guid.NewGuid().ToString("N");
+
+    [Parameter]
+    public string CSS { get; set; } = string.Empty;
+
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+    [Parameter]
+    public List<(int, IItemType)> Hierarchy { get; set; } = new();
+
+    private List<IDTO> Items { get; set; } = new();
+
+    private IJSObjectReference? jsModule;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (Item != null)
+        {
+            int pos = Hierarchy.Where(se => se.Item2.Name == Item.ItemType).FirstOrDefault().Item1;
+
+            if (pos < Hierarchy.Count)
+            {
+                IItemType it = Hierarchy[pos].Item2;
+
+                IQueryParameter qp = QueryParameter.Default("");
+                qp.ItemType = it.Name;
+                qp.MasterGUID = sql.MasterGUID;
+
+                IQueryResult result = await sql.GetRelatedItems(Item, it.Name, AssociationTyp.NULL);
+                Items = result.Items;
+            }
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var type = this.GetType();
+            var assemblyName = type.Assembly.GetName().Name;
+            var componentName = type.Name;
+
+            var jsPath = $"./_content/{assemblyName}/OKR/{componentName}.razor.js";
+
+            jsModule = await JS.InvokeAsync<IJSObjectReference>("import", jsPath);
+            await jsModule.InvokeVoidAsync("init", DotNetObjectReference.Create(this), "Initialisierungswert");
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (jsModule is not null)
+            {
+                await jsModule.DisposeAsync();
+            }
+        }
+        catch (Exception ex)
+        { }
+    }
+}

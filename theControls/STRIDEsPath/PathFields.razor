@@ -1,0 +1,53 @@
+﻿@if (Item != null)
+{
+    @if (!string.IsNullOrEmpty(Priority) || !string.IsNullOrEmpty(Status) || !string.IsNullOrEmpty(Progress))
+    {
+        <div class="row g-0 bg-surface-secondary border rounded p-1 align-items-center">
+            @if (!string.IsNullOrEmpty(Priority))
+            {
+                <div class="col-auto p-1">
+                    <PriorityBox Value="@Priority" />
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Status))
+            {
+                <div class="col-auto p-1 px-2">
+                    <StatusBox Value="@Status" />
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Progress))
+            {
+                <div class="col-auto p-1">
+                    <ProgressBar Value="@Progress" />
+                </div>
+            }
+        </div>
+    }
+}
+
+@code {
+
+    [Parameter]
+    public IDTO Item { get; set; }
+
+    private string Priority { get; set; } = string.Empty;
+    private string Status { get; set; } = string.Empty;
+    private string Progress { get; set; } = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Priority = string.Empty;
+        Status = string.Empty;
+        Progress = string.Empty;
+
+        if (Item != null)
+        {
+            Priority = Item["Prio"].ToSecureString();
+            Status = Item["Status"].ToSecureString();
+            Progress = Item["Progress"].ToSecureString();
+        }
+    }
+
+}

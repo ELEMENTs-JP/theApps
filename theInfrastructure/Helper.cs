@@ -393,7 +393,7 @@ namespace theInfrastructure
             }
             return Items;
         }
-        public static async Task<List<IDTO>> InitDropDown(IField field, ISqlDatabaseService sql)
+        public static async Task<List<IDTO>> InitDropDown(IField field, ISqlDatabaseService sql, IAppService appService)
         {
             List<IDTO> Items = new List<IDTO>();
 
@@ -503,6 +503,17 @@ namespace theInfrastructure
                 qp.ItemType = "ItemType";
                 IQueryResult result = await sql.GetItems(qp);
                 Items = result.Items.OrderBy(se => se.Title).ToList();
+
+                foreach (IApp app in appService.AllApps.Where(se => se.Typ == AppTyp.Custom || se.Typ == AppTyp.Predefined))
+                {
+                    List<IItemType> types = await app.GetItemTypes(AssociationTyp.Association);
+                    foreach (IItemType it in types)
+                    {
+                        Items.Add(new DTO { ID = it.Name, Title = it.Title });
+                    }
+                }
+
+                Items = Items.OrderBy(se => se.Title).ToList();
             }
             else if (field.Typ == FieldTyp.AppList)
             {

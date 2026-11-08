@@ -2,19 +2,12 @@
 @using theControls.Icons
 @using theControls.Input
 @using theControls.OKR
-@inject IMessagingBusService msg
-@inject ISecurityService sec
-@inject ISqlDatabaseService sql
-@inject ISearchService search
-@inject IAppService app
-@inject NavigationManager nm
-@inject INotificationService notify
-@inject IJSRuntime js
+@inherits BaseCtl
 @implements IAsyncDisposable
 
 @if (Field != null && Context != null && Context.Item != null)
 {
-    <div class="@( ((Border == true) ? "border " : "")) rounded-2 @FrameCSS position-relative @CheckCondition(Context.Item) @CssClass">
+    <div class="@( ((Border == true) ? "border " : "")) rounded-2 hover @FrameCSS position-relative @CheckCondition(Context.Item) @CssClass">
 
         @if (Field.Typ == FieldTyp.TextArea)
         {
@@ -278,7 +271,7 @@
     public string CssClass { get; set; } = "  ";
 
     [Parameter]
-    public string FrameCSS { get; set; } = "  p-1 px-2  ";
+    public string FrameCSS { get; set; } = "  p-1  ";
 
     [Parameter]
     public string ControlStyle { get; set; } = " ";
@@ -351,9 +344,9 @@
 
 
         hasUpdatePermission = await sec.HasItemTypePermission(Context.ItemType, SecurityFunction.Update);
+        this.IsEditable = hasUpdatePermission;
 
-
-        this.Items = await Helper.InitDropDown(Field, sql);
+        this.Items = await Helper.InitDropDown(Field, sql, appService);
 
         if (this.Field.Typ == FieldTyp.Gewichtung)
         {
@@ -424,7 +417,7 @@
         await Context.Update(Context.Item);
 
         // ItemType Event
-        IItemEventArgs args = new ItemEventArgs(Context.Item, null, sql, sec, app);
+        IItemEventArgs args = new ItemEventArgs(Context.Item, null, sql, sec, appService);
         Context.Item = await Context.ItemType.OnUpdateItem(args);
 
         // Update
@@ -449,7 +442,7 @@
         notify.NotifyChanged(Context.Item, NotificationType.Update, sec.User);
 
         // Search UPdate
-        await search.Init();
+        await searchService.Init();
 
         return Context.Item;
     }
@@ -482,7 +475,7 @@
             string url = Context.Item[this.Field.Column].ToSecureString();
             if (url.IsValidHttpsUrl())
             {
-                await js.InvokeVoidAsync("open", url, "_blank");
+                await JS.InvokeVoidAsync("open", url, "_blank");
             }
         }
     }

@@ -11,10 +11,16 @@ namespace theInfrastructure
         public string Namespace { get; set; } = "";
         public string ClassName { get; set; } = "";
         public string CSS { get; set; } = "col-12 my-2";
-        public Dictionary<string, object> ParameterList = null;
         public IItemType ItemType { get; set; } = null;
         public bool IsActive { get; set; } = true;
         public string Group { get; set; } = "Group"; // Gruppe für die Gruppierung des Typs des Controls 
+
+        public IDictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
+
+   
+
+
+  
     }
 
     // Interface 
@@ -61,9 +67,9 @@ namespace theInfrastructure
             this.CssColumnClass = def.CSS;
 
             // Parameter 
-            if (def.ParameterList != null)
+            if (def.Parameters != null)
             {
-                this.Parameters = def.ParameterList;
+                this.Parameters = def.Parameters;
             }
         }
     }

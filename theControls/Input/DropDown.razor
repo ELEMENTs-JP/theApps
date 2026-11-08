@@ -16,7 +16,28 @@
 
 <div class="position-relative overlay-container">
 
-    <div id="@( "frame_popup_" + ID )" name="@InputName" class="@(" w-100 dropdown-center editbox ")) ">
+    <div id="@( "frame_popup_" + ID )" name="@InputName" class="@(" w-100 dropdown-center ")) @( ((IsEditable) ? " editbox " : " viewbox no-select ") )">
+
+        @if (IsEditable == false)
+        {
+            
+          @if (HeaderTemplate is not null)
+                {
+                    @if (SelectedItem != null)
+                    {
+                        @HeaderTemplate(SelectedItem)
+                    }
+                }
+                else
+                {
+                    @if (SelectedItem != null)
+                    {
+                        @SelectedItem.Title
+                    }
+                }    
+        }
+        else
+        { 
 
         <div id="@( "link_popup_" + ID )" class="@(" row g-0 align-items-center ")" data-bs-toggle="dropdown">
 
@@ -84,6 +105,8 @@
 
          
         </div>
+  }
+    
     </div>
 
     @if (Inlay != null)

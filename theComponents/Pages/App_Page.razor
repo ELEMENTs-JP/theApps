@@ -1,24 +1,32 @@
 ﻿@page "/App/{ID}"
-@inject ISqlDatabaseService sql
-@inject IAppService apps
+@inherits BaseCtl
 
 <PageTitle>the App | Application</PageTitle>
 
-@if (apps.App != null)
+@if (appService.App != null)
 {
     <div class="container-flex">
 
-        <Header PreTitle="Application" Title="@apps.App.Name" PostTitle="" Border="true" />
+        <Header PreTitle="Application" Title="@appService.App.Name" PostTitle="" Border="true" />
 
         <div class="row g-0">
             <div class="col-7 p-2">
-                <MinimumItemComp />
+        
             </div>
             <div class="col-5 p-2">
-
-         
-
             </div>
+        </div>
+
+        <div class="row g-0">
+        
+            @foreach (ComponentDefinition def in Components)
+            {
+                <div class="@def.CSS">
+                    <DynamicComponent @key="def.ClassName" Type="@Helper.SpecificType(def.Namespace, def.ClassName)" 
+                                        Parameters="@def.Parameters" />
+                </div>
+            }
+
         </div>
 
     </div>
@@ -30,23 +38,18 @@
     [Parameter]
     public string ID { get; set; } = string.Empty;
 
+    private List<ComponentDefinition> Components { get; set; } = new List<ComponentDefinition>();
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
 
         if (!string.IsNullOrEmpty(this.ID))
         {
-            Factory f = new Factory(sql);
-            // App = await f.BuildApp(ID);
-
-            // if (App.Name == apps.App.Name)
-            // {
-                
-            
-            // }
+            if (appService.App != null)
+            {
+                Components = await appService.App.GetDashboardComponents();
+            }
         }
-
-     
     }
-
 }

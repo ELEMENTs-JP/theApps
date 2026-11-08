@@ -5,7 +5,7 @@
 <div class="position-relative overlay-container">
     <textarea id="@ID"
               name="@InputName"
-              class="editbox @CssClass @(Overlay != null ? "pe-6" : "")"
+              class="@( (IsEditable ? " editbox " : " viewbox no-select ")) @CssClass @(Overlay != null ? "pe-6" : "")"
               style="@( Style + " " + ((Rounded) ? " " : " border-radius: 0 !important; "))"
               placeholder="@Placeholder"
               maxlength="@MaxLength"

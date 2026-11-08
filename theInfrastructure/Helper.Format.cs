@@ -785,6 +785,31 @@ namespace theInfrastructure
         }
 
         private static readonly CultureInfo GermanCulture = CultureInfo.GetCultureInfo("de-DE");
+        public static string ToFormat(this string input, FieldTyp typ)
+        {
+
+            switch (typ)
+            {
+                case FieldTyp.Date:
+                    {
+                        return input.ToSecureDateTime().ToShortDateString();
+                    }
+                case FieldTyp.Time:
+                    {
+                        return input.ToSecureDateTime().ToShortTimeString();
+                    }
+                case FieldTyp.DateTime:
+                    {
+                        return input.ToSecureDateTime().ToShortDateString() + " | " + input.ToSecureDateTime().ToShortTimeString();
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+            
+            return input;
+        }
         public static string ToFormat(this string input, TextFormat format)
         {
             switch (format)

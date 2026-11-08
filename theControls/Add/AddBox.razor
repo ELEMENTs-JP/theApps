@@ -1,8 +1,8 @@
 ﻿@using theControls.Essentials
 @using theControls.Icons
 @using theControls.Input
-@inject ISqlDatabaseService sql
-
+@inherits BaseCtl
+@implements IAsyncDisposable
 
 @if (Field != null)
 {
@@ -180,7 +180,7 @@
     // Methods 
     public async Task Init()
     {
-        this.Items = await Helper.InitDropDown(Field, sql);
+        this.Items = await Helper.InitDropDown(Field, sql, appService);
 
         // if (Field.Typ == FieldTyp.CheckBox)
         // {
@@ -211,5 +211,21 @@
 
     [Parameter]
     public EventCallback<List<IDTO>> ItemsChanged { get; set; }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (Items != null)
+            {
+                Items.Clear();
+                Items = null;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("FAIL : DISPOSE : BoardComp : " + ex.Message);
+        }
+    }
 
 }

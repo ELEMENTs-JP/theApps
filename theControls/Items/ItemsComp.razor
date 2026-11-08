@@ -1,13 +1,6 @@
 ﻿@using theControls.Folder
-@inject IAppService app
-@inject ISqlDatabaseService sql
-@inject ISecurityService sec
-@inject IMessagingBusService msg
-@inject ISearchService search
-@inject INotificationService notify
-@inject ILocalizationService loc
 
-@inject NavigationManager nm
+@inherits BaseCtl
 
 @if (ItemType != null)
 {
@@ -149,39 +142,7 @@
         }
     }
 
-    // Helper
-    // private async Task CreateRedirect()
-    // {
-    //     IQueryParameter qp = QueryParameter.Default("neuer Termin");
-    //     qp.ItemType = "Appointment";
-    //     qp.MasterGUID = sql.MasterGUID;
-
-    //     await sql.Create(qp);
-
-    //     IQueryResult result = await sql.GetItem(qp);
-    //     IDTO newItem = result.Items.FirstOrDefault();
-    //     if (newItem != null)
-    //     {
-    //         nm.NavToItem(qp.ItemType, qp.GUID);
-
-    //         if (sec.Configuration.EventHandler == true)
-    //         {
-    //             // Event
-    //             IItemEventArgs args = new ItemEventArgs(newItem, null, sql, sec, app);
-
-    //             // Create Event
-    //             IItemType it = await new Factory(sql).BuildItemType(qp.ItemType);
-    //             newItem = await it.OnCreateItem(args);
-    //         }
-
-    //         // Message
-    //         AppMessage am = new AppMessage("ID", BusAction.Refresh, "Datensatz erzeugt");
-    //         msg.Publish(am);
-
-    //         // Search
-    //         await search.Init();
-    //     }
-    // }
+  
     private async Task ItemDelete(IDTO dto)
     {
         try

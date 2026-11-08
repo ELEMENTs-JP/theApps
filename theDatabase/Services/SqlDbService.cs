@@ -914,7 +914,7 @@ namespace theDatabase
                 return info;
             }
 
-            string relationTypeStr = Typ.ToSecureEnumString();
+         
 
             try
             {
@@ -1011,7 +1011,219 @@ namespace theDatabase
             return resultList;
         }
 
-        private async Task<List<IDTO>> GetAll_obsolete(IDTO dto, string ItemType, AssociationTyp typ)
+
+
+        public async Task<List<IDTO>> GetAll(IDTO dto, string ItemType, AssociationTyp typ)
+        {
+            // Result List
+            List<IDTO> resultList = new List<IDTO>();
+
+            // Prüft auf ungültige Eingangsparameter. 
+            if (dto == null || dto.GUID == Guid.Empty)
+            {
+                return resultList;
+            }
+
+            try
+            {
+                // Erstellt den Datenbankkontext in einem using-Block
+                using SQLDbContext ctx = GetContext();
+
+                // Prüft, ob der Relationstyp ignoriert werden soll. 
+                bool ignoreRelationType = typ == AssociationTyp.NULL;
+                string relationTypeString = typ.ToSecureEnumString();
+
+                // Ruft Relationen ab, bei denen das DTO Parent ist. 
+                var asParent = await ctx.tbl_TEC_Relation.AsNoTracking()
+                    .Where(pr => pr.ParentGUID == dto.GUID 
+                    && (ignoreRelationType || pr.RelationType == relationTypeString))
+                    .Select(pr => new { ContentGuid = pr.ChildGUID, pr.RelationType })
+                    .ToListAsync();
+
+                // Ruft Relationen ab, bei denen das DTO Child ist. 
+                var asChild = await ctx.tbl_TEC_Relation.AsNoTracking()
+                    .Where(cr => cr.ChildGUID == dto.GUID 
+                    && (ignoreRelationType || cr.RelationType == relationTypeString))
+                    .Select(cr => new { ContentGuid = cr.ParentGUID, cr.RelationType })
+                    .ToListAsync();
+
+                // Führt beide Richtungen zusammen und bereinigt Duplikate.
+                // Erzeugt eine eindeutige Menge von Ziel-GUIDs.
+                // In-Memory-Verarbeitung schont die Datenbank.
+                var relations = asParent.Concat(asChild)
+                    .GroupBy(x => x.ContentGuid)
+                    .Select(g => new { ContentGuid = g.Key, RelationType = g.First().RelationType })
+                    .ToList();
+
+                // Prüft, ob Relationen gefunden wurden.
+                // Verhindert nachfolgende Leerabfragen.
+                if (!relations.Any())
+                {
+                    // Gibt die leere Liste zurück.
+                    // Früher Ausstieg bei fehlenden Verknüpfungen. 
+                    return resultList;
+                }
+
+                // Extrahiert die reinen GUIDs
+                // Erstellt eine kompakte Schlüsselliste.
+                // Reduziert den Speicherbedarf für den Filter.
+                var contentGuids = relations.Select(r => r.ContentGuid).ToList();
+
+                // Erstellt ein Dictionary für den Relationstyp pro GUID.
+                // Ermöglicht die schnelle Zuweisung.
+                // Bietet O(1)-Zugriffszeit im Arbeitsspeicher.
+                var relationDict = relations.ToDictionary(r => r.ContentGuid, r => r.RelationType);
+
+                // Initialisiert die Sammelliste für Content-Objekte.
+                // Vermeidet häufiges Reallokieren von Speicher.
+                var allContents = new List<tbl_CON_Content>();
+
+                // Teilt die GUID-Liste in Blöcke auf.
+                // Umgeht das SQL Server Parameter-Limit von 2100.
+                // Hält SQL-Abfragen innerhalb optimaler Ausführungspläne.
+                foreach (var chunk in contentGuids.Chunk(2000))
+                {
+                    // Erstellt die Content-Abfrage ohne Tracking.
+                    // Lädt nur die benötigten Datensätze.
+                    // Deaktiviert den Change Tracker für maximale Abfragegeschwindigkeit.
+                    var contentQuery = ctx.tbl_CON_Content.AsNoTracking()
+                        .Where(c => chunk.Contains(c.GUID));
+
+                    // Prüft auf optionalen ItemType-Filter.
+                    // Schränkt die Ergebnismenge typspezifisch ein.
+                    // Verringert die zu verarbeitende Datenmenge.
+                    if (!string.IsNullOrEmpty(ItemType))
+                    {
+                        // Wendet den ItemType-Filter an.
+                        // Filtert direkt auf der Datenbank.
+                        // Nutzt vorhandene Datenbankindizes.
+                        contentQuery = contentQuery.Where(c => c.ItemType == ItemType);
+                    }
+
+                    // Führt den aktuellen Block aus.
+                    // Lädt den Teilabschnitt der Daten.
+                    // Begrenzt den gleichzeitigen Speicherverbrauch.
+                    var batch = await contentQuery.ToListAsync();
+
+                    // Fügt den Block zur Gesamtliste hinzu.
+                    // Aggregiert die Ergebnisse.
+                    // Effiziente Massenübernahme in die Liste.
+                    allContents.AddRange(batch);
+                }
+
+                // Iteriert über alle geladenen Content-Datensätze.
+                // Überträgt die Relationsdaten in die DTOs.
+                // Reine In-Memory-Schleife ohne DB-Zugriffe.
+                foreach (var content in allContents)
+                {
+                    // Prüft auf IDTO-Kompatibilität.
+                    // Gewährleistet korrekte Typumwandlung.
+                    // Schnelle Typprüfung im Arbeitsspeicher.
+                    if (content is IDTO dtoItem)
+                    {
+                        // Holt den passenden Relationstyp aus dem Dictionary.
+                        // Verknüpft Metadaten mit dem Objekt.
+                        // Direkter O(1)-Lookup.
+                        if (relationDict.TryGetValue(content.GUID, out var relType))
+                        {
+                            // Setzt den Relationstyp.
+                            // Übergibt die Information an das Zielobjekt.
+                            // Direkte Zuweisung im Speicher.
+                            dtoItem.RelationType = relType;
+                        }
+                        resultList.Add(dtoItem);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
+            }
+
+            // Entfernt finale Duplikate und gibt die Liste zurück.
+            // Garantiert eindeutige Datensätze im Endergebnis.
+            // Nutzt optimierte LINQ-Hash-Algorithmen.
+            return resultList.DistinctBy(se => se.GUID).ToList();
+        }
+
+
+
+
+        public async Task<List<IDTO>> GetAll_ohneChunks(IDTO dto, string ItemType, AssociationTyp typ)
+        {
+            List<IDTO> resultList = new List<IDTO>();
+
+            if (dto == null || dto.GUID == Guid.Empty)
+            {
+                return resultList;
+            }
+
+            try
+            {
+                using SQLDbContext ctx = GetContext();
+
+                bool ignoreRelationType = typ == AssociationTyp.NULL;
+                string relationTypeString = typ.ToString();
+
+                // 1. Relationen abrufen, bei denen dto Parent ist (gesuchter Content ist Child)
+                var asParent = await ctx.tbl_TEC_Relation.AsNoTracking()
+                    .Where(pr => pr.ParentGUID == dto.GUID && (ignoreRelationType || pr.RelationType == relationTypeString))
+                    .Select(pr => new { ContentGuid = pr.ChildGUID, pr.RelationType })
+                    .ToListAsync();
+
+                // 2. Relationen abrufen, bei denen dto Child ist (gesuchter Content ist Parent)
+                var asChild = await ctx.tbl_TEC_Relation.AsNoTracking()
+                    .Where(cr => cr.ChildGUID == dto.GUID && (ignoreRelationType || cr.RelationType == relationTypeString))
+                    .Select(cr => new { ContentGuid = cr.ParentGUID, cr.RelationType })
+                    .ToListAsync();
+
+                // Richtungen zusammenführen und Duplikate auf ID-Ebene bereinigen
+                var relations = asParent.Concat(asChild)
+                    .GroupBy(x => x.ContentGuid)
+                    .Select(g => new { ContentGuid = g.Key, RelationType = g.First().RelationType })
+                    .ToList();
+
+                if (!relations.Any())
+                {
+                    return resultList;
+                }
+
+                var contentGuids = relations.Select(r => r.ContentGuid).ToList();
+
+                // 3. Entitäten über die GUIDs laden und optional nach ItemType filtern
+                var contentQuery = ctx.tbl_CON_Content.AsNoTracking()
+                    .Where(c => contentGuids.Contains(c.GUID));
+
+                if (!string.IsNullOrEmpty(ItemType))
+                {
+                    contentQuery = contentQuery.Where(c => c.ItemType == ItemType);
+                }
+
+                var contents = await contentQuery.ToListAsync();
+                var relationDict = relations.ToDictionary(r => r.ContentGuid, r => r.RelationType);
+
+                foreach (var content in contents)
+                {
+                    if (content is IDTO dtoItem)
+                    {
+                        if (relationDict.TryGetValue(content.GUID, out var relType))
+                        {
+                            dtoItem.RelationType = relType;
+                        }
+                        resultList.Add(dtoItem);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"FAIL: {ex.Message}");
+                Debugger.Break();
+            }
+
+            return resultList.DistinctBy(se => se.GUID).ToList();
+        }
+        private async Task<List<IDTO>> GetAll_obsolete_old(IDTO dto, string ItemType, AssociationTyp typ)
         {
             List<IDTO> resultList = new List<IDTO>();
 
@@ -1059,7 +1271,7 @@ namespace theDatabase
 
             return resultList.DistinctBy(se => se.GUID).ToList();
         }
-        public async Task<List<IDTO>> GetAll(IDTO dto, string ItemType, AssociationTyp typ)
+        public async Task<List<IDTO>> GetAll_obsolete_new(IDTO dto, string ItemType, AssociationTyp typ)
         {
             List<IDTO> resultList = new List<IDTO>();
 
@@ -1102,42 +1314,6 @@ namespace theDatabase
                         resultList.Add(dtoItem);
                     }
                 }
-
-
-                //using SQLiteContext ctx = GetContext();
-
-                //var query = await (from content in ctx.tbl_CON_Content
-
-                //                   // Suche Relationen, wo Content das Parent ist und dto.GUID das Child
-                //                   join pr in ctx.tbl_TEC_Relation.Where(se => se.RelationType == typ.ToString())
-                //                     on new { Parent = content.GUID, Child = dto.GUID }
-                //                 equals new { Parent = pr.ParentGUID, Child = pr.ChildGUID } into parentRelations
-                //                   from pr in parentRelations.DefaultIfEmpty()
-
-                //                       // Suche Relationen, wo Content das Child ist und dto.GUID das Parent
-                //                   join cr in ctx.tbl_TEC_Relation.Where(se => se.RelationType == typ.ToString())
-                //                     on new { Child = content.GUID, Parent = dto.GUID }
-                //                 equals new { Child = cr.ChildGUID, Parent = cr.ParentGUID } into childRelations
-                //                   from cr in childRelations.DefaultIfEmpty()
-
-                //                       // Es dürfen nur Einträge geladen werden, die mindestens eine Treffer-Relation haben
-                //                   where (pr != null || cr != null)
-                //                      && (string.IsNullOrEmpty(ItemType) || content.ItemType == ItemType)
-
-                //                   select new
-                //                   {
-                //                       Content = content,
-                //                       RelationType = pr != null ? pr.RelationType : cr.RelationType
-                //                   }).Distinct().ToListAsync();
-
-                //foreach (var item in query)
-                //{
-                //    if (item.Content is IDTO dtoItem)
-                //    {
-                //        dtoItem.RelationType = item.RelationType;
-                //        resultList.Add(dtoItem);
-                //    }
-                //}
             }
             catch (Exception ex)
             {

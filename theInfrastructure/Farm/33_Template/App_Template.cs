@@ -21,6 +21,9 @@ namespace theInfrastructure
             this.Description = Item["Description"].ToSecureString();
             this.Group = Item["Group"].ToSecureString();
             this.IsActive = Item["IsActive"].ToSecureBool();
+            
+            // Custom // CMS App 
+            this.Typ = AppTyp.Custom;
         }
 
         public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Children)

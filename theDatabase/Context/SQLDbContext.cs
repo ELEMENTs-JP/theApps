@@ -68,6 +68,41 @@ namespace theDatabase
         // Events 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // SQLite 
+            #region SQLite
+            // Content 
+            modelBuilder.Entity<tbl_CON_Content>(entity =>
+            {
+                entity.OwnsMany(e => e.Properties, builder =>
+                {
+                    builder.ToJson();
+                });
+
+                entity.OwnsOne(x => x.Metadata, builder =>
+                {
+                    builder.ToJson();
+                });
+            });
+
+            // Relation 
+            modelBuilder.Entity<tbl_TEC_Relation>()
+                .HasKey(c => new
+                {
+                    c.MasterGUID,
+                    c.RelationType,
+                    c.ParentGUID,
+                    c.ChildGUID
+                });
+
+            modelBuilder.Entity<tbl_TEC_Relation>()
+                .HasIndex(c => new { c.ParentGUID, c.RelationType });
+
+            modelBuilder.Entity<tbl_TEC_Relation>()
+                .HasIndex(c => new { c.ChildGUID, c.RelationType });
+            #endregion
+        }
+        protected void OnModelCreating_old(ModelBuilder modelBuilder)
+        {
 
             // SQLite 
             #region SQLite

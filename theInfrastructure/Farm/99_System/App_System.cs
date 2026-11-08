@@ -12,6 +12,8 @@ namespace theInfrastructure
             Name = "System";
             IsNavigation = false;
 
+            // Typ 
+            this.Typ = AppTyp.System;
         }
 
         public override async Task<List<IItemType>> GetItemTypes(AssociationTyp ast = AssociationTyp.Association)

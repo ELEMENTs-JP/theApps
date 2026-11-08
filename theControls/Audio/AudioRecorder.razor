@@ -1,0 +1,300 @@
+@using Microsoft.JSInterop
+@using Microsoft.AspNetCore.Components.Web
+@using System.IO
+
+<div class="border rounded p-2">
+    @if (!string.IsNullOrEmpty(permissionStatusMessage))
+        @if (!string.IsNullOrEmpty(permissionStatusMessage))
+        {
+            <div class="alert @(hasPermission ? "alert-success" : "alert-warning") p-2 mb-3" role="alert">
+                @permissionStatusMessage
+            </div>
+        }
+
+    <div class="d-flex align-items-center gap-2 mb-3">
+        @if (!isRecording)
+        {
+            <div class="hover pointer rounded p-1 px-1 bg-danger text-white d-inline-flex align-items-center gap-1 @(!hasPermission ? "opacity-50" : "")" @onclick="StartRecordingAsync">
+                <i class="bi bi-mic-fill"></i>
+                <span>Aufnahme starten</span>
+            </div>
+        }
+        else
+        {
+            <div class="hover pointer rounded p-1 px-1 bg-dark text-white d-inline-flex align-items-center gap-1 animate-pulse" @onclick="StopRecordingAsync">
+                <i class="bi bi-stop-fill"></i>
+                <span>Aufnahme stoppen</span>
+            </div>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger p-2 mb-2" role="alert">
+            @errorMessage
+        </div>
+    }
+
+    @if (latestRecording != null)
+    {
+        <div class="border-top my-2 pt-2">
+            <h6>Aktuell aufgenommene Audio-Datei:</h6>
+            <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded">
+                <span class="text-truncate me-2">@latestRecording.FileName</span>
+                <div class="d-flex align-items-center gap-2">
+                    <audio controls src="@latestRecording.WebPath" class="me-2"></audio>
+                    <div class="hover pointer rounded p-1 px-1 text-danger border border-danger d-inline-flex align-items-center" @onclick="() => DeleteAudioAsync(latestRecording)">
+                        <i class="bi bi-trash-fill"></i>
+                        <span class="ms-1">Löschen</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="border-top my-2 pt-2">
+        <h6>Bisherige Aufnahmen (@recordings.Count)</h6>
+        @if (recordings.Count == 0)
+        {
+            <p class="text-muted small m-0">Keine Aufnahmen vorhanden.</p>
+        }
+        else
+        {
+            <ul class="list-group list-group-flush">
+                @foreach (var file in recordings)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-file-earmark-music"></i>
+                            <span class="small">@file.FileName</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <audio controls src="@file.WebPath"></audio>
+                            <div class="hover pointer rounded p-1 px-1 text-danger d-inline-flex align-items-center" @onclick="() => DeleteAudioAsync(file)">
+                                <i class="bi bi-trash-fill"></i>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
+
+@code {
+    [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+
+    [Parameter] public string UploadDirectory { get; set; } = "wwwroot/audio";
+    [Parameter] public string RelativeWebPath { get; set; } = "audio";
+
+    private IJSObjectReference? jsModule;
+    private DotNetObjectReference<AudioRecorder>? objRef;
+    private bool isRecording = false;
+    private bool hasPermission = false;
+    private string permissionStatusMessage = "Prüfe Mikrofon-Berechtigung...";
+    private string? errorMessage;
+    private AudioFileInfo? latestRecording;
+    private List<AudioFileInfo> recordings = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            objRef = DotNetObjectReference.Create(this);
+            var assemblyName = GetType().Assembly.GetName().Name;
+            var componentName = GetType().Name;
+            var jsPath = $"./_content/{assemblyName}/{componentName}.razor.js";
+
+            jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", jsPath);
+
+            // Vorab-Prüfung der Mikrofon-Berechtigung
+            await CheckMicrophonePermissionAsync();
+
+            await LoadRecordingsAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task CheckMicrophonePermissionAsync()
+    {
+        if (jsModule != null)
+        {
+            try
+            {
+                var status = await jsModule.InvokeAsync<string>("checkMicrophonePermission");
+                UpdatePermissionState(status);
+            }
+            catch
+            {
+                permissionStatusMessage = "Mikrofon-Berechtigung konnte nicht automatisch abgefragt werden. Wird bei Aufnahme angefordert.";
+                hasPermission = true; // Fallback, falls die Permissions API vom Browser nicht unterstützt wird
+            }
+        }
+    }
+
+    [JSInvokable]
+    public void OnPermissionChanged(string status)
+    {
+        UpdatePermissionState(status);
+        StateHasChanged();
+    }
+
+    private void UpdatePermissionState(string status)
+    {
+        switch (status)
+        {
+            case "granted":
+            hasPermission = true;
+            permissionStatusMessage = "Mikrofon-Zugriff ist erlaubt.";
+            break;
+            case "prompt":
+            hasPermission = true;
+            permissionStatusMessage = "Mikrofon-Zugriff muss beim Starten der Aufnahme erlaubt werden.";
+            break;
+            case "denied":
+            hasPermission = false;
+            permissionStatusMessage = "Mikrofon-Zugriff wurde verweigert. Bitte in den Browsereinstellungen erlauben.";
+            break;
+            default:
+            hasPermission = true;
+            permissionStatusMessage = string.Empty;
+            break;
+        }
+    }
+
+    private async Task StartRecordingAsync()
+    {
+        errorMessage = null;
+        if (!hasPermission)
+        {
+            errorMessage = "Aufnahme nicht möglich, da keine Mikrofon-Berechtigung vorliegt.";
+            return;
+        }
+
+        if (jsModule != null)
+        {
+            try
+            {
+                await jsModule.InvokeVoidAsync("startRecording", objRef);
+                isRecording = true;
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Fehler beim Starten der Aufnahme: {ex.Message}";
+            }
+        }
+    }
+
+    private async Task StopRecordingAsync()
+    {
+        if (jsModule != null && isRecording)
+        {
+            try
+            {
+                await jsModule.InvokeVoidAsync("stopRecording", objRef);
+                isRecording = false;
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Fehler beim Stoppen der Aufnahme: {ex.Message}";
+            }
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnAudioCaptured(string base64Data, string mimeType)
+    {
+        try
+        {
+            if (!Directory.Exists(UploadDirectory))
+            {
+                Directory.CreateDirectory(UploadDirectory);
+            }
+
+            var bytes = Convert.FromBase64String(base64Data);
+            var extension = mimeType.Contains("webm") ? ".webm" : ".wav";
+            var fileName = $"rec_{DateTime.Now:yyyyMMdd_HHmmss}{extension}";
+            var filePath = Path.Combine(UploadDirectory, fileName);
+
+            await File.WriteAllBytesAsync(filePath, bytes);
+
+            var webPath = $"{RelativeWebPath}/{fileName}";
+            var audioFile = new AudioFileInfo
+            {
+                FileName = fileName,
+                FullPath = filePath,
+                WebPath = webPath
+            };
+
+            latestRecording = audioFile;
+            await LoadRecordingsAsync();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Fehler beim Speichern der Datei: {ex.Message}";
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadRecordingsAsync()
+    {
+        recordings.Clear();
+        if (Directory.Exists(UploadDirectory))
+        {
+            var files = Directory.GetFiles(UploadDirectory, "*.*")
+                                 .Where(f => f.EndsWith(".webm") || f.EndsWith(".wav") || f.EndsWith(".mp3"))
+                                 .OrderByDescending(f => File.GetCreationTime(f));
+
+            foreach (var file in files)
+            {
+                var name = Path.GetFileName(file);
+                recordings.Add(new AudioFileInfo
+                {
+                    FileName = name,
+                    FullPath = file,
+                    WebPath = $"{RelativeWebPath}/{name}"
+                });
+            }
+        }
+        await Task.CompletedTask;
+    }
+
+    private async Task DeleteAudioAsync(AudioFileInfo file)
+    {
+        try
+        {
+            if (File.Exists(file.FullPath))
+            {
+                File.Delete(file.FullPath);
+            }
+
+            if (latestRecording?.FullPath == file.FullPath)
+            {
+                latestRecording = null;
+            }
+
+            await LoadRecordingsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Fehler beim Löschen der Datei: {ex.Message}";
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (jsModule != null)
+        {
+            await jsModule.DisposeAsync();
+        }
+        objRef?.Dispose();
+    }
+
+    public class AudioFileInfo
+    {
+        public string FileName { get; set; } = string.Empty;
+        public string FullPath { get; set; } = string.Empty;
+        public string WebPath { get; set; } = string.Empty;
+    }
+}

@@ -1,0 +1,71 @@
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+@inherits BaseCtl
+
+
+@foreach (IDTO item in Items)
+{
+    <OkrItem @key="@item.GUID" Item="@item" Hierarchy="@Hierarchy" />    
+}
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = "comp-" + Guid.NewGuid().ToString("N");
+
+
+    [Parameter]
+    public List<(int, IItemType)> Hierarchy { get; set; } = new List<(int, IItemType)>();
+
+    List<IDTO> Items { get; set; }
+
+
+    private IJSObjectReference? jsModule;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        IItemType objective = Hierarchy[0].Item2;
+
+        IQueryParameter qp = QueryParameter.Default("");
+        qp.ItemType = objective.Name;
+        qp.MasterGUID = sql.MasterGUID;
+
+        IQueryResult result = await sql.GetItems(qp);
+        Items = result.Items;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var type = this.GetType();
+            var assemblyName = type.Assembly.GetName().Name;
+            var componentName = type.Name;
+
+            var jsPath = $"./_content/{assemblyName}/OKR/{componentName}.razor.js";
+
+            jsModule = await JS.InvokeAsync<IJSObjectReference>("import", jsPath);
+            await jsModule.InvokeVoidAsync("init", DotNetObjectReference.Create(this), "Initialisierungswert");
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (jsModule is not null)
+            {
+                await jsModule.DisposeAsync();
+            }
+        }
+        catch (Exception ex)
+        { }
+    }
+}

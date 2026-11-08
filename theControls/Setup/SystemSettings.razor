@@ -53,7 +53,7 @@ appService.Configuration.Save();     })" />
     </div>
     <div class="col-12 col-md-4 col-lg-4 px-2">
         <DropDown Label="Sprache" Value="@loc.Configuration.Sprache"
-                  Items="@( Helper.InitDropDown(LanguageField, sql).Result)"
+                  Items="@( Helper.InitDropDown(LanguageField, sql, appService).Result)"
                   IDChanged="@(e => { loc.Configuration.Sprache = e;
                                           loc.Configuration.Save(); })" />
 
@@ -66,7 +66,7 @@ appService.Configuration.Save();     })" />
         <div class="border-bottom my-2"></div>
 
         <DropDown Label="Währung" Value="@loc.Configuration.Currency"
-                  Items="@( Helper.InitDropDown(CurrencyField, sql).Result)"
+                  Items="@( Helper.InitDropDown(CurrencyField, sql, appService).Result)"
                   IDChanged="@(e => { loc.Configuration.Currency = e;
                                           loc.Configuration.Save(); })" />
 
