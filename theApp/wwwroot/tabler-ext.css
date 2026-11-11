@@ -86,9 +86,6 @@
 
 
 
-
-
-
 /* Der obere Rahmen wird nur gesetzt, wenn der Container nicht leer ist */
 .list:not(:empty) {
     border-top: var(--tblr-border-width) solid var(--tblr-border-color);
