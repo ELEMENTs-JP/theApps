@@ -5,7 +5,7 @@
 
 @if (!string.IsNullOrEmpty(this.Label))
 {
-    <label class="form-label text-secondary" for="@ID">@Label</label>
+    <label class="form-label @LabelCSS" for="@ID">@Label</label>
 }
 
 <div class="position-relative overlay-container p-1">
@@ -106,6 +106,9 @@
 
     [Parameter]
     public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string LabelCSS { get; set; } = "";
 
     [Parameter]
     public string Description { get; set; } = string.Empty;

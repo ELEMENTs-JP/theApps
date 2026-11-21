@@ -4,7 +4,7 @@
 
 @if (!string.IsNullOrEmpty(this.Label))
 {
-    <label class="form-label text-secondary" for="@ID" data-id="lbl-selection-@ID">
+    <label class="form-label @LabelCSS" for="@ID" data-id="lbl-selection-@ID">
         @Label
      @if (!string.IsNullOrEmpty(TitleNavigationLink))
         {
@@ -167,6 +167,9 @@
 
     [Parameter]
     public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string LabelCSS { get; set; } = "";
 
     [Parameter]
     public string TitleNavigationLink { get; set; } = string.Empty;

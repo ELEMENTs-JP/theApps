@@ -95,6 +95,7 @@ namespace theInfrastructure
                 CSS = "col-12 col-lg-6",
                 Description = "Was ist abgedeckt.",
                 OnDisplay = new FieldDisplay(true, false, false, false),
+                LabelCSS = "text-success",
             });
 
             fields.Add(new Field()
@@ -105,6 +106,7 @@ namespace theInfrastructure
                 CSS = "col-12 col-lg-6",
                 Description = "Was ist nicht abgedeckt.",
                 OnDisplay = new FieldDisplay(true, false, false, false),
+                LabelCSS = "text-danger",
             });
 
             return fields;

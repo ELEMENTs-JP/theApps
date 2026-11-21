@@ -1,6 +1,6 @@
 ﻿@if (!string.IsNullOrEmpty(this.Label) && ShowLabel == true)
 {
-    <label class="form-label text-secondary no-select" for="@Id">@Label</label>
+    <label class="form-label @LabelCSS no-select" for="@Id">@Label</label>
 }
 
 <div class="row g-0">
@@ -121,6 +121,9 @@
 
     [Parameter]
     public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string LabelCSS { get; set; } = "";
 
     [Parameter]
     public string Description { get; set; } = string.Empty;

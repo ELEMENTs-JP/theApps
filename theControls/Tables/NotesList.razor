@@ -32,6 +32,29 @@
                                 </div>
                             </Overlay>
                         </TextArea> *@
+
+                        <div class="row g-0 px-1 border-top small text-muted">
+                            <div class="col-auto p-1 fw-bold">
+                                @loc.GetLabel("Erstellung", "Author")
+                            </div>
+                            <div class="col-auto p-1">
+                                @item.Metadata.Creator
+                            </div>
+                            <div class="col-auto p-1">
+                                @item.Metadata.CreatedAt.ToShortDateString()
+                            </div>
+                            <div class="col p-1">
+                            </div>
+                            <div class="col-auto p-1 fw-bold">
+                                @loc.GetLabel("Bearbeitung", "Editor")
+                            </div>
+                            <div class="col-auto p-1">
+                                @item.Metadata.Editor
+                            </div>
+                            <div class="col-auto p-1">
+                                @item.Metadata.EditedAt.ToShortDateString()
+                            </div>
+                        </div>
                     </div>
                 }
             </div>

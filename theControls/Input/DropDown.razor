@@ -3,7 +3,7 @@
 
 @if (!string.IsNullOrEmpty(this.Label))
 {
-    <label class="form-label text-secondary" for="@ID" data-id="lbl-dropdown-@ID">
+    <label class="form-label @LabelCSS" for="@ID" data-id="lbl-dropdown-@ID">
         @Label
     
         @if (!string.IsNullOrEmpty(TitleNavigationLink))
@@ -16,7 +16,8 @@
 
 <div class="position-relative overlay-container">
 
-    <div id="@( "frame_popup_" + ID )" name="@InputName" class="@(" w-100 dropdown-center ")) @( ((IsEditable) ? " editbox " : " viewbox no-select ") )">
+    <div id="@( "frame_popup_" + ID )" name="@InputName" 
+         class="@(" w-100 dropdown-center ")) @( ((IsEditable) ? " editbox inputBox " : " viewbox no-select ") )">
 
         @if (IsEditable == false)
         {
@@ -162,6 +163,9 @@
 
     [Parameter]
     public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string LabelCSS { get; set; } = "";
 
     [Parameter]
     public string TitleNavigationLink { get; set; } = string.Empty;

@@ -2,7 +2,7 @@
 
 @if (!string.IsNullOrEmpty(this.Label))
 {
-    <label class="form-label text-secondary" for="@Id">
+    <label class="form-label @LabelCSS" for="@Id">
         @Label
     </label>
 }
@@ -43,6 +43,9 @@
 
     [Parameter]
     public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string LabelCSS { get; set; } = "";
 
     [Parameter]
     public string Value { get; set; }

@@ -14,6 +14,7 @@ namespace theInfrastructure
         string Description { get; set; }
         string Placeholder { get; set; }
         string CSS { get; set; }
+        string LabelCSS { get; set; }
         string Extension { get; set; }
         bool IsNecessary { get; set; }
         string DefaultValue { get; set; }
@@ -51,6 +52,7 @@ namespace theInfrastructure
         public string DefaultValue { get; set; } = string.Empty;
 
         public string CSS { get; set; } = "col";
+        public string LabelCSS { get; set; } = "";
         public string Extension { get; set; } = string.Empty;
         public DeviceDisplay OnDevice { get; set; } = DeviceDisplay.NULL;
         public FieldDisplay OnDisplay { get; set; } = new();

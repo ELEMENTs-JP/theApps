@@ -13,6 +13,7 @@
         {
             <TextArea @key="@( "TextArea-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
                       Label="@Title" Description="@Description" Value="@Value"
+                      LabelCSS="@Field.LabelCSS"
                       ValueChanged="@(async e => { onValueChanged(e); await Change(); })"
                       Placeholder="@Field.Placeholder"
                       CssClass="@CssClass" Rounded="@Rounded"
@@ -221,6 +222,7 @@
         {
             <TextBox @key="@( "TextBox-" + Context.ID + "-" + Field.Title + "-" + Context.Item.GUID)"
                      Label="@Title" Description="@Description" Value="@Value" ShowLabel="@ShowLabel"
+                     LabelCSS="@Field.LabelCSS"
                      ValueChanged="@(async e =>{ onValueChanged(e); await Change(); })"
                      Type="@Field.Typ"
                      Placeholder="@Field.Placeholder"

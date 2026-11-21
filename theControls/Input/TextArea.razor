@@ -1,11 +1,11 @@
 ﻿@if (!string.IsNullOrEmpty(this.Label) && ShowLabel == true)
 {
-    <label class="form-label text-secondary" for="@ID">@Label</label>
+    <label class="form-label @LabelCSS" for="@ID">@Label</label>
 }
 <div class="position-relative overlay-container">
     <textarea id="@ID"
               name="@InputName"
-              class="@( (IsEditable ? " editbox " : " viewbox no-select ")) @CssClass @(Overlay != null ? "pe-6" : "")"
+              class="@( (IsEditable ? " editbox inputBox " : " viewbox no-select ")) @CssClass @(Overlay != null ? "pe-6" : "")"
               style="@( Style + " " + ((Rounded) ? " " : " border-radius: 0 !important; "))"
               placeholder="@Placeholder"
               maxlength="@MaxLength"
@@ -48,6 +48,9 @@
 
     [Parameter]
     public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string LabelCSS { get; set; } = "";
 
     [Parameter]
     public bool ShowLabel { get; set; } = true;

@@ -346,3 +346,8 @@
 .markdown > table > :not(caption) > * > *, .table > :not(caption) > * > * {
     padding: .25rem .5rem !important; /* Zelle*/
 }
+
+
+.end-36 {
+    right: 36px !important;
+}
