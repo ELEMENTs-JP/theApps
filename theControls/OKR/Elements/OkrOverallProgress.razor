@@ -7,7 +7,7 @@
 <div class="border rounded p-1 bg-surface">
     <h3 class="h3 p-1">Overall Progress (rel %)</h3>
     <div class="border-bottom p-1 text-muted small">
-        Eine aggregierte Kennzahl über alle aktuellen Ziele hinweg schafft maximale Transparenz über den laufenden strategischen Zielerreichungsgrad und macht Abweichungen vom Plan augenblicklich sichtbar.
+        Eine aggregierte Kennzahl über alle aktuellen Ziele macht den laufenden Zielerreichungsgrad transparent und zeigt Planabweichungen sofort.
     </div>
     <div class="row g-0 p-1">
         <div class="col-auto p-1">
@@ -41,24 +41,21 @@
     [Parameter]
     public string Id { get; set; } = "comp-" + Guid.NewGuid().ToString("N");
 
-    [Parameter]
-    public IDTO TimeFrame { get; set; }
-
     private IJSObjectReference? jsModule;
 
     eConfiguration Configuration { get; set; } = new eConfiguration(EChartTyp.line);
 
     private string Value { get; set; } = string.Empty;
 
-      protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
+
         appService.PropertyChanged += async (sender, e) =>
                 {
                     if (e.PropertyName == "TimeFrame")
                     {
-                        TimeFrame = appService.TimeFrame;
+                        await LoadSeries();
                         await InvokeAsync(StateHasChanged);
                     }
                 };
@@ -67,21 +64,8 @@
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        int progress = 0;
-        List<IDTO> Items = searchService.Store.Where(se => se.ItemType == "Objective").ToList();
-        int count = Items.Count;
-        if (count > 0)
-        {
-            int sum = Items.Sum(se => se["Progress"].ToSecureString().ExtractNumber().ToSecureInt());
-            Value = (sum / count).ToString("0.00") + " %";
-            progress = (sum / count).ToSecureInt();
-        }
-        else
-        {
-            Value = "0 %";
-        }
 
-        await LoadSeries(progress);
+        await LoadSeries();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -99,8 +83,34 @@
         }
     }
 
-    private async Task LoadSeries(int progress)
+    private async Task LoadSeries()
     {
+        int progress = 0;
+        List<IDTO> Items = new();
+        if (appService.TimeFrame == null)
+        {
+            Items = searchService.Store.Where(se => se.ItemType == "Objective").ToList();
+        }
+        else
+        {
+            Items = await appService.TimeFrame.GetRelatedItems(sql, "Objective");
+        }
+
+        int count = Items.Count;
+        if (count > 0)
+        {
+            int sum = Items.Sum(se => se["Progress"].ToSecureString().ExtractNumber().ToSecureInt());
+            Value = (sum / count).ToString("0.00") + " %";
+            progress = (sum / count).ToSecureInt();
+        }
+        else
+        {
+            Value = "0 %";
+        }
+
+        // Chart 
+        Configuration.Series.Clear();
+
         // Durchschnitt
         eSeries avg = new eSeries();
         avg.Name = "Durchschnitt";

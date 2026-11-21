@@ -9,10 +9,12 @@
         <TimeFrameSelector />
     </div>
 </div>
+        
+<OkrList Hierarchy="@( new() { (1, new ItemType_Objective()), (2, new ItemType_KeyResult()) } )" />
 
 <div class="row g-0">
     <div class="col-4 p-1">
-       <OkrOverallProgress TimeFrame="@this.TimeFrame" />
+       <OkrOverallProgress  />
     </div>
     <div class="col-4 p-1">
         <OkrByStatus TimeFrame="@this.TimeFrame" />

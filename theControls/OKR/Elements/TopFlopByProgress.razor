@@ -5,7 +5,7 @@
 
     <h3 class="h3">Top Flop @ItemType</h3>
     <div class="border-bottom text-muted small py-1">
-        Schafft Transparenz über den Zielerreichungsgrad, um erfolgreiche Methoden gezielt zu skalieren und bei kritischen Abweichungen frühzeitig Ressourcen umzusteuern.
+        Schafft Transparenz über den Zielerreichungsgrad, um Methoden gezielt zu skalieren und bei Abweichungen Ressourcen umzusteuern.
     </div>
     @foreach (IDTO okr in Items.OrderByDescending(se => se["Progress"].ToSecureString().ExtractNumber()).Take(3))
     {
@@ -50,13 +50,21 @@
     {
         await base.OnParametersSetAsync();
 
-        Items = searchService.Store.Where(se => se.ItemType == ItemType).ToList();
+        if (appService.TimeFrame == null)
+        {
+            Items = searchService.Store.Where(se => se.ItemType == ItemType).ToList();
+        }
+        else
+        {
+            Items = await appService.TimeFrame.GetRelatedItems(sql, this.ItemType);
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+
             var type = GetType();
 
             var assemblyName = type.Assembly.GetName().Name;
@@ -69,6 +77,7 @@
             var jsPath =
                 $"./_content/{assemblyName}/{relativePath}/{componentName}.razor.js";
 
+    
             jsModule = await JS.InvokeAsync<IJSObjectReference>("import", jsPath);
             await jsModule.InvokeVoidAsync("init", DotNetObjectReference.Create(this), "Initialisierungswert");
         }
