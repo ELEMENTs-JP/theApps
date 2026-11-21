@@ -1,17 +1,12 @@
 ﻿
-@inject ISqlDatabaseService sqlService
-@inject ISecurityService secService
-@inject ISearchService search
-@inject ILocalizationService loc
-@inject IAppService appService
-@inject IMessagingBusService msg
 
+@inherits BaseCtl
 
 @implements IAsyncDisposable
 
 @if (ItemType != null)
 {
-    <ModalForm @key="@(new Guid().ToSecureString())" Title="neuen Eintrag erstellen"
+    <ModalForm @key="@(new Guid().ToSecureString())" Title="@loc.GetLabel("neuen Eintrag erstellen", "Create a new entry")"
                ShowTitleInButton="false" FrameCSS="@CSS"
                ButtonText="@ButtonTitle" Value=""
                OnBeforeOK="BeforeOK"
@@ -23,14 +18,14 @@
             <div class="d-flex flex-row border-bottom mb-3">
                 <div class="vstack p-2 px-3">
                     <div class="fw-bold">@ItemType.Name</div>
-                    <small class="text-muted small">Erstellt einen neuen: @ItemType.Name</small>
+                    <small class="text-muted small">@loc.GetLabel("Erstellt einen neuen", "Create a new"): @ItemType.Name</small>
                 </div>
                 @if (RelatedItem != null)
                 {
                     <div class="vr"></div>
                     <div class="vstack p-2 px-3">
                         <div class="text-secondary fw-bold">@RelatedItem.Title</div>
-                        <small class="text-muted small">Verbundener Eintrag vom Typ: @RelatedItem.ItemType</small>
+                        <small class="text-muted small">@loc.GetLabel("Verbundener Eintrag vom Typ", "Linked entry of type"): @RelatedItem.ItemType</small>
                     </div>
 
                     <div class="vr"></div>
@@ -53,8 +48,8 @@
                 }
 
                 <div class="col-12 p-2">
-                    <TextBox Label="Titel" Value="@Title" Description="Titel des Datensatzes" 
-                            Placeholder="Titel hier formulieren..."
+                    <TextBox Label="Titel" Value="@Title" Description="@loc.GetLabel("Titel des Datensatzes", "Record Title")"
+                            Placeholder="@loc.GetLabel("Titel hier formulieren...", "Enter the title here...")"
                              ValueChanged="@( async e => { Title = e; await SearchForDuplicates(); })" />
                 </div>
 
@@ -118,7 +113,7 @@
         if (ItemType != null)
         {
             Fields = await ItemType.GetFields();
-            Context = new QueryContext(sqlService, secService);
+            Context = new QueryContext(sql, sec);
             Context.ItemType = this.ItemType;
         }
     }
@@ -233,7 +228,7 @@
             {
                 foreach (IDTO toAssignItem in av.Value)
                 {
-                    await sqlService.Assign(Context.Item, toAssignItem, field.Association);
+                    await sql.Assign(Context.Item, toAssignItem, field.Association);
                 }
             }
         }
@@ -241,14 +236,14 @@
         // Related Item 
         if (RelatedItem != null)
         {
-            await sqlService.Assign(RelatedItem, Context.Item, Association);
+            await sql.Assign(RelatedItem, Context.Item, Association);
         }
 
         // Event Hendler
-        if (secService.Configuration.EventHandler == true)
+        if (sec.Configuration.EventHandler == true)
         {
             // Event
-            IItemEventArgs args = new ItemEventArgs(Context.Item, RelatedItem, sqlService, secService, appService);
+            IItemEventArgs args = new ItemEventArgs(Context.Item, RelatedItem, sql, sec, appService);
 
             // Create Event
             Context.Item = await Context.ItemType.OnCreateItem(args);
@@ -264,7 +259,7 @@
         msg.Publish(am);
 
         // Search
-        await search.Init();
+        await searchService.Init();
 
         // Visual Update 
         await InvokeAsync(this.StateHasChanged);

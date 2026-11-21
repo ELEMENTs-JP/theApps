@@ -3,7 +3,7 @@
 
 <DropDown Items="@Items" ItemChanged="@( e => { appService.TimeFrame = e; })" >
     <HeaderTemplate>
-        <TimeFrameBox Item="@appService.TimeFrame" CSS="" />
+        <TimeFrameBox Item="@appService.TimeFrame" CSS="" SpaceCSS=" p-2 py-1 me-3 " ShowBudget="false" />
     </HeaderTemplate>
 </DropDown>
 
