@@ -1,0 +1,121 @@
+﻿@inject ILogger<Index> Logger
+@inherits BaseCtl
+
+@if (ItemType != null)
+{
+    <div class="row g-2">
+
+        @foreach (var columnItems in GetColumnBuckets())
+        {
+            <div class="col d-flex flex-column gap-2">
+                @foreach (var item in columnItems)
+                {
+                    <div @key="@("item_entry_" + item.GUID)" 
+                            class="border rounded pb-0" 
+                                style="background-color:#FFF9B1">
+                        
+                        <h3 class="h3 fw-bold w-100 p-2 text-dark pointer" 
+                            @onclick="@( e => { nm.NavToItem(item.ItemType, item.GUID); })">@item.Title</h3>
+
+                        <TextArea Label="" Description="" Value="@item.Description()"
+                                  ValueChanged="@(async e => { item["Note"] = e;  })"
+                                  Rows="3" ShowLabel="false"
+                                  IsEditable="true" CssClass="text-dark">
+                            <Overlay>
+                                <div class="hover pointer rounded-2 p-1" @onclick="@( async e => { await item.Save(sql); })">
+                                    <i class="ti ti-check text-dark"></i>
+                                </div>
+                            </Overlay>
+                        </TextArea>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    @if (Empty.HasContent())
+    {
+        @if (Items.Count == 0)
+        {
+            @Empty
+        }
+    }
+}
+
+@code {
+
+    [Parameter]
+    public List<IDTO> Items { get; set; } = new();
+    [Parameter] public int Columns { get; set; } = 4;
+
+    private List<List<IDTO>> GetColumnBuckets()
+    {
+        var colCount = Math.Max(1, Columns);
+        var buckets = Enumerable.Range(0, colCount).Select(_ => new List<IDTO>()).ToList();
+
+        if (Items is null || Items.Count == 0)
+            return buckets;
+
+        var heights = new int[colCount];
+
+        foreach (var item in Items)
+        {
+            var estimatedHeight = 40 + ((item.Description()?.Length ?? 0) / 4);
+            var targetCol = 0;
+
+            for (var i = 1; i < colCount; i++)
+            {
+                if (heights[i] < heights[targetCol])
+                    targetCol = i;
+            }
+
+            buckets[targetCol].Add(item);
+            heights[targetCol] += estimatedHeight;
+        }
+
+        return buckets;
+    }
+
+    [Parameter]
+    public RenderFragment Empty { get; set; }
+
+    [Parameter]
+    public string Matchcode { get; set; } = string.Empty;
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task Sort()
+    {
+        if (OnSort.HasDelegate)
+        {
+            await OnSort.InvokeAsync("");
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> OnSort { get; set; }
+
+    
+    [Parameter]
+    public EventCallback<IDTO> OnUpdate { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnDisconnect { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnConnect { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnDelete { get; set; }
+}

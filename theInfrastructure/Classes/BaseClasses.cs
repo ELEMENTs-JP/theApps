@@ -78,5 +78,9 @@ namespace theInfrastructure
         {
             
         }
+
+        public async Task Save(ISqlDatabaseService sql)
+        { }
+    
     }
 }

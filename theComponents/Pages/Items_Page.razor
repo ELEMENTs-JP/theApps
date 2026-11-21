@@ -36,6 +36,10 @@
         {
             <FilesComp ItemType="@ItemType" />
         }
+        else if (ItemType.Typ == ItemTypeTyp.Note)
+        {
+            <NotesComp ItemType="@ItemType" />
+        }
         else
         {
             <ItemsComp ItemType="@ItemType" />

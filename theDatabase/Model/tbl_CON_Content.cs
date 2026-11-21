@@ -111,6 +111,10 @@ namespace theDatabase
             }
             if (string.IsNullOrEmpty(description))
             {
+                description = this["Note"].ToSecureString();
+            }
+            if (string.IsNullOrEmpty(description))
+            {
                 description = this.Content.ToSecureString();
             }
             return description;
@@ -136,6 +140,12 @@ namespace theDatabase
         {
             IDTO parent = this as IDTO;
             await sql.Remove(parent, dtoToRemove);
+        }
+
+        public async Task Save(ISqlDatabaseService sql)
+        {
+            IDTO item = this as IDTO;
+            await sql.Update(item);
         }
 
     }

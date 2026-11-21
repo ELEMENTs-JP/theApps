@@ -1,0 +1,177 @@
+﻿@using theControls.Folder
+
+@inherits BaseCtl
+
+@if (ItemType != null)
+{
+    @if (IsSecure)
+    {
+        <Frame Border="true">
+            <Header>
+                <Header PreTitle="List" Title="@Title"
+                               SubTitle="@("Typ " + ItemType.Typ.ToSecureString())"
+                               Description="@ItemType.Description" />
+            </Header>
+            <Controls>
+                <div class="d-flex align-items-center">
+
+                    <Gruppierung ItemType="@ItemType" Context="@Context"
+                                 OnGroup="@( async e => { await Context.Search(); })" />
+                    <Filter ItemType="@ItemType" Context="@Context"
+                            OnFilter="@( async e => { await Context.Search(); })" />
+
+                </div>
+            </Controls>
+            <Search>
+                <LocalSearchComp  ItemType="@this.ItemType" 
+                    OnSearch="@( async e => { Context.Filter.Matchcode = e.ToSecureString(); await Context.Search(); })" />
+            </Search>
+            <Related>
+                @if (this.ItemType.Name != "Trash")
+                {
+                    <ListSetting ItemType="@this.ItemType" CSS="mx-2"
+                                 OnSettingChanged="@( async e => {  })" />
+                    <div class="vr"></div>
+
+              
+                    <AddArea ItemType="@ItemType" CSS="me-2"
+                             OnItemAdded="@( async e => { await Context.Search(); })" />
+
+                }
+            </Related>
+            <Content>
+                <NotesList ItemType="@this.ItemType" Matchcode="@Context.Filter.Matchcode" Items="@Context.Items"
+                            OnDelete="@( async e => { await ItemDelete(e); })"
+                            OnDisconnect="@( async e => { await Context.Search(); })"
+                           OnSort="@( async e => { await Context.Search(); } )">
+                    <Empty>
+                        <QuickAdd ItemType="@this.ItemType" OnAdd="@( e => { })" />
+                    </Empty>
+                </NotesList>
+            </Content>
+            <Bottom>
+
+                <div class="row g-0">
+                    <div class="col-12">
+                        <AddFast ItemType="@ItemType" OnItemAdded="@( async e => { await Context.Search(); })" />
+                    </div>
+                    <div class="col-12">
+                        @if (IsPersonalizedView)
+                        {
+                            <div class="d-inline-flex align-items-center">
+                                <div class="bg-secondary rounded-circle me-2" style="width: 8px; height: 8px; border:1px solid #fff; flex-shrink: 0;"></div>
+                                <small class="text-muted small me-2">
+                                    @loc.GetLabel("Personalisierte Ansicht", "Personalized View")
+                                </small>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+              
+
+            </Bottom>
+        </Frame>
+    }
+    else
+    {
+        <div class="row g-0 p-2 align-items-center">
+            <div class="col-auto p-2">
+                <SymbolIcon Symbol="Icon.Invariant" />
+            </div>
+            <div class="col p-2">
+                <h1 class="h1">Dieser ItemType ist nicht einsehbar.</h1>
+            </div>
+        </div>
+    }
+}
+
+
+@code {
+
+    [Parameter]
+    public IItemType ItemType { get; set; }
+
+    private string Title { get; set; } = string.Empty;
+    private bool IsSecure { get; set; } = false;
+    private string View { get; set; } = "Monat";
+    private bool IsPersonalizedView { get; set; } = false;
+
+    private IQueryContext Context { get; set; }
+    private List<IField> Fields { get; set; } = new();
+
+    private string dateColumn = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ItemType == null)
+            return;
+
+        dateColumn = await ItemType.GetRelevantPropertyName(RelevantPropertyType.Date);
+
+        if (Context == null)
+        {
+            Context = new QueryContext(sql, sec, ItemType);
+        }
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (ItemType == null)
+            return;
+
+        // Personalisierte Ansicht 
+        IsPersonalizedView = ItemType.IsPersonalizedItemType();
+
+        // Felder 
+        Fields = await ItemType.GetFields();
+
+        // ItemType 
+        Context.ItemType = ItemType;
+
+        await Context.Search();
+
+        // Title
+        Title = await Helper.GetSettingValue(sql, "Title", ItemType.Name);
+        Title = Title.IsEmpty() ? ItemType.Title : Title;
+        Title = Title.IsEmpty() ? ItemType.Name : Title;
+
+        IsSecure = Helper.ValidateVisibility(SecuredFeature.List, ItemType, sec.User);
+
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            // this.StateHasChanged();
+        }
+    }
+
+  
+    private async Task ItemDelete(IDTO dto)
+    {
+        try
+        {
+            if (dto == null)
+                return;
+
+            await Context.Delete(dto);
+            await Context.Search();
+
+            msg.Publish("", BusAction.Refresh);
+            msg.Publish("", BusAction.Info, "Item wurde gelöscht");
+
+            // Notification Service
+            notify.NotifyChanged(Context.Item, NotificationType.Update, sec.User);
+
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    
+}
