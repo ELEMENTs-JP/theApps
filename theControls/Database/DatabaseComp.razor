@@ -12,19 +12,19 @@
 
     <div class="row g-0">
         <div class="col-3 py-2">
-            <KpiFrame KPI="Datenbank" Description="Anzahl an Datensätze"
+            <theControls.Layout.KpiFrame KPI="Datenbank" Description="Anzahl an Datensätze"
                       Value="@( sql.GetRecordCount().Result.ToSecureString() )" />
         </div>
         <div class="col-3 py-2 px-2">
-            <KpiFrame KPI="Datenbankgröße" Description="Größe der Datenbank in MB"
+            <theControls.Layout.KpiFrame KPI="Datenbankgröße" Description="Größe der Datenbank in MB"
                       Value="@( DBFileSize )" />
         </div>
         <div class="col-3 p-2 px-2">
-            <KpiFrame KPI="Page Count" Description="Anzahl verwendete Pages"
+            <theControls.Layout.KpiFrame KPI="Page Count" Description="Anzahl verwendete Pages"
                       Value="@( sql.GetUsedPageCount().Result.ToSecureString() )" />
         </div>
         <div class="col-3 py-2">
-            <KpiFrame KPI="Unused Pages" Description="Anzahl ungenutzter Pages"
+            <theControls.Layout.KpiFrame KPI="Unused Pages" Description="Anzahl ungenutzter Pages"
                       Value="@(  sql.GetNotUsedPageCount().Result.ToSecureString() )" />
         </div>
     </div>

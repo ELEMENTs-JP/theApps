@@ -44,7 +44,7 @@
             string fileGUID = Item.GUID.ToSecureString();
             string fileEXT = Item["FileExtension"].ToSecureString();
 
-            Url = $"/stream/{fileGUID + "." + fileEXT}";
+            Url = $"/stream/{fileGUID + "." + fileEXT}"; // this works for video streaming 
         }
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)

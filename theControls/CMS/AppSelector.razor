@@ -1,12 +1,13 @@
 ﻿@using theControls.Dashboard
 @using theControls.Icons
+@using theControls.Navigation
 @using theInfrastructure
 @inherits BaseCtl
 @implements IAsyncDisposable
 
 <div class="p-3">
 
-    @* --- App Modus (App wurde selektiert) --- *@
+    @* --- HOME - App Modus (App wurde selektiert) --- *@
     @if (appService.App != null)
     {
         @* --- HOME (go back to HOME) --- *@
@@ -67,6 +68,8 @@
     }
 
     @* --- App INHALT --- *@
+    
+    @* --- Navigation --- *@
     @if (appService.App != null)
     {
         <div class="border-top my-3"></div>
@@ -90,6 +93,13 @@
 
         <div class="border-top my-3"></div>
         <MainAppItemSelector App="@appService.App" />
+
+        @if (appService.App.HasReporting)
+        {
+            <div class="border-top my-3"></div>
+            <ReportNavigation App="@appService.App" />
+        }
+
 
         @if (CurrentItemTypes.Count() >= 1)
         {

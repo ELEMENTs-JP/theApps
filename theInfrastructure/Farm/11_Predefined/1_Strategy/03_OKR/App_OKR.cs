@@ -15,6 +15,7 @@ namespace theInfrastructure
             IsActive = true;
             IsNavigation = true;
             Typ = AppTyp.Predefined;
+            this.HasReporting = true;
         }
 
         public override async Task<List<IItemType>> GetItemTypes(AssociationTyp typ = AssociationTyp.Association)
@@ -34,26 +35,16 @@ namespace theInfrastructure
         {
             List<ComponentDefinition> comps = new List<ComponentDefinition>();
 
-            List<(int, IItemType)> Hierarchy = new List<(int, IItemType)>();
-            Hierarchy.Add((1, new ItemType_Objective()));
-            Hierarchy.Add((2, new ItemType_KeyResult()));
-            //Hierarchy.Add((3, new ItemType_CheckIn()));
-
-
-            // Test 
+            // Dashboard 
             comps.Add(new ComponentDefinition
             {
                 Namespace = "theControls",
-                ClassName = "OkrList",
-                Parameters = new Dictionary<string, object>
-                {
-                    { "Hierarchy", Hierarchy }
-                },
+                ClassName = "Dashboard_OKR",
                 Name = "OKR List",
                 CSS = " col-12 my-2",
                 Group = "OKR"
-
             });
+
 
             return comps;
         }

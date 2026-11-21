@@ -7,6 +7,7 @@
     --tblr-bg-surface-secondary: #12151855;
     /* --- Tabler Base Colors --- */
     --tblr-blue: #0461c0;
+    --tblr-marine: #0461c0;
     --tblr-azure: #4299e1;
     --tblr-indigo: #4263eb;
     --tblr-purple: #9921b6;
@@ -53,7 +54,6 @@
     /* --- Tabs Pages Nav Link --- */
     /*    --tblr-nav-link-padding-x: 0.35rem;
     --tblr-nav-link-padding-y: 0.25rem;*/
-    
     /* --- OffCanvas --- */
     --tblr-offcanvas-padding-x: 1.15rem !important;
     --tblr-offcanvas-padding-y: 1.15rem !important;

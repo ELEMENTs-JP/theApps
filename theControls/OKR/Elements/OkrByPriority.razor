@@ -1,0 +1,92 @@
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+@inherits BaseCtl
+
+<div class="border rounded p-2 bg-surface overflow-hidden">
+
+    <h3 class="h3">Objectives by Priority</h3>
+
+    <div class="border-bottom py-1 text-muted small">
+        Die Priorisierung von Objectives unterstützt die zielgerichtete Ressourcenallokation, fokussiert die Organisation auf die wichtigsten Unternehmensziele und erhöht die Wirksamkeit strategischer Entscheidungen.
+    </div>
+
+    <div class="d-flex my-2 rounded overflow-hidden align-items-center">
+        @foreach (var kpi in Values)
+        {
+            var percentage = totalCount > 0 ? ((double)kpi.Value / totalCount * 100).ToString(System.Globalization.CultureInfo.InvariantCulture) : "0";
+            <div class="border" style="width:@percentage%; height:1rem;
+            border-right:1px solid #fff !important;
+            border-left:1px solid #fff !important;
+            background-color:@Priority.ColorByPriority(kpi.Title)"></div>
+        }
+    </div>
+
+    <div class="d-flex my-2 align-items-center">
+        @foreach (var kpi in Values)
+        {
+            <div class="legend-dot me-1" style="border:1px solid #fff !important; background-color:@Priority.ColorByPriority(kpi.Title)"></div>
+            <div class="me-2 text-truncate" style="max-width:7rem;">@kpi.Title</div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = "comp-" + Guid.NewGuid().ToString("N");
+
+    [Parameter]
+    public IDTO TimeFrame { get; set; }
+
+    List<KpiValue> Values { get; set; } = new();
+    private int totalCount;
+
+    private IJSObjectReference? jsModule;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Values.Clear();
+
+        List<IDTO> items = searchService.Store.Where(se => se.ItemType == "Objective").ToList();
+        totalCount = items.Count;
+
+        List<string> priorities = items
+            .Select(se => se["Prio"].ToSecureString())
+            .Where(s => !string.IsNullOrEmpty(s))
+            .Distinct()
+            .ToList();
+
+        foreach (string s in priorities)
+        {
+            var val = new KpiValue();
+            val.Title = s;
+            val.Value = items.Where(se => se["Prio"].ToSecureString() == s).Count();
+
+            Values.Add(val);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var type = this.GetType();
+            var assemblyName = type.Assembly.GetName().Name;
+            var componentName = type.Name;
+
+            var jsPath = $"./_content/{assemblyName}/OKR/Elements/{componentName}.razor.js";
+
+            jsModule = await JS.InvokeAsync<IJSObjectReference>("import", jsPath);
+            await jsModule.InvokeVoidAsync("init", DotNetObjectReference.Create(this), "Initialisierungswert");
+        }
+    }
+
+    public new async ValueTask DisposeAsync()
+    {
+        if (jsModule is not null)
+        {
+            await jsModule.DisposeAsync();
+        }
+    }
+}

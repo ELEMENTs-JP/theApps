@@ -1,7 +1,7 @@
 ﻿
 <div class="d-flex align-items-center flex-nowrap">
     <SymbolIcon Symbol="@( Priority.IconByPriority(Value))"
-                Color="@( Priority.ColorByPriority(ID) )" />
+                Color="@( string.IsNullOrEmpty(ID) ? Priority.ColorByPriority(Value) : Priority.ColorByPriority(ID) )" />
 
     <div class="px-1">
         @Value

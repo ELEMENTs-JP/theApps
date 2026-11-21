@@ -21,11 +21,11 @@ namespace theInfrastructure
             // Fields 
             List<IField> Fields = new List<IField>();
 
-            // Files 
-            Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.File));
-
             // Description 
             Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.Description));
+
+            // Files 
+            Fields.AddRange(Field.DefaultFields(DefaultFieldTypes.File));
 
             return Fields;
         }

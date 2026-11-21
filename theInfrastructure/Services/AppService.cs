@@ -59,6 +59,14 @@ namespace theInfrastructure
             set { _item = value; OnPropertyChanged(); }
         }
 
+
+        private IDTO _timeframe = null;
+        public IDTO TimeFrame
+        {
+            get { return _timeframe; }
+            set { _timeframe = value; OnPropertyChanged(); }
+        }
+
         // CTR 
         public AppService()
         {

@@ -106,7 +106,7 @@ namespace theInfrastructure
 
             if (typ == DefaultFieldTypes.Description)
             {
-                Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });
+                //Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });
                 Fields.Add(new Field() 
                 { 
                     Title = "Beschreibung", 
@@ -131,23 +131,26 @@ namespace theInfrastructure
                
                 
                 Fields.Add(new Field() { Title = "Größen", Typ = FieldTyp.HR });
-               Fields.Add(new Field() { 
-                    Title = "Size in Byte", Typ = FieldTyp.TextBlock, Column = "FileSizeInByte", 
+     Fields.Add(new Field() { 
+                    Title = "Size in MB", Typ = FieldTyp.TextBlock, Column = "FileSizeInMB", 
                     CSS = " col-12 col-md-4 col-lg-4 ", 
-                    Extension = "Byte",
-                    Formatierung = TextFormat.Byte,
+                    Extension = "MB",
+                    Formatierung = TextFormat.MB,
                     OnDevice = DeviceDisplay.Desktop });
+        
+
                 Fields.Add(new Field() { 
                     Title = "Size in KB", Typ = FieldTyp.TextBlock, Column = "FileSizeInKB", 
                     CSS = " col-12 col-md-4 col-lg-4 ", 
                     Extension = "KB",
                     Formatierung = TextFormat.KB,
                     OnDevice = DeviceDisplay.Desktop });
-                Fields.Add(new Field() { 
-                    Title = "Size in MB", Typ = FieldTyp.TextBlock, Column = "FileSizeInMB", 
+
+                  Fields.Add(new Field() { 
+                    Title = "Size in Byte", Typ = FieldTyp.TextBlock, Column = "FileSizeInByte", 
                     CSS = " col-12 col-md-4 col-lg-4 ", 
-                    Extension = "MB",
-                    Formatierung = TextFormat.MB,
+                    Extension = "Byte",
+                    Formatierung = TextFormat.Byte,
                     OnDevice = DeviceDisplay.Desktop });
 
                 Fields.Add(new Field() { Title = "Inhalt", Typ = FieldTyp.HR });
@@ -176,6 +179,35 @@ namespace theInfrastructure
                     OnDevice = DeviceDisplay.Desktop
                 });
 
+            }
+
+            if (typ == DefaultFieldTypes.Music)
+            {
+                Fields.Add(new Field()
+                {
+                    Title = "Typ",
+                    Typ = FieldTyp.DropDown,
+                    Column = "Typ",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    Items = new List<string>() { "Song", "Album", "Podcast" },
+                    OnDevice = DeviceDisplay.Desktop
+                });
+                Fields.Add(new Field()
+                {
+                    Title = "Artist",
+                    Typ = FieldTyp.Text,
+                    Column = "Artist",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDevice = DeviceDisplay.Desktop
+                });
+                Fields.Add(new Field()
+                {
+                    Title = "Album",
+                    Typ = FieldTyp.Text,
+                    Column = "Album",
+                    CSS = " col-12 col-md-4 col-lg-4 ",
+                    OnDevice = DeviceDisplay.Desktop
+                });
             }
 
             if (typ == DefaultFieldTypes.Appointment)

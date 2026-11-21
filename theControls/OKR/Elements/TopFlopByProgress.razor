@@ -1,0 +1,84 @@
+@implements IAsyncDisposable
+@inherits BaseCtl
+
+<div class="border rounded p-2 bg-surface">
+
+    <h3 class="h3">Top Flop @ItemType</h3>
+    <div class="border-bottom text-muted small py-1">
+        Schafft Transparenz über den Zielerreichungsgrad, um erfolgreiche Methoden gezielt zu skalieren und bei kritischen Abweichungen frühzeitig Ressourcen umzusteuern.
+    </div>
+    @foreach (IDTO okr in Items.OrderByDescending(se => se["Progress"].ToSecureString().ExtractNumber()).Take(3))
+    {
+        <div class="d-flex p-1 pointer" @onclick="@( e => { nm.NavToItem(okr.ItemType, okr.GUID); })">
+            <div class="flex-fill fw-bold p-1 bg-success text-white rounded">
+                @okr.Title
+            </div>
+            <div class="p-1 px-2">
+                @okr["Progress"].ToSecureString()
+            </div>
+        </div>
+    }
+
+    <div class="border-bottom my-3"></div>
+
+    @foreach (IDTO okr in Items.OrderBy(se => se["Progress"].ToSecureString().ExtractNumber()).Take(3))
+    {
+        <div class="d-flex p-1 pointer" @onclick="@( e => { nm.NavToItem(okr.ItemType, okr.GUID); })">
+            <div class="flex-fill fw-bold p-1 bg-danger text-white rounded">
+                @okr.Title
+            </div>
+            <div class="p-1 px-2">
+                @okr["Progress"].ToSecureString()
+            </div>
+        </div>
+    }
+
+
+</div>
+
+@code {
+    string Id { get; set; } = "comp-" + Guid.NewGuid().ToString("N");
+    private IJSObjectReference? jsModule;
+
+    [Parameter]
+    public string ItemType { get; set; } = "Objective";
+
+    List<IDTO> Items { get; set; } = new();
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Items = searchService.Store.Where(se => se.ItemType == ItemType).ToList();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var type = GetType();
+
+            var assemblyName = type.Assembly.GetName().Name;
+            var componentName = type.Name;
+
+            var relativePath = type.Namespace!
+                .Replace($"{assemblyName}.", "")
+                .Replace('.', '/');
+
+            var jsPath =
+                $"./_content/{assemblyName}/{relativePath}/{componentName}.razor.js";
+
+            jsModule = await JS.InvokeAsync<IJSObjectReference>("import", jsPath);
+            await jsModule.InvokeVoidAsync("init", DotNetObjectReference.Create(this), "Initialisierungswert");
+        }
+    }
+
+    public new async ValueTask DisposeAsync()
+    {
+        if (jsModule is not null)
+        {
+            await jsModule.DisposeAsync();
+        }
+    }
+}

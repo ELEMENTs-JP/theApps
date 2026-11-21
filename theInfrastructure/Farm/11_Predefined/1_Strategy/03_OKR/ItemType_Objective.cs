@@ -15,6 +15,7 @@ namespace theInfrastructure
             this.Order = 11;
             Description = "";
             this.IsPathElement = true;
+            this.AppItemType = true;
         }
 
         // Views 

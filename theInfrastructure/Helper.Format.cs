@@ -248,24 +248,31 @@ namespace theInfrastructure
         {
             return DefaultColors().Find(se => se.Title == color.ToString()).ID;
         }
+        public static string ColorByDefaultColorHex(DefaultColor color)
+        {
+            return DefaultColors().Find(se => se.Title == color.ToString())["Hex"];
+        }
         public static List<IDTO> DefaultColors()
         {
             List<IDTO> Items = new();
 
 
-            Items.Add(new DTO() { ID = "#00000000", Title = "transparent" });
-            Items.Add(new DTO() { ID = "#ffffff", Title = "weiss" });
-            Items.Add(new DTO() { ID = "#a1a5ab", Title = "hellgrau" });
-            Items.Add(new DTO() { ID = "#626976", Title = "grau" });
-            Items.Add(new DTO() { ID = "#444a55", Title = "dunkelgrau" });
-            Items.Add(new DTO() { ID = "#182433", Title = "schwarz" });
-            Items.Add(new DTO() { ID = "#8914a5", Title = "violett" });
-            Items.Add(new DTO() { ID = "#c11515", Title = "rot" });
-            Items.Add(new DTO() { ID = "#f76707", Title = "orange" });
-            Items.Add(new DTO() { ID = "#f59f00", Title = "gelb" });
-            Items.Add(new DTO() { ID = "#1d9d31", Title = "grün" });
-            Items.Add(new DTO() { ID = "#066fd1", Title = "blau" });
-            Items.Add(new DTO() { ID = "#084a87", Title = "marine" });
+            Items.Add(new DTO() { ID = "#00000000", Title = "transparent", ["Hex"] = "#00000000" });
+            Items.Add(new DTO() { ID = "#ffffff", Title = "weiss", ["Hex"] = "#ffffff" });
+
+            Items.Add(new DTO() { ID = "#a1a5ab", Title = "hellgrau", ["Hex"] = "#a1a5ab" });
+            Items.Add(new DTO() { ID = "#626976", Title = "grau", ["Hex"] = "#626976" });
+            Items.Add(new DTO() { ID = "#444a55", Title = "dunkelgrau", ["Hex"] = "#444a55" });
+            
+            Items.Add(new DTO() { ID = "#182433", Title = "schwarz", ["Hex"] = "#182433" });
+            
+            Items.Add(new DTO() { ID = "#8914a5", Title = "violett", ["Hex"] = "#8914a5" });
+            Items.Add(new DTO() { ID = "var(--tblr-red)", Title = "rot", ["Hex"] = "#f01515" }); // #c11515
+            Items.Add(new DTO() { ID = "var(--tblr-orange)", Title = "orange", ["Hex"] = "#f76707" }); // #f76707
+            Items.Add(new DTO() { ID = "var(--tblr-yellow)", Title = "gelb", ["Hex"] = "#f5d700" });
+            Items.Add(new DTO() { ID = "var(--tblr-green)", Title = "grün", ["Hex"] = "#0dc62a" });
+            Items.Add(new DTO() { ID = "var(--tblr-blue)", Title = "blau", ["Hex"] = "#0461c0" });
+            Items.Add(new DTO() { ID = "var(--tblr-marine)", Title = "marine", ["Hex"] = "#0461c0" });
 
             return Items;
         }
@@ -801,6 +808,10 @@ namespace theInfrastructure
                 case FieldTyp.DateTime:
                     {
                         return input.ToSecureDateTime().ToShortDateString() + " | " + input.ToSecureDateTime().ToShortTimeString();
+                    }
+                case FieldTyp.Money:
+                    {
+                        return input.ToSecureDecimal().ToString("C", GermanCulture);
                     }
                 default:
                     {

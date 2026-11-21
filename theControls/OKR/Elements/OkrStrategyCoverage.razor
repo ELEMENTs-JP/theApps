@@ -1,0 +1,92 @@
+@using theCharts
+@using theCharts.Charts
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+@inherits BaseCtl
+
+<div class="border rounded p-1 bg-surface">
+    <h3 class="h3 p-1">Strategy Coverage</h3>
+
+<div class="row g-0 p-1">
+    <div class="col-6 p-1">
+        <ChartCTL Configuration="@Configuration" />
+    </div>
+    <div class="col-6 p-1">
+        <h1 class="display-5">@Value</h1>
+    </div>
+</div>
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = "comp-" + Guid.NewGuid().ToString("N");
+
+    [Parameter]
+    public IDTO TimeFrame { get; set; }
+
+    private IJSObjectReference? jsModule;
+
+    eConfiguration Configuration { get; set; } = new eConfiguration(EChartTyp.pie);
+
+    private string Value { get; set; } = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await LoadSeries();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var type = GetType();
+            var assemblyName = type.Assembly.GetName().Name;
+            var componentName = type.Name;
+
+            var relativePath = type.Namespace!
+                .Replace($"{assemblyName}.", "")
+                .Replace('.', '/');
+
+            var jsPath =
+                $"./_content/{assemblyName}/{relativePath}/{componentName}.razor.js";
+
+            jsModule = await JS.InvokeAsync<IJSObjectReference>("import", jsPath);
+            await jsModule.InvokeVoidAsync("init", DotNetObjectReference.Create(this), "Initialisierungswert");
+        }
+    }
+
+    private async Task LoadSeries()
+    {
+        Value = "0 %";
+        List<IDTO> Items = searchService.Store.Where(se => se.ItemType == "Objective").ToList();
+        int count = Items.Count;
+        if (count > 0)
+        {
+            int sum = Items.Sum(se => se["Progress"].ToSecureString().ExtractNumber().ToSecureInt());
+            Value = (sum / count).ToString("0.00") + " %";
+        }
+
+        // Durchschnitt 
+        eSeries avg = new eSeries();
+        avg.Typ = EChartTyp.pie.ToString();
+        avg.Name = "Coverage";
+        avg.Color = "#cccccc";
+
+        foreach (IDTO okr in Items)
+        {
+            avg.Data.Add(new() { Name = okr.Title, Value = 1 });
+        }
+
+        Configuration.Series.Add(avg);
+    }
+
+    public new async ValueTask DisposeAsync()
+    {
+        if (jsModule is not null)
+        {
+            await jsModule.DisposeAsync();
+        }
+    }
+}

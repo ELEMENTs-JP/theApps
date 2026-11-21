@@ -1,0 +1,13 @@
+/* Spezifische Stile für die Komponente */
+
+.legend-dot, .legend:empty {
+    --tblr-legend-size: 0.5rem;
+    --tblr-legend-color: var(--tblr-border-color);
+    display: inline-block;
+    flex-shrink: 0;
+    width: var(--tblr-legend-size);
+    height: var(--tblr-legend-size);
+    background: var(--tblr-legend-color);
+    border: var(--tblr-border-width) var(--tblr-border-style) var(--tblr-border-color-translucent);
+    border-radius: var(--tblr-border-radius-pill);
+}

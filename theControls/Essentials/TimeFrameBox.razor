@@ -1,6 +1,6 @@
 ﻿@if (Item != null)
 {
-    <div class="hover pointer p-2 py-1 mx-2 w-100"
+    <div class="@CSS p-2 py-1 mx-2 w-100"
          style="border-left: 3px solid #fff;">
         <div class="row g-0">
             <div class="col px-1">
@@ -15,7 +15,7 @@
                 <strong>Ende</strong> @Item["Ende"].ToSecureDateTime().ToShortDateString()
             </div>
             <div class="col px-1 text-muted truncate-text">
-                <strong>Budget</strong> @Item["Budget"].ToSecureDecimal()
+                <strong>Budget</strong> @Item["Budget"].ToFormat(FieldTyp.Money)
             </div>
         </div>
     </div>
@@ -28,4 +28,10 @@
 
     [Parameter]
     public IDTO Item { get; set; }
+
+    [Parameter]
+    public EventCallback<IDTO> OnClick { get; set; }
+
+    [Parameter]
+    public string CSS { get; set; } = " hover pointer ";
 }

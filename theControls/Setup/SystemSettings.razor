@@ -18,6 +18,16 @@
                                                     new DTO() { ID = "List", Title = loc.GetLabel("Liste", "List") },
                                                     new DTO() { ID = "Popup", Title = loc.GetLabel("Popup", "Popup") },
                                                 } )" />
+
+        <div class="my-3"></div>
+
+        <ButtonSelectionBox Label="Messages"
+                            Value="@appService.Configuration.MessageTyp.ToSecureString()"
+                            ItemChanged="@(async e => { appService.Configuration.MessageTyp = e.ID.ToSecureString();
+                                    appService.Configuration.Save(); await PushFeatureUpdate(); })"
+                            Items="@(new List<IDTO>() { 
+                                new DTO() { ID = "Single", Title = loc.GetLabel("Einzelne Nachrichten", "Single Messages") },
+                                    new DTO() { ID = "Multiple", Title = loc.GetLabel("Mehrere Nachrichten", "Multiple Messages") }, } )" />
     </div>
     <div class="col-12 col-md-4 col-lg-4 px-2 border-start border-end">
         <ThemeSwitch />

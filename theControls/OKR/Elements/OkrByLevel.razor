@@ -1,0 +1,84 @@
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+@inherits BaseCtl
+
+<div class="border rounded p-2 bg-surface">
+
+    <h3 class="h3">Objectives by Business Level</h3>
+    <div class="border-bottom text-muted small py-1">
+        Objectives auf Unternehmensebene geben die strategische Richtung vor, schaffen Transparenz über Prioritäten und richten alle Bereiche auf gemeinsame Unternehmensziele aus.
+    </div>
+    @foreach (KpiValue level in Values)
+    {
+        <div class="d-flex p-1">
+            <div class="flex-fill fw-bold p-1">
+             @level.Title
+            </div>
+            <div class="border-start p-1">
+                @level.Value.ToSecureString()
+            </div>
+        </div>
+    }
+
+
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = "comp-" + Guid.NewGuid().ToString("N");
+    private IJSObjectReference? jsModule;
+
+    [Parameter]
+    public IDTO TimeFrame { get; set; }
+
+    List<KpiValue> Values { get; set; } = new();
+    private int totalCount;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Values.Clear();
+
+        List<IDTO> items = searchService.Store.Where(se => se.ItemType == "Objective").ToList();
+        totalCount = items.Count;
+
+        List<string> level = items
+            .Select(se => se["Ebene"].ToSecureString())
+            .Where(s => !string.IsNullOrEmpty(s))
+            .Distinct()
+            .ToList();
+
+        foreach (string l in level)
+        {
+            var val = new KpiValue();
+            val.Title = l;
+            val.Value = items.Where(se => se["Ebene"].ToSecureString() == l).Count();
+
+            Values.Add(val);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var type = this.GetType();
+            var assemblyName = type.Assembly.GetName().Name;
+            var componentName = type.Name;
+
+            var jsPath = $"./_content/{assemblyName}/OKR/Elements/{componentName}.razor.js";
+
+            jsModule = await JS.InvokeAsync<IJSObjectReference>("import", jsPath);
+            await jsModule.InvokeVoidAsync("init", DotNetObjectReference.Create(this), "Initialisierungswert");
+        }
+    }
+
+    public new async ValueTask DisposeAsync()
+    {
+        if (jsModule is not null)
+        {
+            await jsModule.DisposeAsync();
+        }
+    }
+}

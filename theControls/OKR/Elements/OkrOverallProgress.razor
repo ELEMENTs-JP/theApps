@@ -1,0 +1,152 @@
+@using theCharts
+@using theCharts.Charts
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+@inherits BaseCtl
+
+<div class="border rounded p-1 bg-surface">
+    <h3 class="h3 p-1">Overall Progress (rel %)</h3>
+    <div class="border-bottom p-1 text-muted small">
+        Eine aggregierte Kennzahl über alle aktuellen Ziele hinweg schafft maximale Transparenz über den laufenden strategischen Zielerreichungsgrad und macht Abweichungen vom Plan augenblicklich sichtbar.
+    </div>
+    <div class="row g-0 p-1">
+        <div class="col-auto p-1">
+            <h1 class="display-5">@Value</h1>
+        </div>
+        <div class="col p-1">
+            <ChartCTL Configuration="@Configuration" />
+        </div>
+    </div>
+
+    @if (appService.TimeFrame != null)
+    {
+        <div class="row g-0 p-1 border-top text-muted">
+            <div class="col-3 p-1 fw-bold">
+                TimeFrame
+            </div>
+            <div class="col-3 p-1">
+                @appService.TimeFrame["Start"].ToSecureDateTime().ToShortDateString()
+            </div>
+            <div class="col-3 p-1">
+                @appService.TimeFrame["Ende"].ToSecureDateTime().ToShortDateString()
+            </div>
+            <div class="col-3 p-1">
+                @appService.TimeFrame["Budget"].ToFormat(FieldTyp.Money)
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = "comp-" + Guid.NewGuid().ToString("N");
+
+    [Parameter]
+    public IDTO TimeFrame { get; set; }
+
+    private IJSObjectReference? jsModule;
+
+    eConfiguration Configuration { get; set; } = new eConfiguration(EChartTyp.line);
+
+    private string Value { get; set; } = string.Empty;
+
+      protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        
+        appService.PropertyChanged += async (sender, e) =>
+                {
+                    if (e.PropertyName == "TimeFrame")
+                    {
+                        TimeFrame = appService.TimeFrame;
+                        await InvokeAsync(StateHasChanged);
+                    }
+                };
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        int progress = 0;
+        List<IDTO> Items = searchService.Store.Where(se => se.ItemType == "Objective").ToList();
+        int count = Items.Count;
+        if (count > 0)
+        {
+            int sum = Items.Sum(se => se["Progress"].ToSecureString().ExtractNumber().ToSecureInt());
+            Value = (sum / count).ToString("0.00") + " %";
+            progress = (sum / count).ToSecureInt();
+        }
+        else
+        {
+            Value = "0 %";
+        }
+
+        await LoadSeries(progress);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var type = this.GetType();
+            var assemblyName = type.Assembly.GetName().Name;
+            var componentName = type.Name;
+
+            var jsPath = $"./_content/{assemblyName}/OKR/Elements/{componentName}.razor.js";
+
+            jsModule = await JS.InvokeAsync<IJSObjectReference>("import", jsPath);
+            await jsModule.InvokeVoidAsync("init", DotNetObjectReference.Create(this), "Initialisierungswert");
+        }
+    }
+
+    private async Task LoadSeries(int progress)
+    {
+        // Durchschnitt
+        eSeries avg = new eSeries();
+        avg.Name = "Durchschnitt";
+        avg.Color = "#cccccc";
+        avg.BackgroundColor = "#cccccc";
+        avg.Opacity = 0.01;
+        avg.Typ = EChartTyp.line.ToString();
+
+        for (int i = 1; i <= 12; i++)
+        {
+            var monthName = new DateTime(DateTime.Now.Year, i, 1).ToString("MMM", new System.Globalization.CultureInfo("de-DE"));
+
+            avg.Data.Add(new eDataItem()
+            {
+                Name = monthName,
+                Value = (double)i / 12 * 100
+            });
+        }
+
+        Configuration.Series.Add(avg);
+
+
+        // Serie: Progress
+        eSeries b = new eSeries();
+        b.Name = "Progress";
+        b.Typ = EChartTyp.lineArea.ToString();
+
+        int currentMonth = DateTime.Now.Month;
+        int avgProgress = progress / currentMonth;
+        for (int m = 1; m <= currentMonth; m++)
+        {
+            var monthName = new DateTime(DateTime.Now.Year, m, 1).ToString("MMM", new System.Globalization.CultureInfo("de-DE"));
+            b.Data.Add(new eDataItem() { Name = monthName, Value = m * avgProgress });
+        }
+
+        b.BackgroundColor = Helper.ColorByDefaultColorHex(Helper.DefaultColor.grün); // "#e01256";
+        b.Color = Helper.ColorByDefaultColorHex(Helper.DefaultColor.grün); // "#e01256";
+
+        Configuration.Series.Add(b);
+    }
+
+    public new async ValueTask DisposeAsync()
+    {
+        if (jsModule is not null)
+        {
+            await jsModule.DisposeAsync();
+        }
+    }
+}

@@ -21,7 +21,8 @@ namespace theInfrastructure
             this.Description = Item["Description"].ToSecureString();
             this.Group = Item["Group"].ToSecureString();
             this.IsActive = Item["IsActive"].ToSecureBool();
-            
+            this.HasReporting = Item["HasReporting"].ToSecureBool();
+
             // Custom // CMS App 
             this.Typ = AppTyp.Custom;
         }

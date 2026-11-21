@@ -13,6 +13,7 @@ namespace theInfrastructure
     {
         public string Background { get; set; } = string.Empty;
         public string AppSelector { get; set; } = "List";
+        public string MessageTyp { get; set; } = "Single"; // Legt fest, wie die Nachrichten angezeigt werden (Single, Stack)
         public bool Akzente { get; set; } = false; // weiße Akzente anzeigen oder nicht 
         public bool Blur { get; set; } = false; // Legt fest ob der Hintergrund blur ist 
         public bool Glass { get; set; } = false; // Legt fest ob der Vordergrund blur ist 

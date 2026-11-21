@@ -91,6 +91,7 @@ namespace theInfrastructure
         IDTO Page { get; set; }
         IDTO Board { get; set; }
         IDTO Item { get; set; }
+        IDTO TimeFrame { get; set; }
         Task SetApp(IApp? app);
         Task SetItemType(IItemType it);
         Task SetPage(IDTO page);

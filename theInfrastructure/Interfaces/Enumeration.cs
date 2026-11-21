@@ -250,7 +250,8 @@ namespace theInfrastructure
         File = 3,
         Appointment = 4,
         Checklist = 5,
-        Reminder = 6
+        Reminder = 6,
+            Music = 7,
     }
     public enum DeviceDisplay
     { 

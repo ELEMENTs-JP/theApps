@@ -1,0 +1,65 @@
+﻿@using theControls.OKR.Elements
+@inherits BaseCtl
+
+<div class="row g-0 m-1 bg-surface rounded border">
+    <div class="col p-2">
+        <h1>OKR Dashboard</h1>
+    </div>
+    <div class="col-4 p-2">
+        <TimeFrameSelector />
+    </div>
+</div>
+
+<div class="row g-0">
+    <div class="col-4 p-1">
+       <OkrOverallProgress TimeFrame="@this.TimeFrame" />
+    </div>
+    <div class="col-4 p-1">
+        <OkrByStatus TimeFrame="@this.TimeFrame" />
+    </div>
+    <div class="col-4 p-1">
+        <OkrByPriority TimeFrame="@this.TimeFrame" />
+    </div>
+
+    <div class="col-4 p-1">
+        <OkrByLevel TimeFrame="@this.TimeFrame" />
+    </div>
+    <div class="col-4 p-1">
+       <OkrStrategyCoverage />
+    </div>
+    <div class="col-4 p-1">
+        <OkrCoverage />
+    </div>
+
+    <div class="col-4 p-1">
+            <TopFlopByProgress ItemType="Objective" />
+    </div>
+    <div class="col-4 p-1">
+        <TopFlopByProgress ItemType="KeyResult" />
+    </div>
+    <div class="col-4 p-1">
+        <TopFlopByProgress ItemType="CheckIn" />
+    </div>
+</div>
+
+@code {
+
+
+    [Parameter]
+    public IDTO TimeFrame { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        
+        appService.PropertyChanged += async (sender, e) =>
+                {
+                    if (e.PropertyName == "TimeFrame")
+                    {
+                        TimeFrame = appService.TimeFrame;
+                        await InvokeAsync(StateHasChanged);
+                    }
+                };
+    }
+
+}

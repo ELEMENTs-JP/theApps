@@ -1,0 +1,33 @@
+﻿@inject IAppService app
+@inject ISqlDatabaseService sql
+@inject NavigationManager nm
+
+@if (App != null)
+{
+    @if (app.Item == null)
+    {
+            @* --- Report --- *@
+            <div class="d-flex rounded-2 hover pointer p-1 px-2"
+                 @onclick="@( async e => { nm.NavigateTo("/Reporting"); })">
+                <div class=" p-1 px-2 fw-bold flex-fill">
+                    Reporting
+                </div>
+            </div>
+    }
+}
+
+@code {
+
+    [Parameter]
+    public IApp App { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+}

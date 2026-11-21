@@ -8,9 +8,6 @@ using System.Text;
 namespace theInfrastructure
 {
 
-
-
-
     public class EventRenderItem
     {
         public CalendarEvent Event { get; set; } = default!;
@@ -177,7 +174,11 @@ namespace theInfrastructure
         public string Value { get; set; } = string.Empty;
     }
 
-
+    public class KpiValue
+    {
+        public string Title { get; set; }
+        public int Value { get; set; }
+    }
 
     public class QueryResult : IQueryResult
     {

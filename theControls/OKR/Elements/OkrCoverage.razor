@@ -1,0 +1,65 @@
+@implements IAsyncDisposable
+
+@inherits BaseCtl
+
+<div class="border rounded p-2 bg-surface">
+
+    <h3 class="h3">OKR Coverage</h3>
+    <div class="border-bottom text-muted small py-1">
+    </div>
+
+    @foreach (IDTO okr in Items.OrderByDescending(se => se["Progress"].ToSecureString().ExtractNumber()).Take(3))
+    {
+        <div class="d-flex p-1">
+            <div class="flex-fill fw-bold p-1">
+                @okr.Title
+            </div>
+            <div class="border-start p-1 px-2 text-success">
+                @okr["Progress"].ToSecureString()
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+
+    List<KpiValue> Values { get; set; } = new();
+    private int totalCount;
+
+    [Parameter]
+    public string ItemType { get; set; } = "Objective";
+
+    private IJSObjectReference? jsModule;
+    List<IDTO> Items { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Items = searchService.Store.Where(se => se.ItemType == ItemType).ToList();
+    }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var type = this.GetType();
+            var assemblyName = type.Assembly.GetName().Name;
+            var componentName = type.Name;
+
+            var jsPath = $"./_content/{assemblyName}/OKR/Elements/{componentName}.razor.js";
+
+            jsModule = await JS.InvokeAsync<IJSObjectReference>("import", jsPath);
+            await jsModule.InvokeVoidAsync("init", DotNetObjectReference.Create(this), "Initialisierungswert");
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (jsModule is not null)
+        {
+            await jsModule.DisposeAsync();
+        }
+    }
+}

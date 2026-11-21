@@ -7,7 +7,7 @@
 
 @if (Field != null && Context != null && Context.Item != null)
 {
-    <div class="@( ((Border == true) ? "border " : "")) rounded-2 hover @FrameCSS position-relative @CheckCondition(Context.Item) @CssClass">
+    <div class="@( ((Border == true) ? "border " : "")) rounded-2 @FrameCSS position-relative @CheckCondition(Context.Item) @CssClass">
 
         @if (Field.Typ == FieldTyp.TextArea)
         {
@@ -192,10 +192,12 @@
                      Style="@ControlStyle"
                      IsEditable="@IsEditable">
                 <Overlay>
-                    <div class="hover pointer rounded-2 p-1 me-2" @onclick="Save">
-                        <SymbolIcon Symbol="@Icon.Check" />
-                    </div>
-
+                    @if (IsEditable == true)
+                    {
+                        <div class="hover pointer rounded-2 p-1 me-2" @onclick="Save">
+                            <SymbolIcon Symbol="@Icon.Check" />
+                        </div>
+                    }
                 </Overlay>
             </Heading>
         }

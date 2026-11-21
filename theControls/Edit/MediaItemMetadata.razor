@@ -1,7 +1,13 @@
-﻿@using FFMpegCore
+﻿@using System.Net.Http.Json
+@using System.Text.Json.Serialization
+@using FFMpegCore
 @using MetadataExtractor
 @using NAudio.Wave
 @using TagLib
+@inject HttpClient Http
+
+
+
 
 @if (Item != null && ItemType != null &&
     (ItemType.Typ == ItemTypeTyp.Audio ||
@@ -13,6 +19,20 @@
         {
             @if (ItemType.Typ == ItemTypeTyp.Audio)
             {
+                @if (SongCoverUrls.Any())
+                {
+                    <div class="itunes-covers">
+                        @foreach (var cover in SongCoverUrls)
+                        {
+                            <img src="@cover"
+                                 alt="Album Cover"
+                                 class="cover-image pointer rounded-2 overflow-hidden"
+                                 @onclick="() => SaveCoverToMp3Async(cover)" />
+                        }
+                    </div>
+                }
+
+
                 @if (!string.IsNullOrEmpty(coverBase64))
                 {
                     <div class="my-2">
@@ -21,7 +41,6 @@
                     </div>
                 }
             }
-
 
             @if (metadataList.Any())
             {
@@ -61,6 +80,19 @@
 
 @code {
 
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? Album { get; set; }
+
+    [Parameter]
+    public string? Artist { get; set; }
+
+    private readonly List<string> SongCoverUrls = new();
+
+
     [Parameter]
     public string CSS { get; set; } = "rounded p-2 bg-surface my-2";
 
@@ -89,6 +121,9 @@
 
         if (ItemType.Typ == ItemTypeTyp.Audio)
         {
+            this.Title = Item.Title.ToSecureString();
+            this.Album = Item["Album"].ToSecureString();
+            this.Artist = Item["Artist"].ToSecureString();
             LoadAudioMetadata();
             LoadCover();
         }
@@ -161,7 +196,7 @@
             {
                 metadataList["Video-Codec"] = videoStream.CodecName;
                 metadataList["Auflösung"] = $"{videoStream.Width}x{videoStream.Height}";
-                metadataList["Bildrate (FPS)"] = videoStream.FrameRate.ToString("0.##");
+                // metadataList["Bildrate (FPS)"] = videoStream.FrameRate.ToString("0.##");
                 metadataList["Pixelformat"] = videoStream.PixelFormat;
             }
 
@@ -214,7 +249,7 @@
         }
     }
 
-    private void LoadCover()
+    private async void LoadCover()
     {
         if (string.IsNullOrWhiteSpace(FilePath) || !System.IO.File.Exists(FilePath))
             return;
@@ -229,6 +264,10 @@
                 var binData = picture.Data.Data;
                 coverBase64 = Convert.ToBase64String(binData);
                 coverMimeType = picture.MimeType;
+            }
+            if (picture == null)
+            {
+                await LoadiTunesCovers();
             }
         }
         catch { }
@@ -259,4 +298,201 @@
         }
         catch { }
     }
+
+    protected async Task LoadiTunesCovers()
+    {
+        SongCoverUrls.Clear();
+
+        if (string.IsNullOrWhiteSpace(Title) &&
+            string.IsNullOrWhiteSpace(Album) &&
+            string.IsNullOrWhiteSpace(Artist))
+        {
+            return;
+        }
+
+        var searchTerm = string.Join(" ",
+            new[]
+            {
+            Title,
+            Artist
+            }
+            .Where(x => !string.IsNullOrWhiteSpace(x)));
+
+        var url =
+            $"https://itunes.apple.com/search?term={Uri.EscapeDataString(searchTerm)}&media=music&entity=song&limit=200";
+
+        var result = await Http.GetFromJsonAsync<ItunesSearchResponse>(url);
+
+        if (result?.Results == null || result.Results.Count == 0)
+            return;
+
+        var rankedResults = result.Results
+            .Select(track =>
+            {
+                var score = 0;
+
+                if (!string.IsNullOrWhiteSpace(Title))
+                {
+                    if (string.Equals(
+                            track.TrackName,
+                            Title,
+                            StringComparison.OrdinalIgnoreCase))
+                    {
+                        score += 1000;
+                    }
+                    else if (!string.IsNullOrWhiteSpace(track.TrackName) &&
+                             track.TrackName.Contains(
+                                 Title,
+                                 StringComparison.OrdinalIgnoreCase))
+                    {
+                        score += 500;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Artist))
+                {
+                    if (string.Equals(
+                            track.ArtistName,
+                            Artist,
+                            StringComparison.OrdinalIgnoreCase))
+                    {
+                        score += 500;
+                    }
+                    else if (!string.IsNullOrWhiteSpace(track.ArtistName) &&
+                             track.ArtistName.Contains(
+                                 Artist,
+                                 StringComparison.OrdinalIgnoreCase))
+                    {
+                        score += 250;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Album))
+                {
+                    if (string.Equals(
+                            track.CollectionName,
+                            Album,
+                            StringComparison.OrdinalIgnoreCase))
+                    {
+                        score += 300;
+                    }
+                    else if (!string.IsNullOrWhiteSpace(track.CollectionName) &&
+                             track.CollectionName.Contains(
+                                 Album,
+                                 StringComparison.OrdinalIgnoreCase))
+                    {
+                        score += 100;
+                    }
+                }
+
+                return new
+                {
+                    Track = track,
+                    Score = score
+                };
+            })
+            .Where(x => x.Score > 0)
+            .OrderByDescending(x => x.Score)
+            .ToList();
+
+        SongCoverUrls.AddRange(
+            rankedResults
+                .Select(x => x.Track.ArtworkUrl100)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct()
+                .Take(9)
+                .Select(x => x!
+                    .Replace("100x100bb", "1000x1000bb")
+                    .Replace("100x100-75", "1000x1000"))
+        );
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private int CalculateScore(ItunesTrack item)
+    {
+        var score = 0;
+
+        if (!string.IsNullOrWhiteSpace(Title) &&
+            item.TrackName?.Contains(Title,
+                StringComparison.OrdinalIgnoreCase) == true)
+        {
+            score += 100;
+        }
+
+        if (!string.IsNullOrWhiteSpace(Album) &&
+            item.CollectionName?.Contains(Album,
+                StringComparison.OrdinalIgnoreCase) == true)
+        {
+            score += 50;
+        }
+
+        if (!string.IsNullOrWhiteSpace(Artist) &&
+            item.ArtistName?.Contains(Artist,
+                StringComparison.OrdinalIgnoreCase) == true)
+        {
+            score += 30;
+        }
+
+        return score;
+    }
+    private async Task SaveCoverToMp3Async(string imageUrl)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(FilePath))
+                return;
+
+            using var httpClient = new HttpClient();
+
+            var imageBytes = await httpClient.GetByteArrayAsync(imageUrl);
+
+            var mimeType = imageUrl.EndsWith(".png",
+                StringComparison.OrdinalIgnoreCase)
+                    ? "image/png"
+                    : "image/jpeg";
+
+            var tagFile = TagLib.File.Create(FilePath);
+
+            tagFile.Tag.Pictures =
+            [
+                new TagLib.Picture
+            {
+                Type = PictureType.FrontCover,
+                Description = "Front Cover",
+                MimeType = mimeType,
+                Data = imageBytes
+            }
+            ];
+
+            tagFile.Save();
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+        }
+    }
+    public class ItunesSearchResponse
+    {
+        [JsonPropertyName("results")]
+        public List<ItunesTrack> Results { get; set; } = [];
+    }
+
+    public class ItunesTrack
+    {
+        [JsonPropertyName("trackName")]
+        public string? TrackName { get; set; }
+
+        [JsonPropertyName("artistName")]
+        public string? ArtistName { get; set; }
+
+        [JsonPropertyName("collectionName")]
+        public string? CollectionName { get; set; }
+
+        [JsonPropertyName("artworkUrl100")]
+        public string? ArtworkUrl100 { get; set; }
+    }
+
 }

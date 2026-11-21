@@ -14,6 +14,7 @@ namespace theInfrastructure
         string Group { get; set; } // Gruppierung in der Navigation // Allgemeine Typisierung
         bool IsNavigation { get; set; } // wird im App Selector // Navigation angezeigt oder nicht 
         bool IsActive { get; set; } // legt fest ob die App aktiv ist und verwendet werden kann (Feature on off) 
+        bool HasReporting { get; set; }
         Task<List<IItemType>> GetItemTypes(
             AssociationTyp ast = AssociationTyp.Association);
         Task<List<IDTO>> GetPages(AssociationTyp ast = AssociationTyp.Association);
@@ -34,6 +35,7 @@ namespace theInfrastructure
         public string Group { get; set; } = string.Empty;
         public bool IsNavigation { get; set; } = true;
         public bool IsActive { get; set; } = true;
+        public bool HasReporting { get; set; } = false;
 
         public virtual async Task<List<IItemType>> GetItemTypes(
             AssociationTyp ast = AssociationTyp.Association)

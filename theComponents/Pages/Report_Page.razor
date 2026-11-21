@@ -1,0 +1,45 @@
+﻿@page "/Reporting"
+@page "/Reporting/{IT}/{ID}"
+
+@inherits BaseCtl
+
+<PageTitle>the App | Report</PageTitle>
+
+<Header Title="Report" PreTitle="Report" PostTitle="Report"
+        SubTitle="Report" Description="Description" Border="true" />
+
+<div class="row g-0">
+    <div class="col-7">
+    </div>
+
+    <div class="col-5">
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string ID { get; set; } = string.Empty;
+
+    [Parameter]
+    public string IT { get; set; } = string.Empty;
+
+    private IItemType ItemType { get; set; } = null;
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        // if (!string.IsNullOrEmpty(this.IT))
+        // {
+        //     if (this.IT.SplitGetFirst(".").IsValidGuid())
+        //         return;
+
+        //     Factory f = new Factory(sql);
+        //     ItemType = await f.BuildItemType(this.IT);
+        // }
+
+    }
+
+}

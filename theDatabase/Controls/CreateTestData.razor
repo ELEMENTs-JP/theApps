@@ -16,8 +16,24 @@
     </div>
 </div>
 
+
+<div class="row g-0 align-items-center">
+    <div class="col p-2">
+        <strong>MessageBox texten</strong>
+    </div>
+    <div class="col-auto p-2">
+        <div class="btn btn-primary" @onclick="SendMessage">
+            Nachricht verschicken...
+        </div>
+    </div>
+</div>
+
 @code {
 
+    private async Task SendMessage()
+    {
+        msg.Publish("Info", BusAction.Info, "Testnachricht");
+    }
     private async Task CreatetheData()
     {
         IQueryParameter qp = QueryParameter.Default(".");

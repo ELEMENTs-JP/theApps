@@ -1,0 +1,33 @@
+﻿@using theControls.Essentials
+@inherits BaseCtl
+
+<DropDown Items="@Items" ItemChanged="@( e => { appService.TimeFrame = e; })" >
+    <HeaderTemplate>
+        <TimeFrameBox Item="@appService.TimeFrame" CSS="" />
+    </HeaderTemplate>
+</DropDown>
+
+@code {
+
+    [Parameter]
+    public List<IDTO> Items { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Items = searchService.Store.Where(se => se.ItemType == "TimeFrame").ToList();
+    }
+
+    [Parameter]
+    public EventCallback<IItemType> OnClick { get; set; }
+
+    private async Task ButtonClick(IItemType it)
+    {
+        if (OnClick.HasDelegate)
+        {
+            await OnClick.InvokeAsync(it);
+        }
+    }
+
+}

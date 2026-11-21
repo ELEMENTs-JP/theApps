@@ -54,9 +54,9 @@ namespace theInfrastructure
                     }
             }
         }
-        public static string ColorByStatus(string Prio)
+        public static string ColorByStatus(string status)
         {
-            switch (Prio)
+            switch (status)
             {
                 case "0":
                     {
@@ -120,10 +120,6 @@ namespace theInfrastructure
                     {
                         return "var(--tblr-red)";
                     }
-                //case "-5":
-                //    {
-                //        return "var(--tblr-gray-500)";
-                //    }
                 default:
                     {
                         return "#fff";
