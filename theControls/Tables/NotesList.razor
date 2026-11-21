@@ -14,19 +14,22 @@
                             class="border rounded pb-0" 
                                 style="background-color:#FFF9B1">
                         
-                        <h3 class="h3 fw-bold w-100 p-2 text-dark pointer" 
+                        <h3 class="h3 fw-bold w-100 p-2 text-dark hover rounded pointer" 
                             @onclick="@( e => { nm.NavToItem(item.ItemType, item.GUID); })">@item.Title</h3>
 
-                        <TextArea Label="" Description="" Value="@item.Description()"
+                        <EditableDIV Value="@item.Description()" 
+                                ValueChanged="@(async e => { item["Note"] = e; await item.Save(sql); })" />
+
+                      @*   <TextArea Label="" Description="" Value="@item.Description()"
                                   ValueChanged="@(async e => { item["Note"] = e;  })"
-                                  Rows="3" ShowLabel="false"
+                                  Rows="1" ShowLabel="false"
                                   IsEditable="true" CssClass="text-dark">
                             <Overlay>
                                 <div class="hover pointer rounded-2 p-1" @onclick="@( async e => { await item.Save(sql); })">
                                     <i class="ti ti-check text-dark"></i>
                                 </div>
                             </Overlay>
-                        </TextArea>
+                        </TextArea> *@
                     </div>
                 }
             </div>

@@ -1,0 +1,110 @@
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+@using Microsoft.JSInterop
+@using Microsoft.AspNetCore.Components.Web
+
+<div @ref="_editorElement"
+     contenteditable="true"
+     class="@CSS rounded p-1 text-dark text-muted editableDiv"
+     @oninput="HandleInputAsync">
+</div>
+
+@code {
+    [Parameter]
+    public string? Value { get; set; }
+
+    [Parameter]
+    public string CSS { get; set; } = "";
+
+    [Parameter]
+    public EventCallback<string?> ValueChanged { get; set; }
+
+    private ElementReference _editorElement;
+    private IJSObjectReference? _jsModule;
+    private string? _lastRenderedValue;
+    private bool _isModuleLoaded;
+    private bool _isDisposed;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_isDisposed)
+        {
+            return;
+        }
+
+        if (firstRender)
+        {
+            var type = GetType();
+            var assemblyName = type.Assembly.GetName().Name;
+            var componentName = type.Name;
+
+            var modulePath = $"./_content/{assemblyName}/Input/{componentName}.razor.js";
+
+            _jsModule = await JS.InvokeAsync<IJSObjectReference>("import", modulePath);
+            _isModuleLoaded = true;
+
+            if (_isDisposed)
+            {
+                await DisposeModuleAsync();
+                return;
+            }
+
+            if (Value is not null)
+            {
+                await _jsModule.InvokeVoidAsync("setContent", _editorElement, Value);
+                _lastRenderedValue = Value;
+            }
+        }
+        else if (_isModuleLoaded && _jsModule is not null && !string.Equals(Value, _lastRenderedValue, StringComparison.Ordinal))
+        {
+            await _jsModule.InvokeVoidAsync("setContent", _editorElement, Value ?? string.Empty);
+            _lastRenderedValue = Value;
+        }
+    }
+
+    private async Task HandleInputAsync(ChangeEventArgs _)
+    {
+        if (_isDisposed || !_isModuleLoaded || _jsModule is null)
+        {
+            return;
+        }
+
+        string currentText = await _jsModule.InvokeAsync<string>("getContent", _editorElement);
+        if (_isDisposed)
+        {
+            return;
+        }
+
+        _lastRenderedValue = currentText;
+
+        if (ValueChanged.HasDelegate)
+        {
+            await ValueChanged.InvokeAsync(currentText);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _isDisposed = true;
+        await DisposeModuleAsync();
+    }
+
+    private async Task DisposeModuleAsync()
+    {
+        if (_jsModule is not null)
+        {
+            var module = _jsModule;
+            _jsModule = null;
+            _isModuleLoaded = false;
+
+            try
+            {
+                await module.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+            }
+        }
+    }
+}

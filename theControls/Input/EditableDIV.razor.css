@@ -1,0 +1,11 @@
+/* Spezifische Stile für die Komponente */
+.editableDiv {
+    outline: none;
+    box-shadow: none;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    padding-bottom: 0.35rem !important;
+}
+.editableDiv:focus {
+    
+}
