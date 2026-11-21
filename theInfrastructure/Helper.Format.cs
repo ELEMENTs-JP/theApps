@@ -252,6 +252,46 @@ namespace theInfrastructure
         {
             return DefaultColors().Find(se => se.Title == color.ToString())["Hex"];
         }
+        public static List<IDTO> NoteColorsBorder()
+        {
+            List<IDTO> Items = new();
+
+            Items.Add(new DTO() { ID = "#B8BFC9", Title = "hellgrau", ["Hex"] = "#B8BFC9" });
+            Items.Add(new DTO() { ID = "#858E9B", Title = "grau", ["Hex"] = "#858E9B" });
+            Items.Add(new DTO() { ID = "#565F6D", Title = "dunkelgrau", ["Hex"] = "#565F6D" });
+
+            Items.Add(new DTO() { ID = "#182433", Title = "schwarz", ["Hex"] = "#182433" });
+
+            Items.Add(new DTO() { ID = "#9B30C7", Title = "violett", ["Hex"] = "#9B30C7" });
+            Items.Add(new DTO() { ID = "#E03142", Title = "rot", ["Hex"] = "#E03142" });
+            Items.Add(new DTO() { ID = "#E86D14", Title = "orange", ["Hex"] = "#E86D14" });
+            Items.Add(new DTO() { ID = "#F5D000", Title = "gelb", ["Hex"] = "#F5D000" });
+            Items.Add(new DTO() { ID = "#1FA83D", Title = "grün", ["Hex"] = "#1FA83D" });
+            Items.Add(new DTO() { ID = "#1D6FE5", Title = "blau", ["Hex"] = "#1D6FE5" });
+            Items.Add(new DTO() { ID = "#254ED6", Title = "marine", ["Hex"] = "#254ED6" });
+
+            return Items;
+        }
+        public static List<IDTO> NoteColors()
+        {
+            List<IDTO> Items = new();
+
+            Items.Add(new DTO() { ID = "#ECEEF0", Title = "hellgrau", ["Hex"] = "#ECEEF0" });
+            Items.Add(new DTO() { ID = "#D5D9DF", Title = "grau", ["Hex"] = "#D5D9DF" });
+            Items.Add(new DTO() { ID = "#B8BFC9", Title = "dunkelgrau", ["Hex"] = "#B8BFC9" });
+
+            Items.Add(new DTO() { ID = "#3A424E", Title = "schwarz", ["Hex"] = "#3A424E" });
+
+            Items.Add(new DTO() { ID = "#E6B8FA", Title = "violett", ["Hex"] = "#E6B8FA" });
+            Items.Add(new DTO() { ID = "#FBB6BC", Title = "rot", ["Hex"] = "#FBB6BC" });
+            Items.Add(new DTO() { ID = "#FFD1A9", Title = "orange", ["Hex"] = "#FFD1A9" });
+            Items.Add(new DTO() { ID = "#FFF9B1", Title = "gelb", ["Hex"] = "#FFF9B1" });
+            Items.Add(new DTO() { ID = "#C6F6C8", Title = "grün", ["Hex"] = "#C6F6C8" });
+            Items.Add(new DTO() { ID = "#B6D3FB", Title = "blau", ["Hex"] = "#B6D3FB" });
+            Items.Add(new DTO() { ID = "#B5C7F8", Title = "marine", ["Hex"] = "#B5C7F8" });
+
+            return Items;
+        }
         public static List<IDTO> DefaultColors()
         {
             List<IDTO> Items = new();

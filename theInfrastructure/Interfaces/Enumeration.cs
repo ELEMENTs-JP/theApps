@@ -295,6 +295,7 @@ namespace theInfrastructure
         
         Search,
         Color,
+        NoteColors,
         Range,
         
         Hidden,

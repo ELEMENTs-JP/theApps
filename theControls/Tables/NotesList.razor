@@ -7,12 +7,14 @@
 
         @foreach (var columnItems in GetColumnBuckets())
         {
-            <div class="col d-flex flex-column gap-2">
+            <div class="col d-flex flex-column gap-3">
                 @foreach (var item in columnItems)
                 {
                     <div @key="@("item_entry_" + item.GUID)" 
-                            class="border rounded pb-0" 
-                                style="background-color:#FFF9B1">
+                            class="pb-0 rounded" 
+                         style="@(item["Color"] == "" ? "background-color:#FFF9B1; border-left: 5px solid #F5D000;"
+                                : ("background-color:" + Helper.NoteColors().Where(se => se.Title == item["Color"]).FirstOrDefault().ID  + ";" +
+                                    "border-left: 5px solid " + Helper.NoteColorsBorder().Where(se => se.Title == item["Color"]).FirstOrDefault().ID + ";"))">
                         
                         <h3 class="h3 fw-bold w-100 p-2 text-dark hover rounded pointer" 
                             @onclick="@( e => { nm.NavToItem(item.ItemType, item.GUID); })">@item.Title</h3>

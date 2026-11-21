@@ -71,6 +71,7 @@
         }
         else if (Field.Typ == FieldTyp.DropDown ||
                 Field.Typ == FieldTyp.Color ||
+                Field.Typ == FieldTyp.NoteColors ||
                 Field.Typ == FieldTyp.FieldTyp ||
                 Field.Typ == FieldTyp.ItemTypeTyp ||
                 Field.Typ == FieldTyp.ItemTypeList ||
@@ -109,6 +110,10 @@
                     {
                         <ColorBar Item="@headitem" />
                     }
+                    else if (Field.Typ == FieldTyp.NoteColors)
+                    {
+                        <ColorBar Item="@headitem" />
+                    }
                     else if (Field.ItemType == "Folder")
                     {
                         <FolderBox Item="@headitem" />
@@ -141,6 +146,10 @@
                         <ProgressBar Value="@entry.ID.ToSecureString()" />
                     }
                     else if (Field.Typ == FieldTyp.Color)
+                    {
+                        <ColorBar Item="@entry" />
+                    }
+                    else if (Field.Typ == FieldTyp.NoteColors)
                     {
                         <ColorBar Item="@entry" />
                     }

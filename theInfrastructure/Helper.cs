@@ -420,6 +420,10 @@ namespace theInfrastructure
             {
                 Items = Helper.DefaultColors();
             }
+            else if (field.Typ == FieldTyp.NoteColors)
+            {
+                Items = Helper.NoteColorsBorder();
+            }
             else if (field.Typ == FieldTyp.BoardTyp)
             {
                 Items.Add(new DTO() { ID = "Business Model Canvas", Title = "Business Model Canvas" });

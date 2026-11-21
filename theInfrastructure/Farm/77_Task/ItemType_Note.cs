@@ -22,7 +22,8 @@ namespace theInfrastructure
             List<IField> Fields = new List<IField>();
 
             Fields.Add(new Field() { Title = "Beschreibung", Typ = FieldTyp.HR });
-            Fields.Add(new Field() { Title = "Notiz", Typ = FieldTyp.TextArea, Column = "Note", CSS = " col-12 col-md-6 col-lg-12 ", OnDevice = DeviceDisplay.Desktop });
+            Fields.Add(new Field() { Title = "Notiz", Typ = FieldTyp.TextArea, Column = "Note", CSS = " col-12 col-md-6 col-lg-8 ", OnDevice = DeviceDisplay.Desktop });
+            Fields.Add(new Field() { Title = "Farbe", Typ = FieldTyp.NoteColors, Column = "Color", CSS = " col-12 col-md-6 col-lg-4 ", OnDevice = DeviceDisplay.Desktop });
 
             return Fields;
         }
